@@ -84,7 +84,9 @@
 - **PostExploit**: Post-Exploitation Modules [Sub-Menu]
   - **Persist**  : Remote Persist Client [Sub-Menu]
     - **StartUp**   : Persiste Client Using startup Folder
+    - **RUNONCE**   :  Persiste Client using REGISTRY:RunOnce Key
     - **REGRUN**    : Persiste Client using REGISTRY:Run Key
+    - **Schtasks**  :  Make Client Beacon Home with xx minuts of Interval
     - **WinLogon**  : Persiste Client using WinLogon REGISTRY:Userinit Key
   - **Restart**  : Restart in xx seconds
   - **ListLog**  : List/Delete EventLogs Module [Sub-Menu]
