@@ -259,7 +259,7 @@ meterpeter Under Linux Distros: http://Not-recorded-yet<br />
 <br />
 
 ### Special Thanks:
-**@ZHacker13** (Original Rev Shell) | **@codings9** (debugging project under Windows|Linux)
+**@ZHacker13** (Original Rev Shell) | **@codings9** (debugging project under Windows|Linux)<br />
 [Jump To Top of this readme File](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#project)
 
 
