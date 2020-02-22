@@ -128,6 +128,8 @@
 ### ATTACKER MACHINE: [Linux Kali]
 ![linux](https://user-images.githubusercontent.com/23490060/74575258-26951700-4f7e-11ea-832c-512dce1c97cc.png)
 
+      Warning: powershell under linux distributions its only available for x64 archs ..
+
 <br />
 
 #### Install Powershell (Linux)
