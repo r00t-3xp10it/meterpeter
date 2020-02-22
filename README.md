@@ -1,6 +1,5 @@
 ### PROJECT:
    my_meterp(r)eter_Server<br />
-   'For Guys Like Me that Misses the meterpreter Prompt, In our redteam engagements using reverse shells' d(^_^)b<br />
 
 ### AUTHOR:
    @r00t-3xp10it { version 2.7 }<br />
