@@ -1,6 +1,5 @@
 ### PROJECT:
    my_meterp(r)eter_Server<br />
-   'For Guys Like Me that Misses the meterpreter Prompt, In our redteam engagements using reverse shells' d(^_^)b<br />
 
 ### AUTHOR:
    @r00t-3xp10it { version 2.7 }<br />
@@ -14,7 +13,7 @@
 [List Of Available Modules](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#currently-available-modules)<br />
 [Windows Defender (Target Related)](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#remark-about-windows-defender)<br />
 [Some meterpeter Screenshots](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#meterpeter-screenshots)<br />
-[Two meterpeter video tutorials](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#videos)<br />
+[Two meterpeter video tutorials](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#video-tutorials)<br />
 [Special Thanks|Contributions](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#special-thanks)<br />
 
 ---
@@ -84,7 +83,9 @@
 - **PostExploit**: Post-Exploitation Modules [Sub-Menu]
   - **Persist**  : Remote Persist Client [Sub-Menu]
     - **StartUp**   : Persiste Client Using startup Folder
+    - **RUNONCE**   :  Persiste Client using REGISTRY:RunOnce Key
     - **REGRUN**    : Persiste Client using REGISTRY:Run Key
+    - **Schtasks**  :  Make Client Beacon Home with xx minuts of Interval
     - **WinLogon**  : Persiste Client using WinLogon REGISTRY:Userinit Key
   - **Restart**  : Restart in xx seconds
   - **ListLog**  : List/Delete EventLogs Module [Sub-Menu]
