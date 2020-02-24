@@ -127,12 +127,12 @@
 <br /><br />
 
 ### ATTACKER MACHINE: [Linux Kali]
-      Warning: powershell under linux distributions its only available for x64 archs ..
+      Warning: powershell under linux distributions its only available for x64 bits archs ..
 ![linux](https://user-images.githubusercontent.com/23490060/74575258-26951700-4f7e-11ea-832c-512dce1c97cc.png)
 
 <br />
 
-#### Install Powershell (Linux)
+#### Install Powershell (Linux x64 bits)
 ```
 apt-get update && apt-get install -y powershell
 ```
@@ -150,7 +150,6 @@ service apache2 start
 #### Start C2 Server (Local)
 ```
 cd meterpeter
-pwsh Set-ExecutionPolicy Unrestricted -Scope CurrentUser
 pwsh -File meterpeter.ps1
 ```
 
@@ -178,6 +177,7 @@ UNZIP (IN DESKTOP) AND EXECUTE 'Update-KB4524147.bat' (Run As Administrator)..
 <br />
 
 #### Install Python3 (optional)
+Install Python3 (http.Server) to deliver payloads under LAN networks ..<br />
 ```
 https://www.python.org/downloads/release/python-381/
 ```
@@ -191,7 +191,7 @@ powershell -File meterpeter.ps1
 
      Remark:
      -------
-     meterpeter.ps1 delivers Dropper/Payload using python3 http.server. IF attacker has python3 installed
+     meterpeter.ps1 delivers Dropper/Payload using python3 http.server. IF attacker has python3 installed.
      If NOT then the payload (Client) its written in Server Local Working Directory to be Manualy Deliver ..
 
      Remmnenber to close the http.server terminal after the target have recived the two files (Dropper & Client)
