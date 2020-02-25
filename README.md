@@ -103,6 +103,9 @@
   - **UACSet**   : Enable/Disable remote UAC Module [Sub-Menu]
     - **Disable**   : Disable UAC in REGISTRY:hklm
     - **Enable**    : Enable  UAC in REGISTRY:hklm
+  - **ASLRSet**  : Enable/Disable ASLR Module [Sub-Menu]
+    - **Disable**   : Disable ASLR in REGISTRY:hklm
+    - **Enable**    : Enable  ASLR in REGISTRY:hklm
   - **TaskMan**  : Enable/Disable TaskManager Module [Sub-Menu]
     - **Disable**   : Disable TaskManager in REGISTRY:hklm
     - **Enable**    : Enable  TaskManager in REGISTRY:hklm
