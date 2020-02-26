@@ -58,6 +58,10 @@
     - **Create**   : Create Remote-Host New Task
     - **Delete**   : Delete Remote-Host Single Task
   - **ListRece** : Retrieve Remote-Host Recent Folder Contents
+  - **ListPriv** : Retrieve Remote-Host Weak Service|Folders permissions [sub-menu]
+    - **Check**   : Retrieve Folder Privileges
+    - **WeakDir** : Search weak privs recursive
+    - **Service** : Search weak privs in services
   - **StartUp**  : Retrieve Remote-Host StartUp Folder Contents
   - **ListDriv** : Retrieve Remote-Host Drives Available List
   - **ListRun**  : Retrieve Remote-Host Startup Run Entrys
