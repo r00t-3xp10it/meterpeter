@@ -471,6 +471,8 @@ While($Client.Connected)
         If($my_choise -eq "Check" -or $my_choise -eq "check")
         {
           write-host " List of Remote-Host Schedule Tasks." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
+          write-host "TaskName                                 Schedule               Status" -ForegroundColor green;
+          write-host "--------                                 --------               ------";
           $Command = "cmd /R schtasks|findstr `"Ready Running`" `> schedule.txt;Get-content schedule.txt;Remove-Item schedule.txt -Force";
         }
         If($my_choise -eq "Inform" -or $my_choise -eq "info")
