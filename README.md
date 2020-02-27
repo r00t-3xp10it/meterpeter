@@ -1,11 +1,11 @@
-### PROJECT:
+### PROJECT
    my_meterp(r)eter_Server<br />
 
-### AUTHOR:
+### AUTHOR
    @r00t-3xp10it { version 2.7 }<br />
    Original Shell: @ZHacker13 **'https://github.com/ZHacker13/ReverseTCPShell'**
 
-### Article Quick Jump List:
+**Article Quick Jump List**<br />
 - **[meterpeter Project Description](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#description)**<br />
 - **[List Of Available Modules](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#currently-available-modules)**<br />
 - **[How To - Under Linux Distributions](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#attacker-machine-linux-kali)**<br />
@@ -19,7 +19,7 @@
 
 <br />
 
-### DESCRIPTION:
+### DESCRIPTION
    **meterpeter** - This PS1 starts a listener Server on a Windows|Linux attacker machine and generates oneliner PS reverse shell payloads obfuscated in ANCII|BXOR with a random secret key and another layer of Characters/Variables Obfuscation to be executed on the victim machine (The payload will also execute AMSI reflection bypass in current session to evade AMSI detection while working). You can also recive the generated oneliner reverse shell connection via netcat. (in this case you will lose the C2 functionalities like screenshot, upload, download files, Keylogger, AdvInfo, PostExploitation, etc)<br /><br />meterpeter payloads/droppers can be executed using User or Administrator Privileges depending of the cenario (executing the Client as Administrator will unlock ALL Server Modules, amsi bypasses, etc.). Droppers will mimic a Fake KB Security Update while in background Downloads and executes our Client in $env:tmp trusted location, with the intent of evading  Windows Defender Exploit Guard. meterpeter payloads|droppers are FUD (dont test samples on VirusTotal).<br /><br />This project has been inspired in the work of @ZHacker13 from GitHub **->** [github.com/ZHacker13/ReverseTCPShell](https://github.com/ZHacker13/ReverseTCPShell) **<-**<br />
 ![banner](https://user-images.githubusercontent.com/23490060/74566700-fba1c780-4f6b-11ea-85a0-ac26576302b3.png)<br />
 
@@ -28,20 +28,11 @@
    This Project allows Attackers to execute **'meterpeter.ps1'** under **'Linux'** or **'Windows'** distributions. Under Linux distros users required to install **powershell** and **apache2** webserver, Under Windows its optional the install of **python3** http.server to deliver payloads under LAN networks. If this requirements are **NOT** met, then Client will be written in meterpeter working directory for manual deliver <- In this ocassion execute your Client.ps1 in **$env:tmp** ('recomended').
 ![pythonserver](https://user-images.githubusercontent.com/23490060/74612205-1bb3c100-50fb-11ea-8138-a3c9649a8201.png)
 
-<br />
-
-#### How To Display|Change 'Client' Working Directory:
-**Client** Remote Working directory its located in **$env:tmp**, But meterpeter gives us access to one **'Interactive powershell console',** that means that all powershell commands executed in **' :meterpeter> '** prompt will be executed remotely.<br />
-![dirs1](https://user-images.githubusercontent.com/23490060/75086920-d8f64c80-5531-11ea-9420-43f0ab947d0d.png)
-![dirs2](https://user-images.githubusercontent.com/23490060/75086924-e01d5a80-5531-11ea-84a5-87fcc1aa6818.png)
-
-- **[Quick Jump List](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#quick-jump-list)**<br />
-
 ---
 
 <br />
 
-### Currently available modules:
+### meterpeter (Server) available modules
 ![keylogger](https://user-images.githubusercontent.com/23490060/74612250-79e0a400-50fb-11ea-8f21-60cd34c314aa.png)<br />
 
 - **Info**       : Retrieve Target PC Information
