@@ -118,7 +118,7 @@
 - **exit**       : Exit Reverse TCP Shell (Server + Client).
 
 - **[Please Read my WIKI for Detailed information about each Module](https://github.com/r00t-3xp10it/meterpeter/wiki)**<br />
-- **[Quick Jump List](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#quick-jump-list)**<br />
+- **[Quick Jump List](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#project)**<br />
 
 ---
 
@@ -163,7 +163,7 @@ UNZIP (IN DESKTOP) AND EXECUTE 'Update-KB4524147.bat' (Run As Administrator)..
      IF Attacker decided to manualy execute Client: Then Client remote location (pwd) will be used has working dir .
 
 
-- **[Quick Jump List](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#quick-jump-list)**<br />
+- **[Quick Jump List](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#project)**<br />
 
 ---
 
@@ -205,7 +205,7 @@ DELIVER 'Update-KB4524147' (.ps1=manual) OR (.zip=automated|silentExec) TO TARGE
      IF dropper.bat its executed: Then the Client will use $env:tmp has its working directory ('recomended')..
      IF Attacker decided to manualy execute Client: Then Client remote location (pwd) will be used has working dir .
 
-- **[Quick Jump List](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#quick-jump-list)**<br />
+- **[Quick Jump List](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#project)**<br />
 
 ---
 
@@ -230,7 +230,7 @@ powershell Set-ExecutionPolicy Restricted -Scope CurrentUser
 **meterpeter Settings File**<br />
 Allow Attackers to **automate** the creation of payloads (Client) without the need of User inputs. To activate it Attacker just need to edit the **Settings file**, change is values and then rename it from **'settingZZZ'** to **'Settings'** before executing the Server.
 
-- **[Quick Jump List](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#quick-jump-list)**<br />
+- **[Quick Jump List](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#project)**<br />
 
 ---
 
