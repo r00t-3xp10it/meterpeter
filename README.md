@@ -12,7 +12,7 @@
 - **[How To - Under Windows Distributions](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#attacker-machiner-windows-pc)**<br />
 - **[Windows Defender (Target Related)](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#remark-about-windows-defender)**<br />
 - **[Some meterpeter Screenshots](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#meterpeter-screenshots)**<br />
-- **[Special Thanks|Contributions|Videos](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#special-thanks)**<br />
+- **[Special Thanks|Contributions|Videos](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#video-tutorials)**<br />
 - **[Please Read my WIKI for Detailed information about each Module](https://github.com/r00t-3xp10it/meterpeter/wiki)**<br />
 
 ---
@@ -259,7 +259,7 @@ Allow Attackers to **automate** the creation of payloads (Client) without the ne
 
 ### Video Tutorials:
 meterpeter Under Windows Distros: https://youtu.be/5_VLBWYUuJ8<br />
-meterpeter Under Linux Distros: http://Not-recorded-yet<br />
+meterpeter Under Linux Distros: http://Not-recorded-yet<br /><br />
 
 ### Special Thanks:
 **@ZHacker13** (Original Rev Shell) | **@codings9** (debugging project under Windows|Linux)<br /><br />
