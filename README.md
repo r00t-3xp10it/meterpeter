@@ -7,7 +7,7 @@
 
 **Article Quick Jump List**<br />
 - **[meterpeter Project Description](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#description)**<br />
-- **[List Of Available Modules](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#currently-available-modules)**<br />
+- **[List Of Available Modules](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#meterpeter-server-available-modules)**<br />
 - **[How To - Under Linux Distributions](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#attacker-machine-linux-kali)**<br />
 - **[How To - Under Windows Distributions](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#attacker-machiner-windows-pc)**<br />
 - **[Windows Defender (Target Related)](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#remark-about-windows-defender)**<br />
@@ -30,10 +30,11 @@
 
 ---
 
-<br />
+<br /><br />
 
 ### meterpeter (Server) available modules
 ![keylogger](https://user-images.githubusercontent.com/23490060/74612250-79e0a400-50fb-11ea-8f21-60cd34c314aa.png)<br />
+- **[Please Read my WIKI for Detailed information about each Module](https://github.com/r00t-3xp10it/meterpeter/wiki)**<br />
 
 - **Info**       : Retrieve Target PC Information
 - **AdvInfo**    : Advanced Gather Information Modules [Sub-Menu]
