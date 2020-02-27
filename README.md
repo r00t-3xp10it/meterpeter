@@ -241,7 +241,6 @@ Allow Attackers to **automate** the creation of payloads (Client) without the ne
 ### meterpeter Screenshots:
 ![screenshot](https://user-images.githubusercontent.com/23490060/74612209-22423880-50fb-11ea-8c1d-66a9a14e18f7.png)
 ![uacoff](https://user-images.githubusercontent.com/23490060/74612213-266e5600-50fb-11ea-8557-b06c3ff93e09.png)
-![keylogger](https://user-images.githubusercontent.com/23490060/74612250-79e0a400-50fb-11ea-8f21-60cd34c314aa.png)
 ![taskoff](https://user-images.githubusercontent.com/23490060/74618345-3b61de00-5129-11ea-8e78-4834107a01a3.png)
 ![mace](https://user-images.githubusercontent.com/23490060/74764142-1a100780-5279-11ea-9e18-09f2e555baca.png)
 
