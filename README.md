@@ -5,16 +5,14 @@
    @r00t-3xp10it { version 2.7 }<br />
    Original Shell: @ZHacker13 **'https://github.com/ZHacker13/ReverseTCPShell'**
 
-### Quick Jump List:
+### Article Quick Jump List:
 - **[meterpeter Project Description](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#description)**<br />
-- **[How to change client working dir](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#how-to-displaychange-client-working-directory)**<br />
+- **[List Of Available Modules](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#currently-available-modules)**<br />
 - **[How To - Under Linux Distributions](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#attacker-machine-linux-kali)**<br />
 - **[How To - Under Windows Distributions](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#attacker-machiner-windows-pc)**<br />
-- **[List Of Available Modules](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#currently-available-modules)**<br />
 - **[Windows Defender (Target Related)](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#remark-about-windows-defender)**<br />
 - **[Some meterpeter Screenshots](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#meterpeter-screenshots)**<br />
-- **[Two meterpeter video tutorials](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#video-tutorials)**<br />
-- **[Special Thanks|Contributions](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#special-thanks)**<br />
+- **[Special Thanks|Contributions|Videos](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#special-thanks)**<br />
 - **[Please Read my WIKI for Detailed information about each Module](https://github.com/r00t-3xp10it/meterpeter/wiki)**<br />
 
 ---
@@ -256,14 +254,12 @@ Allow Attackers to **automate** the creation of payloads (Client) without the ne
 
 ---
 
+
 <br />
 
 ### Video Tutorials:
 meterpeter Under Windows Distros: https://youtu.be/5_VLBWYUuJ8<br />
 meterpeter Under Linux Distros: http://Not-recorded-yet<br />
-
-
-<br />
 
 ### Special Thanks:
 **@ZHacker13** (Original Rev Shell) | **@codings9** (debugging project under Windows|Linux)<br /><br />
