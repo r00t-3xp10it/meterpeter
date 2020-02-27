@@ -6,15 +6,16 @@
    Original Shell: @ZHacker13 **'https://github.com/ZHacker13/ReverseTCPShell'**
 
 ### Quick Jump List:
-[meterpeter Project Description](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#description)<br />
-[How to change client working dir](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#how-to-displaychange-client-working-directory)<br />
-[How To - Under Linux Distributions](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#attacker-machine-linux-kali)<br />
-[How To - Under Windows Distributions](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#attacker-machiner-windows-pc)<br />
-[List Of Available Modules](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#currently-available-modules)<br />
-[Windows Defender (Target Related)](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#remark-about-windows-defender)<br />
-[Some meterpeter Screenshots](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#meterpeter-screenshots)<br />
-[Two meterpeter video tutorials](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#video-tutorials)<br />
-[Special Thanks|Contributions](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#special-thanks)<br />
+- **[meterpeter Project Description](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#description)**<br />
+- **[How to change client working dir](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#how-to-displaychange-client-working-directory)**<br />
+- **[How To - Under Linux Distributions](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#attacker-machine-linux-kali)**<br />
+- **[How To - Under Windows Distributions](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#attacker-machiner-windows-pc)**<br />
+- **[List Of Available Modules](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#currently-available-modules)**<br />
+- **[Windows Defender (Target Related)](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#remark-about-windows-defender)**<br />
+- **[Some meterpeter Screenshots](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#meterpeter-screenshots)**<br />
+- **[Two meterpeter video tutorials](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#video-tutorials)**<br />
+- **[Special Thanks|Contributions](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#special-thanks)**<br />
+- **[Please Read my WIKI for Detailed information about each Module](https://github.com/r00t-3xp10it/meterpeter/wiki)**<br />
 
 ---
 
@@ -36,8 +37,7 @@
 ![dirs1](https://user-images.githubusercontent.com/23490060/75086920-d8f64c80-5531-11ea-9420-43f0ab947d0d.png)
 ![dirs2](https://user-images.githubusercontent.com/23490060/75086924-e01d5a80-5531-11ea-84a5-87fcc1aa6818.png)
 
-[Please Read my WIKI for Detailed information about each Module](https://github.com/r00t-3xp10it/meterpeter/wiki)<br />
-[Quick Jump List](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#quick-jump-list)<br />
+- **[Quick Jump List](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#quick-jump-list)**<br />
 
 ---
 
@@ -45,7 +45,6 @@
 
 ### Currently available modules:
 ![keylogger](https://user-images.githubusercontent.com/23490060/74612250-79e0a400-50fb-11ea-8f21-60cd34c314aa.png)<br />
-[Please Read my WIKI for Detailed information about each Module](https://github.com/r00t-3xp10it/meterpeter/wiki)<br />
 
 - **Info**       : Retrieve Target PC Information
 - **AdvInfo**    : Advanced Gather Information Modules [Sub-Menu]
@@ -129,8 +128,8 @@
     - **Enable**    : Enable Drives from explorer in REGISTRY:hklm
 - **exit**       : Exit Reverse TCP Shell (Server + Client).
 
-[Please Read my WIKI for Detailed information about each Module](https://github.com/r00t-3xp10it/meterpeter/wiki)<br />
-[Quick Jump List](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#quick-jump-list)<br />
+- **[Please Read my WIKI for Detailed information about each Module](https://github.com/r00t-3xp10it/meterpeter/wiki)**<br />
+- **[Quick Jump List](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#quick-jump-list)**<br />
 
 ---
 
@@ -175,7 +174,7 @@ UNZIP (IN DESKTOP) AND EXECUTE 'Update-KB4524147.bat' (Run As Administrator)..
      IF Attacker decided to manualy execute Client: Then Client remote location (pwd) will be used has working dir .
 
 
-[Quick Jump List](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#quick-jump-list)<br />
+- **[Quick Jump List](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#quick-jump-list)**<br />
 
 ---
 
@@ -217,7 +216,7 @@ DELIVER 'Update-KB4524147' (.ps1=manual) OR (.zip=automated|silentExec) TO TARGE
      IF dropper.bat its executed: Then the Client will use $env:tmp has its working directory ('recomended')..
      IF Attacker decided to manualy execute Client: Then Client remote location (pwd) will be used has working dir .
 
-[Quick Jump List](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#quick-jump-list)<br />
+- **[Quick Jump List](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#quick-jump-list)**<br />
 
 ---
 
@@ -242,7 +241,7 @@ powershell Set-ExecutionPolicy Restricted -Scope CurrentUser
 **meterpeter Settings File**<br />
 Allow Attackers to **automate** the creation of payloads (Client) without the need of User inputs. To activate it Attacker just need to edit the **Settings file**, change is values and then rename it from **'settingZZZ'** to **'Settings'** before executing the Server.
 
-[Quick Jump List](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#quick-jump-list)<br />
+- **[Quick Jump List](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#quick-jump-list)**<br />
 
 ---
 
@@ -267,8 +266,9 @@ meterpeter Under Linux Distros: http://Not-recorded-yet<br />
 <br />
 
 ### Special Thanks:
-**@ZHacker13** (Original Rev Shell) | **@codings9** (debugging project under Windows|Linux)<br />
-[Please Read my WIKI for Detailed information about each Module](https://github.com/r00t-3xp10it/meterpeter/wiki)<br />
-[Jump To Top of this readme File](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#project)<br />
+**@ZHacker13** (Original Rev Shell) | **@codings9** (debugging project under Windows|Linux)<br /><br />
+- **[Please Read my WIKI for Detailed information about each Module](https://github.com/r00t-3xp10it/meterpeter/wiki)**<br />
+- **[Jump To Top of this readme File](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#project)**<br />
+---
 
 
