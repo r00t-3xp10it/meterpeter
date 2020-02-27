@@ -37,29 +37,29 @@
 **{ [Please Read my WIKI for Detailed information about each Module](https://github.com/r00t-3xp10it/meterpeter/wiki) }**<br />
 ![keylogger](https://user-images.githubusercontent.com/23490060/74612250-79e0a400-50fb-11ea-8f21-60cd34c314aa.png)<br />
 
-- **Info**       : Retrieve Target PC Information
+- **Info**       : Quick Retrieve of Target PC Information
 - **AdvInfo**    : Advanced Gather Information Modules [Sub-Menu]
   - **ListAdm**  : Retrieve Client Shell Path|Privileges
   - **ListAcc**  : Retrieve Remote-Host Accounts List
   - **ListSmb**  : Retrieve Remote-Host SMB shares List
   - **ListDns**  : Retrieve Remote-Host DNS Entrys List
   - **ListApp**  : Retrieve Remote-Host Installed Applications List
-  - **ListTask** : Retrieve Remote-Host Schedule Tasks List [Sub-Menu]
+  - **ListTask** : Remote-Host Schedule Tasks Module [Sub-Menu]
     - **Check**    : Retrieve Schedule Tasks List
-    - **Inform**   : Advanced Info Single Task Information
-    - **Create**   : Create Remote-Host New Task
-    - **Delete**   : Delete Remote-Host Single Task
+    - **Inform**   : Schedule Taks Verbose Information
+    - **Create**   : Create Remote-Host New Tasks
+    - **Delete**   : Delete Remote-Host Tasks
   - **ListRece** : Retrieve Remote-Host Recent Folder Contents
   - **ListPriv** : Retrieve Remote-Host Weak Service|Folders permissions [sub-menu]
-    - **Check**   : Retrieve Folder Privileges
-    - **WeakDir** : Search weak privs recursive
-    - **Service** : Search weak privs in services
+    - **Check**   : Retrieve Folder Permissions
+    - **WeakDir** : Search for weak Permissions recursive
+    - **Service** : Search for Unquoted Service Paths
   - **StartUp**  : Retrieve Remote-Host StartUp Folder Contents
   - **ListDriv** : Retrieve Remote-Host Drives Available List
   - **ListRun**  : Retrieve Remote-Host Startup Run Entrys
   - **ListProc** : Remote-Host Processe(s) [Sub-Menu]
-    - **Check**    : Retrieve Remote Processe(s) Running List
-    - **KillProc** : Kill Remote Process By Name From Running
+    - **Check**    : Retrieve Remote Processe(s) Running
+    - **KillProc** : Kill Remote Process By DisplayName
   - **ListConn** : Retrieve Remote-Host Active TCP Connections List
   - **ListIpv4** : Retrieve Remote-Host IPv4 Network Statistics List
   - **ListWifi** : Remote-Host Profiles/SSID/Passwords [Sub-Menu]
