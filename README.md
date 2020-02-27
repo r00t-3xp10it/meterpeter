@@ -34,7 +34,7 @@
 <br /><br />
 
 ### meterpeter (Server) available modules
-**[Please Read my WIKI for Detailed information about each Module](https://github.com/r00t-3xp10it/meterpeter/wiki)**<br />
+**{ [Please Read my WIKI for Detailed information about each Module](https://github.com/r00t-3xp10it/meterpeter/wiki) }**<br />
 ![keylogger](https://user-images.githubusercontent.com/23490060/74612250-79e0a400-50fb-11ea-8f21-60cd34c314aa.png)<br />
 
 - **Info**       : Retrieve Target PC Information
