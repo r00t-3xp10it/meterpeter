@@ -52,7 +52,7 @@
   - **ListRece** : Retrieve Remote-Host Recent Folder Contents
   - **ListPriv** : Retrieve Remote-Host Weak Service|Folders permissions [sub-menu]
     - **Check**   : Retrieve Folder Permissions
-    - **WeakDir** : Search for weak Permissions recursive
+    - **WeakDir** : Search for Folders weak Permissions recursive
     - **Service** : Search for Unquoted Service Paths
   - **StartUp**  : Retrieve Remote-Host StartUp Folder Contents
   - **ListDriv** : Retrieve Remote-Host Drives Available List
