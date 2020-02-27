@@ -36,6 +36,7 @@
 ![dirs1](https://user-images.githubusercontent.com/23490060/75086920-d8f64c80-5531-11ea-9420-43f0ab947d0d.png)
 ![dirs2](https://user-images.githubusercontent.com/23490060/75086924-e01d5a80-5531-11ea-84a5-87fcc1aa6818.png)
 
+[Please Read my WIKI for Detailed information about each Module](https://github.com/r00t-3xp10it/meterpeter/wiki)<br />
 [Quick Jump List](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#quick-jump-list)<br />
 
 ---
@@ -43,7 +44,8 @@
 <br />
 
 ### Currently available modules:
-![keylogger](https://user-images.githubusercontent.com/23490060/74612250-79e0a400-50fb-11ea-8f21-60cd34c314aa.png)
+![keylogger](https://user-images.githubusercontent.com/23490060/74612250-79e0a400-50fb-11ea-8f21-60cd34c314aa.png)<br />
+[Please Read my WIKI for Detailed information about each Module](https://github.com/r00t-3xp10it/meterpeter/wiki)<br />
 
 - **Info**       : Retrieve Target PC Information
 - **AdvInfo**    : Advanced Gather Information Modules [Sub-Menu]
@@ -127,6 +129,7 @@
     - **Enable**    : Enable Drives from explorer in REGISTRY:hklm
 - **exit**       : Exit Reverse TCP Shell (Server + Client).
 
+[Please Read my WIKI for Detailed information about each Module](https://github.com/r00t-3xp10it/meterpeter/wiki)<br />
 [Quick Jump List](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#quick-jump-list)<br />
 
 ---
@@ -247,11 +250,8 @@ Allow Attackers to **automate** the creation of payloads (Client) without the ne
 
 ### meterpeter Screenshots:
 ![screenshot](https://user-images.githubusercontent.com/23490060/74612209-22423880-50fb-11ea-8c1d-66a9a14e18f7.png)
-![dnshijack](https://user-images.githubusercontent.com/23490060/74612220-2cfccd80-50fb-11ea-9bfa-7b32d503d306.png)
-![delogs](https://user-images.githubusercontent.com/23490060/74612217-2a01dd00-50fb-11ea-9dd4-0ea93b0dfcb1.png)
 ![uacoff](https://user-images.githubusercontent.com/23490060/74612213-266e5600-50fb-11ea-8557-b06c3ff93e09.png)
 ![keylogger](https://user-images.githubusercontent.com/23490060/74612250-79e0a400-50fb-11ea-8f21-60cd34c314aa.png)
-![dumpsam](https://user-images.githubusercontent.com/23490060/74611908-43edf080-50f8-11ea-81a2-71cbf3d82123.png)
 ![taskoff](https://user-images.githubusercontent.com/23490060/74618345-3b61de00-5129-11ea-8e78-4834107a01a3.png)
 ![mace](https://user-images.githubusercontent.com/23490060/74764142-1a100780-5279-11ea-9e18-09f2e555baca.png)
 
@@ -268,6 +268,7 @@ meterpeter Under Linux Distros: http://Not-recorded-yet<br />
 
 ### Special Thanks:
 **@ZHacker13** (Original Rev Shell) | **@codings9** (debugging project under Windows|Linux)<br />
-[Jump To Top of this readme File](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#project)
+[Please Read my WIKI for Detailed information about each Module](https://github.com/r00t-3xp10it/meterpeter/wiki)<br />
+[Jump To Top of this readme File](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#project)<br />
 
 
