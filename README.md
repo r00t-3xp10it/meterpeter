@@ -28,13 +28,14 @@
    This Project allows Attackers to execute **'meterpeter.ps1'** under **'Linux'** or **'Windows'** distributions. Under Linux distros users required to install **powershell** and **apache2** webserver, Under Windows its optional the install of **python3** http.server to deliver payloads under LAN networks. If this requirements are **NOT** met, then Client will be written in meterpeter working directory for manual deliver <- In this ocassion execute your Client.ps1 in **$env:tmp** ('recomended').
 ![pythonserver](https://user-images.githubusercontent.com/23490060/74612205-1bb3c100-50fb-11ea-8138-a3c9649a8201.png)
 
+- **[Quick Jump List](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#project)**<br />
 ---
 
 <br /><br />
 
 ### meterpeter (Server) available modules
-![keylogger](https://user-images.githubusercontent.com/23490060/74612250-79e0a400-50fb-11ea-8f21-60cd34c314aa.png)<br />
 - **[Please Read my WIKI for Detailed information about each Module](https://github.com/r00t-3xp10it/meterpeter/wiki)**<br />
+![keylogger](https://user-images.githubusercontent.com/23490060/74612250-79e0a400-50fb-11ea-8f21-60cd34c314aa.png)<br />
 
 - **Info**       : Retrieve Target PC Information
 - **AdvInfo**    : Advanced Gather Information Modules [Sub-Menu]
