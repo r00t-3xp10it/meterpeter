@@ -38,31 +38,31 @@
 ![keylogger](https://user-images.githubusercontent.com/23490060/74612250-79e0a400-50fb-11ea-8f21-60cd34c314aa.png)<br />
 
 - **Info**       : Quick Retrieve of Target PC Information
-- **AdvInfo**    : Advanced Gather Information Modules [Sub-Menu]
+- **AdvInfo**    : Advanced Gather Information Modules (Sub-Menu)
   - **ListAdm**  : Retrieve Client Shell Path|Privileges
   - **ListAcc**  : Retrieve Remote-Host Accounts List
   - **ListSmb**  : Retrieve Remote-Host SMB shares List
   - **ListDns**  : Retrieve Remote-Host DNS Entrys List
   - **ListApp**  : Retrieve Remote-Host Installed Applications List
-  - **ListTask** : Remote-Host Schedule Tasks Module [Sub-Menu]
+  - **ListTask** : Remote-Host Schedule Tasks Module (Sub-Menu)
     - **Check**    : Retrieve Schedule Tasks List
     - **Inform**   : Schedule Taks Verbose Information
     - **Create**   : Create Remote-Host New Tasks
     - **Delete**   : Delete Remote-Host Tasks
   - **ListRece** : Retrieve Remote-Host Recent Folder Contents
-  - **ListPriv** : Retrieve Remote-Host Weak Service|Folders permissions [sub-menu]
+  - **ListPriv** : Remote-Host Weak Service|Folders permissions (Sub-Menu)
     - **Check**   : Retrieve Folder Permissions
     - **WeakDir** : Search for Folders weak Permissions recursive
     - **Service** : Search for Unquoted Service Paths
   - **StartUp**  : Retrieve Remote-Host StartUp Folder Contents
   - **ListDriv** : Retrieve Remote-Host Drives Available List
   - **ListRun**  : Retrieve Remote-Host Startup Run Entrys
-  - **ListProc** : Remote-Host Processe(s) [Sub-Menu]
+  - **ListProc** : Remote-Host Processe(s) (Sub-Menu)
     - **Check**    : Retrieve Remote Processe(s) Running
     - **KillProc** : Kill Remote Process By DisplayName
   - **ListConn** : Retrieve Remote-Host Active TCP Connections List
   - **ListIpv4** : Retrieve Remote-Host IPv4 Network Statistics List
-  - **ListWifi** : Remote-Host Profiles/SSID/Passwords [Sub-Menu]
+  - **ListWifi** : Remote-Host Profiles/SSID/Passwords (Sub-Menu)
     - **ListProf**  : Retrieve Remote-Host wifi Profile
     - **ListNetw**  : Retrieve wifi Available networks List
     - **ListSSID**  : Retrieve Remote-Host SSID Entrys List
@@ -71,20 +71,20 @@
 - **Upload**     : Upload File from Local-Host to Remote-Host.
 - **Download**   : Download File from Remote-Host to Local-Host.
 - **Screenshot** : Save Screenshot from Remote-Host to Local-Host.
-- **keylogger**  : Remote-Host Keylogger [Sub-Menu].
+- **keylogger**  : Remote-Host Keylogger (Sub-Menu)
   - **Install**  : Install Remote keylogger
   - **StartK**   : Start remote keylogger
   - **ReadLog**  : Read keystrokes logfile
   - **StopKP**   : Stop keylogger Process(s)
-- **PostExploit**: Post-Exploitation Modules [Sub-Menu]
-  - **Persist**  : Remote Persist Client [Sub-Menu]
+- **PostExploit**: Post-Exploitation Modules (Sub-Menu)
+  - **Persist**  : Remote Persist Client (Sub-Menu)
     - **StartUp**   : Persiste Client Using startup Folder
     - **RUNONCE**   :  Persiste Client using REGISTRY:RunOnce Key
     - **REGRUN**    : Persiste Client using REGISTRY:Run Key
     - **Schtasks**  :  Make Client Beacon Home with xx minuts of Interval
     - **WinLogon**  : Persiste Client using WinLogon REGISTRY:Userinit Key
   - **Restart**  : Restart in xx seconds
-  - **ListLog**  : List/Delete EventLogs Module [Sub-Menu]
+  - **ListLog**  : List/Delete EventLogs Module (Sub-Menu)
     - **Check**     : Retrieve Remote-Host EventLogs List
     - **DelLogs**   : Delete  Remote-Host EventLogs (eventvwr)
     - **DelFull**   : Delete  Remote-Host LogFiles from Disk
@@ -92,29 +92,29 @@
   - **ListPas**  : Search for passwords in txt Files
   - **GoogleX**  : Open Remote Browser in google sphere (prank)
   - **LockPC**   : Lock Remote workstation (prank|refresh explorer)
-  - **SpeakPC**  : Make Remote-Host Speak your sentence
-  - **AMSIset**  : Enable/Disable AMSI Module [Sub-Menu]
+  - **SpeakPC**  : Make Remote-Host Speak your sentence (prank)
+  - **AMSIset**  : Enable/Disable AMSI Module (Sub-Menu)
     - **Disable**   : Disable AMSI in REGISTRY:hklm|hkcu
     - **Enable**    : Enable  AMSI in REGISTRY:hklm|hkcu
-  - **UACSet**   : Enable/Disable remote UAC Module [Sub-Menu]
+  - **UACSet**   : Enable/Disable remote UAC Module (Sub-Menu)
     - **Disable**   : Disable UAC in REGISTRY:hklm
     - **Enable**    : Enable  UAC in REGISTRY:hklm
-  - **ASLRSet**  : Enable/Disable ASLR Module [Sub-Menu]
+  - **ASLRSet**  : Enable/Disable ASLR Module (Sub-Menu)
     - **Disable**   : Disable ASLR in REGISTRY:hklm
     - **Enable**    : Enable  ASLR in REGISTRY:hklm
-  - **TaskMan**  : Enable/Disable TaskManager Module [Sub-Menu]
+  - **TaskMan**  : Enable/Disable TaskManager Module (Sub-Menu)
     - **Disable**   : Disable TaskManager in REGISTRY:hklm
     - **Enable**    : Enable  TaskManager in REGISTRY:hklm
-  - **Firewall** : Enable/Disable Remote Firewall Module [Sub-Menu]
+  - **Firewall** : Enable/Disable Remote Firewall Module (Sub-Menu)
     - **Check**     : Review Remote-Host Firewall Settings
     - **Disable**   : Disable Remote-Host Firewall
     - **Enable**    : Enable  Remote-Host Firewall
   - **DumpSAM**  : Dump SAM/SYSTEM Credentials to a remote location
-  - **Dnspoof**  : Hijack Entrys in hosts file Module [Sub-Menu]
+  - **Dnspoof**  : Hijack Entrys in hosts file Module (Sub-Menu)
     - **Check**     : Review Remote-Host hosts File
     - **Spoof**     : Add Entrys to Remote-Host hosts File
     - **Default**   : Defaults Remote-Host hosts File
-  - **NoDrive**  : Hide Drives from Explorer Module [Sub-Menu]
+  - **NoDrive**  : Hide Drives from Explorer Module (Sub-Menu)
     - **Disable**   : Hide Drives from explorer in REGISTRY:hklm
     - **Enable**    : Enable Drives from explorer in REGISTRY:hklm
 - **exit**       : Exit Reverse TCP Shell (Server + Client).
