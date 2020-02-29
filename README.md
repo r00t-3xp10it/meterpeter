@@ -229,8 +229,6 @@ incursions into Remote-Host (**in persistence cenario Demonstrations**) ..
 ```
 powershell Set-ExecutionPolicy Restricted -Scope CurrentUser
 ```
-**meterpeter Settings File**<br />
-Allow Attackers to **automate** the creation of payloads (Client) without the need of User inputs. To activate it Attacker just need to edit the **Settings file**, change is values and then rename it from **'settingZZZ'** to **'Settings'** before executing the Server.
 
 - **[Quick Jump List](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#project)**<br />
 
