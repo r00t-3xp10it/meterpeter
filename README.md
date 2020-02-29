@@ -191,7 +191,7 @@ powershell -File meterpeter.ps1
 
 **Remark**
 - meterpeter.ps1 delivers Dropper/Payload using python3 http.server. IF attacker has python3 installed.<br />
-  **'If NOT then the payload (Client) its written in Server Local Working Directory to be Manualy Deliver'** ..
+  **'If NOT then the payload (Client) its written in Server Local [Working Directory](https://github.com/r00t-3xp10it/meterpeter/wiki/How-To-Display%7CChange-'Client'-Working-Directory) to be Manualy Deliver'** ..
 
 - Remmnenber to close the http.server terminal after the target have recived the two files (Dropper & Client)<br />
   **'And we have recived the connection in our meterpeter Server { to prevent Server|Client connection errors }'**<br /><br />
