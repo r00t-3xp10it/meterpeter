@@ -251,7 +251,7 @@ Allow Attackers to **automate** the creation of payloads (Client) without the ne
 
 ### Video Tutorials:
 meterpeter Under Windows Distros: https://youtu.be/5_VLBWYUuJ8<br />
-meterpeter Under Linux Distros: http://Not-recorded-yet<br /><br />
+meterpeter Under Linux Distros: https://www.youtube.com/watch?v=CmMbWmN246E<br /><br />
 
 ### Special Thanks:
 **@ZHacker13** (Original Rev Shell) | **@codings9** (debugging project under Windows|Linux)<br /><br />
