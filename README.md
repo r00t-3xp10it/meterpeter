@@ -1,5 +1,5 @@
 ### PROJECT
-   my_meterp(r)eter_Server<br />
+   my_meterp(r)eter_Server [**`BETA`**] <br />
 
 ### AUTHOR
    @r00t-3xp10it { version 2.7 }<br />
