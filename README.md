@@ -190,11 +190,11 @@ powershell -File meterpeter.ps1
 ```
 
 **Remark**
-- meterpeter.ps1 delivers Dropper/Payload using python3 http.server. IF attacker has python3 installed.
+- meterpeter.ps1 delivers Dropper/Payload using python3 http.server. IF attacker has python3 installed.<br />
   **'If NOT then the payload (Client) its written in Server Local Working Directory to be Manualy Deliver'** ..
 
-- Remmnenber to close the http.server terminal after the target have recived the two files (Dropper & Client)
-  **'and we have recived the connection back in our meterpeter Server { to prevent Server|Client connection errors }'**<br /><br />
+- Remmnenber to close the http.server terminal after the target have recived the two files (Dropper & Clientbr />
+  **'and we have recived the connection in our meterpeter Server { to prevent Server|Client connection errors }'**<br /><br />
 
 #### Deliver Dropper/Payload To Target Machine (manual OR python3)
 ```
