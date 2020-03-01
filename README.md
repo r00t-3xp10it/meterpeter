@@ -28,6 +28,12 @@
    This Project allows Attackers to execute **'meterpeter.ps1'** under **'Linux'** or **'Windows'** distributions. Under Linux distros users required to install **powershell** and **apache2** webserver, Under Windows its optional the install of **python3** http.server to deliver payloads under LAN networks. If this requirements are **NOT** met, then Client will be written in meterpeter working directory for manual deliver <- In this ocassion execute your Client.ps1 in **$env:tmp** ('recomended').
 ![pythonserver](https://user-images.githubusercontent.com/23490060/74612205-1bb3c100-50fb-11ea-8138-a3c9649a8201.png)
 
+<br />
+
+**meterpeter Modules Shortcuts**<br />
+meterpeter prompt reveals us some of the shortcuts we have available to use.
+![Shortcuts](https://user-images.githubusercontent.com/23490060/75630967-ad84f900-5be6-11ea-9810-7430cb72663c.png)
+
 - **[Quick Jump List](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#project)**<br />
 ---
 
