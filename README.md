@@ -96,6 +96,7 @@ meterpeter prompt reveals us some of the shortcuts we have available to use.
     - **DelFull**   : Delete  Remote-Host LogFiles from Disk
   - **SetMace**  : Change files date/time TimeStomp
   - **ListPas**  : Search for passwords in txt Files
+  - **ListDir**  : Search for hidden folders recursive
   - **GoogleX**  : Open Remote Browser in google sphere (prank)
   - **LockPC**   : Lock Remote workstation (prank|refresh explorer)
   - **SpeakPC**  : Make Remote-Host Speak your sentence (prank)
