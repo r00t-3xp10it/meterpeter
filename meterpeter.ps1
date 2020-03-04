@@ -1,6 +1,6 @@
 <#
 .Author:
-   @ZHacker13 &('r00t-3xp10it') version 2.7
+   @ZHacker13 &('r00t-3xp10it') version 2.8
 
 .DESCRIPTION:
    ReverseTCPShell - Framework. This PS1 starts a listener Server on a Windows attacker machine and generate oneline revshell
@@ -161,7 +161,7 @@ $Modules = @"
   __  __  ____  _____  ____  ____  ____  ____  _____  ____  ____ 
  |  \/  || ===||_   _|| ===|| () )| ()_)| ===||_   _|| ===|| () )
  |_|\/|_||____|  |_|  |____||_|\_\|_|   |____|  |_|  |____||_|\_\
-      Author: @ZHacker13 &('r00t-3xp10it') - SSAredTeam @2019
+      Author: @ZHacker13 &('r00t-3xp10it') - SSAredTeam @2020
 
 
  - | Modules     | - Show C2-Server Modules.
