@@ -63,6 +63,7 @@ meterpeter prompt reveals us some of the shortcuts we have available to use.
   - **StartUp**  : Retrieve Remote-Host StartUp Folder Contents
   - **ListDriv** : Retrieve Remote-Host Drives Available List
   - **ListRun**  : Retrieve Remote-Host Startup Run Entrys
+  - **ListCred** : Retrieve Remote-Host cmdkey stored Creds
   - **ListProc** : Remote-Host Processe(s) (Sub-Menu)
     - **Check**    : Retrieve Remote Processe(s) Running
     - **KillProc** : Kill Remote Process By DisplayName
