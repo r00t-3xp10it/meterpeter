@@ -1,4 +1,4 @@
-## meterpeter.ps1 - v2.7 Conf (Automation)
+## meterpeter.ps1 - v2.8 Conf (Automation)
 # 'Change My Values and rename me to Settings'
 
 HTTPSERVER:8087
