@@ -59,7 +59,8 @@ meterpeter prompt reveals us some of the shortcuts we have available to use.
   - **ListPriv** : Remote-Host Weak Service|Folders permissions (Sub-Menu)
     - **Check**   : Retrieve Folder Permissions
     - **WeakDir** : Search for Folders weak Permissions recursive
-    - **Service** : Search for Unquoted Service Paths
+    - **Service** : Search for Unquoted Service Paths vulnerability
+    - **RottenP** : Search for Rotten Potato Privilege Vulnerability
   - **StartUp**  : Retrieve Remote-Host StartUp Folder Contents
   - **ListDriv** : Retrieve Remote-Host Drives Available List
   - **ListRun**  : Retrieve Remote-Host Startup Run Entrys
