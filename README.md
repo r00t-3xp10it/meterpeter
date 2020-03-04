@@ -1,8 +1,8 @@
 ### PROJECT
-   my_meterp(r)eter_Server [**`BETA`**] <br />
+   my_meterp(r)eter_Server [**`STABLE`**] <br />
 
 ### AUTHOR
-   @r00t-3xp10it { version 2.7 }<br />
+   @r00t-3xp10it { version 2.8 }<br />
    Original Shell: @ZHacker13 **'https://github.com/ZHacker13/ReverseTCPShell'**
 
 **Article Quick Jump List**<br />
