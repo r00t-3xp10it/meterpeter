@@ -64,7 +64,6 @@ meterpeter prompt reveals us some of the shortcuts we have available to use.
   - **StartUp**  : Retrieve Remote-Host StartUp Folder Contents
   - **ListDriv** : Retrieve Remote-Host Drives Available List
   - **ListRun**  : Retrieve Remote-Host Startup Run Entrys
-  - **ListCred** : Retrieve Remote-Host cmdkey stored Creds
   - **ListProc** : Remote-Host Processe(s) (Sub-Menu)
     - **Check**    : Retrieve Remote Processe(s) Running
     - **KillProc** : Kill Remote Process By DisplayName
@@ -105,6 +104,7 @@ meterpeter prompt reveals us some of the shortcuts we have available to use.
   - **AMSIset**  : Enable/Disable AMSI Module (Sub-Menu)
     - **Disable**   : Disable AMSI in REGISTRY:hklm|hkcu
     - **Enable**    : Enable  AMSI in REGISTRY:hklm|hkcu
+  - **ListCred** : Retrieve Remote-Host cmdkey stored Creds
   - **UACSet**   : Enable/Disable remote UAC Module (Sub-Menu)
     - **Disable**   : Disable UAC in REGISTRY:hklm
     - **Enable**    : Enable  UAC in REGISTRY:hklm
