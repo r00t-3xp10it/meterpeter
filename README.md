@@ -263,7 +263,8 @@ meterpeter Under Windows Distros: https://youtu.be/k9aX3yBQrEQ<br />
 meterpeter Under Linux Distros: https://www.youtube.com/watch?v=CmMbWmN246E<br /><br />
 
 ### Special Thanks:
-**@ZHacker13** (Original Rev Shell) | **@codings9** (debugging project under Windows|Linux Distros)<br /><br />
+**@ZHacker13** (Original Rev Shell) | **@codings9** (debugging project under Windows|Linux Distros)<br />
+**@tedburke** (CommandCam.exe binary) <br /><br />
 - **[meterpeter WIKI pages (Oficial Documentation)](https://github.com/r00t-3xp10it/meterpeter/wiki)**<br />
 - **[Jump To Top of this readme File](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#project)**<br />
 ---
