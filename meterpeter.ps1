@@ -1506,7 +1506,7 @@ While($Client.Connected)
         {
           If($Cam_set -eq "True")
           {
-            $OutPut = $OutPut -replace "`n","";$final = $OutPut -Replace "WebCamCommandCam.exe"," ";
+            $OutPut = $OutPut -replace "`n","";$final = $OutPut -replace "WebCamCommandCam.exe","";
             write-host "`n`n  WebCam(s) Detected" -ForeGroundColor Green;
             write-host "  ------------------";
             Write-Host "  $final";
