@@ -84,11 +84,14 @@ meterpeter prompt reveals us some of the shortcuts we have available to use.
   - **ReadLog**  : Read keystrokes logfile
   - **StopKP**   : Stop keylogger Process(s)
 - **PostExploit**: Post-Exploitation Modules (Sub-Menu)
+  - **CamSnap**  : Manipulate remote webcam (sub-menu)
+    - **Device**    : List Remote-Host webcams available
+    - **Snap**      : Take Remote-Host screenshot (webcam)
   - **Persist**  : Remote Persist Client (Sub-Menu)
     - **StartUp**   : Persiste Client Using startup Folder
-    - **RUNONCE**   :  Persiste Client using REGISTRY:RunOnce Key
+    - **RUNONCE**   : Persiste Client using REGISTRY:RunOnce Key
     - **REGRUN**    : Persiste Client using REGISTRY:Run Key
-    - **Schtasks**  :  Make Client Beacon Home with xx minuts of Interval
+    - **Schtasks**  : Make Client Beacon Home with xx minuts of Interval
     - **WinLogon**  : Persiste Client using WinLogon REGISTRY:Userinit Key
   - **Restart**  : Restart in xx seconds
   - **ListLog**  : List/Delete EventLogs Module (Sub-Menu)
