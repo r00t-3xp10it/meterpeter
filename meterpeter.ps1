@@ -1,12 +1,12 @@
 <#
 .Author:
-   @ZHacker13 &('r00t-3xp10it') version 2.8
+   @ZHacker13 &('r00t-3xp10it') version 2.9
 
 .DESCRIPTION:
    ReverseTCPShell - Framework. This PS1 starts a listener Server on a Windows attacker machine and generate oneline revshell
    payloads for CMD and PS to be executed on the victim machine. You can use the generated oneline revshell payload also via
    netcat on linux. (in this case you will lose the C2 functionalities like screenshot, upload and download files). If this
-   framework is executed using venom v1.0.16 framework {amsi evasion nº4} then linux users will not lost C2 functionalities
+   framework is executed using venom v1.0.16 framework {amsi evasion n�4} then linux users will not lost C2 functionalities
    and the target connection terminal window will be executed hidden with the help of dropper.bat script.
 
 .EXECUTION:
@@ -181,7 +181,7 @@ $Modules = @"
 Clear-Host;
 Write-Host $Modules;
 ## Venom v1.0.16 function
-# Auto-Venom-Settings {Agent nÂº 5}
+# Auto-Venom-Settings {Agent nº 5}
 $DISTRO_OS = pwd|Select-String -Pattern "/" -SimpleMatch; # <-- (check IF windows|Linux Separator)
 If($DISTRO_OS)
 {

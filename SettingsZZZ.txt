@@ -1,7 +1,8 @@
-## meterpeter.ps1 - v2.8 Conf (Automation)
+## meterpeter.ps1 - v2.9 Conf (Automation)
 # 'Change My Values and rename me to Settings'
 
 HTTPSERVER:8087
 IP:192.168.1.72
 PORT:666
 OBFUS:2
+
