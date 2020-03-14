@@ -85,7 +85,7 @@ meterpeter prompt reveals us some of the shortcuts we have available to use.
   - **StopKP**   : Stop keylogger Process(s)
 - **PostExploit**: Post-Exploitation Modules (Sub-Menu)
   - **Escalate** : WSReset.exe Privilege Escalation (Sub-Menu)
-    - **Escal**     : Escalate Client Privileges (UserLand -> NT/System)
+    - **getsystem** : Escalate Client Privileges (UserLand -> NT/System)
     - **Delete**    : Delete Old Priv Escalation Configurations
   - **CamSnap**  : Manipulate remote webcam (sub-menu)
     - **Device**    : List Remote-Host webcams available
