@@ -61,6 +61,7 @@ meterpeter prompt reveals us some of the shortcuts we have available to use.
     - **WeakDir** : Search for Folders weak Permissions recursive
     - **Service** : Search for Unquoted Service Paths vulnerability
     - **RottenP** : Search for Rotten Potato Privilege Vulnerability
+    - **RegACL**  : Search for weak permissions on registry
   - **StartUp**  : Retrieve Remote-Host StartUp Folder Contents
   - **ListDriv** : Retrieve Remote-Host Drives Available List
   - **ListRun**  : Retrieve Remote-Host Startup Run Entrys
@@ -85,7 +86,7 @@ meterpeter prompt reveals us some of the shortcuts we have available to use.
   - **StopKP**   : Stop keylogger Process(s)
 - **PostExploit**: Post-Exploitation Modules (Sub-Menu)
   - **Escalate** : WSReset.exe Privilege Escalation (Sub-Menu)
-    - **Escal**     : Escalate Client Privileges (UserLand -> NT/System)
+    - **Getsystem** : Escalate Client Privileges (UserLand -> SYSTEM)
     - **Delete**    : Delete Old Priv Escalation Configurations
   - **CamSnap**  : Manipulate remote webcam (sub-menu)
     - **Device**    : List Remote-Host webcams available
