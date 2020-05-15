@@ -2,7 +2,7 @@
    my_meterp(r)eter_Server [**`STABLE`**] <br />
 
 ### AUTHOR
-   @r00t-3xp10it { version 2.9 }<br />
+   @r00t-3xp10it { version 2.10 }<br />
    Original Shell: @ZHacker13 **'https://github.com/ZHacker13/ReverseTCPShell'**
 
 **Article Quick Jump List**<br />
@@ -20,7 +20,7 @@
 <br />
 
 ### DESCRIPTION
-   **meterpeter** - This PS1 starts a listener Server on a Windows|Linux attacker machine and generates oneliner PS reverse shell payloads obfuscated in ASCII|BXOR with a random secret key and another layer of Characters/Variables Obfuscation to be executed on the victim machine (The payload will also execute AMSI reflection bypass in current session to evade AMSI detection while working). You can also recive the generated oneliner reverse shell connection via netcat. (in this case you will lose the C2 functionalities like screenshot, upload, download files, Keylogger, AdvInfo, PostExploitation, etc)<br /><br />meterpeter payloads/droppers can be executed using User or Administrator Privileges depending of the cenario (executing the Client as Administrator will unlock ALL Server Modules, amsi bypasses, etc.). Droppers will mimic a Fake KB Security Update while in background Downloads and executes our Client in $env:tmp trusted location, with the intent of evading  Windows Defender Exploit Guard. meterpeter payloads|droppers are FUD (dont test samples on VirusTotal).<br /><br />This project has been inspired in the work of @ZHacker13 from GitHub **->** [github.com/ZHacker13/ReverseTCPShell](https://github.com/ZHacker13/ReverseTCPShell) **<-**<br />
+   **meterpeter** - This PS1 starts a listener Server on a Windows|Linux attacker machine and generates oneliner PS reverse shell payloads obfuscated in ANCII|BXOR with a random secret key and another layer of Characters/Variables Obfuscation to be executed on the victim machine (The payload will also execute AMSI reflection bypass in current session to evade AMSI detection while working). You can also recive the generated oneliner reverse shell connection via netcat. (in this case you will lose the C2 functionalities like screenshot, upload, download files, Keylogger, AdvInfo, PostExploitation, etc)<br /><br />meterpeter payloads/droppers can be executed using User or Administrator Privileges depending of the cenario (executing the Client as Administrator will unlock ALL Server Modules, amsi bypasses, etc.). Droppers will mimic a Fake KB Security Update while in background Downloads and executes our Client in $env:tmp trusted location, with the intent of evading  Windows Defender Exploit Guard. meterpeter payloads|droppers are FUD (dont test samples on VirusTotal).<br /><br />This project has been inspired in the work of @ZHacker13 from GitHub **->** [github.com/ZHacker13/ReverseTCPShell](https://github.com/ZHacker13/ReverseTCPShell) **<-**<br />
 ![banner](https://user-images.githubusercontent.com/23490060/74566700-fba1c780-4f6b-11ea-85a0-ac26576302b3.png)<br />
 
 <br />
@@ -59,7 +59,6 @@ meterpeter prompt reveals us some of the shortcuts we have available to use.
   - **ListPriv** : Remote-Host Weak Service|Folders permissions (Sub-Menu)
     - **Check**   : Retrieve Folder Permissions
     - **WeakDir** : Search for Folders weak Permissions recursive
-    - **RegPerm** : Search for Services registry permissions
     - **Service** : Search for Unquoted Service Paths vulnerability
     - **RottenP** : Search for Rotten Potato Privilege Vulnerability
   - **StartUp**  : Retrieve Remote-Host StartUp Folder Contents
@@ -86,13 +85,14 @@ meterpeter prompt reveals us some of the shortcuts we have available to use.
   - **StopKP**   : Stop keylogger Process(s)
 - **PostExploit**: Post-Exploitation Modules (Sub-Menu)
   - **Escalate** : WSReset.exe Privilege Escalation (Sub-Menu)
-    - **getsystem** : Escalate Client Privileges (UserLand -> NT/System)
+    - **Escal**     : Escalate Client Privileges (UserLand -> NT/System)
     - **Delete**    : Delete Old Priv Escalation Configurations
   - **CamSnap**  : Manipulate remote webcam (sub-menu)
     - **Device**    : List Remote-Host webcams available
     - **Snap**      : Take Remote-Host screenshot (webcam)
   - **Persist**  : Remote Persist Client (Sub-Menu)
     - **StartUp**   : Persiste Client Using startup Folder
+    - **Beacon**    : Persiste Client Using startup Folder (beacon home from xx to xx sec)
     - **RUNONCE**   : Persiste Client using REGISTRY:RunOnce Key
     - **REGRUN**    : Persiste Client using REGISTRY:Run Key
     - **Schtasks**  : Make Client Beacon Home with xx minuts of Interval
