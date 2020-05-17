@@ -92,7 +92,6 @@ meterpeter prompt reveals us some of the shortcuts we have available to use.
     - **Device**    : List Remote-Host webcams available
     - **Snap**      : Take Remote-Host screenshot (webcam)
   - **Persist**  : Remote Persist Client (Sub-Menu)
-    - **StartUp**   : Persiste Client Using startup Folder
     - **Beacon**    : Persiste Client Using startup Folder (beacon home from xx to xx sec)
     - **RUNONCE**   : Persiste Client using REGISTRY:RunOnce Key
     - **REGRUN**    : Persiste Client using REGISTRY:Run Key
