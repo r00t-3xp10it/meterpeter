@@ -170,6 +170,7 @@ $Modules = @"
  - | Info        | - Show Remote-Host System Info.
  - | AdvInfo     | - Advanced Remote-Host system Info.
  - | Session     | - Retrieve C2-Server Connection Status.
+ - | Settings    | - Retrieve Server/Client active settings
  - | Upload      | - Upload File from Local-Host to Remote-Host.
  - | Download    | - Download File from Remote-Host to Local-Host.
  - | Screenshot  | - Save Screenshot from Remote-Host to Local-Host.
@@ -386,7 +387,7 @@ While($Client.Connected)
     }
 
     ## venom v1.0.16 function
-    If($Command -eq "-v" -or $Command -eq "--version" -or $Command -eq "version")
+    If($Command -eq "-s" -or $Command -eq "--settings" -or $Command -eq "settings")
     {
       $Parse = "$IPATH"+"meterpeter.ps1"
       $SerSat = "$Local_Host"+":"+"$Local_Port";
