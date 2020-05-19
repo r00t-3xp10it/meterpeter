@@ -32,7 +32,7 @@
 
 
 ## Meterpeter Develop version
-$dev_Version = "2.10.2";
+$dev_Version = "2.10.3";
 
 function Character_Obfuscation($String)
 {
@@ -251,8 +251,10 @@ While(!($Choices -like "$Choice"))
   {
     Write-Host "`n - Obfuscation: " -NoNewline;
     $Choice = Read-Host;
+    If($Choice -eq "2"){$ob = "BXOR"}else{$ob = "ASCII"}
   }else{
     $Choice = "$Obfuscation";
+    If($Choice -eq "2"){$ob = "BXOR"}else{$ob = "ASCII"}
   }
 }
 
@@ -390,8 +392,9 @@ While($Client.Connected)
       $SerSat = "$Local_Host"+":"+"$Local_Port";
       write-host "`n`n Current Settings" -ForegroundColor green;
       write-host " ----------------";
-      write-host " meterpeter version   : v${dev_Version}";
-      write-host " Attacker Arch        : $env:PROCESSOR_ARCHITECTURE";
+      write-host " meterpeter dev       : $dev_Version";
+      write-host " Local Architecture   : $env:PROCESSOR_ARCHITECTURE";
+      write-host " Obuscation type      : $ob";
       write-host " Attacker flavor      : $Flavor Distro";
       write-host " Attacker Settings    : $SerSat";
       write-host " meterpeter WebServer : $APACHE";
