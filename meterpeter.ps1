@@ -392,6 +392,8 @@ While($Client.Connected)
       write-host "`n`n Current Settings" -ForegroundColor green;
       write-host " ----------------";
       write-host " meterpeter version   : 2.10.1";
+      write-host " Attacker Arch        : $env:PROCESSOR_ARCHITECTURE";
+      write-host " Attacker IP addr     : $Local_Host";
       write-host " meterpeter flavor    : $Flavor Distro";
       write-host " meterpeter WebServer : $APACHE";
       write-host " meterpeter Server    : $IPATH";
