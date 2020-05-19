@@ -272,11 +272,6 @@ If($Choice -eq "2" -or $Choise -eq "BXOR")
   $Payload = BXOR_Obfuscation($Payload);
 }
 
-If($Choice -eq "3")
-{
-  Write-Host "`n[*] Obfuscation Type: Base64";
-  $Payload = Base64_Obfuscation($Payload);
-}
 
 $PowerShell_Payload = $Payload[0];
 $CMD_Payload = $Payload[1];
@@ -395,7 +390,7 @@ While($Client.Connected)
       write-host " ----------------";
       write-host " meterpeter version   : 2.10.1";
       write-host " Attacker Arch        : $env:PROCESSOR_ARCHITECTURE";
-      write-host " meterpeter flavor    : $Flavor Distro";
+      write-host " Attacker flavor      : $Flavor Distro";
       write-host " Attacker Settings    : $SerSat";
       write-host " meterpeter WebServer : $APACHE";
       write-host " meterpeter Server    : $Parse";
