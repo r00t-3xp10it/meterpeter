@@ -397,11 +397,11 @@ While($Client.Connected)
       write-host " ---------------";
       write-host " meterpeter dev       : $dev_Version";
       write-host " Local Architecture   : $env:PROCESSOR_ARCHITECTURE";
-      write-host " Obuscation type      : $ob";
-      write-host " Attacker flavor      : $Flavor Distro";
-      write-host " Listenner Settings   : $SerSat";
-      write-host " Local WebServer Dir  : $APACHE";
-      write-host " Local Server Dir     : $Parse";
+      write-host " Obuscation Sellected : $ob";
+      write-host " Attacker OS flavor   : $Flavor Distro";
+      write-host " Lhost|Lport Settings : $SerSat";
+      write-host " meterpeter WebServer : $APACHE";
+      write-host " meterpeter Server    : $Parse";
     }
 
     ## venom v1.0.16 function
