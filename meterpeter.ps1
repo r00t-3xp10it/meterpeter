@@ -393,15 +393,15 @@ While($Client.Connected)
     {
       $Parse = "$IPATH"+"meterpeter.ps1"
       $SerSat = "$Local_Host"+":"+"$Local_Port";
-      write-host "`n`n Current Settings" -ForegroundColor green;
-      write-host " ----------------";
+      write-host "`n`n Server Settings" -ForegroundColor green;
+      write-host " ---------------";
       write-host " meterpeter dev       : $dev_Version";
       write-host " Local Architecture   : $env:PROCESSOR_ARCHITECTURE";
       write-host " Obuscation type      : $ob";
       write-host " Attacker flavor      : $Flavor Distro";
-      write-host " Attacker Settings    : $SerSat";
-      write-host " meterpeter WebServer : $APACHE";
-      write-host " meterpeter Server    : $Parse";
+      write-host " Listenner Settings   : $SerSat";
+      write-host " Local WebServer Dir  : $APACHE";
+      write-host " Local Server Dir     : $Parse";
     }
 
     ## venom v1.0.16 function
