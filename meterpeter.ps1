@@ -474,6 +474,10 @@ While($Client.Connected)
       }
       If($choise -eq "ListPriv" -or $choise -eq "Priv")
       {
+        write-host "`n   Remark" -ForegroundColor Yellow;
+        write-host "   ------";
+        write-host "   None of the modules in this sub-category will try to exploit any";
+        write-host "   weak permissions found. They will only report the vulnerability.";
         write-host "`n`n   Modules   Description                     Remark" -ForegroundColor green;
         write-host "   -------   -----------                     -------";
         write-host "   Check     Retrieve Folder Privileges      Client:User  - Privileges Required";
