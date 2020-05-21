@@ -24,7 +24,7 @@
 
 
 taskkill /f /im explorer.exe
-$timestomp = $null
+$timestamp = $null
 $account = $null
 
 
