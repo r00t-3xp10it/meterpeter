@@ -856,7 +856,7 @@ While($Client.Connected)
       write-host "   DumpSAM   Dump SAM/SYSTEM Credentials     Client:Admin - Privileges Required";
       write-host "   Dnspoof   Hijack Entrys in hosts file     Client:Admin - Privileges Required";
       write-host "   NoDrive   Hide Drives from Explorer       Client:Admin - Privileges Required";
-      write-host "   CredPhi   Promp User for valid creds      Client:Admin - Privileges Required";
+      write-host "   CredPhi   Promp User for valid creds      Client:User|Admin - Privs Required";
       write-host "   Return    Return to Server Main Menu" -ForeGroundColor yellow;
       write-host "`n`n :meterpeter:Post> " -NoNewline -ForeGroundColor Green;
       $choise = Read-Host;      
@@ -1412,7 +1412,7 @@ While($Client.Connected)
         write-host "   the credentials into a remote logfile under `$env:tmp folder to later review.";
         write-host "`n`n   Modules     Description                  Remark" -ForegroundColor green;
         write-host "   -------     -----------                  ------";
-        write-host "   exploit     Phish for remote creds       Client:User  - Privileges required";
+        write-host "   exploit     Phish for remote creds       Client:User|Admin - Privs required";
         write-host "   ReadLog     Read phishing logFile        Client:User  - Privileges required";
         write-host "   Return      Return to Server Main Menu" -ForeGroundColor yellow;
         write-host "`n`n :meterpeter:Post:CredPhi> " -NoNewline -ForeGroundColor Green;
