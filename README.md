@@ -133,6 +133,9 @@ meterpeter prompt reveals us some of the shortcuts we have available to use.
   - **NoDrive**  : Hide Drives from Explorer Module (Sub-Menu)
     - **Disable**   : Hide Drives from explorer in REGISTRY:hklm
     - **Enable**    : Enable Drives from explorer in REGISTRY:hklm
+  - **CredPhi**  : Phishing for remote logon credentials
+    - **exploit**   : Trigger Remote Phishing PS Script
+    - **ReadLog**   : Read Remote Phishing LogFile
 - **exit**       : Exit Reverse TCP Shell (Server + Client).
 
 - **[Please Read my WIKI for Detailed information about each Module](https://github.com/r00t-3xp10it/meterpeter/wiki)**<br />
