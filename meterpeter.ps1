@@ -1457,8 +1457,6 @@ While($Client.Connected)
         }
         $cred_choise = $Null;
       }
-
-
       If($choise -eq "Return" -or $choice -eq "return" -or $choise -eq "cls" -or $choise -eq "Modules" -or $choise -eq "modules" -or $choise -eq "clear")
       {
         $choise = $Null;
