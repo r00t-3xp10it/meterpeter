@@ -25,7 +25,7 @@
 
 $account = $null
 $timestamp = $null
-Stop-Process -Name "explorer" -Force
+taskkill /f /im explorer.exe
 
 
 [int]$counter = 1
