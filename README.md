@@ -90,7 +90,8 @@ meterpeter prompt reveals us some of the shortcuts we have available to use.
     - **Delete**    : Delete Old Priv Escalation Configurations
   - **CamSnap**  : Manipulate remote webcam (sub-menu)
     - **Device**    : List Remote-Host webcams available
-    - **Snap**      : Take Remote-Host screenshot (webcam)
+    - **Snap**      : Take Remote-Host screenshot (Default webcam)
+    - **Manual**    : Manual sellect webcam device to use (device name)
   - **Persist**  : Remote Persist Client (Sub-Menu)
     - **Beacon**    : Persiste Client Using startup Folder (beacon home from xx to xx sec)
     - **RUNONCE**   : Persiste Client using REGISTRY:RunOnce Key
