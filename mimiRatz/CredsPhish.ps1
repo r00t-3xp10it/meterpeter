@@ -3,7 +3,7 @@
   Standalone Powershell script that will promp the current user for a valid credential.
 
 .Author: enigma0x3 &('r00t-3xp10it')
-  Required Dependencies: None
+  Required Dependencies: target Account Password set
   Optional Dependencies: None
 
 .DESCRIPTION
