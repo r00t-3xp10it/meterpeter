@@ -1496,6 +1496,7 @@ While($Client.Connected)
       If($choise -eq "PtHash" -or $choice -eq "pthash")
       { 
         ## Pass-The-Hash - Check for Module Requirements { Server::SYSTEM }
+        write-host " Pass-The-Hash using PsExec.exe from sysinternals .." -ForegroundColor Blue -BackgroundColor White;
         $Server_Creds = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match "S-1-5-32-544")
         If(-not($Server_Creds) -or $Server_Creds -eq $null){
           write-host "`n`n   [i] Abort:: [Server] needs to be Run as 'SYSTEM' (Admin) .." -ForegroundColor Red -BackgroundColor Black;
