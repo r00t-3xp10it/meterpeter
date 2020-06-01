@@ -92,7 +92,6 @@ function Credentials(){
                     Credentials
                     }                
                 }
-
             $CurrentDomain = "LDAP://" + ([ADSI]"").distinguishedName
             $domain = New-Object System.DirectoryServices.DirectoryEntry($CurrentDomain,$username,$password)
             if ($domain.name -eq $null){
