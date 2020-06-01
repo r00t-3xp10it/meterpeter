@@ -100,7 +100,6 @@ function Credentials(){
                 Credentials
             }
             else {
-                #leaker($CurrentDomain_Name,$username,$password)
                 $status = $false
                 exit
             }
