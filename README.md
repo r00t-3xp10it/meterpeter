@@ -135,7 +135,8 @@ meterpeter prompt reveals us some of the shortcuts we have available to use.
     - **Disable**   : Hide Drives from explorer in REGISTRY:hklm
     - **Enable**    : Enable Drives from explorer in REGISTRY:hklm
   - **CredPhi**  : Phishing for remote logon credentials
-    - **exploit**   : Trigger Remote Phishing PS Script
+    - **OldBox**   : Trigger Remote Phishing PS Script (Windows 7 or less)
+    - **NewBox**   : Trigger Remote Phishing PS Script (Windows 7 or above)
     - **ReadLog**   : Read Remote Phishing LogFile
 - **exit**       : Exit Reverse TCP Shell (Server + Client).
 
