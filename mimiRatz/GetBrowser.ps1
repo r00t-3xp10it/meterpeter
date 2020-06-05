@@ -63,8 +63,6 @@ If(-not($IEHistory) -or $IEHistory -eq $null){
     Get-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Internet Explorer\TypedURLs"|findstr /B /I "url" >> $env:tmp\BrowserEnum.log
 }
 
-
-
 ## Retrieve Internet Explorer Bookmarks
 echo "`nIE Bookmarks" >> $env:tmp\BrowserEnum.log
 echo "------------" >> $env:tmp\BrowserEnum.log
@@ -90,7 +88,6 @@ ForEach ($URL in $URLs) {
         }
     }
 }
-
 
 
 ## Retrieve FireFox Browser Information
@@ -130,7 +127,6 @@ If($Path -eq $True){
     echo "---------------" >> $env:tmp\BrowserEnum.log
     echo "Could not find any FireFox Info .." >> $env:tmp\BrowserEnum.log
 }
-
 
 ## Dump FIREFOX HISTORY URLs
 If($Path -eq $False) {
