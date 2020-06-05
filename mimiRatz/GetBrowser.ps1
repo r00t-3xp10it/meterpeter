@@ -1,21 +1,22 @@
 <#
 .SYNOPSIS
-  Standalone Powershell script that will dump remote-host browser information.
+  Standalone Powershell script that will dump Local-Host browser(s) information.
 
 .Author r00t-3xp10it (SSA RedTeam @2020)
-  Required Dependencies: Local Web Browser(s) (Installed)
+  Required Dependencies: Local Web Browser (Installed)
   Optional Dependencies: None
 
 .DESCRIPTION
-   Standalone Powershell script to dump remote-host browser information sutch as: HomePage, Browser Version
-   Language Used, Browser Download Directory, etc.. The dumps will be created in Local-host $env:tmp folder.
+   Standalone Powershell script to dump Local-host browser information sutch as: HomePage, Browser Version
+   Language Used, Download Directory, History, etc.. The dumps will be created in Local-host $env:tmp folder.
 
-.EXECUTION
-   ./GetBrowser.ps1
- 
+.EXAMPLE
+   PS C:\> ./GetBrowser.ps1
+   Enumerates Internet Explorer, FireFox and Chrome Browsers info.
+
 .LINK 
     https://github.com/r00t-3xp10it/meterpeter
-    https://github.com/rvrsh3ll/Misc-Powershell-Scripts/blob/master/Get-BrowserData.ps1
+    https://github.com/rvrsh3ll/Misc-Powershell-Scripts/blob/master/Get-BrowserData.ps1 (flagged by AV)
 #>
 
 
@@ -24,7 +25,7 @@ $Path = $null
 $JsPrefs = $null
 $RegPrefs = $null
 $ParsingData = $null
-## PS Script Banner
+## GetBrowser PS Script Banner
 Write-Host "GetBrowser - Dump Remote-Host Browser(s) Information." -ForeGroundColor Green
 Write-Host "[i] Dumping Data To: `$env:tmp\BrowserEnum.log" -ForeGroundColor yellow -BackgroundColor Black
 Start-sleep -Seconds 2
@@ -33,45 +34,33 @@ Start-sleep -Seconds 2
 ## Retrieve IE Browser Information
 $IEVersion = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Internet Explorer" -Name 'Version' -ErrorAction SilentlyContinue|Select-Object 'Version'
 If(-not($IEVersion) -or $IEVersion -eq $null){
-    echo "`n`n   IE Browser" > $env:tmp\BrowserEnum.log
-    echo "   ----------" >> $env:tmp\BrowserEnum.log
-    echo "   Could not find any IE Browser Info .." >> $env:tmp\BrowserEnum.log
+    echo "`n`nIE Browser" > $env:tmp\BrowserEnum.log
+    echo "----------" >> $env:tmp\BrowserEnum.log
+    echo "Could not find any IE Browser Info .." >> $env:tmp\BrowserEnum.log
 }else{
-    $IEData = $IEVersion -replace '@{Version=','Version   : ' -replace '}',''
+    $IEData = $IEVersion -replace '@{Version=','Version      : ' -replace '}',''
     $KBNumber = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Internet Explorer" -Name 'svcKBNumber'|Select-Object 'svcKBNumber'
-    $KBData = $KBNumber -replace '@{svcKBNumber=','KBUpdate  : ' -replace '}',''
+    $KBData = $KBNumber -replace '@{svcKBNumber=','KBUpdate     : ' -replace '}',''
     $RegPrefs = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Internet Explorer\Main\" -Name 'start page'|Select-Object 'Start Page'
-    $ParsingData = $RegPrefs -replace '@{Start Page=','HomePage  : ' -replace '}',''
+    $ParsingData = $RegPrefs -replace '@{Start Page=','HomePage     : ' -replace '}',''
     ## Build Remote LogFile
-    echo "`n`n   IE Browser" > $env:tmp\BrowserEnum.log
-    echo "   ----------" >> $env:tmp\BrowserEnum.log
-    echo "   $KBData" >> $env:tmp\BrowserEnum.log
-    echo "   $IEData" >> $env:tmp\BrowserEnum.log
-    echo "   $ParsingData" >> $env:tmp\BrowserEnum.log
+    echo "`n`nIE Browser" > $env:tmp\BrowserEnum.log
+    echo "----------" >> $env:tmp\BrowserEnum.log
+    echo "$KBData" >> $env:tmp\BrowserEnum.log
+    echo "$IEData" >> $env:tmp\BrowserEnum.log
+    echo "$ParsingData" >> $env:tmp\BrowserEnum.log
 }
 
 ## Retrieve IE history URLs
 $IEHistory = Get-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Internet Explorer\TypedURLs" -ErrorAction SilentlyContinue|findstr /B /I "url"
 If(-not($IEHistory) -or $IEHistory -eq $null){
-    echo "`n   IE Browser History" >> $env:tmp\BrowserEnum.log
-    echo "   ------------------" >> $env:tmp\BrowserEnum.log
-    echo "   Could not find any IE History Info .." >> $env:tmp\BrowserEnum.log
+    echo "`nIE Browser History" >> $env:tmp\BrowserEnum.log
+    echo "------------------" >> $env:tmp\BrowserEnum.log
+    echo "Could not find any IE History Info .." >> $env:tmp\BrowserEnum.log
 }else{
-    $strings = $null
-    $FinalOut = $null
-    echo "`n   IE Browser History" >> $env:tmp\BrowserEnum.log
-    echo "   ------------------" >> $env:tmp\BrowserEnum.log
-    ## Parsing data the stupid way to writte the logfile proper ..
-    $strings = Get-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Internet Explorer\TypedURLs"|findstr /B /I "url"
-    If($strings[0]){$FinalOut = $strings[0] -replace 'url','   url' -replace '         :','      :';echo "$FinalOut" >> $env:tmp\BrowserEnum.log}
-    If($strings[1]){$FinalOut = $strings[1] -replace 'url','   url' -replace '         :','      :';echo "$FinalOut" >> $env:tmp\BrowserEnum.log}
-    If($strings[2]){$FinalOut = $strings[2] -replace 'url','   url' -replace '         :','      :';echo "$FinalOut" >> $env:tmp\BrowserEnum.log}
-    If($strings[3]){$FinalOut = $strings[3] -replace 'url','   url' -replace '         :','      :';echo "$FinalOut" >> $env:tmp\BrowserEnum.log}
-    If($strings[4]){$FinalOut = $strings[4] -replace 'url','   url' -replace '         :','      :';echo "$FinalOut" >> $env:tmp\BrowserEnum.log}
-    If($strings[5]){$FinalOut = $strings[5] -replace 'url','   url' -replace '         :','      :';echo "$FinalOut" >> $env:tmp\BrowserEnum.log}
-    If($strings[6]){$FinalOut = $strings[6] -replace 'url','   url' -replace '         :','      :';echo "$FinalOut" >> $env:tmp\BrowserEnum.log}
-    If($strings[7]){$FinalOut = $strings[7] -replace 'url','   url' -replace '         :','      :';echo "$FinalOut" >> $env:tmp\BrowserEnum.log}
-    If($strings[8]){$FinalOut = $strings[8] -replace 'url','   url' -replace '         :','      :';echo "$FinalOut" >> $env:tmp\BrowserEnum.log}
+    echo "`nIE Browser History" >> $env:tmp\BrowserEnum.log
+    echo "------------------" >> $env:tmp\BrowserEnum.log
+    Get-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Internet Explorer\TypedURLs"|findstr /B /I "url" >> $env:tmp\BrowserEnum.log
 }
 
 
@@ -83,44 +72,44 @@ If($Path -eq $True){
 
     ## get PlatformVersion
     $JsPrefs = Get-content prefs.js|Select-String "extensions.lastPlatformVersion"
-    $ParsingData = $JsPrefs[0] -replace 'user_pref\(','' -replace '\"','' -replace ',',':' -replace '\);','' -replace 'extensions.lastPlatformVersion','Version   '
-    echo "`n`n   FireFox Browser" >> $env:tmp\BrowserEnum.log
-    echo "   ---------------" >> $env:tmp\BrowserEnum.log
-    echo "   $ParsingData" >> $env:tmp\BrowserEnum.log
+    $ParsingData = $JsPrefs[0] -replace 'user_pref\(','' -replace '\"','' -replace ',',':' -replace '\);','' -replace 'extensions.lastPlatformVersion','Version      '
+    echo "`n`nFireFox Browser" >> $env:tmp\BrowserEnum.log
+    echo "---------------" >> $env:tmp\BrowserEnum.log
+    echo "$ParsingData" >> $env:tmp\BrowserEnum.log
 
     ## get brownser startup page
     $JsPrefs = Get-content prefs.js|Select-String "browser.startup.homepage"
-    $ParsingData = $JsPrefs[0] -replace 'user_pref\(','' -replace '\"','' -replace ',',':' -replace '\);','' -replace 'browser.startup.homepage','HomePage  '
-    echo "   $ParsingData" >> $env:tmp\BrowserEnum.log
+    $ParsingData = $JsPrefs[0] -replace 'user_pref\(','' -replace '\"','' -replace ',',':' -replace '\);','' -replace 'browser.startup.homepage','HomePage     '
+    echo "$ParsingData" >> $env:tmp\BrowserEnum.log
 
     ## get browser DownloadDir
     $JsPrefs = Get-content prefs.js|Select-String "browser.download.lastDir";
-    $ParsingData = $JsPrefs[0] -replace 'user_pref\(','' -replace '\"','' -replace ',',':' -replace '\);','' -replace 'browser.download.lastDir','Downloads '
-    echo "   $ParsingData" >> $env:tmp\BrowserEnum.log
+    $ParsingData = $JsPrefs[0] -replace 'user_pref\(','' -replace '\"','' -replace ',',':' -replace '\);','' -replace 'browser.download.lastDir','Downloads    '
+    echo "$ParsingData" >> $env:tmp\BrowserEnum.log
 }else{
-    echo "`n`n   FireFox Browser" >> $env:tmp\BrowserEnum.log
-    echo "   ---------------" >> $env:tmp\BrowserEnum.log
-    echo "   Could not find any FireFox Info .." >> $env:tmp\BrowserEnum.log
+    echo "`n`nFireFox Browser" >> $env:tmp\BrowserEnum.log
+    echo "---------------" >> $env:tmp\BrowserEnum.log
+    echo "Could not find any FireFox Info .." >> $env:tmp\BrowserEnum.log
 }
 
 ## Dump FIREFOX HISTORY URLs
 If($Path -eq $False) {
-    echo "`n   FireFox History" >> $env:tmp\BrowserEnum.log
-    echo "   ---------------" >> $env:tmp\BrowserEnum.log
-    echo "   Could not find any FireFox History URLs .." >> $env:tmp\BrowserEnum.log
+    echo "`nFireFox History" >> $env:tmp\BrowserEnum.log
+    echo "---------------" >> $env:tmp\BrowserEnum.log
+    echo "Could not find any FireFox History URLs .." >> $env:tmp\BrowserEnum.log
 }else{
     $Profiles = Get-ChildItem "$env:AppData\Mozilla\Firefox\Profiles\*.default\"
     $Regex = '([a-zA-Z]{3,})://([\w-]+\.)+[\w-]+(/[\w- ./?%&=]*)*?'
-    echo "`n   FireFox History" >> $env:tmp\BrowserEnum.log
-    echo "   ---------------" >> $env:tmp\BrowserEnum.log
+    echo "`nFireFox History" >> $env:tmp\BrowserEnum.log
+    echo "---------------" >> $env:tmp\BrowserEnum.log
     Get-Content $Profiles\places.sqlite | Select-String -Pattern $Regex -AllMatches | % { $_.Matches } | % { $_.Value } | Sort-Object -Unique | % {
         $Value = New-Object -TypeName PSObject -Property @{
             FireFoxHistoryURL = $_
         }
         if ($Value -match $Search) {
             $ParsingData = $Value -replace '@{FireFoxHistoryURL=','' -replace '}',''
-            echo "   $ParsingData" >> $env:tmp\BrowserEnum.log
-        } 
+            echo "$ParsingData" >> $env:tmp\BrowserEnum.log
+        }
     }
 }
 
@@ -128,15 +117,15 @@ If($Path -eq $False) {
 ## Get Google Chrome Version
 $Path = Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Window\CurrentVersion\App Paths\chrome.exe' -ErrorAction SilentlyContinue
 If(-not($Path) -or $Path -eq $null){
-    echo "`n`n   Chrome Browser" >> $env:tmp\BrowserEnum.log
-    echo "   --------------" >> $env:tmp\BrowserEnum.log
-    echo "   Could not find any Chrome Info .." >> $env:tmp\BrowserEnum.log
+    echo "`n`nChrome Browser" >> $env:tmp\BrowserEnum.log
+    echo "--------------" >> $env:tmp\BrowserEnum.log
+    echo "Could not find any Chrome Info .." >> $env:tmp\BrowserEnum.log
 }else{
     $GCVersionInfo = (Get-Item (Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Window\CurrentVersion\App Paths\chrome.exe').'(Default)').VersionInfo
     $GCVersion = $GCVersionInfo.ProductVersion
-    echo "`n`n   Chrome Browser" >> $env:tmp\BrowserEnum.log
-    echo "   --------------" >> $env:tmp\BrowserEnum.log
-    echo "   Version   : $GCVersion" >> $env:tmp\BrowserEnum.log
+    echo "`n`nChrome Browser" >> $env:tmp\BrowserEnum.log
+    echo "--------------" >> $env:tmp\BrowserEnum.log
+    echo "Version      : $GCVersion" >> $env:tmp\BrowserEnum.log
 }
 
 
