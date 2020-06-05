@@ -8,7 +8,7 @@
 
 .DESCRIPTION
    Standalone Powershell script to dump Local-host browser information sutch as: HomePage, Browser Version
-   Language Used, Download Directory, History, etc.. The dumps will be created in Local-host $env:tmp folder.
+   Language Used, Download Directory, URL History, etc.. The dumps will be created in Local-host $env:tmp
 
 .EXAMPLE
    PS C:\> ./GetBrowser.ps1
@@ -68,7 +68,7 @@ If(-not($IEHistory) -or $IEHistory -eq $null){
 $Path = Test-Path "$env:APPDATA\Mozilla\Firefox\Profiles";
 If($Path -eq $True){
     ## change to the correct directory structure
-    cd $env:APPDATA\Mozilla\Firefox\Profiles;cd *.default
+    cd $env:APPDATA\Mozilla\Firefox\Profiles\*.default
 
     ## get PlatformVersion
     $JsPrefs = Get-content prefs.js|Select-String "extensions.lastPlatformVersion"
