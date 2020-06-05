@@ -64,6 +64,33 @@ If(-not($IEHistory) -or $IEHistory -eq $null){
 }
 
 
+
+## function Get-InternetExplorerBookmarks
+echo "`nIE Bookmarks" >> $env:tmp\BrowserEnum.log
+echo "------------" >> $env:tmp\BrowserEnum.log
+        $URLs = Get-ChildItem -Path "$Env:systemdrive\Users\" -Filter "*.url" -Recurse -ErrorAction SilentlyContinue
+        ForEach ($URL in $URLs) {
+            if ($URL.FullName -match 'Favorites') {
+                $User = $URL.FullName.split('\')[2]
+                Get-Content -Path $URL.FullName | ForEach-Object {
+                    try {
+                        if ($_.StartsWith('URL')) {
+                            # parse the .url body to extract the actual bookmark location
+                            $URL = $_.Substring($_.IndexOf('=') + 1)
+                            if($URL -match $Search) {
+                                echo "$URL" >> $env:tmp\BrowserEnum.log
+                            }
+                        }
+                    }
+                    catch {
+                        Write-Verbose "Error parsing url: $_"
+                    }
+                }
+            }
+        }
+
+
+
 ## Retrieve FireFox Browser Information
 $Path = Test-Path "$env:APPDATA\Mozilla\Firefox\Profiles";
 If($Path -eq $True){
