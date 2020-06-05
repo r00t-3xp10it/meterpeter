@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-  Standalone Powershell script that will dump Local-Host browser(s) information.
+  Standalone Powershell script that will dump Local-Host browsers information.
 
 .Author r00t-3xp10it (SSA RedTeam @2020)
   Required Dependencies: Local Web Browser (Installed)
@@ -14,11 +14,11 @@
    PS C:\> ./GetBrowser.ps1 -ALL
    Enumerates Internet Explorer, FireFox and Chrome Browsers info.
 
-.PARAMETERS
+.EXAMPLE
    PS C:\> ./GetBrowser.ps1 -HELP
    Displays GetBrowser.ps1 help discription.
 
-.PARAMETERS
+.EXAMPLE
    PS C:\> ./GetBrowser.ps1 -FIREFOX
    Enumerates FireFox Browser information Only.
 
@@ -53,7 +53,7 @@ function HELP_MENU {
     write-host "  PS C:\> ./GetBrowser.ps1 -ALL"
     write-host "  Enumerates Internet Explorer, FireFox and Chrome Browsers info."
     write-host "`n"
-    write-host ".PARAMETERS" -ForegroundColor Green
+    write-host ".EXAMPLE" -ForegroundColor Green
     write-host "  PS C:\> ./GetBrowser.ps1 -FIREFOX"
     write-host "  Enumerates FireFox Browser information Only."
     write-host "`n"
