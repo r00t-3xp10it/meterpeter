@@ -7,8 +7,8 @@
   Optional Dependencies: None
 
 .DESCRIPTION
-   Standalone Powershell script to dump Local-host browser information sutch as: HomePage, Browser Version
-   Language Used, Download Directory, URL History, etc.. The dumps will be created in Local-host $env:tmp
+   Standalone Powershell script to dump Local-host browser information sutch as: Home Page, Browser Version
+   Language Used, Download Directory, URL History, Bookmarks, etc.. The dumps will be created in $env:tmp
 
 .EXAMPLE
    PS C:\> ./GetBrowser.ps1
@@ -16,6 +16,7 @@
 
 .LINK 
     https://github.com/r00t-3xp10it/meterpeter
+    https://github.com/r00t-3xp10it/meterpeter\mimRatz\GetBrowser.ps1
     https://github.com/rvrsh3ll/Misc-Powershell-Scripts/blob/master/Get-BrowserData.ps1 (flagged by AV)
 #>
 
@@ -26,7 +27,7 @@ $JsPrefs = $null
 $RegPrefs = $null
 $ParsingData = $null
 ## GetBrowser PS Script Banner
-Write-Host "GetBrowser - Dump Remote-Host Browser(s) Information." -ForeGroundColor Green
+Write-Host "GetBrowser - Dump Local-Host Browser(s) Information." -ForeGroundColor Green
 Write-Host "[i] Dumping Data To: `$env:tmp\BrowserEnum.log" -ForeGroundColor yellow -BackgroundColor Black
 Start-sleep -Seconds 2
 
@@ -43,12 +44,15 @@ If(-not($IEVersion) -or $IEVersion -eq $null){
     $KBData = $KBNumber -replace '@{svcKBNumber=','KBUpdate     : ' -replace '}',''
     $RegPrefs = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Internet Explorer\Main\" -Name 'start page'|Select-Object 'Start Page'
     $ParsingData = $RegPrefs -replace '@{Start Page=','HomePage     : ' -replace '}',''
+    $LocalPage = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Internet Explorer\Main\" -Name 'Search Page'|Select-Object 'Search Page'
+    $ParsingLocal = $LocalPage -replace '@{Search Page=','SearchPage   : ' -replace '}',''
     ## Build Remote LogFile
     echo "`n`nIE Browser" > $env:tmp\BrowserEnum.log
     echo "----------" >> $env:tmp\BrowserEnum.log
     echo "$KBData" >> $env:tmp\BrowserEnum.log
     echo "$IEData" >> $env:tmp\BrowserEnum.log
     echo "$ParsingData" >> $env:tmp\BrowserEnum.log
+    echo "$ParsingLocal" >> $env:tmp\BrowserEnum.log
 }
 
 ## Retrieve IE history URLs
