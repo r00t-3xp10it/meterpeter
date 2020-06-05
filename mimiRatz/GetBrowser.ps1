@@ -80,10 +80,8 @@ ForEach ($URL in $URLs) {
                         }
                 }
             }
-                catch {
-                    echo "`nIE Bookmarks" >> $env:tmp\BrowserEnum.log
-                    echo "------------" >> $env:tmp\BrowserEnum.log
-                    echo "Error parsing url: $_" >> $env:tmp\BrowserEnum.log
+            catch {
+                echo "Error parsing url: $_" >> $env:tmp\BrowserEnum.log
             }
         }
     }
