@@ -65,29 +65,31 @@ If(-not($IEHistory) -or $IEHistory -eq $null){
 
 
 
-## function Get-InternetExplorerBookmarks
+## Retrieve Internet Explorer Bookmarks
 echo "`nIE Bookmarks" >> $env:tmp\BrowserEnum.log
 echo "------------" >> $env:tmp\BrowserEnum.log
-        $URLs = Get-ChildItem -Path "$Env:systemdrive\Users\" -Filter "*.url" -Recurse -ErrorAction SilentlyContinue
-        ForEach ($URL in $URLs) {
-            if ($URL.FullName -match 'Favorites') {
-                $User = $URL.FullName.split('\')[2]
-                Get-Content -Path $URL.FullName | ForEach-Object {
-                    try {
-                        if ($_.StartsWith('URL')) {
-                            # parse the .url body to extract the actual bookmark location
-                            $URL = $_.Substring($_.IndexOf('=') + 1)
-                            if($URL -match $Search) {
-                                echo "$URL" >> $env:tmp\BrowserEnum.log
-                            }
+$URLs = Get-ChildItem -Path "$Env:systemdrive\Users\" -Filter "*.url" -Recurse -ErrorAction SilentlyContinue
+ForEach ($URL in $URLs) {
+    if ($URL.FullName -match 'Favorites') {
+        $User = $URL.FullName.split('\')[2]
+        Get-Content -Path $URL.FullName | ForEach-Object {
+            try {
+                if ($_.StartsWith('URL')) {
+                    # parse the .url body to extract the actual bookmark location
+                    $URL = $_.Substring($_.IndexOf('=') + 1)
+                        if($URL -match $Search) {
+                            echo "$URL" >> $env:tmp\BrowserEnum.log
                         }
-                    }
-                    catch {
-                        Write-Verbose "Error parsing url: $_"
-                    }
                 }
             }
+                catch {
+                    echo "`nIE Bookmarks" >> $env:tmp\BrowserEnum.log
+                    echo "------------" >> $env:tmp\BrowserEnum.log
+                    echo "Error parsing url: $_" >> $env:tmp\BrowserEnum.log
+            }
         }
+    }
+}
 
 
 
@@ -96,12 +98,22 @@ $Path = Test-Path "$env:APPDATA\Mozilla\Firefox\Profiles";
 If($Path -eq $True){
     ## change to the correct directory structure
     cd $env:APPDATA\Mozilla\Firefox\Profiles\*.default
+    echo "`n`nFireFox Browser" >> $env:tmp\BrowserEnum.log
+    echo "---------------" >> $env:tmp\BrowserEnum.log
+
+    ## get browser countryCode
+    $JsPrefs = Get-content prefs.js|Select-String "browser.search.countryCode";
+    $ParsingData = $JsPrefs[0] -replace 'user_pref\(','' -replace '\"','' -replace ',',':' -replace '\);','' -replace 'browser.search.countryCode','countryCode  '
+    echo "$ParsingData" >> $env:tmp\BrowserEnum.log
 
     ## get PlatformVersion
     $JsPrefs = Get-content prefs.js|Select-String "extensions.lastPlatformVersion"
     $ParsingData = $JsPrefs[0] -replace 'user_pref\(','' -replace '\"','' -replace ',',':' -replace '\);','' -replace 'extensions.lastPlatformVersion','Version      '
-    echo "`n`nFireFox Browser" >> $env:tmp\BrowserEnum.log
-    echo "---------------" >> $env:tmp\BrowserEnum.log
+    echo "$ParsingData" >> $env:tmp\BrowserEnum.log
+
+    ## get browser plugin.flash.version
+    $JsPrefs = Get-content prefs.js|Select-String "plugin.flash.version";
+    $ParsingData = $JsPrefs[0] -replace 'user_pref\(','' -replace '\"','' -replace ',',':' -replace '\);','' -replace 'plugin.flash.version','flash        '
     echo "$ParsingData" >> $env:tmp\BrowserEnum.log
 
     ## get brownser startup page
@@ -118,6 +130,7 @@ If($Path -eq $True){
     echo "---------------" >> $env:tmp\BrowserEnum.log
     echo "Could not find any FireFox Info .." >> $env:tmp\BrowserEnum.log
 }
+
 
 ## Dump FIREFOX HISTORY URLs
 If($Path -eq $False) {
