@@ -8,7 +8,7 @@
 
 .DESCRIPTION
    Standalone Powershell script to dump remote-host browser information sutch as: HomePage, Browser Version
-   Language Used, Browser Download Directory, etc.. The dumps will be created in remote-host $env:tmp folder.
+   Language Used, Browser Download Directory, etc.. The dumps will be created in Local-host $env:tmp folder.
 
 .EXECUTION
    ./GetBrowser.ps1
