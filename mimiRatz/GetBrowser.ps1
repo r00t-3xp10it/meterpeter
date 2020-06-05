@@ -5,10 +5,11 @@
 .Author r00t-3xp10it (SSA RedTeam @2020)
   Required Dependencies: Local Web Browser (Installed)
   Optional Dependencies: None
+  PS Script Dev Version: v1.1
 
 .DESCRIPTION
    Standalone Powershell script to dump Local-host browser information sutch as: Home Page, Browser Version
-   Language Used, Download Directory, URL History, Bookmarks, etc.. The dumps will be created in $env:tmp
+   Language Used, Download Directory, URL History, Bookmarks, etc.. The dumps will be created into $env:tmp
 
 .EXAMPLE
    PS C:\> ./GetBrowser.ps1 -ALL
@@ -28,6 +29,7 @@
     https://github.com/rvrsh3ll/Misc-Powershell-Scripts/blob/master/Get-BrowserData.ps1 (flagged by AV)
 #>
 
+$IPATH = pwd
 $RFP = $null
 $Path = $null
 $JsPrefs = $null
@@ -36,7 +38,7 @@ $param1 = $args[0]
 $ParsingData = $null
 
 
-## Help Menu (parameter)
+## Help Menu (parameters - arguments)
 function HELP_MENU {
   If($param1 -eq "-help"){
     write-host "`n"
@@ -47,7 +49,7 @@ function HELP_MENU {
     write-host ".DESCRIPTION" -ForegroundColor Green
     write-host "  Standalone Powershell script to dump Local-host browser information sutch as:"
     write-host "  Home Page, Browser Version, ContryCode, Download Dir, URL History, Bookmarks,"
-    write-host "  etc.. The dumps will be Saved in `$env:tmp folder for later review."
+    write-host "  etc.. The dumps will be Saved into `$env:tmp folder for later review."
     write-host "`n"
     write-host ".EXAMPLE" -ForegroundColor Green
     write-host "  PS C:\> ./GetBrowser.ps1 -ALL"
@@ -71,20 +73,27 @@ Write-Host "GetBrowser - Dump Local-Host Browsers Information." -ForeGroundColor
 Write-Host "[i] Dumping Data To: `$env:tmp\BrowserEnum.log" -ForeGroundColor yellow -BackgroundColor Black
 Start-sleep -Seconds 2
 
-## Get Default WebBrowser
+## Get System Default Configurations
+$Caption = Get-CimInstance Win32_OperatingSystem|Format-List *|findstr /I /B /C:"Caption"
+$ParseCap = $Caption -replace '                                   :','   :'
 $Registry = [Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey('LocalMachine', $Env:ComputerName)
 $RegistryKey = $Registry.OpenSubKey("SOFTWARE\\Classes\\http\\shell\\open\\command")
 $Value = $RegistryKey.GetValue("") -replace '%1','' -replace '"',''
-echo "`n`nDefault Browser" > $env:tmp\BrowserEnum.log
+$IntSet = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\internet settings" -Name 'User Agent'|Select-Object 'User Agent'
+$ParsingIntSet = $IntSet -replace '@{User Agent=','UserAgent : ' -replace '}',''
+$MyInvocation = "WebBrowser: "+"$Value"; 
+echo "`n`nSystem Defaults" > $env:tmp\BrowserEnum.log
 echo "---------------" >> $env:tmp\BrowserEnum.log
-echo "$Value" >> $env:tmp\BrowserEnum.log
+echo "$ParseCap" >> $env:tmp\BrowserEnum.log 
+echo "$ParsingIntSet" >> $env:tmp\BrowserEnum.log 
+echo "$MyInvocation" >> $env:tmp\BrowserEnum.log
 
 
 ## Retrieve IE Browser Information
 function IE_Dump {
 $IEVersion = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Internet Explorer" -Name 'Version' -ErrorAction SilentlyContinue|Select-Object 'Version'
 If(-not($IEVersion) -or $IEVersion -eq $null){
-    echo "`n`nIE Browser" >> $env:tmp\BrowserEnum.log
+    echo "`n`n`nIE Browser" >> $env:tmp\BrowserEnum.log
     echo "----------" >> $env:tmp\BrowserEnum.log
     echo "Could not find any IE Browser Info .." >> $env:tmp\BrowserEnum.log
 }else{
@@ -98,11 +107,10 @@ If(-not($IEVersion) -or $IEVersion -eq $null){
     $IntSet = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\internet settings" -Name 'User Agent'|Select-Object 'User Agent'
     $ParsingIntSet = $IntSet -replace '@{User Agent=','UserAgent    : ' -replace '}',''
     ## Build Remote LogFile
-    echo "`n`nIE Browser" >> $env:tmp\BrowserEnum.log
+    echo "`n`n`nIE Browser" >> $env:tmp\BrowserEnum.log
     echo "----------" >> $env:tmp\BrowserEnum.log
     echo "$KBData" >> $env:tmp\BrowserEnum.log
     echo "$IEData" >> $env:tmp\BrowserEnum.log
-    echo "$ParsingIntSet" >> $env:tmp\BrowserEnum.log 
     echo "$ParsingData" >> $env:tmp\BrowserEnum.log
     echo "$ParsingLocal" >> $env:tmp\BrowserEnum.log
 }
@@ -110,12 +118,12 @@ If(-not($IEVersion) -or $IEVersion -eq $null){
 ## Retrieve IE history URLs
 $IEHistory = Get-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Internet Explorer\TypedURLs" -ErrorAction SilentlyContinue|findstr /B /I "url"
 If(-not($IEHistory) -or $IEHistory -eq $null){
-    echo "`nIE Browser History" >> $env:tmp\BrowserEnum.log
-    echo "------------------" >> $env:tmp\BrowserEnum.log
+    echo "`nIE History" >> $env:tmp\BrowserEnum.log
+    echo "----------" >> $env:tmp\BrowserEnum.log
     echo "Could not find any IE History Info .." >> $env:tmp\BrowserEnum.log
 }else{
-    echo "`nIE Browser History" >> $env:tmp\BrowserEnum.log
-    echo "------------------" >> $env:tmp\BrowserEnum.log
+    echo "`nIE History" >> $env:tmp\BrowserEnum.log
+    echo "----------" >> $env:tmp\BrowserEnum.log
     Get-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Internet Explorer\TypedURLs"|findstr /B /I "url" >> $env:tmp\BrowserEnum.log
 }
 
@@ -151,7 +159,7 @@ $Path = Test-Path "$env:APPDATA\Mozilla\Firefox\Profiles";
 If($Path -eq $True){
     ## change to the correct directory structure
     cd $env:APPDATA\Mozilla\Firefox\Profiles\*.default
-    echo "`n`nFireFox Browser" >> $env:tmp\BrowserEnum.log
+    echo "`n`n`nFireFox Browser" >> $env:tmp\BrowserEnum.log
     echo "---------------" >> $env:tmp\BrowserEnum.log
 
     ## get browser countryCode
@@ -204,6 +212,8 @@ If($Path -eq $False) {
         }
     }
 }
+## Returning to working directory
+cd $IPATH
 }
 
 
@@ -211,13 +221,13 @@ If($Path -eq $False) {
 function CHROME {
 $Path = Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Window\CurrentVersion\App Paths\chrome.exe' -ErrorAction SilentlyContinue
 If(-not($Path) -or $Path -eq $null){
-    echo "`n`nChrome Browser" >> $env:tmp\BrowserEnum.log
+    echo "`n`n`nChrome Browser" >> $env:tmp\BrowserEnum.log
     echo "--------------" >> $env:tmp\BrowserEnum.log
     echo "Could not find any Chrome Info .." >> $env:tmp\BrowserEnum.log
 }else{
     $GCVersionInfo = (Get-Item (Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Window\CurrentVersion\App Paths\chrome.exe').'(Default)').VersionInfo
     $GCVersion = $GCVersionInfo.ProductVersion
-    echo "`n`nChrome Browser" >> $env:tmp\BrowserEnum.log
+    echo "`n`n`nChrome Browser" >> $env:tmp\BrowserEnum.log
     echo "--------------" >> $env:tmp\BrowserEnum.log
     echo "Version      : $GCVersion" >> $env:tmp\BrowserEnum.log
 }
@@ -227,7 +237,8 @@ If(-not($Path) -or $Path -eq $null){
 ### ----
 
 ## Jump Links (Functions)
-If(-not($param1)){HELP_MENU}
+If(!$param1){HELP_MENU}
+#If(-not($param1)){HELP_MENU}
 If($param1 -eq "-IE"){IE_Dump}
 If($param1 -eq "-HELP"){HELP_MENU}
 If($param1 -eq "-FIREFOX"){FIREFOX}
