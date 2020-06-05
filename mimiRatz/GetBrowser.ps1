@@ -24,6 +24,10 @@ $Path = $null
 $JsPrefs = $null
 $RegPrefs = $null
 $ParsingData = $null
+## PS Script Banner
+Write-Host "GetBrowser - Dump Remote-Host Browser(s) Information." -ForeGroundColor Green
+Write-Host "[i] Dumping Data To: `$env:tmp\BrowserEnum.log" -ForeGroundColor yellow -BackgroundColor Black
+Start-sleep -Seconds 2
 
 
 ## Retrieve IE Browser Information
@@ -53,10 +57,21 @@ If(-not($IEHistory) -or $IEHistory -eq $null){
     echo "   ------------------" >> $env:tmp\BrowserEnum.log
     echo "   Could not find any IE History Info .." >> $env:tmp\BrowserEnum.log
 }else{
-    $parseIEHistory = $IEHistory -replace '         :','      :'
+    $strings = $null
+    $FinalOut = $null
     echo "`n   IE Browser History" >> $env:tmp\BrowserEnum.log
     echo "   ------------------" >> $env:tmp\BrowserEnum.log
-    echo "   $parseIEHistory" >> $env:tmp\BrowserEnum.log
+    ## Parsing data the stupid way to writte the logfile proper ..
+    $strings = Get-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Internet Explorer\TypedURLs"|findstr /B /I "url"
+    If($strings[0]){$FinalOut = $strings[0] -replace 'url','   url' -replace '         :','      :';echo "$FinalOut" >> $env:tmp\BrowserEnum.log}
+    If($strings[1]){$FinalOut = $strings[1] -replace 'url','   url' -replace '         :','      :';echo "$FinalOut" >> $env:tmp\BrowserEnum.log}
+    If($strings[2]){$FinalOut = $strings[2] -replace 'url','   url' -replace '         :','      :';echo "$FinalOut" >> $env:tmp\BrowserEnum.log}
+    If($strings[3]){$FinalOut = $strings[3] -replace 'url','   url' -replace '         :','      :';echo "$FinalOut" >> $env:tmp\BrowserEnum.log}
+    If($strings[4]){$FinalOut = $strings[4] -replace 'url','   url' -replace '         :','      :';echo "$FinalOut" >> $env:tmp\BrowserEnum.log}
+    If($strings[5]){$FinalOut = $strings[5] -replace 'url','   url' -replace '         :','      :';echo "$FinalOut" >> $env:tmp\BrowserEnum.log}
+    If($strings[6]){$FinalOut = $strings[6] -replace 'url','   url' -replace '         :','      :';echo "$FinalOut" >> $env:tmp\BrowserEnum.log}
+    If($strings[7]){$FinalOut = $strings[7] -replace 'url','   url' -replace '         :','      :';echo "$FinalOut" >> $env:tmp\BrowserEnum.log}
+    If($strings[8]){$FinalOut = $strings[8] -replace 'url','   url' -replace '         :','      :';echo "$FinalOut" >> $env:tmp\BrowserEnum.log}
 }
 
 
@@ -130,5 +145,6 @@ If(-not($Path) -or $Path -eq $null){
 
 ## Retrieve Remote Info from LogFile
 Get-Content $env:tmp\BrowserEnum.log;# Remove-Item $env:tmp\BrowserEnum.log -Force
-Write-warning "`n DumpLogFile: `$env:tmp\BrowserEnum.log";Start-sleep -Seconds 3
+Write-Host "`n`n";Write-Host "[i] DumpLogFile: `$env:tmp\BrowserEnum.log" -ForeGroundColor yellow -BackGroundColor Black
+Start-sleep -Seconds 4
 exit
