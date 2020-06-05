@@ -129,4 +129,6 @@ If(-not($Path) -or $Path -eq $null){
 
 
 ## Retrieve Remote Info from LogFile
-Get-Content $env:tmp\BrowserEnum.log;Remove-Item $env:tmp\BrowserEnum.log -Force
+Get-Content $env:tmp\BrowserEnum.log;# Remove-Item $env:tmp\BrowserEnum.log -Force
+Write-warning "`n DumpLogFile: `$env:tmp\BrowserEnum.log";Start-sleep -Seconds 3
+exit
