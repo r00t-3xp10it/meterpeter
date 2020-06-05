@@ -60,6 +60,7 @@ function HELP_MENU {
     write-host ".LINK" -ForegroundColor Green
     write-host "  https://github.com/r00t-3xp10it/meterpeter"
     write-host "  https://github.com/r00t-3xp10it/meterpeter\mimRatz\GetBrowser.ps1"
+    write-host "`n"
     exit
   }
 }
