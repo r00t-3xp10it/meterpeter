@@ -3,7 +3,7 @@
   Standalone Powershell script that will dump remote-host browser information.
 
 .Author r00t-3xp10it (SSA RedTeam @2020)
-  Required Dependencies: Remote Web Browser
+  Required Dependencies: Local Web Browser(s) (Installed)
   Optional Dependencies: None
 
 .DESCRIPTION
