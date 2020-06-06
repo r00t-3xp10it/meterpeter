@@ -278,7 +278,7 @@ function CHROME {
   If($check_path -eq $True){
       echo "`nChrome Bookmarks" >> $LogFilePath\BrowserEnum.log
       echo "----------------" >> $LogFilePath\BrowserEnum.log
-      Get-Content $Path|Select-String "http" >> $LogFilePath\BrowserEnum.log
+      Get-Content $Path|Select-String "http"|format-list >> $LogFilePath\BrowserEnum.log
   }else{
       echo "`nChrome Bookmarks" >> $LogFilePath\BrowserEnum.log
       echo "----------------" >> $LogFilePath\BrowserEnum.log
