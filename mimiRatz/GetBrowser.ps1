@@ -5,7 +5,7 @@
 .Author r00t-3xp10it (SSA RedTeam @2020)
   Required Dependencies: Local Web Browser
   Optional Dependencies: None
-  PS Script Dev Version: v1.3
+  PS Script Dev Version: v1.4
 
 .DESCRIPTION
    Standalone Powershell script to dump Local-host browser information sutch as: HomePage, Browser Version
@@ -50,9 +50,20 @@ $RegPrefs = $null
 $ParsingData = $null
 $param1 = $args[0] # User Args
 $param2 = $args[1] # User Args
-## Auto-Set @Args in the case of User empty inputs.
-If($param1 -eq $null -or $param1 -eq ' '){$param1 = "-help"}
+## Auto-Set @Args in the case of User empty inputs (LogFile Path).
 If(-not($param2)){$LogFilePath = "$env:tmp"}else{$LogFilePath = "$param2"}
+If(-not($param1)){
+   ## Required (obrigatory) Parameters Settings
+   echo "`nGetBrowser - Dump Local-Host Browsers Information." > $LogFilePath\BrowserEnum.log
+   echo "[ ERROR ] This Script Requires Parameters (Args) to Run .." >> $LogFilePath\BrowserEnum.log
+   echo "`n[Example] ./GetBrowser.ps1 -IE" >> $LogFilePath\BrowserEnum.log
+   echo "[Example] ./GetBrowser.ps1 -ALL" >> $LogFilePath\BrowserEnum.log
+   echo "[Example] ./GetBrowser.ps1 -HELP" >> $LogFilePath\BrowserEnum.log
+   echo "[Example] ./GetBrowser.ps1 -CHROME" >> $LogFilePath\BrowserEnum.log
+   echo "[Example] ./GetBrowser.ps1 -FIREFOX" >> $LogFilePath\BrowserEnum.log
+   Get-Content $LogFilePath\BrowserEnum.log;Remove-Item $LogFilePath\BrowserEnum.log -Force
+   Start-Sleep -Seconds 8;exit
+}
 
 
 ## [GetBrowser] PS Script Banner
@@ -84,7 +95,7 @@ function HELP_MENU {
     write-host ".Author r00t-3xp10it {SSA RedTeam @2020}" -ForegroundColor Green
     write-host "  Required Dependencies: Local Web Browser"
     write-host "  Optional Dependencies: None"
-    write-host "  PS Script Dev Version: v1.3"
+    write-host "  PS Script Dev Version: v1.4"
     write-host "`n"
     write-host ".DESCRIPTION" -ForegroundColor Green
     write-host "  Standalone Powershell script to dump Local-host browser information sutch as:"
@@ -116,6 +127,7 @@ function HELP_MENU {
     write-host "  https://github.com/r00t-3xp10it/meterpeter"
     write-host "  https://github.com/r00t-3xp10it/meterpeter/blob/master/mimiRatz/GetBrowser.ps1"
     write-host "`n"
+    Start-Sleep -Seconds 3
     exit
   }
 }
