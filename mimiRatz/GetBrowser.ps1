@@ -9,7 +9,7 @@
 
 .DESCRIPTION
    Standalone Powershell script to dump Local-host browser information sutch as: HomePage, Browser Version
-   Language Used, Download Directory, URL History, Bookmarks, etc.. The dumps will be Saved into $env:tmp
+   Language Used, Download Directory, URL History, Bookmarks, etc.. The dumps will be Saved into $env:TMP
    Folder. Unless this script 2º argument its used to input another LogFile storage location.
 
 .EXAMPLE
@@ -25,15 +25,15 @@
    Enumerates FireFox Browser information Only.
 
 .EXAMPLE
-   PS C:\> .\GetBrowser.ps1 -CHROME $env:userprofile\Desktop
-   Enumerates Chrome Browser Info and writes logfile to $env:userprofile\Desktop\BrowserEnum.log
+   PS C:\> .\GetBrowser.ps1 -CHROME $env:USERPROFILE\Desktop
+   Enumerates Chrome Browser Info and writes logfile to $env:USERPROFILE\Desktop\BrowserEnum.log
 
 .NOTES
    :meterpeter> upload
    - Upload Local File: mimiRatz\GetBrowser.ps1
    :meterpeter> .\GetBrowser.ps1 -IE
    
-   Uploads This PS Script to Remote-Host $env:tmp Location and Enumerates Internet Explorer
+   Uploads This PS Script to Remote-Host $env:TMP Location and Enumerates Internet Explorer
    Remote browser using meterpeter C2 Server { https://github.com/r00t-3xp10it/meterpeter }
    
 .LINK 
@@ -51,7 +51,7 @@ $ParsingData = $null
 $param1 = $args[0] # User Args
 $param2 = $args[1] # User Args
 ## Auto-Set @Args in the case of User empty inputs (LogFile Path).
-If(-not($param2)){$LogFilePath = "$env:tmp"}else{$LogFilePath = "$param2"}
+If(-not($param2)){$LogFilePath = "$env:TMP"}else{$LogFilePath = "$param2"}
 If(-not($param1)){
    ## Required (obrigatory) Parameters Settings
    echo "`nGetBrowser - Dump Local-Host Browsers Information." > $LogFilePath\BrowserEnum.log
@@ -73,7 +73,7 @@ Start-sleep -Seconds 2
 
 ## Get System Default Configurations
 $Caption = Get-CimInstance Win32_OperatingSystem|Format-List *|findstr /I /B /C:"Caption"
-$Registry = [Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey('LocalMachine', $Env:ComputerName)
+$Registry = [Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey('LocalMachine', $Env:COMPUTERNAME)
 $RegistryKey = $Registry.OpenSubKey("SOFTWARE\\Classes\\http\\shell\\open\\command")
 $Value = $RegistryKey.GetValue("") -replace '%1','' -replace '"',''
 $IntSet = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\internet settings" -Name 'User Agent'|Select-Object 'User Agent'
@@ -100,7 +100,7 @@ function HELP_MENU {
     write-host ".DESCRIPTION" -ForegroundColor Green
     write-host "  Standalone Powershell script to dump Local-host browser information sutch as:"
     write-host "  HomePage, Browser Version, Contry Code, Download Dir, URL History, Bookmarks,"
-    write-host "  etc.. The dumps will be Saved into `$env:tmp Folder for later review. Unless"
+    write-host "  etc.. The dumps will be Saved into `$env:TMP Folder for later review. Unless"
     write-host "  this script 2º argument its used to input another LogFile storage location"
     write-host "`n"
     write-host ".EXAMPLE" -ForegroundColor Green
@@ -112,15 +112,15 @@ function HELP_MENU {
     write-host "  Enumerates FireFox Browser information Only."
     write-host "`n"
     write-host ".EXAMPLE" -ForegroundColor Green
-    write-host "  PS C:\> .\GetBrowser.ps1 -CHROME `$env:userprofile\Desktop"
-    write-host "  Enumerates Chrome Browser Info and writes logfile to `$env:userprofile\Desktop\BrowserEnum.log"
+    write-host "  PS C:\> .\GetBrowser.ps1 -CHROME `$env:USERPROFILE\Desktop"
+    write-host "  Enumerates Chrome Browser Info and writes logfile to `$env:USERPROFILE\Desktop\BrowserEnum.log"
     write-host "`n"
     write-host ".NOTES" -ForegroundColor Green
     write-host "  :meterpeter> upload"
     write-host "  - Upload Local File: mimiRatz\GetBrowser.ps1"
     write-host "  :meterpeter> .\GetBrowser.ps1 -IE"
     write-host "`n"
-    write-host "  Uploads This PS Script to Remote-Host `$env:tmp Location and Enumerates Internet Explorer"
+    write-host "  Uploads This PS Script to Remote-Host `$env:TMP Location and Enumerates Internet Explorer"
     write-host "  Remote browser using meterpeter C2 Server { https://github.com/r00t-3xp10it/meterpeter }"
     write-host "`n"
     write-host ".LINK" -ForegroundColor Green
@@ -173,7 +173,7 @@ function IE_Dump {
   ## Retrieve IE Bookmarks
   echo "`nIE Bookmarks" >> $LogFilePath\BrowserEnum.log
   echo "------------" >> $LogFilePath\BrowserEnum.log
-  $URLs = Get-ChildItem -Path "$Env:systemdrive\Users\" -Filter "*.url" -Recurse -ErrorAction SilentlyContinue
+  $URLs = Get-ChildItem -Path "$Env:SYSTEMDRIVE\Users\" -Filter "*.url" -Recurse -ErrorAction SilentlyContinue
   ForEach ($URL in $URLs) {
       if ($URL.FullName -match 'Favorites') {
           $User = $URL.FullName.split('\')[2]
@@ -239,9 +239,9 @@ function FIREFOX {
       echo "---------------" >> $LogFilePath\BrowserEnum.log
       echo "Could not find any FireFox History URLs .." >> $LogFilePath\BrowserEnum.log
   }else{
-      echo "`nFireFox History" >> $env:tmp\BrowserEnum.log
-      echo "---------------" >> $env:tmp\BrowserEnum.log
-      $Profiles = Get-ChildItem "$env:AppData\Mozilla\Firefox\Profiles\*.default\"
+      echo "`nFireFox History" >> $LogFilePath\BrowserEnum.log
+      echo "---------------" >> $LogFilePath\BrowserEnum.log
+      $Profiles = Get-ChildItem "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\"
       $Regex = '([a-zA-Z]{3,})://([\w-]+\.)+[\w-]+(/[\w- ./?%&=]*)*?'
       Get-Content $Profiles\places.sqlite | Select-String -Pattern $Regex -AllMatches | % { $_.Matches } | % { $_.Value } | Sort-Object -Unique | % {
           $Value = New-Object -TypeName PSObject -Property @{
@@ -271,7 +271,7 @@ function CHROME {
   }
 
   ## Retrieve Chrome bookmarks
-  $Path = "$env:localappdata\Google\Chrome\User Data\Default\Bookmarks"
+  $Path = "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Bookmarks"
   $check_path = Test-Path -Path $Path
   If($check_path -eq $True){
       echo "`nChrome Bookmarks" >> $LogFilePath\BrowserEnum.log
