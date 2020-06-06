@@ -104,7 +104,7 @@ function HELP_MENU {
     write-host "  PS C:\> .\GetBrowser.ps1 -CHROME `$env:userprofile\Desktop"
     write-host "  Enumerates Chrome Browser Info and writes logfile to `$env:userprofile\Desktop\BrowserEnum.log"
     write-host "`n"
-    write-host ".NOTES"
+    write-host ".NOTES" -ForegroundColor Green
     write-host "  :meterpeter> upload"
     write-host "  - Upload Local File: mimiRatz\GetBrowser.ps1"
     write-host "  :meterpeter> .\GetBrowser.ps1 -IE"
