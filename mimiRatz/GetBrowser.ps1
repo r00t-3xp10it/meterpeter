@@ -225,6 +225,8 @@ function FIREFOX {
       $JsPrefs = Get-content prefs.js|Select-String "browser.download.lastDir";
       $ParsingData = $JsPrefs[0] -replace 'user_pref\(','' -replace '\"','' -replace ',',':' -replace '\);','' -replace 'browser.download.lastDir','Downloads    '
       echo "$ParsingData" >> $LogFilePath\BrowserEnum.log
+      ## Returning to working directory
+      cd $IPATH
   }else{
       echo "`n`nFireFox Browser" >> $LogFilePath\BrowserEnum.log
       echo "---------------" >> $LogFilePath\BrowserEnum.log
@@ -251,9 +253,6 @@ function FIREFOX {
           }
       }
   }
-
-## Returning to working directory
-cd $IPATH
 }
 
 
