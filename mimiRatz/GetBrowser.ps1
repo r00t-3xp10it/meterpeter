@@ -265,10 +265,9 @@ function CHROME {
       echo "Could not find any Chrome Info .." >> $LogFilePath\BrowserEnum.log
   }else{
       $GCVersionInfo = (Get-ItemProperty 'HKCU:\Software\Google\Chrome\BLBeacon').Version
-      $ParseData = $GCVersionInfo -replace 'Version      :','Version   :'
       echo "`n`n`nChrome Browser" >> $LogFilePath\BrowserEnum.log
       echo "--------------" >> $LogFilePath\BrowserEnum.log
-      echo "Version      : $ParseData" >> $LogFilePath\BrowserEnum.log
+      echo "Version      : $GCVersionInfo" >> $LogFilePath\BrowserEnum.log
   }
 
   ## Retrieve Chrome bookmarks
