@@ -38,7 +38,7 @@
    
 .LINK 
     https://github.com/r00t-3xp10it/meterpeter
-    https://github.com/r00t-3xp10it/meterpeter\mimRatz\GetBrowser.ps1
+    https://github.com/r00t-3xp10it/meterpeter/blob/master/mimiRatz/GetBrowser.ps1
     https://github.com/rvrsh3ll/Misc-Powershell-Scripts/blob/master/Get-BrowserData.ps1 (flagged by AV)
 #>
 
@@ -51,7 +51,7 @@ $ParsingData = $null
 $param1 = $args[0] # User Args
 $param2 = $args[1] # User Args
 ## Auto-Set @Args in the case of User empty inputs.
-If($param1 -eq $null -or $param1 -eq ' '){$param1 = "-help"}
+If($param1 -eq $null -or $param1 -eq ' '){$param1 = "-HELP"}
 If(-not($param2)){$LogFilePath = "$env:tmp"}else{$LogFilePath = "$param2"}
 
 
