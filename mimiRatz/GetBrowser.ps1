@@ -10,6 +10,7 @@
 .DESCRIPTION
    Standalone Powershell script to dump Local-host browser information sutch as: Home Page, Browser Version
    Language Used, Download Directory, URL History, Bookmarks, etc.. The dumps will be Saved into $env:tmp
+   Folder. Unless this script 2º argument its used to input another LogFile storage location.
 
 .EXAMPLE
    PS C:\> ./GetBrowser.ps1 -ALL
@@ -56,7 +57,8 @@ function HELP_MENU {
     write-host ".DESCRIPTION" -ForegroundColor Green
     write-host "  Standalone Powershell script to dump Local-host browser information sutch as:"
     write-host "  Home Page, Browser Version, ContryCode, Download Dir, URL History, Bookmarks,"
-    write-host "  etc.. The dumps will be Saved into `$env:tmp folder for later review."
+    write-host "  etc.. The dumps will be Saved into `$env:tmp Folder for later review. Unless"
+    write-host "  this script 2º argument its used to input another LogFile storage location"
     write-host "`n"
     write-host ".EXAMPLE" -ForegroundColor Green
     write-host "  PS C:\> ./GetBrowser.ps1 -ALL"
