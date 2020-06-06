@@ -251,8 +251,8 @@ If($param1 -eq "-IE"){IE_Dump}
 If($param1 -eq "-CHROME"){CHROME}
 If($param1 -eq "-HELP"){HELP_MENU}
 If($param1 -eq "-FIREFOX"){FIREFOX}
-If(-not($param1)){$param1 = "-HELP"}
 If($param1 -eq "-ALL"){IE_Dump;FIREFOX;CHROME}
+If(-not($param1) -or $param1 = ' '){$param1 = "-HELP"}
 
 
 ## Retrieve Remote Info from LogFile
