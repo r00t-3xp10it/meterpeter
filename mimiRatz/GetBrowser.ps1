@@ -5,7 +5,7 @@
 .Author r00t-3xp10it (SSA RedTeam @2020)
   Required Dependencies: Local Web Browser
   Optional Dependencies: None
-  PS Script Dev Version: v1.4
+  PS Script Dev Version: v1.5
 
 .DESCRIPTION
    Standalone Powershell script to dump Local-host browser information sutch as: HomePage, Browser Version
@@ -95,7 +95,7 @@ function HELP_MENU {
     write-host ".Author r00t-3xp10it {SSA RedTeam @2020}" -ForegroundColor Green
     write-host "  Required Dependencies: Local Web Browser"
     write-host "  Optional Dependencies: None"
-    write-host "  PS Script Dev Version: v1.4"
+    write-host "  PS Script Dev Version: v1.5"
     write-host "`n"
     write-host ".DESCRIPTION" -ForegroundColor Green
     write-host "  Standalone Powershell script to dump Local-host browser information sutch as:"
@@ -258,9 +258,6 @@ cd $IPATH
 
 
 function CHROME {
-
-
-
   ## Retrieve Google Chrome Browser Information
   $Path = Get-ItemProperty 'HKCU:\Software\Google\Chrome\BLBeacon' -ErrorAction SilentlyContinue
   If(-not($Path) -or $Path -eq $null){
