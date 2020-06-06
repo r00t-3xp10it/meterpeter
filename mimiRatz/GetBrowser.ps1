@@ -28,6 +28,14 @@
    PS C:\> .\GetBrowser.ps1 -CHROME $env:userprofile\Desktop
    Enumerates Chrome Browser Info and writes logfile to $env:userprofile\Desktop\BrowserEnum.log
 
+.NOTES
+   :meterpeter> upload
+   - Upload Local File: mimiRatz\GetBrowser.ps1
+   Uploads This PS Script to Remote-Host $env:tmp Location
+
+   :meterpeter> .\GetBrowser.ps1 -IE
+   Enumerates Internet Explorer (IE) Remote browser using meterpeter C2 Server
+   
 .LINK 
     https://github.com/r00t-3xp10it/meterpeter
     https://github.com/r00t-3xp10it/meterpeter\mimRatz\GetBrowser.ps1
