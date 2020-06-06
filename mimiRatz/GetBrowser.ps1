@@ -258,20 +258,37 @@ cd $IPATH
 
 
 function CHROME {
+
+
+
   ## Retrieve Google Chrome Browser Information
-  $Path = Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Window\CurrentVersion\App Paths\chrome.exe' -ErrorAction SilentlyContinue
+  $Path = Get-ItemProperty 'HKCU:\Software\Google\Chrome\BLBeacon' -ErrorAction SilentlyContinue
   If(-not($Path) -or $Path -eq $null){
       echo "`n`n`nChrome Browser" >> $LogFilePath\BrowserEnum.log
       echo "--------------" >> $LogFilePath\BrowserEnum.log
       echo "Could not find any Chrome Info .." >> $LogFilePath\BrowserEnum.log
   }else{
-      $GCVersionInfo = (Get-Item (Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Window\CurrentVersion\App Paths\chrome.exe').'(Default)').VersionInfo
-      $GCVersion = $GCVersionInfo.ProductVersion
+      $GCVersionInfo = (Get-ItemProperty 'HKCU:\Software\Google\Chrome\BLBeacon').Version
+      $ParseData = $GCVersionInfo -replace 'Version      :','Version   :'
       echo "`n`n`nChrome Browser" >> $LogFilePath\BrowserEnum.log
       echo "--------------" >> $LogFilePath\BrowserEnum.log
-      echo "Version      : $GCVersion" >> $LogFilePath\BrowserEnum.log
+      echo "Version      : $ParseData" >> $LogFilePath\BrowserEnum.log
+  }
+
+  ## Retrieve Chrome bookmarks
+  $Path = "$env:localappdata\Google\Chrome\User Data\Default\Bookmarks"
+  $check_path = Test-Path -Path $Path
+  If($check_path -eq $True){
+      echo "`nChrome Bookmarks" >> $LogFilePath\BrowserEnum.log
+      echo "----------------" >> $LogFilePath\BrowserEnum.log
+      Get-Content $Path|Select-String "http" >> $LogFilePath\BrowserEnum.log
+  }else{
+      echo "`nChrome Bookmarks" >> $LogFilePath\BrowserEnum.log
+      echo "----------------" >> $LogFilePath\BrowserEnum.log
+      echo "Could not find any Chrome Bookmarks .." >> $LogFilePath\BrowserEnum.log
   }
 }
+
 
 
 ## Jump Links (Functions)
