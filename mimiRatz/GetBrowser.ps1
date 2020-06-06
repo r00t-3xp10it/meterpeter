@@ -51,7 +51,7 @@ $ParsingData = $null
 $param1 = $args[0] # User Args
 $param2 = $args[1] # User Args
 ## Auto-Set @Args in the case of User empty inputs.
-If($param1 -eq $null -or $param1 -eq ' '){$param1 = "-HELP"}
+If($param1 -eq $null -or $param1 -eq ' '){$param1 = "-help"}
 If(-not($param2)){$LogFilePath = "$env:tmp"}else{$LogFilePath = "$param2"}
 
 
@@ -255,12 +255,12 @@ function CHROME {
 
 
 ## Jump Links (Functions)
+If(-not($param1)){$param1 = "-help"}
 If($param1 -eq "-IE"){IE_Dump}
 If($param1 -eq "-CHROME"){CHROME}
 If($param1 -eq "-HELP"){HELP_MENU}
 If($param1 -eq "-FIREFOX"){FIREFOX}
 If($param1 -eq "-ALL"){IE_Dump;FIREFOX;CHROME}
-If(-not($param1) -or $param1 = ' '){$param1 = "-HELP"}
 
 
 ## Retrieve Remote Info from LogFile
