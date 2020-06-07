@@ -41,6 +41,10 @@
     https://github.com/r00t-3xp10it/meterpeter/blob/master/mimiRatz/GetBrowser.ps1
 #>
 
+
+## NOTE: |select-object -Property "hash"
+
+
 $RFP = $null
 $IPATH = pwd
 $Path = $null
@@ -70,15 +74,16 @@ Write-Host "GetBrowser - Dump Local-Host Browsers Information." -ForeGroundColor
 Write-Host "[i] Dumping Data To: $LogFilePath\BrowserEnum.log" -ForeGroundColor yellow -BackgroundColor Black
 Start-sleep -Seconds 2
 
-## Get System Default Configurations
+## Get System Default Configurations (OS distro)
 $Caption = Get-CimInstance Win32_OperatingSystem|Format-List *|findstr /I /B /C:"Caption"
-$Registry = [Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey('LocalMachine', $Env:COMPUTERNAME)
-$RegistryKey = $Registry.OpenSubKey("SOFTWARE\\Classes\\http\\shell\\open\\command")
-$Value = $RegistryKey.GetValue("") -replace '%1','' -replace '"',''
+$ParseCap = $Caption -replace '                                   :','   :'
+## Get System Default webBrowser
+$DefaultBrowser = (Get-ItemProperty 'HKCU:\Software\Microsoft\Windows\Shell\Associations\UrlAssociations\https\UserChoice').ProgId
+$Parse_Browser_Data = $DefaultBrowser.split("-")[0] -replace 'URL','' -replace 'HTML','' -replace '.HTTPS',''
+$MInvocation = "WebBrowser: "+"$Parse_Browser_Data";
+## Get System UserAgent
 $IntSet = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\internet settings" -Name 'User Agent'|Select-Object 'User Agent'
 $ParsingIntSet = $IntSet -replace '@{User Agent=','UserAgent : ' -replace '}',''
-$ParseCap = $Caption -replace '                                   :','   :'
-$MInvocation = "WebBrowser: "+"$Value";
 ## Writting LogFile to the selected path in: { $param2 var }
 echo "`n`nSystem Defaults" > $LogFilePath\BrowserEnum.log
 echo "---------------" >> $LogFilePath\BrowserEnum.log
