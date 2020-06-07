@@ -268,22 +268,22 @@ function CHROME {
       echo "`n`n`nChrome Browser" >> $LogFilePath\BrowserEnum.log
       echo "--------------" >> $LogFilePath\BrowserEnum.log
       ## Retrieve Browser accept languages
+      $Store_Path = get-content "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Preferences"
       $Parse_String = $Store_Path.split(",")
       $Dump_Lang = $Parse_String|select-string "accept_languages"
-      $Exist_Dump = $Dump_Lang -replace '"','' -replace 'intl:{','' -replace ':',' : '
-      echo "$Exist_Dump" >> $LogFilePath\BrowserEnum.log
+      $Dumped = $Dump_Lang -replace '"','' -replace 'intl:{','' -replace ':',' : '
+      echo "$Dumped" >> $LogFilePath\BrowserEnum.log
 
          ## Retrieve Browser Version
          $GCVersionInfo = (Get-ItemProperty 'HKCU:\Software\Google\Chrome\BLBeacon').Version
          echo "Version          : $GCVersionInfo" >> $LogFilePath\BrowserEnum.log
          ## Retrieve Email from Google CHROME preferencies File ..
-         $Store_Path = get-content "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Preferences"
          $Parse_String = $Store_Path.split(",")
          $Dump_Email = $Parse_String|select-string "email"
-         $Exist_Dump = $Dump_Email -replace ' ','' -replace '"','' -replace ':','            : '
+         $Exist_Email = $Dump_Email -replace ' ','' -replace '"','' -replace ':','            : '
 
-      If($Exist_Dump){
-          echo "$Exist_Dump" >> $LogFilePath\BrowserEnum.log
+      If($Exist_Email){
+          echo "$Exist_Email" >> $LogFilePath\BrowserEnum.log
       }else{
           echo "Email        : None Email Found .." >> $LogFilePath\BrowserEnum.log
       }
