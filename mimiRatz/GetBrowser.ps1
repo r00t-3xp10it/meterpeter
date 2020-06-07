@@ -285,7 +285,7 @@ function CHROME {
       If($Exist_Email){
           echo "$Exist_Email" >> $LogFilePath\BrowserEnum.log
       }else{
-          echo "Email        : None Email Found .." >> $LogFilePath\BrowserEnum.log
+          echo "Email            : None Email Found .." >> $LogFilePath\BrowserEnum.log
       }
   }
 
@@ -295,7 +295,7 @@ function CHROME {
   If($check_path -eq $True){
       echo "`nChrome Bookmarks" >> $LogFilePath\BrowserEnum.log
       echo "----------------" >> $LogFilePath\BrowserEnum.log
-      Get-Content $Path|Select-String "http" >> $LogFilePath\BrowserEnum.log # |format-list
+      Get-Content $Path|Select-String "http" >> $LogFilePath\BrowserEnum.log #|format-list
   }else{
       echo "`nChrome Bookmarks" >> $LogFilePath\BrowserEnum.log
       echo "----------------" >> $LogFilePath\BrowserEnum.log
