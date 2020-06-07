@@ -76,14 +76,14 @@ Start-sleep -Seconds 2
 
 ## Get System Default Configurations (OS distro)
 $Caption = Get-CimInstance Win32_OperatingSystem|Format-List *|findstr /I /B /C:"Caption"
-$ParseCap = $Caption -replace '                                   :','   :'
+$ParseCap = $Caption -replace '                                   :','      :'
 ## Get System Default webBrowser
 $DefaultBrowser = (Get-ItemProperty 'HKCU:\Software\Microsoft\Windows\Shell\Associations\UrlAssociations\https\UserChoice').ProgId
 $Parse_Browser_Data = $DefaultBrowser.split("-")[0] -replace 'URL','' -replace 'HTML','' -replace '.HTTPS',''
-$MInvocation = "WebBrowser: "+"$Parse_Browser_Data";
+$MInvocation = "WebBrowser   : "+"$Parse_Browser_Data";
 ## Get System UserAgent
 $IntSet = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\internet settings" -Name 'User Agent'|Select-Object 'User Agent'
-$ParsingIntSet = $IntSet -replace '@{User Agent=','UserAgent : ' -replace '}',''
+$ParsingIntSet = $IntSet -replace '@{User Agent=','UserAgent    : ' -replace '}',''
 ## Writting LogFile to the selected path in: { $param2 var }
 echo "`n`nSystem Defaults" > $LogFilePath\BrowserEnum.log
 echo "---------------" >> $LogFilePath\BrowserEnum.log
