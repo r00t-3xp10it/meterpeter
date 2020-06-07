@@ -5,7 +5,7 @@
 .Author r00t-3xp10it (SSA RedTeam @2020)
   Required Dependencies: Local Web Browser
   Optional Dependencies: None
-  PS Script Dev Version: v1.6
+  PS Script Dev Version: v1.7
 
 .DESCRIPTION
    Standalone Powershell script to dump Local-host browser information sutch as: HomePage, Browser Version
@@ -39,10 +39,7 @@
 .LINK 
     https://github.com/r00t-3xp10it/meterpeter
     https://github.com/r00t-3xp10it/meterpeter/blob/master/mimiRatz/GetBrowser.ps1
-
-NOTE: |select-object -Property "hash"
 #>
-
 
 $IPATH = pwd
 $Path = $null
@@ -79,7 +76,7 @@ $ParseCap = $Caption -replace '                                   :','      :'
 ## Get System Default webBrowser
 $DefaultBrowser = (Get-ItemProperty 'HKCU:\Software\Microsoft\Windows\Shell\Associations\UrlAssociations\https\UserChoice').ProgId
 $Parse_Browser_Data = $DefaultBrowser.split("-")[0] -replace 'URL','' -replace 'HTML','' -replace '.HTTPS',''
-$MInvocation = "WebBrowser   : "+"$Parse_Browser_Data";
+$MInvocation = "WebBrowser   : "+"$Parse_Browser_Data"+" (PreDefined)";
 ## Get System UserAgent
 $IntSet = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\internet settings" -Name 'User Agent'|Select-Object 'User Agent'
 $ParsingIntSet = $IntSet -replace '@{User Agent=','UserAgent    : ' -replace '}',''
@@ -98,7 +95,7 @@ function HELP_MENU {
     write-host ".Author r00t-3xp10it {SSA RedTeam @2020}" -ForegroundColor Green
     write-host "  Required Dependencies: Local Web Browser"
     write-host "  Optional Dependencies: None"
-    write-host "  PS Script Dev Version: v1.6"
+    write-host "  PS Script Dev Version: v1.7"
     write-host "`n"
     write-host ".DESCRIPTION" -ForegroundColor Green
     write-host "  Standalone Powershell script to dump Local-host browser information sutch as:"
@@ -153,10 +150,13 @@ function IE_Dump {
       $ParsingLocal = $LocalPage -replace '@{Search Page=','SearchPage   : ' -replace '}',''
       $IntSet = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\internet settings" -Name 'User Agent'|Select-Object 'User Agent'
       $ParsingIntSet = $IntSet -replace '@{User Agent=','UserAgent    : ' -replace '}',''
+      $DownloadDir = Get-ItemProperty 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders' -Name "{374DE290-123F-4565-9164-39C4925E467B}"|findstr /I /C:"Downloads"
+      $ParseDownload = $DownloadDir -replace '{374DE290-123F-4565-9164-39C4925E467B} :','Downloads    :'
       echo "`n`n`nIE Browser" >> $LogFilePath\BrowserEnum.log
       echo "----------" >> $LogFilePath\BrowserEnum.log
       echo "$KBData" >> $LogFilePath\BrowserEnum.log
       echo "$IEData" >> $LogFilePath\BrowserEnum.log
+      echo "$ParseDownload" >> $LogFilePath\BrowserEnum.log
       echo "$ParsingData" >> $LogFilePath\BrowserEnum.log
       echo "$ParsingLocal" >> $LogFilePath\BrowserEnum.log
   }
@@ -269,14 +269,21 @@ function CHROME {
       echo "--------------" >> $LogFilePath\BrowserEnum.log
       echo "Could not find any Chrome Info .." >> $LogFilePath\BrowserEnum.log
   }else{
+      $Store_Path = get-content "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Preferences"
       echo "`n`n`nChrome Browser" >> $LogFilePath\BrowserEnum.log
       echo "--------------" >> $LogFilePath\BrowserEnum.log
-      ## Retrieve Browser accept languages
-      $Store_Path = get-content "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Preferences"
+      ## Retrieve Download Pref Settings
       $Parse_String = $Store_Path.split(",")
-      $Dump_Lang = $Parse_String|select-string "accept_languages"
-      $Dumped = $Dump_Lang -replace '"','' -replace 'intl:{','' -replace ':',' : '
-      echo "$Dumped" >> $LogFilePath\BrowserEnum.log
+      $Dump_Download = $Parse_String|select-string "download"
+      $Dumped = $Dump_Download[1] # download_history Property
+      $Parse_Dump = $Dumped -replace '"','' -replace ':',' : '
+      echo "$Parse_Dump" >> $LogFilePath\BrowserEnum.log
+
+         ## Retrieve Browser accept languages
+         $Parse_String = $Store_Path.split(",")
+         $Dump_Lang = $Parse_String|select-string "accept_languages"
+         $Dumped = $Dump_Lang -replace '"','' -replace 'intl:{','' -replace ':',' : '
+         echo "$Dumped" >> $LogFilePath\BrowserEnum.log
 
          ## Retrieve Browser Version
          $GCVersionInfo = (Get-ItemProperty 'HKCU:\Software\Google\Chrome\BLBeacon').Version
