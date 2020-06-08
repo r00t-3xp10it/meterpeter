@@ -33,8 +33,8 @@
    - Upload Local File: mimiRatz\GetBrowser.ps1
    :meterpeter> .\GetBrowser.ps1 -IE
    
-   Uploads This PS Script to Remote-Host $env:TMP Location and Enumerates Internet Explorer
-   Remote browser using meterpeter C2 Server { https://github.com/r00t-3xp10it/meterpeter }
+   Uploads This PS Script to Remote-Host $env:TMP (Client Working Dir) Using meterpeter
+   tool, and Enumerates Internet Explorer Remote browser through meterpeter C2 Server
    
 .LINK 
     https://github.com/r00t-3xp10it/meterpeter
