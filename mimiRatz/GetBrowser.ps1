@@ -3,7 +3,7 @@
   Standalone Powershell script that will dump Local-Host browsers information.
 
 .Author r00t-3xp10it (SSA RedTeam @2020)
-  Required Dependencies: Local Web Browser
+  Required Dependencies: IE, Firefox, Chrome (browsers)
   Optional Dependencies: None
   PS Script Dev Version: v1.8
 
