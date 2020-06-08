@@ -5,7 +5,7 @@
 .Author r00t-3xp10it (SSA RedTeam @2020)
   Required Dependencies: IE, Firefox, Chrome
   Optional Dependencies: None
-  PS Script Dev Version: v1.8
+  PS Script Dev Version: v1.9
 
 .DESCRIPTION
    Standalone Powershell script to dump Local-host browser information sutch as: HomePage, Browser Version
@@ -104,7 +104,7 @@ function HELP_MENU {
     write-host ".Author r00t-3xp10it {SSA RedTeam @2020}" -ForegroundColor Green
     write-host "  Required Dependencies: IE, Firefox, Chrome"
     write-host "  Optional Dependencies: None"
-    write-host "  PS Script Dev Version: v1.8"
+    write-host "  PS Script Dev Version: v1.9"
     write-host "`n"
     write-host ".DESCRIPTION" -ForegroundColor Green
     write-host "  Standalone Powershell script to dump Local-host browser information sutch as:"
@@ -138,6 +138,16 @@ function HELP_MENU {
     write-host "`n"
     exit
   }
+}
+
+
+
+function ConvertFrom-Json20([object] $item){
+    #http://stackoverflow.com/a/29689642
+    Add-Type -AssemblyName System.Web.Extensions
+    $ps_js = New-Object System.Web.Script.Serialization.JavaScriptSerializer
+    return ,$ps_js.DeserializeObject($item)
+        
 }
 
 
@@ -340,16 +350,20 @@ function CHROME {
 
   ## Retrieve Chrome bookmarks
   $Bookmarks_Path = "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Bookmarks"
-  $check_path = Test-Path -Path $Bookmarks_Path
-  If($check_path -eq $True){
-      echo "`nChrome Bookmarks" >> $LogFilePath\BrowserEnum.log
-      echo "----------------" >> $LogFilePath\BrowserEnum.log
-      Get-Content $Bookmarks_Path|Select-String "http" >> $LogFilePath\BrowserEnum.log #|format-list
-  }else{
-      echo "`nChrome Bookmarks" >> $LogFilePath\BrowserEnum.log
-      echo "----------------" >> $LogFilePath\BrowserEnum.log
-      echo "Could not find any Bookmarks .." >> $LogFilePath\BrowserEnum.log
-  }
+  echo "`nChrome Bookmarks" >> $LogFilePath\BrowserEnum.log
+  echo "----------------" >> $LogFilePath\BrowserEnum.log
+      if (-not(Test-Path -Path $Bookmarks_Path)) {
+          echo "Could not find any Bookmarks .." >> $LogFilePath\BrowserEnum.log
+      }else{
+          $Json = Get-Content $Bookmarks_Path
+          $Output = ConvertFrom-Json20($Json)
+          $Jsonobject = $Output.roots.bookmark_bar.children
+          $Jsonobject.url |Sort -Unique | ForEach-Object {
+              if ($_ -match $Search) {
+                  echo "$_" >> $LogFilePath\BrowserEnum.log
+              }
+          }
+      }
 
   ## Retrieve Chrome Cookies (hashs)
   $Cookie_Path = "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Preferences"
@@ -378,6 +392,10 @@ If($param1 -eq "-HELP"){HELP_MENU}
 If($param1 -eq "-FIREFOX"){FIREFOX}
 If($param1 -eq "-ALL"){IE_Dump;FIREFOX;CHROME}
 
+## Build displays
+# New-Object -TypeName PSObject -Property @{
+#     Data = $_
+# }
 
 ## Retrieve Remote Info from LogFile
 Get-Content $LogFilePath\BrowserEnum.log;Write-Host "`n`n";
