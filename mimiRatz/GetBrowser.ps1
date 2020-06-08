@@ -229,10 +229,6 @@ function FIREFOX {
       $JsPrefs = Get-content prefs.js|Select-String "extensions.lastPlatformVersion"
       $ParsingData = $JsPrefs[0] -replace 'user_pref\(','' -replace '\"','' -replace ',',':' -replace '\);','' -replace 'extensions.lastPlatformVersion','Version      '
       echo "$ParsingData" >> $LogFilePath\BrowserEnum.log
-      ## get browser plugin.flash.version
-      $JsPrefs = Get-content prefs.js|Select-String "plugin.flash.version";
-      $ParsingData = $JsPrefs[0] -replace 'user_pref\(','' -replace '\"','' -replace ',',':' -replace '\);','' -replace 'plugin.flash.version','flash        '
-      echo "$ParsingData" >> $LogFilePath\BrowserEnum.log
       ## get brownser startup page
       $JsPrefs = Get-content prefs.js|Select-String "browser.startup.homepage"
       $ParsingData = $JsPrefs[0] -replace 'user_pref\(','' -replace '\"','' -replace ',',':' -replace '\);','' -replace 'browser.startup.homepage','HomePage     '
