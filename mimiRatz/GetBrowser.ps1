@@ -49,11 +49,12 @@ $param2 = $args[1] # User Inputs [Arguments]
 If(-not($param2)){$LogFilePath = "$env:TMP"}else{$LogFilePath = "$param2"}
 If(-not($param1)){
    ## Required (Mandatory) Parameters Settings
-   echo "GetBrowser - Enumerate installed browser(s) information." > $LogFilePath\BrowserEnum.log
+   echo "`nGetBrowser - Enumerate installed browser(s) information." > $LogFilePath\BrowserEnum.log
    echo "[ ERROR ] This script requires parameters (-args) to run ..`n" >> $LogFilePath\BrowserEnum.log
    echo "Syntax: <scriptname> <-arg>(mandatory) <arg>(optional)`n" >> $LogFilePath\BrowserEnum.log
    echo "The following mandatory args are available:" >> $LogFilePath\BrowserEnum.log
    echo "./GetBrowser.ps1 -HELP             Displays script detail description." >> $LogFilePath\BrowserEnum.log
+   echo "./GetBrowser.ps1 -DEF              Enumerates system defaults (browsers)" >> $LogFilePath\BrowserEnum.log
    echo "./GetBrowser.ps1 -IE               Enumerates IE browser information Only." >> $LogFilePath\BrowserEnum.log
    echo "./GetBrowser.ps1 -ALL              Enumerates IE, Firefox, Chrome information." >> $LogFilePath\BrowserEnum.log
    echo "./GetBrowser.ps1 -CHROME           Enumerates Chrome Browser information Only." >> $LogFilePath\BrowserEnum.log
