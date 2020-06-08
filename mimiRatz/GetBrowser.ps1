@@ -95,6 +95,13 @@ If($Flash_Path -eq $True){
     echo "flashName    : $flashName" >> $LogFilePath\BrowserEnum.log
 }
 echo "$MInvocation" >> $LogFilePath\BrowserEnum.log
+## Detect ALL Available browsers Installed
+$IEVersion = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Internet Explorer" -Name 'Version' -ErrorAction SilentlyContinue|Select-Object 'Version'
+If($IEVersion){$IEfound = $True}else{$IEfound = $False}
+If(Test-Path -Path "$env:APPDATA\Mozilla\Firefox\Profiles"){$FFfound = $True}else{$FFfound = $False}
+$Chrome_App = Get-ItemProperty 'HKCU:\Software\Google\Chrome\BLBeacon' -ErrorAction SilentlyContinue
+If($Chrome_App){$CHfound = $True}else{$CHfound = $False}
+echo "Detected     : IE=$IEfound firefox=$FFfound chrome=$CHfound " >> $LogFilePath\BrowserEnum.log
 
 
 function ConvertFrom-Json20([object] $item){
