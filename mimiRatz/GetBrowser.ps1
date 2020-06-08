@@ -350,7 +350,7 @@ function CHROME {
   $Bookmarks_Path = "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Bookmarks"
   echo "`nChrome Bookmarks" >> $LogFilePath\BrowserEnum.log
   echo "----------------" >> $LogFilePath\BrowserEnum.log
-  if (-not(Test-Path -Path $Bookmarks_Path)) {
+  If(-not(Test-Path -Path $Bookmarks_Path)) {
       echo "Could not find any Bookmarks .." >> $LogFilePath\BrowserEnum.log
   }else{
       $Json = Get-Content $Bookmarks_Path
