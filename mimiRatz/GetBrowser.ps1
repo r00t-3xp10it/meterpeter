@@ -97,6 +97,14 @@ If($Flash_Path -eq $True){
 echo "$MInvocation" >> $LogFilePath\BrowserEnum.log
 
 
+function ConvertFrom-Json20([object] $item){
+    ## Json Files Convertion to text
+    Add-Type -AssemblyName System.Web.Extensions
+    $ps_js = New-Object System.Web.Script.Serialization.JavaScriptSerializer
+    return ,$ps_js.DeserializeObject($item)    
+}
+
+
 function HELP_MENU {
   ## Help Menu (parameters - arguments)
   If($param1 -eq "-help" -or $param1 -eq "-HELP"){
@@ -138,16 +146,6 @@ function HELP_MENU {
     write-host "`n"
     exit
   }
-}
-
-
-
-function ConvertFrom-Json20([object] $item){
-    #http://stackoverflow.com/a/29689642
-    Add-Type -AssemblyName System.Web.Extensions
-    $ps_js = New-Object System.Web.Script.Serialization.JavaScriptSerializer
-    return ,$ps_js.DeserializeObject($item)
-        
 }
 
 
