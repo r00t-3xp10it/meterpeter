@@ -49,20 +49,24 @@ $param2 = $args[1] # User Inputs [Arguments]
 If(-not($param2)){$LogFilePath = "$env:TMP"}else{$LogFilePath = "$param2"}
 If(-not($param1)){
    ## Required (Mandatory) Parameters Settings
-   echo "`nGetBrowser - Dump Local-Host Browsers Information." > $LogFilePath\BrowserEnum.log
-   echo "[ ERROR ] This Script Requires Parameters (-args) to Run .." >> $LogFilePath\BrowserEnum.log
-   echo "`n[Example] ./GetBrowser.ps1 -IE" >> $LogFilePath\BrowserEnum.log
-   echo "[Example] ./GetBrowser.ps1 -ALL" >> $LogFilePath\BrowserEnum.log
-   echo "[Example] ./GetBrowser.ps1 -HELP" >> $LogFilePath\BrowserEnum.log
-   echo "[Example] ./GetBrowser.ps1 -CHROME" >> $LogFilePath\BrowserEnum.log
-   echo "[Example] ./GetBrowser.ps1 -FIREFOX`n" >> $LogFilePath\BrowserEnum.log
+   echo "GetBrowser - Enumerate install browser(s) information." > $LogFilePath\BrowserEnum.log
+   echo "[ ERROR ] This script requires parameters (-args) to run ..`n" >> $LogFilePath\BrowserEnum.log
+   echo "Syntax: <scriptname> <-arg>(mandatory) <arg>(optional)`n" >> $LogFilePath\BrowserEnum.log
+   echo "The following mandatory args are available:" >> $LogFilePath\BrowserEnum.log
+   echo "./GetBrowser.ps1 -HELP          Displays script help description." >> $LogFilePath\BrowserEnum.log
+   echo "./GetBrowser.ps1 -IE            Enumerates IE browser information Only." >> $LogFilePath\BrowserEnum.log
+   echo "./GetBrowser.ps1 -ALL           Enumerates IE, Firefox, Chrome information." >> $LogFilePath\BrowserEnum.log
+   echo "./GetBrowser.ps1 -CHROME        Enumerates Chrome Browser information Only." >> $LogFilePath\BrowserEnum.log
+   echo "./GetBrowser.ps1 -FIREFOX       Enumerates Firefox Browser information Only.`n" >> $LogFilePath\BrowserEnum.log
+   echo "The following Optional args are available:" >> $LogFilePath\BrowserEnum.log
+   echo "./GetBrowser.ps1 -IE `$env:TMP   Enumerates IE and saves logfile to TMP folder.`n" >> $LogFilePath\BrowserEnum.log
    Get-Content $LogFilePath\BrowserEnum.log;Remove-Item $LogFilePath\BrowserEnum.log -Force
-   Start-Sleep -Seconds 6;exit
+   Start-Sleep -Seconds 10;exit
 }
 
 
 ## [GetBrowser] PS Script Banner
-Write-Host "GetBrowser - Dump Local-Host Browsers Information." -ForeGroundColor Green
+Write-Host "GetBrowser - Enumerate install browser(s) information." -ForeGroundColor Green
 Write-Host "[i] Dumping Data To: $LogFilePath\BrowserEnum.log" -ForeGroundColor yellow -BackgroundColor Black
 Start-sleep -Seconds 2
 
@@ -368,5 +372,5 @@ If($param1 -eq "-ALL"){IE_Dump;FIREFOX;CHROME}
 
 ## Retrieve Remote Info from LogFile
 Get-Content $LogFilePath\BrowserEnum.log;Write-Host "`n`n";
-Write-Host "[i] DumpLogFile: $LogFilePath\BrowserEnum.log" -ForeGroundColor yellow -BackGroundColor Black
+Write-Host "[i] Logfile: $LogFilePath\BrowserEnum.log" -ForeGroundColor yellow -BackGroundColor Black
 exit
