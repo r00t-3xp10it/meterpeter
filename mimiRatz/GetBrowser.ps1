@@ -42,7 +42,7 @@
 #>
 
 $IPATH = pwd
-$ParsingData = $null
+$Path = $null
 $param1 = $args[0] # User Inputs [Arguments]
 $param2 = $args[1] # User Inputs [Arguments]
 ## Auto-Set @Args in case of User empty inputs (Set LogFile Path).
@@ -81,6 +81,13 @@ echo "`n`nSystem Defaults" > $LogFilePath\BrowserEnum.log
 echo "---------------" >> $LogFilePath\BrowserEnum.log
 echo "$ParseCap" >> $LogFilePath\BrowserEnum.log 
 echo "$ParsingIntSet" >> $LogFilePath\BrowserEnum.log 
+## Get Flash Internal Name
+$Flash_Path = Test-Path "$env:WINDIR\system32\macromed\flash\flash*.ocx";
+If($Flash_Path -eq $True){
+    $flash = Get-Item "c:\windows\system32\macromed\flash\flash*.ocx"|select *
+    $flashName = $flash.versioninfo.InternalName
+    echo "flashName    : $flashName" >> $LogFilePath\BrowserEnum.log
+}
 echo "$MInvocation" >> $LogFilePath\BrowserEnum.log
 
 
