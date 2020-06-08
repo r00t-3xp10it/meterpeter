@@ -53,7 +53,6 @@ If(-not($param1)){
    echo "[ ERROR ] This script requires parameters (-args) to run ..`n" >> $LogFilePath\BrowserEnum.log
    echo "Syntax: <scriptname> <-arg>(mandatory) <arg>(optional)`n" >> $LogFilePath\BrowserEnum.log
    echo "The following mandatory args are available:" >> $LogFilePath\BrowserEnum.log
-   echo "./GetBrowser.ps1 -HELP             Displays script detail description." >> $LogFilePath\BrowserEnum.log
    echo "./GetBrowser.ps1 -DEF              Enumerates system defaults (browsers)" >> $LogFilePath\BrowserEnum.log
    echo "./GetBrowser.ps1 -IE               Enumerates IE browser information Only." >> $LogFilePath\BrowserEnum.log
    echo "./GetBrowser.ps1 -ALL              Enumerates IE, Firefox, Chrome information." >> $LogFilePath\BrowserEnum.log
