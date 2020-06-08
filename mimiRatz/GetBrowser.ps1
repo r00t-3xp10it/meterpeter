@@ -350,18 +350,18 @@ function CHROME {
   $Bookmarks_Path = "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Bookmarks"
   echo "`nChrome Bookmarks" >> $LogFilePath\BrowserEnum.log
   echo "----------------" >> $LogFilePath\BrowserEnum.log
-      if (-not(Test-Path -Path $Bookmarks_Path)) {
-          echo "Could not find any Bookmarks .." >> $LogFilePath\BrowserEnum.log
-      }else{
-          $Json = Get-Content $Bookmarks_Path
-          $Output = ConvertFrom-Json20($Json)
-          $Jsonobject = $Output.roots.bookmark_bar.children
-          $Jsonobject.url |Sort -Unique | ForEach-Object {
-              if ($_ -match $Search) {
-                  echo "$_" >> $LogFilePath\BrowserEnum.log
-              }
+  if (-not(Test-Path -Path $Bookmarks_Path)) {
+      echo "Could not find any Bookmarks .." >> $LogFilePath\BrowserEnum.log
+  }else{
+      $Json = Get-Content $Bookmarks_Path
+      $Output = ConvertFrom-Json20($Json)
+      $Jsonobject = $Output.roots.bookmark_bar.children
+      $Jsonobject.url |Sort -Unique | ForEach-Object {
+          if ($_ -match $Search) {
+              echo "$_" >> $LogFilePath\BrowserEnum.log
           }
       }
+  }
 
   ## Retrieve Chrome Cookies (hashs)
   $Cookie_Path = "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Preferences"
