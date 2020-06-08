@@ -33,8 +33,8 @@
    - Upload Local File: mimiRatz\GetBrowser.ps1
    :meterpeter> .\GetBrowser.ps1 -IE
    
-   Uploads This PS Script to Remote-Host $env:TMP Using meterpeter Server Script
-   and Enumerates Internet Explorer Remote browser through meterpeter C2 Server.
+   Uploads This PS Script to Remote-Host $env:TMP Using meterpeter C2 Server Script
+   and Enumerates Internet Explorer Remote browser through meterpeter C2 Client payload.
    
 .LINK 
     https://github.com/r00t-3xp10it/meterpeter
@@ -123,8 +123,8 @@ function HELP_MENU {
     write-host "  - Upload Local File: mimiRatz\GetBrowser.ps1"
     write-host "  :meterpeter> .\GetBrowser.ps1 -IE"
     write-host "`n"
-    write-host "  Uploads This PS Script to Remote-Host `$env:TMP Using meterpeter Server Script"
-    write-host "  and Enumerates Internet Explorer Remote browser through meterpeter C2 Server."
+    write-host "  Uploads This PS Script to Remote-Host `$env:TMP Using meterpeter C2 Server Script"
+    write-host "  and Enumerates Internet Explorer Remote browser through meterpeter C2 Client payload."
     write-host "`n"
     write-host ".LINK" -ForegroundColor Green
     write-host "  https://github.com/r00t-3xp10it/meterpeter"
