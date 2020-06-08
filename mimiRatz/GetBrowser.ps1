@@ -49,24 +49,26 @@ $param2 = $args[1] # User Inputs [Arguments]
 If(-not($param2)){$LogFilePath = "$env:TMP"}else{$LogFilePath = "$param2"}
 If(-not($param1)){
    ## Required (Mandatory) Parameters Settings
-   echo "GetBrowser - Enumerate install browser(s) information." > $LogFilePath\BrowserEnum.log
+   echo "GetBrowser - Enumerate installed browser(s) information." > $LogFilePath\BrowserEnum.log
    echo "[ ERROR ] This script requires parameters (-args) to run ..`n" >> $LogFilePath\BrowserEnum.log
    echo "Syntax: <scriptname> <-arg>(mandatory) <arg>(optional)`n" >> $LogFilePath\BrowserEnum.log
    echo "The following mandatory args are available:" >> $LogFilePath\BrowserEnum.log
-   echo "./GetBrowser.ps1 -HELP          Displays script help description." >> $LogFilePath\BrowserEnum.log
-   echo "./GetBrowser.ps1 -IE            Enumerates IE browser information Only." >> $LogFilePath\BrowserEnum.log
-   echo "./GetBrowser.ps1 -ALL           Enumerates IE, Firefox, Chrome information." >> $LogFilePath\BrowserEnum.log
-   echo "./GetBrowser.ps1 -CHROME        Enumerates Chrome Browser information Only." >> $LogFilePath\BrowserEnum.log
-   echo "./GetBrowser.ps1 -FIREFOX       Enumerates Firefox Browser information Only.`n" >> $LogFilePath\BrowserEnum.log
+   echo "./GetBrowser.ps1 -HELP             Displays script detail description." >> $LogFilePath\BrowserEnum.log
+   echo "./GetBrowser.ps1 -IE               Enumerates IE browser information Only." >> $LogFilePath\BrowserEnum.log
+   echo "./GetBrowser.ps1 -ALL              Enumerates IE, Firefox, Chrome information." >> $LogFilePath\BrowserEnum.log
+   echo "./GetBrowser.ps1 -CHROME           Enumerates Chrome Browser information Only." >> $LogFilePath\BrowserEnum.log
+   echo "./GetBrowser.ps1 -FIREFOX          Enumerates Firefox Browser information Only.`n" >> $LogFilePath\BrowserEnum.log
    echo "The following Optional args are available:" >> $LogFilePath\BrowserEnum.log
-   echo "./GetBrowser.ps1 -IE `$env:TMP   Enumerates IE and saves logfile to TMP folder.`n" >> $LogFilePath\BrowserEnum.log
+   echo "./GetBrowser.ps1 -IE `$env:TMP      Enumerates selected browser and saves logfile to TEMP.`n" >> $LogFilePath\BrowserEnum.log
    Get-Content $LogFilePath\BrowserEnum.log;Remove-Item $LogFilePath\BrowserEnum.log -Force
-   Start-Sleep -Seconds 10;exit
+   $meterpeter_client = Test-Path $env:tmp\Update-KB4524147.ps1
+   If(-not($meterpeter_client)){Start-Sleep -Seconds 12}
+   exit
 }
 
 
 ## [GetBrowser] PS Script Banner
-Write-Host "GetBrowser - Enumerate install browser(s) information." -ForeGroundColor Green
+Write-Host "GetBrowser - Enumerate installed browser(s) information." -ForeGroundColor Green
 Write-Host "[i] Dumping Data To: $LogFilePath\BrowserEnum.log" -ForeGroundColor yellow -BackgroundColor Black
 Start-sleep -Seconds 2
 
@@ -264,6 +266,13 @@ function FIREFOX {
           }
       }
   }
+
+  ## firefox bookmarks
+  # $Bookmarks = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\bookmarkbackups\*.jsonlz4"
+  # Get-Content $Bookmarks|ConvertFrom-String > bookmarks.log
+  # foreach ($Bookmark in $Bookmarks.children) {
+  #      Search-FxBookmarks -Bookmarks $Bookmark -PathSoFar $NewPath -SearchString $SearchString
+  # }
 }
 
 
