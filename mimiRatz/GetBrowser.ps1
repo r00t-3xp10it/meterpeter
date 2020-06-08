@@ -97,12 +97,24 @@ If($Flash_Path -eq $True){
 }
 echo "$MInvocation" >> $LogFilePath\BrowserEnum.log
 ## Detect ALL Available browsers Installed
-$IEVersion = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Internet Explorer" -Name 'Version' -ErrorAction SilentlyContinue|Select-Object 'Version'
-If($IEVersion){$IEfound = $True}else{$IEfound = $False}
-If(Test-Path -Path "$env:APPDATA\Mozilla\Firefox\Profiles"){$FFfound = $True}else{$FFfound = $False}
-$Chrome_App = Get-ItemProperty 'HKCU:\Software\Google\Chrome\BLBeacon' -ErrorAction SilentlyContinue
-If($Chrome_App){$CHfound = $True}else{$CHfound = $False}
-echo "Detected     : IE=$IEfound firefox=$FFfound chrome=$CHfound " >> $LogFilePath\BrowserEnum.log
+$IEVersion = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Internet Explorer" -ErrorAction SilentlyContinue).version
+If($IEVersion){$IEfound = "Found"}else{$IEfound = "Missing"}
+$Chrome_App = (Get-ItemProperty "HKCU:\Software\Google\Chrome\BLBeacon" -ErrorAction SilentlyContinue).version
+If($Chrome_App){$CHfound = "Found"}else{$CHfound = "missing";$Chrome_App = $null}
+If(Test-Path -Path "$env:APPDATA\Mozilla\Firefox\Profiles"){
+    $FFfound = "Found"
+    $Preferencies = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\prefs.js"
+    $JsPrefs = Get-content $Preferencies|Select-String "extensions.lastPlatformVersion"
+    $ParsingData = $JsPrefs[0] -replace 'user_pref\(','' -replace '\"','' -replace ',','' -replace '\);','' -replace 'extensions.lastPlatformVersion','' -replace ' ',''
+}else{
+    $FFfound = "Missing"
+    $ParsingData = $null
+}
+echo "`nBrowser      Status      version" >> $LogFilePath\BrowserEnum.log
+echo "-------      ------      ------" >> $LogFilePath\BrowserEnum.log
+echo "IE           $IEfound       $IEVersion" >> $LogFilePath\BrowserEnum.log
+echo "FIREFOX      $FFfound       $ParsingData" >> $LogFilePath\BrowserEnum.log
+echo "CHROME       $CHfound       $Chrome_App" >> $LogFilePath\BrowserEnum.log
 
 
 function ConvertFrom-Json20([object] $item){
