@@ -97,7 +97,7 @@ If($Flash_Path -eq $True){
 echo "$MInvocation" >> $LogFilePath\BrowserEnum.log
 ## Detect ALL Available browsers Installed
 $IEVersion = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Internet Explorer" -ErrorAction SilentlyContinue).version
-If($IEVersion){$IEfound = "Found"}else{$IEfound = "Missing"}
+If($IEVersion){$IEfound = "Found"}else{$IEfound = "Missing";$IEVersion = $null}
 $Chrome_App = (Get-ItemProperty "HKCU:\Software\Google\Chrome\BLBeacon" -ErrorAction SilentlyContinue).version
 If($Chrome_App){$CHfound = "Found"}else{$CHfound = "missing";$Chrome_App = $null}
 If(Test-Path -Path "$env:APPDATA\Mozilla\Firefox\Profiles"){
