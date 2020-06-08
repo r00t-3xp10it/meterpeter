@@ -92,7 +92,9 @@ $Flash_Path = Test-Path "$env:WINDIR\system32\macromed\flash\flash.ocx";
 If($Flash_Path -eq $True){
     $flash = Get-Item "$env:WINDIR\system32\macromed\flash\flash.ocx"|select *
     $flashName = $flash.versioninfo.InternalName
+    $flashVersion = $flash.versioninfo.ProductVersion
     echo "flashName    : $flashName" >> $LogFilePath\BrowserEnum.log
+    echo "flashVersion : $flashVersion" >> $LogFilePath\BrowserEnum.log
 }
 echo "$MInvocation" >> $LogFilePath\BrowserEnum.log
 
