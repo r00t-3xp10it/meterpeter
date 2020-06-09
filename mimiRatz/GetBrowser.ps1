@@ -123,14 +123,14 @@ function SYSTEM_DEFAULTS {
     echo "`nBrowser      Status      Version         PreDefined" > $LogFilePath\BrowserEnum.log
     echo "-------      ------      ------          ----------" >> $LogFilePath\BrowserEnum.log
     echo "IE           $IEfound       $IEVersion    $MInvocation" >> $LogFilePath\BrowserEnum.log
-    echo "FIREFOX      $FFfound       $ParsingData" >> $LogFilePath\BrowserEnum.log
     echo "CHROME       $CHfound       $Chrome_App" >> $LogFilePath\BrowserEnum.log
+    echo "FIREFOX      $FFfound       $ParsingData" >> $LogFilePath\BrowserEnum.log
 }
 
 
 function IE_Dump {
   ## Retrieve IE Browser Information
-  echo "`n`n`nIE Browser" >> $LogFilePath\BrowserEnum.log
+  echo "`n`nIE Browser" >> $LogFilePath\BrowserEnum.log
   echo "----------" >> $LogFilePath\BrowserEnum.log
   $IEVersion = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Internet Explorer" -Name 'Version' -ErrorAction SilentlyContinue|Select-Object 'Version'
   If(-not($IEVersion) -or $IEVersion -eq $null){
@@ -193,7 +193,7 @@ function IE_Dump {
 
 function FIREFOX {
   ## Retrieve FireFox Browser Information
-  echo "`n`n`nFireFox Browser" >> $LogFilePath\BrowserEnum.log
+  echo "`n`nFireFox Browser" >> $LogFilePath\BrowserEnum.log
   echo "---------------" >> $LogFilePath\BrowserEnum.log
   $Path = Test-Path "$env:APPDATA\Mozilla\Firefox\Profiles";
   If($Path -eq $True){
@@ -249,7 +249,7 @@ function FIREFOX {
 
 function CHROME {
   ## Retrieve Google Chrome Browser Information
-  echo "`n`n`nChrome Browser" >> $LogFilePath\BrowserEnum.log
+  echo "`n`nChrome Browser" >> $LogFilePath\BrowserEnum.log
   echo "--------------" >> $LogFilePath\BrowserEnum.log
   $Chrome_App = Get-ItemProperty 'HKCU:\Software\Google\Chrome\BLBeacon' -ErrorAction SilentlyContinue
   If(-not($Chrome_App) -or $Chrome_App -eq $null){
