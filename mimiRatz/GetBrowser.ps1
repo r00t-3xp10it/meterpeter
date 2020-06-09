@@ -103,7 +103,7 @@ function ConvertFrom-Json20([object] $item){
 }
 
 
-function SYSTEM_DEFAULTS {
+function BROWSER_RECON {
     ## Detect ALL Available browsers Installed
     $DefaultBrowser = (Get-ItemProperty 'HKCU:\Software\Microsoft\Windows\Shell\Associations\UrlAssociations\https\UserChoice').ProgId
     $MInvocation = $DefaultBrowser.split("-")[0] -replace 'URL','' -replace 'HTML','' -replace '.HTTPS',''
@@ -339,9 +339,9 @@ function CHROME {
 ## Jump Links (Functions)
 If($param1 -eq "-IE"){IE_Dump}
 If($param1 -eq "-CHROME"){CHROME}
-If($param1 -eq "-RECON"){SYSTEM_DEFAULTS}
+If($param1 -eq "-RECON"){BROWSER_RECON}
 If($param1 -eq "-FIREFOX"){FIREFOX}
-If($param1 -eq "-ALL"){SYSTEM_DEFAULTS;IE_Dump;FIREFOX;CHROME}
+If($param1 -eq "-ALL"){BROWSER_RECON;IE_Dump;FIREFOX;CHROME}
 
 ## Build displays
 # New-Object -TypeName PSObject -Property @{
