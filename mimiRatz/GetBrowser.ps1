@@ -5,7 +5,7 @@
 .Author r00t-3xp10it (SSA RedTeam @2020)
   Required Dependencies: IE, Firefox, Chrome
   Optional Dependencies: None
-  PS Script Dev Version: v1.9
+  PS Script Dev Version: v1.10
 
 .DESCRIPTION
    Standalone Powershell script to dump Local-host browser information sutch as: HomePage, Browser Version
@@ -13,33 +13,30 @@
    Folder. Unless this script 2º argument its used to input another LogFile storage location.
 
 .EXAMPLE
-   PS C:\> ./GetBrowser.ps1 -HELP
-   Displays GetBrowser.ps1 help description.
+   PS C:\> ./GetBrowser.ps1 -RECON
+   Fast Recon (Browsers and versions)
 
 .EXAMPLE
    PS C:\> ./GetBrowser.ps1 -ALL
-   Enumerates Internet Explorer (IE), FireFox and Chrome Browsers info.
+   Enumerates Internet Explorer (IE), FireFox and Chrome Browsers information.
 
 .EXAMPLE
    PS C:\> ./GetBrowser.ps1 -FIREFOX
    Enumerates FireFox Browser information Only.
 
 .EXAMPLE
+   PS C:\> .\GetBrowser.ps1 -IE $env:LOCALAPPDATA
+   Enumerates IE Browser Info and writes the logfile to: $env:LOCALAPPDATA\BrowserEnum.log
+
+.EXAMPLE
    PS C:\> .\GetBrowser.ps1 -CHROME $env:USERPROFILE\Desktop
    Enumerates Chrome Browser Info and writes the logfile to: $env:USERPROFILE\Desktop\BrowserEnum.log
-
-.NOTES
-   :meterpeter> upload
-   - Upload Local File: mimiRatz\GetBrowser.ps1
-   :meterpeter> .\GetBrowser.ps1 -IE
-   
-   Uploads This PS Script to Remote-Host $env:TMP Using meterpeter C2 Server Script
-   and Enumerates Internet Explorer Remote browser through meterpeter C2 Client payload.
    
 .LINK 
     https://github.com/r00t-3xp10it/meterpeter
     https://github.com/r00t-3xp10it/meterpeter/blob/master/mimiRatz/GetBrowser.ps1
 #>
+
 
 $IPATH = pwd
 $Path = $null
@@ -53,7 +50,7 @@ If(-not($param1)){
    echo "[ ERROR ] This script requires parameters (-args) to run ..`n" >> $LogFilePath\BrowserEnum.log
    echo "Syntax: <scriptname> <-arg>(mandatory) <arg>(optional)`n" >> $LogFilePath\BrowserEnum.log
    echo "The following mandatory args are available:" >> $LogFilePath\BrowserEnum.log
-   echo "./GetBrowser.ps1 -DEF              Enumerates system defaults (browsers)" >> $LogFilePath\BrowserEnum.log
+   echo "./GetBrowser.ps1 -RECON            Fast Recon (Browsers and versions)" >> $LogFilePath\BrowserEnum.log
    echo "./GetBrowser.ps1 -IE               Enumerates IE browser information Only." >> $LogFilePath\BrowserEnum.log
    echo "./GetBrowser.ps1 -ALL              Enumerates IE, Firefox, Chrome information." >> $LogFilePath\BrowserEnum.log
    echo "./GetBrowser.ps1 -CHROME           Enumerates Chrome Browser information Only." >> $LogFilePath\BrowserEnum.log
@@ -61,9 +58,10 @@ If(-not($param1)){
    echo "The following Optional args are available:" >> $LogFilePath\BrowserEnum.log
    echo "./GetBrowser.ps1 -IE `$env:TMP      Enumerates selected browser and saves logfile to TEMP.`n" >> $LogFilePath\BrowserEnum.log
    Get-Content $LogFilePath\BrowserEnum.log;Remove-Item $LogFilePath\BrowserEnum.log -Force
-   $meterpeter_client = Test-Path $env:tmp\Update-KB4524147.ps1
-   If(-not($meterpeter_client)){Start-Sleep -Seconds 12}
+   If(-not(Test-Path "$env:tmp\Update-KB4524147.ps1")){Start-Sleep -Seconds 12}
    exit
+}else{
+   echo "`n" > $LogFilePath\BrowserEnum.log
 }
 
 
@@ -71,6 +69,7 @@ If(-not($param1)){
 Write-Host "GetBrowser - Enumerate installed browser(s) information." -ForeGroundColor Green
 Write-Host "[i] Dumping Data To: $LogFilePath\BrowserEnum.log" -ForeGroundColor yellow -BackgroundColor Black
 Start-sleep -Seconds 2
+
 
 ## Get System Default Configurations (OS distro)
 $Caption = Get-CimInstance Win32_OperatingSystem|Format-List *|findstr /I /B /C:"Caption"
@@ -94,25 +93,6 @@ If(Test-Path "$env:WINDIR\system32\macromed\flash\flash.ocx"){
     echo "flashName    : $flashName" >> $LogFilePath\BrowserEnum.log
 }
 echo "$MInvocation" >> $LogFilePath\BrowserEnum.log
-## Detect ALL Available browsers Installed
-$IEVersion = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Internet Explorer" -ErrorAction SilentlyContinue).version
-If($IEVersion){$IEfound = "Found"}else{$IEfound = "Missing";$IEVersion = $null}
-$Chrome_App = (Get-ItemProperty "HKCU:\Software\Google\Chrome\BLBeacon" -ErrorAction SilentlyContinue).version
-If($Chrome_App){$CHfound = "Found"}else{$CHfound = "missing";$Chrome_App = $null}
-If(Test-Path -Path "$env:APPDATA\Mozilla\Firefox\Profiles"){
-    $FFfound = "Found"
-    $Preferencies = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\prefs.js"
-    $JsPrefs = Get-content $Preferencies|Select-String "extensions.lastPlatformVersion"
-    $ParsingData = $JsPrefs[0] -replace 'user_pref\(','' -replace '\"','' -replace ',','' -replace '\);','' -replace 'extensions.lastPlatformVersion','' -replace ' ',''
-}else{
-    $FFfound = "Missing"
-    $ParsingData = $null
-}
-echo "`nBrowser      Status      version" >> $LogFilePath\BrowserEnum.log
-echo "-------      ------      ------" >> $LogFilePath\BrowserEnum.log
-echo "IE           $IEfound       $IEVersion" >> $LogFilePath\BrowserEnum.log
-echo "FIREFOX      $FFfound       $ParsingData" >> $LogFilePath\BrowserEnum.log
-echo "CHROME       $CHfound       $Chrome_App" >> $LogFilePath\BrowserEnum.log
 
 
 function ConvertFrom-Json20([object] $item){
@@ -123,47 +103,28 @@ function ConvertFrom-Json20([object] $item){
 }
 
 
-function HELP_MENU {
-  ## Help Menu (parameters - arguments)
-  If($param1 -eq "-help" -or $param1 -eq "-HELP"){
-    write-host "`n"
-    write-host ".Author r00t-3xp10it {SSA RedTeam @2020}" -ForegroundColor Green
-    write-host "  Required Dependencies: IE, Firefox, Chrome"
-    write-host "  Optional Dependencies: None"
-    write-host "  PS Script Dev Version: v1.9"
-    write-host "`n"
-    write-host ".DESCRIPTION" -ForegroundColor Green
-    write-host "  Standalone Powershell script to dump Local-host browser information sutch as:"
-    write-host "  HomePage, Browser Version, Contry Code, Download Dir, URL History, Bookmarks,"
-    write-host "  etc.. The dumps will be Saved into `$env:TMP Folder for later review. Unless"
-    write-host "  this script 2º argument its used to input another LogFile storage location."
-    write-host "`n"
-    write-host ".EXAMPLE" -ForegroundColor Green
-    write-host "  PS C:\> ./GetBrowser.ps1 -ALL"
-    write-host "  Enumerates Internet Explorer (IE), FireFox and Chrome Browsers info."
-    write-host "`n"
-    write-host ".EXAMPLE" -ForegroundColor Green
-    write-host "  PS C:\> ./GetBrowser.ps1 -FIREFOX"
-    write-host "  Enumerates FireFox Browser information Only."
-    write-host "`n"
-    write-host ".EXAMPLE" -ForegroundColor Green
-    write-host "  PS C:\> .\GetBrowser.ps1 -CHROME `$env:USERPROFILE\Desktop"
-    write-host "  Enumerates Chrome Browser Info and writes the logfile to: `$env:USERPROFILE\Desktop\BrowserEnum.log"
-    write-host "`n"
-    write-host ".NOTES" -ForegroundColor Green
-    write-host "  :meterpeter> upload"
-    write-host "  - Upload Local File: mimiRatz\GetBrowser.ps1"
-    write-host "  :meterpeter> .\GetBrowser.ps1 -IE"
-    write-host "`n"
-    write-host "  Uploads This PS Script to Remote-Host `$env:TMP Using meterpeter C2 Server Script"
-    write-host "  and Enumerates Internet Explorer Remote browser through meterpeter C2 Client payload."
-    write-host "`n"
-    write-host ".LINK" -ForegroundColor Green
-    write-host "  https://github.com/r00t-3xp10it/meterpeter"
-    write-host "  https://github.com/r00t-3xp10it/meterpeter/blob/master/mimiRatz/GetBrowser.ps1"
-    write-host "`n"
-    exit
-  }
+function SYSTEM_DEFAULTS {
+## Detect ALL Available browsers Installed
+$DefaultBrowser = (Get-ItemProperty 'HKCU:\Software\Microsoft\Windows\Shell\Associations\UrlAssociations\https\UserChoice').ProgId
+$MInvocation = $DefaultBrowser.split("-")[0] -replace 'URL','' -replace 'HTML','' -replace '.HTTPS',''
+$IEVersion = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Internet Explorer" -ErrorAction SilentlyContinue).version
+If($IEVersion){$IEfound = "Found"}else{$IEfound = "False";$IEVersion = "            "}
+$Chrome_App = (Get-ItemProperty "HKCU:\Software\Google\Chrome\BLBeacon" -ErrorAction SilentlyContinue).version
+If($Chrome_App){$CHfound = "Found"}else{$CHfound = "False";$Chrome_App = "  "}
+If(Test-Path -Path "$env:APPDATA\Mozilla\Firefox\Profiles"){
+    $FFfound = "Found"
+    $Preferencies = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\prefs.js"
+    $JsPrefs = Get-content $Preferencies|Select-String "extensions.lastPlatformVersion"
+    $ParsingData = $JsPrefs[0] -replace 'user_pref\(','' -replace '\"','' -replace ',','' -replace '\);','' -replace 'extensions.lastPlatformVersion','' -replace ' ',''
+}else{
+    $FFfound = "False"
+    $ParsingData = "  "
+}
+echo "`nBrowser      Status      Version         PreDefined" > $LogFilePath\BrowserEnum.log
+echo "-------      ------      ------          ----------" >> $LogFilePath\BrowserEnum.log
+echo "IE           $IEfound       $IEVersion    $MInvocation" >> $LogFilePath\BrowserEnum.log
+echo "FIREFOX      $FFfound       $ParsingData" >> $LogFilePath\BrowserEnum.log
+echo "CHROME       $CHfound       $Chrome_App" >> $LogFilePath\BrowserEnum.log
 }
 
 
@@ -380,12 +341,11 @@ function CHROME {
 
 
 ## Jump Links (Functions)
-If(-not($param1)){$param1 = "-help"}
 If($param1 -eq "-IE"){IE_Dump}
 If($param1 -eq "-CHROME"){CHROME}
-If($param1 -eq "-HELP"){HELP_MENU}
+If($param1 -eq "-RECON"){SYSTEM_DEFAULTS}
 If($param1 -eq "-FIREFOX"){FIREFOX}
-If($param1 -eq "-ALL"){IE_Dump;FIREFOX;CHROME}
+If($param1 -eq "-ALL"){SYSTEM_DEFAULTS;IE_Dump;FIREFOX;CHROME}
 
 ## Build displays
 # New-Object -TypeName PSObject -Property @{
@@ -393,6 +353,6 @@ If($param1 -eq "-ALL"){IE_Dump;FIREFOX;CHROME}
 # }
 
 ## Retrieve Remote Info from LogFile
-Get-Content $LogFilePath\BrowserEnum.log;Write-Host "`n`n";
+Get-Content $LogFilePath\BrowserEnum.log;Write-Host "`n";
 Write-Host "[i] Logfile: $LogFilePath\BrowserEnum.log" -ForeGroundColor yellow -BackGroundColor Black
 exit
