@@ -121,7 +121,7 @@ function SYSTEM_DEFAULTS {
         $ParsingData = "  "
     }
     echo "`nBrowser      Status      Version         PreDefined" > $LogFilePath\BrowserEnum.log
-    echo "-------      ------      ------          ----------" >> $LogFilePath\BrowserEnum.log
+    echo "-------      ------      -------         ----------" >> $LogFilePath\BrowserEnum.log
     echo "IE           $IEfound       $IEVersion    $MInvocation" >> $LogFilePath\BrowserEnum.log
     echo "CHROME       $CHfound       $Chrome_App" >> $LogFilePath\BrowserEnum.log
     echo "FIREFOX      $FFfound       $ParsingData" >> $LogFilePath\BrowserEnum.log
@@ -130,7 +130,7 @@ function SYSTEM_DEFAULTS {
 
 function IE_Dump {
   ## Retrieve IE Browser Information
-  echo "`n`nIE Browser" >> $LogFilePath\BrowserEnum.log
+  echo "`nIE Browser" >> $LogFilePath\BrowserEnum.log
   echo "----------" >> $LogFilePath\BrowserEnum.log
   $IEVersion = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Internet Explorer" -Name 'Version' -ErrorAction SilentlyContinue|Select-Object 'Version'
   If(-not($IEVersion) -or $IEVersion -eq $null){
@@ -193,7 +193,7 @@ function IE_Dump {
 
 function FIREFOX {
   ## Retrieve FireFox Browser Information
-  echo "`n`nFireFox Browser" >> $LogFilePath\BrowserEnum.log
+  echo "`nFireFox Browser" >> $LogFilePath\BrowserEnum.log
   echo "---------------" >> $LogFilePath\BrowserEnum.log
   $Path = Test-Path "$env:APPDATA\Mozilla\Firefox\Profiles";
   If($Path -eq $True){
@@ -249,7 +249,7 @@ function FIREFOX {
 
 function CHROME {
   ## Retrieve Google Chrome Browser Information
-  echo "`n`nChrome Browser" >> $LogFilePath\BrowserEnum.log
+  echo "`nChrome Browser" >> $LogFilePath\BrowserEnum.log
   echo "--------------" >> $LogFilePath\BrowserEnum.log
   $Chrome_App = Get-ItemProperty 'HKCU:\Software\Google\Chrome\BLBeacon' -ErrorAction SilentlyContinue
   If(-not($Chrome_App) -or $Chrome_App -eq $null){
@@ -260,23 +260,23 @@ function CHROME {
       $Parse_String = $Preferencies_Path.split(",")
       $Search_Download = $Parse_String|select-string "download"
       $Store_Dump = $Search_Download[1] # download_history Property
-      $Parse_Dump = $Store_Dump -replace '"','' -replace ':',' : '
+      $Parse_Dump = $Store_Dump -replace '"','' -replace ':','      : ' -replace 'download_history','History'
       echo "$Parse_Dump" >> $LogFilePath\BrowserEnum.log
 
       ## Retrieve Browser accept languages
       $Parse_String = $Preferencies_Path.split(",")
       $Search_Lang = $Parse_String|select-string "accept_languages"
-      $Parse_Dump = $Search_Lang -replace '"','' -replace 'intl:{','' -replace ':',' : '
+      $Parse_Dump = $Search_Lang -replace '"','' -replace 'intl:{','' -replace ':','    : ' -replace 'accept_languages','Languages'
       echo "$Parse_Dump" >> $LogFilePath\BrowserEnum.log
 
       ## Retrieve Browser Version
       $GCVersionInfo = (Get-ItemProperty 'HKCU:\Software\Google\Chrome\BLBeacon').Version
-      echo "Version          : $GCVersionInfo" >> $LogFilePath\BrowserEnum.log
+      echo "Version      : $GCVersionInfo" >> $LogFilePath\BrowserEnum.log
 
       ## Retrieve Email from Google CHROME preferencies File ..
       $Parse_String = $Preferencies_Path.split(",")
       $Search_Email = $Parse_String|select-string "email"
-      $Parse_Dump = $Search_Email -replace ' ','' -replace '"','' -replace ':','            : '
+      $Parse_Dump = $Search_Email -replace ' ','' -replace '"','' -replace ':','        : '
 
       If(-not($Search_Email) -or $Search_Email -eq $null){
           echo "Email            : None Email Found .." >> $LogFilePath\BrowserEnum.log
