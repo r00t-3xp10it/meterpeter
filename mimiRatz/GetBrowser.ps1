@@ -197,27 +197,23 @@ function FIREFOX {
   echo "---------------" >> $LogFilePath\BrowserEnum.log
   $Path = Test-Path "$env:APPDATA\Mozilla\Firefox\Profiles";
   If($Path -eq $True){
-      ## change to the correct directory structure
-      cd $env:APPDATA\Mozilla\Firefox\Profiles\*.default
-
+      $Path = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\prefs.js"
       ## get browser countryCode
-      $JsPrefs = Get-content prefs.js|Select-String "browser.search.countryCode";
+      $JsPrefs = Get-content "$Path"|Select-String "browser.search.countryCode";
       $ParsingData = $JsPrefs[0] -replace 'user_pref\(','' -replace '\"','' -replace ',',':' -replace '\);','' -replace 'browser.search.countryCode','countryCode  '
       echo "$ParsingData" >> $LogFilePath\BrowserEnum.log
       ## get PlatformVersion
-      $JsPrefs = Get-content prefs.js|Select-String "extensions.lastPlatformVersion"
+      $JsPrefs = Get-content "$Path"|Select-String "extensions.lastPlatformVersion"
       $ParsingData = $JsPrefs[0] -replace 'user_pref\(','' -replace '\"','' -replace ',',':' -replace '\);','' -replace 'extensions.lastPlatformVersion','Version      '
       echo "$ParsingData" >> $LogFilePath\BrowserEnum.log
       ## get brownser startup page
-      $JsPrefs = Get-content prefs.js|Select-String "browser.startup.homepage"
+      $JsPrefs = Get-content "$Path"|Select-String "browser.startup.homepage"
       $ParsingData = $JsPrefs[0] -replace 'user_pref\(','' -replace '\"','' -replace ',',':' -replace '\);','' -replace 'browser.startup.homepage','HomePage     '
       echo "$ParsingData" >> $LogFilePath\BrowserEnum.log
       ## get browser DownloadDir
-      $JsPrefs = Get-content prefs.js|Select-String "browser.download.lastDir";
+      $JsPrefs = Get-content "$Path"|Select-String "browser.download.lastDir";
       $ParsingData = $JsPrefs[0] -replace 'user_pref\(','' -replace '\"','' -replace ',',':' -replace '\);','' -replace 'browser.download.lastDir','Downloads    '
       echo "$ParsingData" >> $LogFilePath\BrowserEnum.log
-      ## Returning to working directory
-      cd $IPATH
   }else{
       echo "Could not find any Browser Info .." >> $LogFilePath\BrowserEnum.log
   }
