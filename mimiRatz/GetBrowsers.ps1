@@ -40,11 +40,12 @@
 
 $IPATH = pwd
 $Path = $null
+$mpset = $False
 $param1 = $args[0] # User Inputs [Arguments]
 $param2 = $args[1] # User Inputs [Arguments]
 $host.UI.RawUI.WindowTitle = " @GetBrowsers v1.10"
 ## Auto-Set @Args in case of User empty inputs (Set LogFile Path).
-If(-not($param2)){$LogFilePath = "$env:TMP"}else{$LogFilePath = "$param2"}
+If(-not($param2)){$LogFilePath = "$env:TMP"}else{$LogFilePath = "$param2";$mpset = $True}
 If(-not($param1)){
     ## Required (Mandatory) Parameters/args Settings
     echo "`nGetBrowsers - Enumerate installed browser(s) information ." > $LogFilePath\BrowserEnum.log
@@ -73,7 +74,7 @@ If(-not($param1)){
 ## [GetBrowsers] PS Script Banner (Manual Run)
 # For those who insiste in running this script outside meterpeter
 Write-Host "GetBrowsers - Enumerate installed browser(s) information." -ForeGroundColor Green
-Write-Host "[i] DataDump => $LogFilePath\BrowserEnum.log" -ForeGroundColor yellow -BackgroundColor Black
+If($mpset -eq $True){Write-Host "[i] DataDump => $LogFilePath\BrowserEnum.log" -ForeGroundColor yellow -BackgroundColor Black}
 Start-sleep -Seconds 1
 
 
