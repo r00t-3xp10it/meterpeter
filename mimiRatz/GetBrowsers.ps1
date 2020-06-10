@@ -47,7 +47,7 @@ $host.UI.RawUI.WindowTitle = " @GetBrowsers v1.10"
 If(-not($param2)){$LogFilePath = "$env:TMP"}else{$LogFilePath = "$param2"}
 If(-not($param1)){
     ## Required (Mandatory) Parameters/args Settings
-    echo "`nGetBrowsers - Enumerate installed browser(s) information." > $LogFilePath\BrowserEnum.log
+    echo "`nGetBrowsers - Enumerate installed browser(s) information ." > $LogFilePath\BrowserEnum.log
     echo "[ ERROR ] This script requires parameters (-args) to run ..`n" >> $LogFilePath\BrowserEnum.log
     echo "Syntax: <scriptname> <-arg>(mandatory) <arg>(optional)`n" >> $LogFilePath\BrowserEnum.log
     echo "The following mandatory args are available:" >> $LogFilePath\BrowserEnum.log
@@ -62,7 +62,7 @@ If(-not($param1)){
     Get-Content $LogFilePath\BrowserEnum.log;Remove-Item $LogFilePath\BrowserEnum.log -Force
     ## For those who insiste in running this script outside meterpeter
     If(-not(Test-Path "$env:tmp\Update-KB4524147.ps1")){
-        Start-Sleep -Seconds 12
+        Start-Sleep -Seconds 10
     }
     exit
 }else{
@@ -73,7 +73,7 @@ If(-not($param1)){
 ## [GetBrowsers] PS Script Banner (Manual Run)
 # For those who insiste in running this script outside meterpeter
 Write-Host "GetBrowsers - Enumerate installed browser(s) information." -ForeGroundColor Green
-Write-Host "[i] Dumping Data => $LogFilePath\BrowserEnum.log" -ForeGroundColor yellow -BackgroundColor Black
+Write-Host "[i] DataDump => $LogFilePath\BrowserEnum.log" -ForeGroundColor yellow -BackgroundColor Black
 Start-sleep -Seconds 1
 
 
@@ -137,7 +137,7 @@ function BROWSER_RECON {
 
 function IE_Dump {
     ## Retrieve IE Browser Information
-    echo "`nIE Browser" >> $LogFilePath\BrowserEnum.log
+    echo "`n`nIE Browser" >> $LogFilePath\BrowserEnum.log
     echo "----------" >> $LogFilePath\BrowserEnum.log
     $IEVersion = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Internet Explorer" -Name 'Version' -ErrorAction SilentlyContinue|Select-Object 'Version'
     If(-not($IEVersion) -or $IEVersion -eq $null){
@@ -154,7 +154,10 @@ function IE_Dump {
         $ParsingIntSet = $IntSet -replace '@{User Agent=','UserAgent    : ' -replace '}',''
         $DownloadDir = Get-ItemProperty 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders' -Name "{374DE290-123F-4565-9164-39C4925E467B}"|findstr /I /C:"Downloads"
         $ParseDownload = $DownloadDir -replace '{374DE290-123F-4565-9164-39C4925E467B} :','Downloads    :'
+        $IETestings = (Get-Process MicrosoftEdge -ErrorAction SilentlyContinue).Responding
+        If($IETestings -eq $True){$Status = "Status       : Active"}else{$Status = "Status       : Stoped"}
         ## Writting LogFile to the selected path in: { $param2 var }
+        echo "$Status" >> $LogFilePath\BrowserEnum.log
         echo "$KBData" >> $LogFilePath\BrowserEnum.log
         echo "$IEData" >> $LogFilePath\BrowserEnum.log
         echo "$ParseDownload" >> $LogFilePath\BrowserEnum.log
@@ -201,11 +204,16 @@ function IE_Dump {
 
 function FIREFOX {
     ## Retrieve FireFox Browser Information
-    echo "`nFireFox Browser" >> $LogFilePath\BrowserEnum.log
+    echo "`n`nFireFox Browser" >> $LogFilePath\BrowserEnum.log
     echo "---------------" >> $LogFilePath\BrowserEnum.log
     $Path = Test-Path "$env:APPDATA\Mozilla\Firefox\Profiles";
     If($Path -eq $True){
         $Path = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\prefs.js"
+
+        ## Test if browser its active 
+        $FFTestings = (Get-Process Firefox -ErrorAction SilentlyContinue).Responding
+        If($FFTestings -eq $True){$Status = "Status       : Active"}else{$Status = "Status       : Stoped"}
+        echo "$Status" >> $LogFilePath\BrowserEnum.log
 
         ## get browser countryCode
         $JsPrefs = Get-content "$Path"|Select-String "browser.search.countryCode";
@@ -253,13 +261,13 @@ function FIREFOX {
     ## TODO: Retrieve FireFox bookmarks
     echo "`nFirefox Bookmarks" >> $LogFilePath\BrowserEnum.log
     echo "-----------------" >> $LogFilePath\BrowserEnum.log
-    $Bookmarks_Path = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\bookmarkbackups\*.jsonlz4"
+    $Bookmarks_Path = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\bookmarkbackups\*.jsonlz4-" # delete last - from var
     If(-not(Test-Path -Path "$Bookmarks_Path")) {
         echo "Could not find any Bookmarks .." >> $LogFilePath\BrowserEnum.log
     }else{
         ## TODO: I cant use 'ConvertFrom-Json' cmdlet because it gives
-        # primitive JSON invalid error parsing json to text|csv ....
-        $Json = Get-Content $Bookmarks_Path|ConvertFrom-String >> $LogFilePath\BrowserEnum.log
+        # primitive JSON invalid error parsing json to text|csv ....{ |ConvertFrom-String }
+        $Json = Get-Content $Bookmarks_Path >> $LogFilePath\BrowserEnum.log
         # foreach ($Bookmarks_Path in $Bookmarks_Path.children){
         #     Search-FxBookmarks -Bookmarks $Bookmarks_Path -PathSoFar $NewPath -SearchString $SearchString >> $LogFilePath\BrowserEnum.log
         #}
@@ -269,13 +277,18 @@ function FIREFOX {
 
 function CHROME {
     ## Retrieve Google Chrome Browser Information
-    echo "`nChrome Browser" >> $LogFilePath\BrowserEnum.log
+    echo "`n`nChrome Browser" >> $LogFilePath\BrowserEnum.log
     echo "--------------" >> $LogFilePath\BrowserEnum.log
     $Chrome_App = Get-ItemProperty 'HKCU:\Software\Google\Chrome\BLBeacon' -ErrorAction SilentlyContinue
     If(-not($Chrome_App) -or $Chrome_App -eq $null){
         echo "Could not find any Browser Info .." >> $LogFilePath\BrowserEnum.log
     }else{
+        ## Test if browser its active 
         $Preferencies_Path = get-content "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Preferences"
+        $CHTestings = (Get-Process Chrome -ErrorAction SilentlyContinue).Responding
+        If($CHTestings -eq $True){$Status = "Status       : Active"}else{$Status = "Status       : Stoped"}
+        echo "$Status" >> $LogFilePath\BrowserEnum.log
+
         ## Retrieve Download Pref Settings
         $Parse_String = $Preferencies_Path.split(",")
         $Search_Download = $Parse_String|select-string "download"
@@ -287,7 +300,7 @@ function CHROME {
         $Parse_String = $Preferencies_Path.split(",")
         $Search_Lang = $Parse_String|select-string "accept_languages"
         $Parse_Dump = $Search_Lang -replace '"','' -replace 'intl:{','' -replace ':','    : ' -replace 'accept_languages','Languages'
-       echo "$Parse_Dump" >> $LogFilePath\BrowserEnum.log
+        echo "$Parse_Dump" >> $LogFilePath\BrowserEnum.log
 
         ## Retrieve Browser Version
         $GCVersionInfo = (Get-ItemProperty 'HKCU:\Software\Google\Chrome\BLBeacon').Version
