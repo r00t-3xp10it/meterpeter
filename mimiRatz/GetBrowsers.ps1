@@ -111,7 +111,7 @@ function ConvertFrom-Json20([object] $item){
 
 function BROWSER_RECON {
     ## Detect ALL Available browsers Installed and the PreDefined browser name
-    $DefaultBrowser = (Get-ItemProperty 'HKCU:\Software\Microsoft\Windows\Shell\Associations\UrlAssociations\https\UserChoice').ProgId
+    $DefaultBrowser = (Get-ItemProperty 'HKCU:\Software\Microsoft\Windows\Shell\Associations\UrlAssociations\https\UserChoice' -ErrorAction SilentlyContinue).ProgId
     $MInvocation = $DefaultBrowser.split("-")[0] -replace 'URL','' -replace 'HTML','' -replace '.HTTPS',''
     $IEVersion = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Internet Explorer" -ErrorAction SilentlyContinue).version
     If($IEVersion){$IEfound = "Found"}else{$IEfound = "False";$IEVersion = "            "}
