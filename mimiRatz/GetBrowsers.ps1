@@ -94,12 +94,12 @@ echo "---------------" >> $LogFilePath\BrowserEnum.log
 echo "$ParseCap" >> $LogFilePath\BrowserEnum.log 
 echo "$ParsingIntSet" >> $LogFilePath\BrowserEnum.log 
 ## Get Flash Internal Name/Version
-If(Test-Path "$env:WINDIR\system32\macromed\flash\flash.ocx"){
+If(-not(Test-Path "$env:WINDIR\system32\macromed\flash\flash.ocx")){
+    echo "flashName    : Not Found" >> $LogFilePath\BrowserEnum.log
+}else{
     $flash = Get-Item "$env:WINDIR\system32\macromed\flash\flash.ocx"|select *
     $flashName = $flash.versioninfo.InternalName
     echo "flashName    : $flashName" >> $LogFilePath\BrowserEnum.log
-}else{
-    echo "flashName    : Not Found" >> $LogFilePath\BrowserEnum.log
 }
 echo "$MInvocation" >> $LogFilePath\BrowserEnum.log
 
