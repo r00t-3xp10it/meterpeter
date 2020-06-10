@@ -80,14 +80,14 @@ Start-sleep -Seconds 1
 
 ## Get System Default Configurations
 $Caption = Get-CimInstance Win32_OperatingSystem|Format-List *|findstr /I /B /C:"Caption"
-$ParseCap = $Caption -replace '                                   :','      :'
+If($Caption){$ParseCap = $Caption -replace '                                   :','      :'}else{$ParseCap = "Caption      : Not Found"}
 ## Get System Default webBrowser
 $DefaultBrowser = (Get-ItemProperty 'HKCU:\Software\Microsoft\Windows\Shell\Associations\UrlAssociations\https\UserChoice' -ErrorAction SilentlyContinue).ProgId
-If($DefaultBrowser){$Parse_Browser_Data = $DefaultBrowser.split("-")[0] -replace 'URL','' -replace 'HTML','' -replace '.HTTPS',''}
+If($DefaultBrowser){$Parse_Browser_Data = $DefaultBrowser.split("-")[0] -replace 'URL','' -replace 'HTML','' -replace '.HTTPS',''}else{$Parse_Browser_Data = "Not Found"}
 $MInvocation = "WebBrowser   : "+"$Parse_Browser_Data"+" (PreDefined)";
 ## Get System UserAgent string
 $IntSet = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\internet settings" -Name 'User Agent' -ErrorAction SilentlyContinue|Select-Object 'User Agent'
-$ParsingIntSet = $IntSet -replace '@{User Agent=','UserAgent    : ' -replace '}',''
+If($IntSet){$ParsingIntSet = $IntSet -replace '@{User Agent=','UserAgent    : ' -replace '}',''}else{$ParsingIntSet = "UserAgent    : Not Found"}
 ## Writting LogFile to the selected path in: { $param2 var }
 echo "`n`nSystem Defaults" > $LogFilePath\BrowserEnum.log
 echo "---------------" >> $LogFilePath\BrowserEnum.log
@@ -98,6 +98,8 @@ If(Test-Path "$env:WINDIR\system32\macromed\flash\flash.ocx"){
     $flash = Get-Item "$env:WINDIR\system32\macromed\flash\flash.ocx"|select *
     $flashName = $flash.versioninfo.InternalName
     echo "flashName    : $flashName" >> $LogFilePath\BrowserEnum.log
+}else{
+    echo "flashName    : Not Found" >> $LogFilePath\BrowserEnum.log
 }
 echo "$MInvocation" >> $LogFilePath\BrowserEnum.log
 
