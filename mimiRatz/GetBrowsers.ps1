@@ -42,6 +42,7 @@ $IPATH = pwd
 $Path = $null
 $param1 = $args[0] # User Inputs [Arguments]
 $param2 = $args[1] # User Inputs [Arguments]
+$host.UI.RawUI.WindowTitle = " @GetBrowsers v1.10"
 ## Auto-Set @Args in case of User empty inputs (Set LogFile Path).
 If(-not($param2)){$LogFilePath = "$env:TMP"}else{$LogFilePath = "$param2"}
 If(-not($param1)){
@@ -68,10 +69,9 @@ If(-not($param1)){
 
 ## [GetBrowsers] PS Script Banner
 # For those who insiste in running this script outside meterpeter
-$host.UI.RawUI.WindowTitle = "@GetBrowsers v1.10"
 Write-Host "GetBrowsers - Enumerate installed browser(s) information." -ForeGroundColor Green
-Write-Host "[i] Dumping Data To: $LogFilePath\BrowserEnum.log" -ForeGroundColor yellow -BackgroundColor Black
-Start-sleep -Seconds 2
+Write-Host "[i] Dumping Data => $LogFilePath\BrowserEnum.log" -ForeGroundColor yellow -BackgroundColor Black
+Start-sleep -Seconds 1
 
 
 ## Get System Default Configurations (OS distro)
@@ -124,7 +124,7 @@ function BROWSER_RECON {
         $ParsingData = "  "
     }
     ## Build Table to display results
-    echo "`nBrowser      Status      Version         PreDefined" > $LogFilePath\BrowserEnum.log
+    echo "`n`nBrowser      Status      Version         PreDefined" > $LogFilePath\BrowserEnum.log
     echo "-------      ------      -------         ----------" >> $LogFilePath\BrowserEnum.log
     echo "IE           $IEfound       $IEVersion    $MInvocation" >> $LogFilePath\BrowserEnum.log
     echo "CHROME       $CHfound       $Chrome_App" >> $LogFilePath\BrowserEnum.log
@@ -371,5 +371,4 @@ If($param1 -eq "-ALL"){BROWSER_RECON;IE_Dump;FIREFOX;CHROME}
 # }
 ## Retrieve Remote Info from LogFile
 Get-Content $LogFilePath\BrowserEnum.log;Write-Host "`n";
-Write-Host "[i] Logfile: $LogFilePath\BrowserEnum.log" -ForeGroundColor yellow -BackGroundColor Black
 exit
