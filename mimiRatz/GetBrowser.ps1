@@ -17,20 +17,20 @@
    Fast Recon (Browsers and versions)
 
 .EXAMPLE
-   PS C:\> ./GetBrowser.ps1 -ALL
-   Enumerates Internet Explorer (IE), FireFox and Chrome Browsers information.
-
-.EXAMPLE
    PS C:\> ./GetBrowser.ps1 -FIREFOX
    Enumerates FireFox Browser information Only.
 
 .EXAMPLE
-   PS C:\> .\GetBrowser.ps1 -IE $env:LOCALAPPDATA
-   Enumerates IE Browser Info and writes the logfile to: $env:LOCALAPPDATA\BrowserEnum.log
+   PS C:\> .\GetBrowser.ps1 -ADDINS
+   Enumerates ALL browsers extentions (addins) installed
 
 .EXAMPLE
-   PS C:\> .\GetBrowser.ps1 -CHROME $env:USERPROFILE\Desktop
-   Enumerates Chrome Browser Info and writes the logfile to: $env:USERPROFILE\Desktop\BrowserEnum.log
+   PS C:\> ./GetBrowser.ps1 -ALL
+   Enumerates Internet Explorer (IE), FireFox and Chrome Browsers information.
+
+.EXAMPLE
+   PS C:\> .\GetBrowser.ps1 -IE $env:LOCALAPPDATA
+   Enumerates IE Browser Info and writes the logfile to: $env:LOCALAPPDATA\BrowserEnum.log
    
 .LINK 
     https://github.com/r00t-3xp10it/meterpeter
@@ -54,7 +54,8 @@ If(-not($param1)){
    echo "./GetBrowser.ps1 -IE               Enumerates IE browser information Only." >> $LogFilePath\BrowserEnum.log
    echo "./GetBrowser.ps1 -ALL              Enumerates IE, Firefox, Chrome information." >> $LogFilePath\BrowserEnum.log
    echo "./GetBrowser.ps1 -CHROME           Enumerates Chrome Browser information Only." >> $LogFilePath\BrowserEnum.log
-   echo "./GetBrowser.ps1 -FIREFOX          Enumerates Firefox Browser information Only.`n" >> $LogFilePath\BrowserEnum.log
+   echo "./GetBrowser.ps1 -FIREFOX          Enumerates Firefox Browser information Only." >> $LogFilePath\BrowserEnum.log
+   echo "./GetBrowser.ps1 -ADDINS           Enumerates ALL browsers extentions installed.`n" >> $LogFilePath\BrowserEnum.log
    echo "The following Optional args are available:" >> $LogFilePath\BrowserEnum.log
    echo "./GetBrowser.ps1 -IE `$env:TMP      Enumerates selected browser and saves logfile to TEMP.`n" >> $LogFilePath\BrowserEnum.log
    Get-Content $LogFilePath\BrowserEnum.log;Remove-Item $LogFilePath\BrowserEnum.log -Force
@@ -336,18 +337,33 @@ function CHROME {
 }
 
 
+function ADDINS {
+    ## Retrieve IE add-ins (BETA DEV)
+    echo "`n`n" >> $LogFilePath\BrowserEnum.log
+    $searchScopes = "HKCU:\SOFTWARE\Microsoft\Office\Outlook\Addins","HKLM:\SOFTWARE\Wow6432Node\Microsoft\Office\Outlook\Addins"
+    $searchScopes | % {Get-ChildItem -Path $_ | % {Get-ItemProperty -Path $_.PSPath} | Select-Object @{n="Name";e={Split-Path $_.PSPath -leaf}},FriendlyName} | Sort-Object -Unique -Property name >> $LogFilePath\BrowserEnum.log
+
+    ## Retrieve Chrome add-ins (BETA DEV)
+    Get-ChildItem "\\$env:COMPUTERNAME\c$\users\*\appdata\local\Google\Chrome\User Data\Default\Extensions\*\*\manifest.json" -ErrorAction SilentlyContinue | % {
+        $path = $_.FullName
+        $_.FullName -match 'users\\(.*?)\\appdata'|Out-Null
+        Get-Content $_.FullName -Raw|ConvertFrom-Json|select @{n='ComputerName';e={$env:COMPUTERNAME}}, @{n='User';e={$Matches[1]}}, Name, Version, @{n='Path';e={$path}} >> $LogFilePath\BrowserEnum.log
+    }
+}
+
+
 ## Jump Links (Functions)
 If($param1 -eq "-IE"){IE_Dump}
 If($param1 -eq "-CHROME"){CHROME}
-If($param1 -eq "-RECON"){BROWSER_RECON}
+If($param1 -eq "-ADDINS"){ADDINS}
 If($param1 -eq "-FIREFOX"){FIREFOX}
+If($param1 -eq "-RECON"){BROWSER_RECON}
 If($param1 -eq "-ALL"){BROWSER_RECON;IE_Dump;FIREFOX;CHROME}
 
 ## Build displays
 # New-Object -TypeName PSObject -Property @{
 #     Data = $_
 # }
-
 ## Retrieve Remote Info from LogFile
 Get-Content $LogFilePath\BrowserEnum.log;Write-Host "`n";
 Write-Host "[i] Logfile: $LogFilePath\BrowserEnum.log" -ForeGroundColor yellow -BackGroundColor Black
