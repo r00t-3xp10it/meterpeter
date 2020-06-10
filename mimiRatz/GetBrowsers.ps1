@@ -75,7 +75,6 @@ Start-sleep -Seconds 2
 
 
 ## Get System Default Configurations (OS distro)
-# For those who insiste in running this script outside meterpeter
 $Caption = Get-CimInstance Win32_OperatingSystem|Format-List *|findstr /I /B /C:"Caption"
 $ParseCap = $Caption -replace '                                   :','      :'
 ## Get System Default webBrowser
