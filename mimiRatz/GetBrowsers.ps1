@@ -34,6 +34,7 @@
 
 .NOTES
    GetBrowsers will delete the LogFile after every dump (If executed without the 2º argument).
+   If executed with the 2º arg then GetBrowsers will store the logfile in the Input location.
 
 .LINK 
     https://github.com/r00t-3xp10it/meterpeter
