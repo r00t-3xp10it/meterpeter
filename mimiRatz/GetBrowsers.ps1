@@ -82,11 +82,11 @@ Start-sleep -Seconds 1
 $Caption = Get-CimInstance Win32_OperatingSystem|Format-List *|findstr /I /B /C:"Caption"
 $ParseCap = $Caption -replace '                                   :','      :'
 ## Get System Default webBrowser
-$DefaultBrowser = (Get-ItemProperty 'HKCU:\Software\Microsoft\Windows\Shell\Associations\UrlAssociations\https\UserChoice').ProgId
-$Parse_Browser_Data = $DefaultBrowser.split("-")[0] -replace 'URL','' -replace 'HTML','' -replace '.HTTPS',''
+$DefaultBrowser = (Get-ItemProperty 'HKCU:\Software\Microsoft\Windows\Shell\Associations\UrlAssociations\https\UserChoice' -ErrorAction SilentlyContinue).ProgId
+If($DefaultBrowser){$Parse_Browser_Data = $DefaultBrowser.split("-")[0] -replace 'URL','' -replace 'HTML','' -replace '.HTTPS',''}
 $MInvocation = "WebBrowser   : "+"$Parse_Browser_Data"+" (PreDefined)";
 ## Get System UserAgent string
-$IntSet = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\internet settings" -Name 'User Agent'|Select-Object 'User Agent'
+$IntSet = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\internet settings" -Name 'User Agent' -ErrorAction SilentlyContinue|Select-Object 'User Agent'
 $ParsingIntSet = $IntSet -replace '@{User Agent=','UserAgent    : ' -replace '}',''
 ## Writting LogFile to the selected path in: { $param2 var }
 echo "`n`nSystem Defaults" > $LogFilePath\BrowserEnum.log
