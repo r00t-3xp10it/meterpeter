@@ -398,4 +398,5 @@ If($param1 -eq "-ALL"){BROWSER_RECON;IE_Dump;FIREFOX;CHROME}
 # }
 ## Retrieve Remote Info from LogFile
 Get-Content $LogFilePath\BrowserEnum.log;Write-Host "`n";
+If($mpset -eq $False){Remove-Item $LogFilePath\BrowserEnum.log -Force}
 exit
