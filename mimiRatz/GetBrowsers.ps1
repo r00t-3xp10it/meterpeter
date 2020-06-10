@@ -21,8 +21,8 @@
    Enumerates FireFox Browser information Only.
 
 .EXAMPLE
-   PS C:\> ./GetBrowsers.ps1 -ADDINS
-   Enumerates ALL browsers extentions installed (addins)
+   PS C:\> ./GetBrowsers.ps1 -ADDONS
+   Enumerates ALL browsers extentions installed (ADDONS)
 
 .EXAMPLE
    PS C:\> ./GetBrowsers.ps1 -ALL
@@ -56,7 +56,7 @@ If(-not($param1)){
     echo "./GetBrowsers.ps1 -ALL              Enumerates IE, Firefox, Chrome information." >> $LogFilePath\BrowserEnum.log
     echo "./GetBrowsers.ps1 -CHROME           Enumerates Chrome Browser information Only." >> $LogFilePath\BrowserEnum.log
     echo "./GetBrowsers.ps1 -FIREFOX          Enumerates Firefox Browser information Only." >> $LogFilePath\BrowserEnum.log
-    echo "./GetBrowsers.ps1 -ADDINS           Enumerates ALL browsers extentions installed.`n" >> $LogFilePath\BrowserEnum.log
+    echo "./GetBrowsers.ps1 -ADDONS           Enumerates ALL browsers extentions installed.`n" >> $LogFilePath\BrowserEnum.log
     echo "The following Optional args are available:" >> $LogFilePath\BrowserEnum.log
     echo "./GetBrowsers.ps1 -IE `$env:TMP      Enumerates selected browser and saves logfile to TEMP.`n" >> $LogFilePath\BrowserEnum.log
     Get-Content $LogFilePath\BrowserEnum.log;Remove-Item $LogFilePath\BrowserEnum.log -Force
@@ -355,7 +355,7 @@ function CHROME {
 }
 
 
-function ADDINS {
+function ADDONS {
     ## TODO: Retrieve IE add-ins (BETA DEV)
     echo "`n`n" >> $LogFilePath\BrowserEnum.log
     $searchScopes = "HKCU:\SOFTWARE\Microsoft\Office\Outlook\Addins","HKLM:\SOFTWARE\Wow6432Node\Microsoft\Office\Outlook\Addins"
@@ -372,7 +372,7 @@ function ADDINS {
 ## Jump Links (Functions)
 If($param1 -eq "-IE"){IE_Dump}
 If($param1 -eq "-CHROME"){CHROME}
-If($param1 -eq "-ADDINS"){ADDINS}
+If($param1 -eq "-ADDONS"){ADDONS}
 If($param1 -eq "-FIREFOX"){FIREFOX}
 If($param1 -eq "-RECON"){BROWSER_RECON}
 If($param1 -eq "-ALL"){BROWSER_RECON;IE_Dump;FIREFOX;CHROME}
