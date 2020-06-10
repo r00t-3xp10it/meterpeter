@@ -274,7 +274,7 @@ function FIREFOX {
             # foreach ($Bookmarks_Path in $Bookmarks_Path.children){
             #     Search-FxBookmarks -Bookmarks $Bookmarks_Path -PathSoFar $NewPath -SearchString $SearchString >> $LogFilePath\BrowserEnum.log
             #}
-    }
+        }
 }
 
 
