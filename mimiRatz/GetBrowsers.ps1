@@ -32,7 +32,7 @@
    PS C:\> ./GetBrowsers.ps1 -IE $env:LOCALAPPDATA
    Enumerates IE Browser Info and writes the logfile to: $env:LOCALAPPDATA\BrowserEnum.log
 
-.NOTE
+.NOTES
    GetBrowsers will delete the LogFile after every dump (If executed without the 2º argument).
 
 .LINK 
