@@ -65,8 +65,6 @@ If(-not($param1)){
             Start-Sleep -Seconds 10
         }
     Exit
-}else{
-    echo "`n" > $LogFilePath\BrowserEnum.log
 }
 
 
