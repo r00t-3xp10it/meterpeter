@@ -250,12 +250,20 @@ function FIREFOX {
         }
     }
 
-    ## TODO: firefox bookmarks
-    # $Bookmarks = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\bookmarkbackups\*.jsonlz4"
-    # Get-Content $Bookmarks|ConvertFrom-String > bookmarks.log
-    # foreach ($Bookmark in $Bookmarks.children) {
-    #      Search-FxBookmarks -Bookmarks $Bookmark -PathSoFar $NewPath -SearchString $SearchString
-    # }
+    ## TODO: Retrieve FireFox bookmarks
+    echo "`nFirefox Bookmarks" >> $LogFilePath\BrowserEnum.log
+    echo "-----------------" >> $LogFilePath\BrowserEnum.log
+    $Bookmarks_Path = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\bookmarkbackups\*.jsonlz4"
+    If(-not(Test-Path -Path "$Bookmarks_Path")) {
+        echo "Could not find any Bookmarks .." >> $LogFilePath\BrowserEnum.log
+    }else{
+        ## TODO: I cant use 'ConvertFrom-Json' cmdlet because it gives
+        # primitive JSON invalid error parsing json to text|csv ....
+        $Json = Get-Content $Bookmarks_Path|ConvertFrom-String >> $LogFilePath\BrowserEnum.log
+        # foreach ($Bookmarks_Path in $Bookmarks_Path.children){
+        #     Search-FxBookmarks -Bookmarks $Bookmarks_Path -PathSoFar $NewPath -SearchString $SearchString >> $LogFilePath\BrowserEnum.log
+        #}
+    }
 }
 
 
@@ -289,7 +297,6 @@ function CHROME {
         $Parse_String = $Preferencies_Path.split(",")
         $Search_Email = $Parse_String|select-string "email"
         $Parse_Dump = $Search_Email -replace ' ','' -replace '"','' -replace ':','        : '
-
         If(-not($Search_Email) -or $Search_Email -eq $null){
             echo "Email            : None Email Found .." >> $LogFilePath\BrowserEnum.log
         }else{
