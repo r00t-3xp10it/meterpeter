@@ -9,8 +9,8 @@
 
 .DESCRIPTION
    Standalone Powershell script to dump Local-host browser information sutch as: HomePage, Browser Version
-   Language Used, Download Directory, URL History, Bookmarks, etc.. The dumps will be Saved into $env:TMP
-   Folder. Unless this script 2º argument its used to input another LogFile storage location.
+   Language, Download Directory, URL History, Bookmarks, extentions, etc.. The dumps will be Saved into 
+   $env:TMP Folder. Unless this script 2º argument its used to input another LogFile storage location.
 
 .EXAMPLE
    PS C:\> ./GetBrowsers.ps1 -RECON
@@ -45,7 +45,7 @@ $param2 = $args[1] # User Inputs [Arguments]
 ## Auto-Set @Args in case of User empty inputs (Set LogFile Path).
 If(-not($param2)){$LogFilePath = "$env:TMP"}else{$LogFilePath = "$param2"}
 If(-not($param1)){
-   ## Required (Mandatory) Parameters Settings
+   ## Required (Mandatory) Parameters/args Settings
    echo "`nGetBrowsers - Enumerate installed browser(s) information." > $LogFilePath\BrowserEnum.log
    echo "[ ERROR ] This script requires parameters (-args) to run ..`n" >> $LogFilePath\BrowserEnum.log
    echo "Syntax: <scriptname> <-arg>(mandatory) <arg>(optional)`n" >> $LogFilePath\BrowserEnum.log
@@ -67,6 +67,7 @@ If(-not($param1)){
 
 
 ## [GetBrowsers] PS Script Banner
+# For those who insiste in running this script outside meterpeter
 $host.UI.RawUI.WindowTitle = "@GetBrowsers v1.10"
 Write-Host "GetBrowsers - Enumerate installed browser(s) information." -ForeGroundColor Green
 Write-Host "[i] Dumping Data To: $LogFilePath\BrowserEnum.log" -ForeGroundColor yellow -BackgroundColor Black
@@ -74,13 +75,14 @@ Start-sleep -Seconds 2
 
 
 ## Get System Default Configurations (OS distro)
+# For those who insiste in running this script outside meterpeter
 $Caption = Get-CimInstance Win32_OperatingSystem|Format-List *|findstr /I /B /C:"Caption"
 $ParseCap = $Caption -replace '                                   :','      :'
 ## Get System Default webBrowser
 $DefaultBrowser = (Get-ItemProperty 'HKCU:\Software\Microsoft\Windows\Shell\Associations\UrlAssociations\https\UserChoice').ProgId
 $Parse_Browser_Data = $DefaultBrowser.split("-")[0] -replace 'URL','' -replace 'HTML','' -replace '.HTTPS',''
 $MInvocation = "WebBrowser   : "+"$Parse_Browser_Data"+" (PreDefined)";
-## Get System UserAgent
+## Get System UserAgent string
 $IntSet = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\internet settings" -Name 'User Agent'|Select-Object 'User Agent'
 $ParsingIntSet = $IntSet -replace '@{User Agent=','UserAgent    : ' -replace '}',''
 ## Writting LogFile to the selected path in: { $param2 var }
@@ -88,7 +90,7 @@ echo "`n`nSystem Defaults" > $LogFilePath\BrowserEnum.log
 echo "---------------" >> $LogFilePath\BrowserEnum.log
 echo "$ParseCap" >> $LogFilePath\BrowserEnum.log 
 echo "$ParsingIntSet" >> $LogFilePath\BrowserEnum.log 
-## Get Flash Internal Settings
+## Get Flash Internal Name/Version
 If(Test-Path "$env:WINDIR\system32\macromed\flash\flash.ocx"){
     $flash = Get-Item "$env:WINDIR\system32\macromed\flash\flash.ocx"|select *
     $flashName = $flash.versioninfo.InternalName
@@ -106,7 +108,7 @@ function ConvertFrom-Json20([object] $item){
 
 
 function BROWSER_RECON {
-    ## Detect ALL Available browsers Installed
+    ## Detect ALL Available browsers Installed and predefined browser name
     $DefaultBrowser = (Get-ItemProperty 'HKCU:\Software\Microsoft\Windows\Shell\Associations\UrlAssociations\https\UserChoice').ProgId
     $MInvocation = $DefaultBrowser.split("-")[0] -replace 'URL','' -replace 'HTML','' -replace '.HTTPS',''
     $IEVersion = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Internet Explorer" -ErrorAction SilentlyContinue).version
@@ -122,6 +124,7 @@ function BROWSER_RECON {
         $FFfound = "False"
         $ParsingData = "  "
     }
+    ## Build Table to display results
     echo "`nBrowser      Status      Version         PreDefined" > $LogFilePath\BrowserEnum.log
     echo "-------      ------      -------         ----------" >> $LogFilePath\BrowserEnum.log
     echo "IE           $IEfound       $IEVersion    $MInvocation" >> $LogFilePath\BrowserEnum.log
@@ -149,6 +152,7 @@ function IE_Dump {
       $ParsingIntSet = $IntSet -replace '@{User Agent=','UserAgent    : ' -replace '}',''
       $DownloadDir = Get-ItemProperty 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders' -Name "{374DE290-123F-4565-9164-39C4925E467B}"|findstr /I /C:"Downloads"
       $ParseDownload = $DownloadDir -replace '{374DE290-123F-4565-9164-39C4925E467B} :','Downloads    :'
+      ## Writting LogFile to the selected path in: { $param2 var }
       echo "$KBData" >> $LogFilePath\BrowserEnum.log
       echo "$IEData" >> $LogFilePath\BrowserEnum.log
       echo "$ParseDownload" >> $LogFilePath\BrowserEnum.log
@@ -240,7 +244,7 @@ function FIREFOX {
       }
   }
 
-  ## firefox bookmarks
+  ## TODO: firefox bookmarks
   # $Bookmarks = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\bookmarkbackups\*.jsonlz4"
   # Get-Content $Bookmarks|ConvertFrom-String > bookmarks.log
   # foreach ($Bookmark in $Bookmarks.children) {
@@ -339,6 +343,7 @@ function CHROME {
 
 
 function ADDINS {
+    ## TODO:
     ## Retrieve IE add-ins (BETA DEV)
     echo "`n`n" >> $LogFilePath\BrowserEnum.log
     $searchScopes = "HKCU:\SOFTWARE\Microsoft\Office\Outlook\Addins","HKLM:\SOFTWARE\Wow6432Node\Microsoft\Office\Outlook\Addins"
