@@ -376,21 +376,28 @@ function CHROME {
 
 
 function ADDONS {
-    ## TODO: Retrieve IE add-ins (BETA DEV)
-    echo "`n`n" >> $LogFilePath\BrowserEnum.log
-    $searchScopes = "HKCU:\SOFTWARE\Microsoft\Office\Outlook\Addins","HKLM:\SOFTWARE\Wow6432Node\Microsoft\Office\Outlook\Addins"
-    $searchScopes | % {Get-ChildItem -Path $_ | % {Get-ItemProperty -Path $_.PSPath} | Select-Object @{n="Name";e={Split-Path $_.PSPath -leaf}},FriendlyName} | Sort-Object -Unique -Property name >> $LogFilePath\BrowserEnum.log
+    ## Retrieve ALL browsers installed ADDONS
+    echo "`n`nAddOns Installed" >> $LogFilePath\BrowserEnum.log
+    echo "----------------" >> $LogFilePath\BrowserEnum.log
+    
+    ## TODO: Retrieve Office addons (BETA DEV)
+    # $searchScopes = "HKCU:\SOFTWARE\Microsoft\Office\Outlook\Addins","HKLM:\SOFTWARE\Wow6432Node\Microsoft\Office\Outlook\Addins"
+    # $searchScopes | % {Get-ChildItem -Path $_ -ErrorAction SilentlyContinue| % {Get-ItemProperty -Path $_.PSPath} | Select-Object @{n="Name";e={Split-Path $_.PSPath -leaf}},FriendlyName} | Sort-Object -Unique -Property name >> $LogFilePath\BrowserEnum.log
 
-    ## TODO: Retrieve Chrome add-ins (BETA DEV)
-    $Json = Get-Content "\\$env:COMPUTERNAME\c$\users\*\appdata\local\Google\Chrome\User Data\Default\Extensions\*\*\manifest.json" -Raw|ConvertFrom-Json|select *
-    $Json|select-object -property name,version,update_url >> $LogFilePath\BrowserEnum.log
+    ## TODO: Retrieve Chrome addons (BETA DEV)
+    If(-not(Test-Path "\\$env:COMPUTERNAME\c$\users\*\appdata\local\Google\Chrome\User Data\Default\Extensions\*\*\manifest.json")){
+        echo "None Chrome ADDONS found .." >> $LogFilePath\BrowserEnum.log
+    }else{
+        $Json = Get-Content "\\$env:COMPUTERNAME\c$\users\*\appdata\local\Google\Chrome\User Data\Default\Extensions\*\*\manifest.json" -Raw|ConvertFrom-Json|select *
+        $Json|select-object -property name,version,update_url >> $LogFilePath\BrowserEnum.log
+    }
 
-    ##TODO: firefox
+    ## TODO: Retrieve firefox addons (BETA DEV)
     If(-not(Test-Path "$Env:AppData\Mozilla\Firefox\Profiles\*.default\extensions.json")){
         echo "None FireFox ADDONS found .." >> $LogFilePath\BrowserEnum.log
     }else{
         $Json = Get-Content "$Env:AppData\Mozilla\Firefox\Profiles\*.default\extensions.json" -Raw|ConvertFrom-Json|select *
-        $Json.addons|select-object id,version,rootURI >> $LogFilePath\BrowserEnum.log
+        $Json.addons|select-object -property id,version,rootURI >> $LogFilePath\BrowserEnum.log
     }
 }
 
