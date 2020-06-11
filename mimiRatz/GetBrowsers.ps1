@@ -274,8 +274,8 @@ function FIREFOX {
             # 'primitive JSON invalid error' parsing jsonlz4 to text|csv ...
             $Json = Get-Content "$Bookmarks_Path" -Raw
             $ParsingData = $Json -replace '.*_','' -replace '.*©','' -replace '.*®','' -replace '.*¯','' -replace '.*ø','' -replace '.*þ','' -replace '.*Š','' -replace '.*‡','' -replace '.*¼','' -replace '.*±','' -replace '.*§','' -replace '.*™','' -replace '.*†','' -replace '.*»','' -replace '.*¥',''
-                ForEach ($Name in $ParsingData){
-                    echo "$Name" >> $LogFilePath\BrowserEnum.log
+                ForEach ($Key in $ParsingData){
+                    echo "$Key" >> $LogFilePath\BrowserEnum.log
                 }
         }
 }
