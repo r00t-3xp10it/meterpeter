@@ -12,6 +12,12 @@
    Language, Download Directory, URL History, Bookmarks, Extentions, etc.. The dumps will be Saved into 
    $env:TMP Folder. Unless this script 2º argument its used to input another Logfile storage location.
 
+.NOTES
+   GetBrowsers.ps1 will delete the LogFile after every dump (If executed without the 2º argument).
+   If executed with the 2º arg then GetBrowsers.ps1 will store the logfile in the Input location.
+   GetBrowsers.ps1 requires at least one argument <-arg> to run. If executed without any arguments
+   then it will present a list of Mandatory and Optional arguments to the user and exits execution..
+
 .EXAMPLE
    PS C:\> ./GetBrowsers.ps1 -RECON
    Fast Recon (Browsers and versions)
@@ -27,10 +33,6 @@
 .EXAMPLE
    PS C:\> ./GetBrowsers.ps1 -CHROME $env:LOCALAPPDATA
    Enumerates CHROME Browser Info and saves logfile to: $env:LOCALAPPDATA\BrowserEnum.log
-
-.NOTES
-   GetBrowsers.ps1 will delete the LogFile after every dump (If executed without the 2º argument).
-   If executed with the 2º arg then GetBrowsers.ps1 will store the logfile in the Input location.
 
 .LINK 
     https://github.com/r00t-3xp10it/meterpeter
@@ -406,6 +408,7 @@ function CREDS_DUMP {
         $Json.logins|select-object hostname,encryptedPassword >> $LogFilePath\BrowserEnum.log
     }
 }
+
 
 
 ## Jump Links (Functions)
