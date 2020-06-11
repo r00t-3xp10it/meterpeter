@@ -266,16 +266,17 @@ function FIREFOX {
     ## TODO: Retrieve FireFox bookmarks
     echo "`nFirefox Bookmarks" >> $LogFilePath\BrowserEnum.log
     echo "-----------------" >> $LogFilePath\BrowserEnum.log
-    $Bookmarks_Path = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\bookmarkbackups\*.jsonlz4-" # delete last - from Path
+    $Bookmarks_Path = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\bookmarkbackups\*.jsonlz4" # delete last - from Path
         If(-not(Test-Path -Path "$Bookmarks_Path")) {
             echo "Could not find any Bookmarks .." >> $LogFilePath\BrowserEnum.log
         }else{
             ## TODO: I cant use 'ConvertFrom-Json' cmdlet because it gives
             # primitive JSON invalid error parsing json to text|csv ....{ |ConvertFrom-String }
-            $Json = Get-Content $Bookmarks_Path >> $LogFilePath\BrowserEnum.log
-            # foreach ($Bookmarks_Path in $Bookmarks_Path.children){
-            #     Search-FxBookmarks -Bookmarks $Bookmarks_Path -PathSoFar $NewPath -SearchString $SearchString >> $LogFilePath\BrowserEnum.log
-            #}
+            $Json = Get-Content "$Bookmarks_Path"
+            $ParsingData = $Json -replace '.*_','' -replace '.*©','' -replace '.*®','' -replace '.*¯','' -replace '.*ø','' -replace '.*þ','' -replace '.*Š','' -replace '.*‡','' -replace '.*¼','' -replace '.*±','' -replace '.*§','' -replace '.*™','' -replace '.*†','' -replace '.*»','' -replace '.*¥',''
+                ForEach ($Name in $ParsingData){
+                    echo "$Name" >> $LogFilePath\BrowserEnum.log
+            }
         }
 }
 
