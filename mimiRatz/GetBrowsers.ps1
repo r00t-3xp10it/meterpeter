@@ -421,10 +421,13 @@ If($param1 -eq "-CREDS"){CREDS_DUMP}
 If($param1 -eq "-RECON"){BROWSER_RECON}
 If($param1 -eq "-ALL"){BROWSER_RECON;IE_Dump;FIREFOX;CHROME}
 
-## Build displays
-# New-Object -TypeName PSObject -Property @{
-#     Data = $_
-# }
+## NOTE: ForEach - Build PSObject displays ..
+# ForEach ($Key in $Input_String){
+#     New-Object -TypeName PSObject -Property @{
+#         Data = $Key
+#     }
+#}
+
 ## Retrieve Remote Info from LogFile
 Get-Content $LogFilePath\BrowserEnum.log;Write-Host "`n";
 If($mpset -eq $False){Remove-Item $LogFilePath\BrowserEnum.log -Force}
