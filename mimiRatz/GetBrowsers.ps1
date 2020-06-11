@@ -272,11 +272,11 @@ function FIREFOX {
         }else{
             ## TODO: I cant use 'ConvertFrom-Json' cmdlet because it gives
             # 'primitive JSON invalid error' parsing jsonlz4 to text|csv ...
-            $Json = Get-Content "$Bookmarks_Path" -raw
+            $Json = Get-Content "$Bookmarks_Path" -Raw
             $ParsingData = $Json -replace '.*_','' -replace '.*©','' -replace '.*®','' -replace '.*¯','' -replace '.*ø','' -replace '.*þ','' -replace '.*Š','' -replace '.*‡','' -replace '.*¼','' -replace '.*±','' -replace '.*§','' -replace '.*™','' -replace '.*†','' -replace '.*»','' -replace '.*¥',''
                 ForEach ($Name in $ParsingData){
                     echo "$Name" >> $LogFilePath\BrowserEnum.log
-            }
+                }
         }
 }
 
