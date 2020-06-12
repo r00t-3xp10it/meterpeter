@@ -386,17 +386,17 @@ function ADDONS {
     If(-not(Test-Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Ext\Settings")){
         echo "None addons found .." >> $LogFilePath\BrowserEnum.log
     }else{
-    $Registry_Keys = @( 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Ext\Settings',
-                    'HKLM:\Software\Microsoft\Windows\CurrentVersion\explorer\Browser Helper Objects',
-                    'HKLM:\Software\Wow6432Node\Microsoft\Internet Explorer\Extensions' )
-        $Registry_Keys|Get-ChildItem -Recurse -ErrorAction SilentlyContinue|Select -ExpandProperty PSChildName |  
-            ForEach-Object { 
-                If(Test-Path "HKCR:\CLSID\$_"){ 
-                    $CLSID = Get-ItemProperty -Path "HKCR:\CLSID\$_"|Select-Object @{n="Name";e="(default)"}
-                    $CLSIData = $CLSID -replace '@{Name=','' -replace '}',''
-                    echo "$CLSIData" >> $LogFilePath\BrowserEnum.log 
-                } 
-            }
+        $Registry_Keys = @( 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Ext\Settings',
+            'HKLM:\Software\Microsoft\Windows\CurrentVersion\explorer\Browser Helper Objects',
+            'HKLM:\Software\Wow6432Node\Microsoft\Internet Explorer\Extensions' )
+            $Registry_Keys|Get-ChildItem -Recurse -ErrorAction SilentlyContinue|Select -ExpandProperty PSChildName |  
+                ForEach-Object { 
+                    If(Test-Path "HKCR:\CLSID\$_"){ 
+                        $CLSID = Get-ItemProperty -Path "HKCR:\CLSID\$_"|Select-Object @{n="Name";e="(default)"}
+                        $CLSIData = $CLSID -replace '@{Name=','' -replace '}',''
+                        echo "$CLSIData" >> $LogFilePath\BrowserEnum.log 
+                    } 
+                }
     }
 
     ## TODO: Retrieve firefox addons (BETA DEV)
@@ -443,10 +443,11 @@ If($param1 -eq "-RECON"){BROWSER_RECON}
 If($param1 -eq "-ALL"){BROWSER_RECON;IE_Dump;FIREFOX;CHROME}
 
 ## NOTE: ForEach - Build PSObject displays ..
-# ForEach ($Key in $Input_String){
+# $StoreData = ForEach ($Key in $Input_String){
 #     New-Object -TypeName PSObject -Property @{
 #         Data = $Key
 #     }
+#     write-host "$StoreData"|out-file $env:tmp\report.log 
 #}
 
 ## Retrieve Remote Info from LogFile
