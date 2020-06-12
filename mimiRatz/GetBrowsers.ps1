@@ -263,7 +263,7 @@ function FIREFOX {
     ## TODO: Retrieve FireFox bookmarks
     echo "`nFirefox Bookmarks" >> $LogFilePath\BrowserEnum.log
     echo "-----------------" >> $LogFilePath\BrowserEnum.log
-    $Bookmarks_Path = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\bookmarkbackups\*.jsonlz4" # delete last - from Path
+    $Bookmarks_Path = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\bookmarkbackups\*.jsonlz4-" # delete last - from Path
         If(-not(Test-Path -Path "$Bookmarks_Path")) {
             echo "Could not find any Bookmarks .." >> $LogFilePath\BrowserEnum.log
         }else{
@@ -379,8 +379,7 @@ function CHROME {
 
 
 function ADDONS {  
-    ## TODO: Retrieve IE addons (BETA DEV)
-    # https://gallery.technet.microsoft.com/scriptcenter/How-to-export-a-list-of-IE-251948ba
+    ## TODO: Retrieve IE addons
     echo "`n`n[ IE ]" >> $LogFilePath\BrowserEnum.log
     echo "`nName" >> $LogFilePath\BrowserEnum.log
     echo "----" >> $LogFilePath\BrowserEnum.log
@@ -403,7 +402,7 @@ function ADDONS {
             }
     }
 
-    ## TODO: Retrieve firefox addons (BETA DEV)
+    ## Retrieve firefox addons
     echo "`n`n[ Firefox ]" >> $LogFilePath\BrowserEnum.log
     If(-not(Test-Path "$Env:AppData\Mozilla\Firefox\Profiles\*.default\extensions.json")){
         echo "None addons found .." >> $LogFilePath\BrowserEnum.log
@@ -412,7 +411,7 @@ function ADDONS {
         $Json.addons|select-object -property id,version,rootURI >> $LogFilePath\BrowserEnum.log
     }
 
-    ## TODO: Retrieve Chrome addons (BETA DEV)
+    ## Retrieve Chrome addons
     echo "`n`n[ Chrome ]" >> $LogFilePath\BrowserEnum.log
     If(-not(Test-Path "\\$env:COMPUTERNAME\c$\users\*\appdata\local\Google\Chrome\User Data\Default\Extensions\*\*\manifest.json")){
         echo "None addons found .." >> $LogFilePath\BrowserEnum.log
@@ -424,8 +423,12 @@ function ADDONS {
 
 
 function CREDS_DUMP {
+    ## TODO: Retrieve IE Credentials
+
     ## TODO: Retrieve FireFox Credentials
     echo "`n`n[ Firefox ]" >> $LogFilePath\BrowserEnum.log
+    echo "`nCredentials Stored" >> $LogFilePath\BrowserEnum.log
+    echo "------------------" >> $LogFilePath\BrowserEnum.log
     If(-not(Test-Path "$Env:AppData\Mozilla\Firefox\Profiles\*.default\logins.json")){
         echo "FireFox logins.json not found .." >> $LogFilePath\BrowserEnum.log
     }else{
@@ -433,6 +436,8 @@ function CREDS_DUMP {
         $Json.logins|select-object hostname,encryptedUsername >> $LogFilePath\BrowserEnum.log
         $Json.logins|select-object hostname,encryptedPassword >> $LogFilePath\BrowserEnum.log
     }
+
+    ## TODO: Retrieve Chrome Credentials
 }
 
 
@@ -450,9 +455,9 @@ If($param1 -eq "-ALL"){BROWSER_RECON;IE_Dump;FIREFOX;CHROME}
 # $StoreData = ForEach ($Key in $Input_String){
 #     New-Object -TypeName PSObject -Property @{
 #         Data = $Key
-#     }
-#     write-host "$StoreData"|out-file $env:tmp\report.log 
-#}
+#     } 
+# }
+# Write-Host "$StoreData"|Out-File "$env:tmp\report.log"
 
 ## Retrieve Remote Info from LogFile
 Get-Content $LogFilePath\BrowserEnum.log;Write-Host "`n";
