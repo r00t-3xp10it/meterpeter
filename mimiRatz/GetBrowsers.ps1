@@ -15,7 +15,6 @@
 .NOTES
    GetBrowsers.ps1 will delete the LogFile after every dump (If executed without the 2º argument).
    If executed with the 2º arg then GetBrowsers.ps1 will store the logfile in the Input location.
-   
    GetBrowsers.ps1 requires at least one argument <-arg> to run. If executed without any arguments
    then it will present a list of Mandatory and Optional arguments to the user and exits execution..
 
