@@ -387,7 +387,7 @@ function ADDONS {
     If(-not(Test-Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Ext\Settings")){
         echo "None addons found .." >> $LogFilePath\BrowserEnum.log
     }else{
-        If (-not(Test-Path HKCR:)){New-PSDrive -Name HKCR -PSProvider Registry -Root HKEY_CLASSES_ROOT|Out-Null} 
+        If(-not(Test-Path HKCR:)){New-PSDrive -Name HKCR -PSProvider Registry -Root HKEY_CLASSES_ROOT|Out-Null} 
         $Registry_Keys = @( "HKCU:\Software\Microsoft\Windows\CurrentVersion\Ext\Settings",
         "HKLM:\Software\Microsoft\Windows\CurrentVersion\explorer\Browser Helper Objects",
         "HKLM:\Software\Microsoft\Internet Explorer\URLSearchHooks",
