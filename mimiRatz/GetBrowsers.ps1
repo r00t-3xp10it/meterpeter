@@ -380,23 +380,27 @@ function CHROME {
 
 function ADDONS {  
     ## TODO: Retrieve IE addons (BETA DEV)
+    # https://gallery.technet.microsoft.com/scriptcenter/How-to-export-a-list-of-IE-251948ba
     echo "`n`n[ IE ]" >> $LogFilePath\BrowserEnum.log
-    echo "`nname" >> $LogFilePath\BrowserEnum.log
+    echo "`nName" >> $LogFilePath\BrowserEnum.log
     echo "----" >> $LogFilePath\BrowserEnum.log
     If(-not(Test-Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Ext\Settings")){
         echo "None addons found .." >> $LogFilePath\BrowserEnum.log
     }else{
-        $Registry_Keys = @( 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Ext\Settings',
-            'HKLM:\Software\Microsoft\Windows\CurrentVersion\explorer\Browser Helper Objects',
-            'HKLM:\Software\Wow6432Node\Microsoft\Internet Explorer\Extensions' )
-            $Registry_Keys|Get-ChildItem -Recurse -ErrorAction SilentlyContinue|Select -ExpandProperty PSChildName |  
-                ForEach-Object { 
-                    If(Test-Path "HKCR:\CLSID\$_"){ 
-                        $CLSID = Get-ItemProperty -Path "HKCR:\CLSID\$_"|Select-Object @{n="Name";e="(default)"}
-                        $CLSIData = $CLSID -replace '@{Name=','' -replace '}',''
-                        echo "$CLSIData" >> $LogFilePath\BrowserEnum.log 
-                    } 
+        If (-not(Test-Path HKCR:)){New-PSDrive -Name HKCR -PSProvider Registry -Root HKEY_CLASSES_ROOT|Out-Null} 
+        $Registry_Keys = @( "HKCU:\Software\Microsoft\Windows\CurrentVersion\Ext\Settings",
+        "HKLM:\Software\Microsoft\Windows\CurrentVersion\explorer\Browser Helper Objects",
+        "HKLM:\Software\Microsoft\Internet Explorer\URLSearchHooks",
+        "HKLM:\Software\Microsoft\Internet Explorer\Extensions",
+        "HKCU:\Software\Microsoft\Internet Explorer\Extensions" )
+        $Registry_Keys|Get-ChildItem -Recurse -ErrorAction SilentlyContinue|Select -ExpandProperty PSChildName |  
+            ForEach-Object { 
+                If(Test-Path "HKCR:\CLSID\$_"){ 
+                    $CLSID = Get-ItemProperty -Path "HKCR:\CLSID\$_" | Select-Object @{n="Name";e="(default)"}
+                    $CLSIData = $CLSID -replace '@{Name=','' -replace '}',''
+                    echo "$CLSIData" >> $LogFilePath\BrowserEnum.log
                 }
+            }
     }
 
     ## TODO: Retrieve firefox addons (BETA DEV)
