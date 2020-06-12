@@ -131,9 +131,9 @@ function BROWSER_RECON {
             $ParsingData = $JsPrefs[0] -replace 'user_pref\(','' -replace '\"','' -replace ',','' -replace '\);','' -replace 'extensions.lastPlatformVersion','' -replace ' ',''
         }
     ## Build Table to display results found
-    echo "`n`nBrowser      Status      Version         PreDefined" > $LogFilePath\BrowserEnum.log
-    echo "-------      ------      -------         ----------" >> $LogFilePath\BrowserEnum.log
-    echo "IE           $IEfound       $IEVersion    $MInvocation" >> $LogFilePath\BrowserEnum.log
+    echo "`n`nBrowser      Status      Version          PreDefined" > $LogFilePath\BrowserEnum.log
+    echo "-------      ------      -------          ----------" >> $LogFilePath\BrowserEnum.log
+    echo "IE           $IEfound       $IEVersion     $MInvocation" >> $LogFilePath\BrowserEnum.log
     echo "CHROME       $CHfound       $Chrome_App" >> $LogFilePath\BrowserEnum.log
     echo "FIREFOX      $FFfound       $ParsingData" >> $LogFilePath\BrowserEnum.log
 }
@@ -374,14 +374,31 @@ function CHROME {
 }
 
 
-function ADDONS {
-    ## Retrieve ALL browsers installed ADDONS    
+function ADDONS {  
     ## TODO: Retrieve IE addons (BETA DEV)
+    echo "`n`n[ IE ]" >> $LogFilePath\BrowserEnum.log
+    echo "`nname" >> $LogFilePath\BrowserEnum.log
+    echo "----" >> $LogFilePath\BrowserEnum.log
+    If(-not(Test-Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Ext\Settings")){
+        echo "None ADDONS found .." >> $LogFilePath\BrowserEnum.log
+    }else{
+    $Registry_Keys = @( 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Ext\Settings',
+                    'HKLM:\Software\Microsoft\Windows\CurrentVersion\explorer\Browser Helper Objects',
+                    'HKLM:\Software\Wow6432Node\Microsoft\Internet Explorer\Extensions' )
+        $Registry_Keys|Get-ChildItem -Recurse -ErrorAction SilentlyContinue|Select -ExpandProperty PSChildName |  
+            ForEach-Object { 
+                If(Test-Path "HKCR:\CLSID\$_"){ 
+                    $CLSID = Get-ItemProperty -Path "HKCR:\CLSID\$_"|Select-Object @{n="Name";e="(default)"}
+                    $CLSIData = $CLSID -replace '@{Name=','' -replace '}',''
+                    echo "$CLSIData" >> $LogFilePath\BrowserEnum.log 
+                } 
+            }
+    }
 
     ## TODO: Retrieve firefox addons (BETA DEV)
     echo "`n`n[ Firefox ]" >> $LogFilePath\BrowserEnum.log
     If(-not(Test-Path "$Env:AppData\Mozilla\Firefox\Profiles\*.default\extensions.json")){
-        echo "None AddOns found .." >> $LogFilePath\BrowserEnum.log
+        echo "None ADDONS found .." >> $LogFilePath\BrowserEnum.log
     }else{
         $Json = Get-Content "$Env:AppData\Mozilla\Firefox\Profiles\*.default\extensions.json" -Raw|ConvertFrom-Json|select *
         $Json.addons|select-object -property id,version,rootURI >> $LogFilePath\BrowserEnum.log
@@ -390,7 +407,7 @@ function ADDONS {
     ## TODO: Retrieve Chrome addons (BETA DEV)
     echo "`n`n[ Chrome ]" >> $LogFilePath\BrowserEnum.log
     If(-not(Test-Path "\\$env:COMPUTERNAME\c$\users\*\appdata\local\Google\Chrome\User Data\Default\Extensions\*\*\manifest.json")){
-        echo "None AddOns found .." >> $LogFilePath\BrowserEnum.log
+        echo "None ADDONS found .." >> $LogFilePath\BrowserEnum.log
     }else{
         $Json = Get-Content "\\$env:COMPUTERNAME\c$\users\*\appdata\local\Google\Chrome\User Data\Default\Extensions\*\*\manifest.json" -Raw|ConvertFrom-Json|select *
         $Json|select-object -property name,version,update_url >> $LogFilePath\BrowserEnum.log
