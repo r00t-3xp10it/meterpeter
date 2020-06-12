@@ -380,7 +380,7 @@ function ADDONS {
     echo "`nname" >> $LogFilePath\BrowserEnum.log
     echo "----" >> $LogFilePath\BrowserEnum.log
     If(-not(Test-Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Ext\Settings")){
-        echo "None ADDONS found .." >> $LogFilePath\BrowserEnum.log
+        echo "None addons found .." >> $LogFilePath\BrowserEnum.log
     }else{
     $Registry_Keys = @( 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Ext\Settings',
                     'HKLM:\Software\Microsoft\Windows\CurrentVersion\explorer\Browser Helper Objects',
@@ -398,7 +398,7 @@ function ADDONS {
     ## TODO: Retrieve firefox addons (BETA DEV)
     echo "`n`n[ Firefox ]" >> $LogFilePath\BrowserEnum.log
     If(-not(Test-Path "$Env:AppData\Mozilla\Firefox\Profiles\*.default\extensions.json")){
-        echo "None ADDONS found .." >> $LogFilePath\BrowserEnum.log
+        echo "None addons found .." >> $LogFilePath\BrowserEnum.log
     }else{
         $Json = Get-Content "$Env:AppData\Mozilla\Firefox\Profiles\*.default\extensions.json" -Raw|ConvertFrom-Json|select *
         $Json.addons|select-object -property id,version,rootURI >> $LogFilePath\BrowserEnum.log
@@ -407,7 +407,7 @@ function ADDONS {
     ## TODO: Retrieve Chrome addons (BETA DEV)
     echo "`n`n[ Chrome ]" >> $LogFilePath\BrowserEnum.log
     If(-not(Test-Path "\\$env:COMPUTERNAME\c$\users\*\appdata\local\Google\Chrome\User Data\Default\Extensions\*\*\manifest.json")){
-        echo "None ADDONS found .." >> $LogFilePath\BrowserEnum.log
+        echo "None addons found .." >> $LogFilePath\BrowserEnum.log
     }else{
         $Json = Get-Content "\\$env:COMPUTERNAME\c$\users\*\appdata\local\Google\Chrome\User Data\Default\Extensions\*\*\manifest.json" -Raw|ConvertFrom-Json|select *
         $Json|select-object -property name,version,update_url >> $LogFilePath\BrowserEnum.log
