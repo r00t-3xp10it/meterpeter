@@ -15,6 +15,7 @@
 .NOTES
    GetBrowsers.ps1 will delete the LogFile after every dump (If executed without the 2º argument).
    If executed with the 2º arg then GetBrowsers.ps1 will store the logfile in the Input location.
+   
    GetBrowsers.ps1 requires at least one argument <-arg> to run. If executed without any arguments
    then it will present a list of Mandatory and Optional arguments to the user and exits execution..
 
@@ -311,20 +312,27 @@ function CHROME {
             $GCVersionInfo = (Get-ItemProperty 'HKCU:\Software\Google\Chrome\BLBeacon').Version
             echo "Version      : $GCVersionInfo" >> $LogFilePath\BrowserEnum.log
 
-            ## Retrieve Email from Google CHROME preferencies File ..
+            ## Retrieve Email(s) from Google CHROME preferencies File ..
             $Parse_String = $Preferencies_Path.split(",")
             $Search_Email = $Parse_String|select-string "email"
-            $Parse_Dump = $Search_Email -replace ' ','' -replace '"','' -replace ':','        : '
+            $Parse_Dump = $Search_Email -replace '"','' -replace 'email:',''
                 If(-not($Search_Email) -or $Search_Email -eq $null){
                     echo "Email            : None Email Found .." >> $LogFilePath\BrowserEnum.log
                 }else{
-                    echo "$Parse_Dump" >> $LogFilePath\BrowserEnum.log
+                    ## Build new PSObject to store emails found
+                    $Store = ForEach ($Email in $Parse_Dump){
+                        New-Object -TypeName PSObject -Property @{
+                            Emails = $Email
+                        }
+                    }
+                    ## Write new PSObject to logfile
+                    echo $Store >> $LogFilePath\BrowserEnum.log
                 }
-    }
+        }
 
     ## Retrieve Chrome History
     # Source: https://github.com/hematic/Helper-Functions/blob/8d5e7a8b41e87ce3f54dc06c40aa1ae5f90c1cfc/Get-BrowserData.ps1
-    echo "`nChrome History" >> $LogFilePath\BrowserEnum.log
+    echo "Chrome History" >> $LogFilePath\BrowserEnum.log
     echo "--------------" >> $LogFilePath\BrowserEnum.log
     $History_Path = "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\History"
         If(-not(Test-Path -Path $History_Path)){
