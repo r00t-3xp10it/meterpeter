@@ -14,27 +14,27 @@ Author r00t-3xp10it (SSA RedTeam @2020)
    If executed with the 2º arg then GetBrowsers will permanent store the logfile in the Input location.
 
 .EXAMPLE
-   PS C:\>  Get-Help ./GetBrowsers.ps1 -detailed
+   PS C:\> Get-Help ./GetBrowsers.ps1 -detailed
    Cmdlet Internal Detailed Help Menu
 
 .EXAMPLE
-   PS C:\>  ./GetBrowsers.ps1
+   PS C:\> ./GetBrowsers.ps1
    Display Full List of arguments available
 
 .EXAMPLE
-   PS C:\>  ./GetBrowsers.ps1 -RECON
+   PS C:\> ./GetBrowsers.ps1 -RECON
    Fast Recon (Browsers and versions)
 
 .EXAMPLE
-   PS C:\>  ./GetBrowsers.ps1 -FIREFOX
+   PS C:\> ./GetBrowsers.ps1 -FIREFOX
    Enumerates FireFox Browser information Only.
 
 .EXAMPLE
-   PS C:\>  ./GetBrowsers.ps1 -ALL
+   PS C:\> ./GetBrowsers.ps1 -ALL
    Enumerates Internet Explorer (IE), FireFox and Chrome Browsers information.
    
 .EXAMPLE
-   PS C:\>  ./GetBrowsers.ps1 -ADDONS $env:USERPROFILE\Desktop
+   PS C:\> ./GetBrowsers.ps1 -ADDONS $env:USERPROFILE\Desktop
    Enumerates ALL Browsers addons and saves logfile to: $env:USERPROFILE\Desktop\BrowserEnum.log
 
 .LINK
