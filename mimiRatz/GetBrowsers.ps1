@@ -2,7 +2,7 @@
 .SYNOPSIS
   Standalone Powershell script that will dump Installed browsers information.
 
-.Author r00t-3xp10it (SSA RedTeam @2020)
+Author r00t-3xp10it (SSA RedTeam @2020)
   Required Dependencies: IE, Firefox, Chrome
   Optional Dependencies: None
   PS Script Dev Version: v1.12
@@ -11,36 +11,37 @@
    Standalone Powershell script to dump Installed browsers information sutch as: HomePage, Browser Version
    Language, Download Directory, URL History, Bookmarks, Extentions, etc.. The dumps will be Saved into 
    $env:TMP Folder. Unless this script 2º argument its used to input another Logfile storage location.
+   If executed with the 2º arg then GetBrowsers.ps1 will store the logfile in the Input location.
 
 .NOTES
    GetBrowsers.ps1 will delete the LogFile after every dump (If executed without the 2º argument).
    If executed with the 2º arg then GetBrowsers.ps1 will store the logfile in the Input location.
 
 .EXAMPLE
-   PS C:\> ./GetBrowsers.ps1
-   Display Full List of args available
+   PS C:\>  Get-Help ./GetBrowsers.ps1 -detailed
+   Cmdlet Internal Detailed Help Menu
 
-.PARAMETER recon
-   PS C:\> ./GetBrowsers.ps1 -RECON
+.EXAMPLE
+   PS C:\>  ./GetBrowsers.ps1
+   Display Full List of arguments available
+
+.EXAMPLE
+   PS C:\>  ./GetBrowsers.ps1 -RECON
    Fast Recon (Browsers and versions)
 
-.PARAMETER firefox
-   PS C:\> ./GetBrowsers.ps1 -FIREFOX
+.EXAMPLE
+   PS C:\>  ./GetBrowsers.ps1 -FIREFOX
    Enumerates FireFox Browser information Only.
 
-.PARAMETER all
-   PS C:\> ./GetBrowsers.ps1 -ALL
+.EXAMPLE
+   PS C:\>  ./GetBrowsers.ps1 -ALL
    Enumerates Internet Explorer (IE), FireFox and Chrome Browsers information.
-
-.PARAMETER chrome $Env:LOGFILE\Path
-   PS C:\> ./GetBrowsers.ps1 -CHROME $env:LOCALAPPDATA
-   Enumerates CHROME Browser and saves logfile to: $env:LOCALAPPDATA\BrowserEnum.log
    
-.PARAMETER addons $Env:USERPROFILE\Desktop
-   PS C:\> ./GetBrowsers.ps1 -ADDONS $env:USERPROFILE\Desktop
+.EXAMPLE
+   PS C:\>  ./GetBrowsers.ps1 -ADDONS $env:USERPROFILE\Desktop
    Enumerates ALL Browsers addons and saves logfile to: $env:USERPROFILE\Desktop\BrowserEnum.log
 
-.LINK 
+.LINK
     https://github.com/r00t-3xp10it/meterpeter
     https://github.com/r00t-3xp10it/meterpeter/blob/master/mimiRatz/GetBrowsers.ps1
 #>
