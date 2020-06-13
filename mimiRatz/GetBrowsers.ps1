@@ -20,7 +20,7 @@
    PS C:\> ./GetBrowsers.ps1
    Display Full List of args available
 
-.PARAMETERS RECON
+.PARAMETER RECON
    PS C:\> ./GetBrowsers.ps1 -RECON
    Fast Recon (Browsers and versions)
 
