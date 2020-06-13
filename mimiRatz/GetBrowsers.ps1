@@ -11,7 +11,7 @@ Author r00t-3xp10it (SSA RedTeam @2020)
    Standalone Powershell script to dump Installed browsers information sutch as: HomePage, Browser Version
    Language, Download Directory, URL History, Bookmarks, Extentions, etc.. The dumps will be Saved into 
    $env:TMP Folder. Unless this script 2º argument its used to input another Logfile storage location.
-   If executed with the 2º arg then GetBrowsers.ps1 will store the logfile in the Input location.
+   If executed with the 2º arg then GetBrowsers will permanent store the logfile in the Input location.
 
 .EXAMPLE
    PS C:\>  Get-Help ./GetBrowsers.ps1 -detailed
