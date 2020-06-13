@@ -72,7 +72,7 @@ If(-not($param1)){
 ## [GetBrowsers] PS Script Banner (Manual Run)
 # For those who insiste in running this script outside meterpeter
 Write-Host "GetBrowsers - Enumerate installed browser(s) information." -ForeGroundColor Green
-If($mpset -eq $True){Write-Host "[i] DataDump => $LogFilePath\BrowserEnum.log" -ForeGroundColor yellow}
+If($mpset -eq $True){Write-Host "[i] LogFile => $LogFilePath\BrowserEnum.log" -ForeGroundColor yellow}
 Start-sleep -Seconds 1
 
 
@@ -328,7 +328,7 @@ function CHROME {
         }
 
     ## Retrieve Chrome History
-    # Source: https://github.com/hematic/Helper-Functions/blob/8d5e7a8b41e87ce3f54dc06c40aa1ae5f90c1cfc/Get-BrowserData.ps1
+    # Source: https://github.com/EmpireProject/Empire/blob/master/data/module_source/collection/Get-BrowserData.ps1
     echo "Chrome History" >> $LogFilePath\BrowserEnum.log
     echo "--------------" >> $LogFilePath\BrowserEnum.log
     $History_Path = "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\History"
