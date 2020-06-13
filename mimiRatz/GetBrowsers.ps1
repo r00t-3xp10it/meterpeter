@@ -17,20 +17,24 @@
    If executed with the 2º arg then GetBrowsers.ps1 will store the logfile in the Input location.
 
 .EXAMPLE
+   PS C:\> ./GetBrowsers.ps1
+   Display Full List of args available
+
+.PARAMETERS RECON
    PS C:\> ./GetBrowsers.ps1 -RECON
    Fast Recon (Browsers and versions)
 
-.EXAMPLE
+.PARAMETERS FIREFOX
    PS C:\> ./GetBrowsers.ps1 -FIREFOX
    Enumerates FireFox Browser information Only.
 
-.EXAMPLE
+.PARAMETERS ALL
    PS C:\> ./GetBrowsers.ps1 -ALL
    Enumerates Internet Explorer (IE), FireFox and Chrome Browsers information.
 
-.EXAMPLE
+.PARAMETERS CHROME $ENV:LOGFILE\PATH
    PS C:\> ./GetBrowsers.ps1 -CHROME $env:LOCALAPPDATA
-   Enumerates CHROME Browser Info and saves logfile to: $env:LOCALAPPDATA\BrowserEnum.log
+   Enumerates CHROME Browser and saves logfile to: $env:LOCALAPPDATA\BrowserEnum.log
 
 .LINK 
     https://github.com/r00t-3xp10it/meterpeter
