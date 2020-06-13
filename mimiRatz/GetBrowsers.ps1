@@ -5,7 +5,7 @@
 .Author r00t-3xp10it (SSA RedTeam @2020)
   Required Dependencies: IE, Firefox, Chrome
   Optional Dependencies: None
-  PS Script Dev Version: v1.11
+  PS Script Dev Version: v1.12
 
 .DESCRIPTION
    Standalone Powershell script to dump Installed browsers information sutch as: HomePage, Browser Version
@@ -16,7 +16,7 @@
    GetBrowsers.ps1 will delete the LogFile after every dump (If executed without the 2º argument).
    If executed with the 2º arg then GetBrowsers.ps1 will store the logfile in the Input location.
 
-.PARAMETER null
+.EXAMPLE
    PS C:\> ./GetBrowsers.ps1
    Display Full List of args available
 
@@ -50,7 +50,7 @@ $Path = $null
 $mpset = $False
 $param1 = $args[0] # User Inputs [Arguments]
 $param2 = $args[1] # User Inputs [Arguments]
-$host.UI.RawUI.WindowTitle = " @GetBrowsers v1.11"
+$host.UI.RawUI.WindowTitle = " @GetBrowsers v1.12"
 ## Auto-Set @Args in case of User empty inputs (Set LogFile Path).
 If(-not($param2)){$LogFilePath = "$env:TMP"}else{$LogFilePath = "$param2";$mpset = $True}
 If(-not($param1)){
@@ -163,6 +163,10 @@ function IE_Dump {
             $ParsingIntSet = $IntSet -replace '@{User Agent=','UserAgent    : ' -replace '}',''
             $DownloadDir = Get-ItemProperty 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders' -Name "{374DE290-123F-4565-9164-39C4925E467B}"|findstr /I /C:"Downloads"
             $ParseDownload = $DownloadDir -replace '{374DE290-123F-4565-9164-39C4925E467B} :','Downloads    :'
+            $logfilefolder = (Get-ItemProperty "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders").Cache
+            $dataparse = "INetCache    : "+"$logfilefolder"
+            $cookiesPath = (Get-ItemProperty "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders").Cookies
+            $cookieparse = "Cookies Path : "+"$cookiesPath"
             $IETestings = (Get-Process MicrosoftEdge -ErrorAction SilentlyContinue).Responding
             If($IETestings -eq $True){$Status = "Status       : Active"}else{$Status = "Status       : Stoped"}
 
@@ -173,6 +177,8 @@ function IE_Dump {
             echo "$ParseDownload" >> $LogFilePath\BrowserEnum.log
             echo "$ParsingData" >> $LogFilePath\BrowserEnum.log
             echo "$ParsingLocal" >> $LogFilePath\BrowserEnum.log
+            echo "$dataparse" >> $LogFilePath\BrowserEnum.log
+            echo "$cookieparse" >> $LogFilePath\BrowserEnum.log
         }
 
     ## Retrieve IE history URLs
