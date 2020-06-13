@@ -35,6 +35,10 @@
 .PARAMETER chrome $Env:LOGFILE\Path
    PS C:\> ./GetBrowsers.ps1 -CHROME $env:LOCALAPPDATA
    Enumerates CHROME Browser and saves logfile to: $env:LOCALAPPDATA\BrowserEnum.log
+   
+.PARAMETER addons $Env:USERPROFILE\Desktop
+   PS C:\> ./GetBrowsers.ps1 -ADDONS $env:USERPROFILE\Desktop
+   Enumerates ALL Browsers addons and saves logfile to: $env:USERPROFILE\Desktop\BrowserEnum.log
 
 .LINK 
     https://github.com/r00t-3xp10it/meterpeter
