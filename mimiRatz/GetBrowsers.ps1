@@ -16,23 +16,23 @@
    GetBrowsers.ps1 will delete the LogFile after every dump (If executed without the 2º argument).
    If executed with the 2º arg then GetBrowsers.ps1 will store the logfile in the Input location.
 
-.EXAMPLE
+.PARAMETER null
    PS C:\> ./GetBrowsers.ps1
    Display Full List of args available
 
-.PARAMETER RECON
+.PARAMETER recon
    PS C:\> ./GetBrowsers.ps1 -RECON
    Fast Recon (Browsers and versions)
 
-.PARAMETERS FIREFOX
+.PARAMETER firefox
    PS C:\> ./GetBrowsers.ps1 -FIREFOX
    Enumerates FireFox Browser information Only.
 
-.PARAMETERS ALL
+.PARAMETER all
    PS C:\> ./GetBrowsers.ps1 -ALL
    Enumerates Internet Explorer (IE), FireFox and Chrome Browsers information.
 
-.PARAMETERS CHROME $ENV:LOGFILE\PATH
+.PARAMETER chrome $Env:LOGFILE\Path
    PS C:\> ./GetBrowsers.ps1 -CHROME $env:LOCALAPPDATA
    Enumerates CHROME Browser and saves logfile to: $env:LOCALAPPDATA\BrowserEnum.log
 
