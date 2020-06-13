@@ -441,8 +441,8 @@ function CREDS_DUMP {
 
     ## TODO: Retrieve FireFox Credentials
     echo "`n`n[ Firefox ]" >> $LogFilePath\BrowserEnum.log
-    echo "`nCredentials Stored" >> $LogFilePath\BrowserEnum.log
-    echo "------------------" >> $LogFilePath\BrowserEnum.log
+    echo "`ngit clone https://github.com/Unode/firefox_decrypt.git" >> $LogFilePath\BrowserEnum.log
+    echo "  ------------------------------------------------------" >> $LogFilePath\BrowserEnum.log
     If(-not(Test-Path "$Env:AppData\Mozilla\Firefox\Profiles\*.default\logins.json")){
         echo "FireFox logins.json not found .." >> $LogFilePath\BrowserEnum.log
     }else{
