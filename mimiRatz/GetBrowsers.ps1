@@ -13,10 +13,6 @@ Author r00t-3xp10it (SSA RedTeam @2020)
    $env:TMP Folder. Unless this script 2º argument its used to input another Logfile storage location.
    If executed with the 2º arg then GetBrowsers.ps1 will store the logfile in the Input location.
 
-.NOTES
-   GetBrowsers.ps1 will delete the LogFile after every dump (If executed without the 2º argument).
-   If executed with the 2º arg then GetBrowsers.ps1 will store the logfile in the Input location.
-
 .EXAMPLE
    PS C:\>  Get-Help ./GetBrowsers.ps1 -detailed
    Cmdlet Internal Detailed Help Menu
