@@ -10,12 +10,12 @@ Author: r00t-3xp10it (SSA RedTeam @2020)
 .DESCRIPTION
    Standalone Powershell script to dump Installed browsers information sutch as: HomePage, Browser Version,
    accepted Language, Download Directory, URL History, Bookmarks, Extentions, Start Page, stored creds, etc..
-   The dumps will be Saved into $env:TMP Folder. Unless this script 2º argument its used to input another Logfile
-   storage location. If executed with the 2º arg then GetBrowsers will permanent store the logfile in the Input location.
+   The dumps will be Saved into $env:TMP folder. Unless this script 2º argument its used to input another Logfile
+   storage location. If executed with the 2º arg then GetBrowsers will store the logfile in the Input location.
 
 .EXAMPLE
    PS C:\> ./GetBrowsers.ps1
-   Display Full List of arguments available
+   Display List of arguments available
 
 .EXAMPLE
    PS C:\> ./GetBrowsers.ps1 -RECON
@@ -75,7 +75,6 @@ If(-not($param1)){
 Write-Host "GetBrowsers - Enumerate installed browser(s) information." -ForeGroundColor Green
 If($mpset -eq $True){Write-Host "[i] LogFile => $LogFilePath\BrowserEnum.log" -ForeGroundColor yellow}
 Start-sleep -Seconds 1
-
 
 ## Get System Default Configurations
 $Caption = Get-CimInstance Win32_OperatingSystem|Format-List *|findstr /I /B /C:"Caption"
