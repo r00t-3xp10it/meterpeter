@@ -157,8 +157,6 @@ function IE_Dump {
             $ParseDownload = $DownloadDir -replace '{374DE290-123F-4565-9164-39C4925E467B} :','Downloads    :'
             $logfilefolder = (Get-ItemProperty "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders").Cache
             $dataparse = "INetCache    : "+"$logfilefolder"
-            $cookiesPath = (Get-ItemProperty "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders").Cookies
-            $cookieparse = "Cookies Path : "+"$cookiesPath"
             $IETestings = (Get-Process MicrosoftEdge -ErrorAction SilentlyContinue).Responding
             If($IETestings -eq $True){$Status = "Status       : Active"}else{$Status = "Status       : Stoped"}
 
@@ -170,7 +168,6 @@ function IE_Dump {
             echo "$ParsingData" >> $LogFilePath\BrowserEnum.log
             echo "$ParsingLocal" >> $LogFilePath\BrowserEnum.log
             echo "$dataparse" >> $LogFilePath\BrowserEnum.log
-            echo "$cookieparse" >> $LogFilePath\BrowserEnum.log
         }
 
     ## Retrieve IE history URLs
@@ -314,6 +311,16 @@ function CHROME {
             ## Retrieve Browser Version
             $GCVersionInfo = (Get-ItemProperty 'HKCU:\Software\Google\Chrome\BLBeacon').Version
             echo "Version      : $GCVersionInfo" >> $LogFilePath\BrowserEnum.log
+
+            ## Retrieve Download Folder (default_directory) Settings
+            $Parse_String = $Preferencies_Path.split(",")
+            $Download_Dir = $Parse_String|select-string "savefile"
+            If(-not($Download_Dir) -or $Download_Dir -eq $null){
+                echo "Downloads    : $env:userprofile\Downloads" >> $LogFilePath\BrowserEnum.log
+            }else{
+                $Parse_Dump = $Download_Dir -replace '"','' -replace '{','' -replace '}','' -replace 'default_directory:','' -replace 'savefile:','Downloads    : '
+                echo "$Parse_Dump" >> $LogFilePath\BrowserEnum.log
+            }
 
             ## Retrieve Email(s) from Google CHROME preferencies File ..
             $Parse_String = $Preferencies_Path.split(",")
