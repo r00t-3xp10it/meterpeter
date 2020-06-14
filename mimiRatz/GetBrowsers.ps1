@@ -12,6 +12,10 @@ Author: r00t-3xp10it (SSA RedTeam @2020)
    accepted Language, Download Directory, URL History, Bookmarks, Extentions, Start Page, stored creds, etc..
    The dumps will be Saved into $env:TMP folder. Unless this script 2º argument its used to input another Logfile
    storage location. If executed with the 2º arg then GetBrowsers will store the logfile in the Input location.
+   
+.NOTES
+   PS C:\> Get-Help ./GetBrowsers.ps1 [-detailed]
+   Access This Cmdlet comments help menu
 
 .EXAMPLE
    PS C:\> ./GetBrowsers.ps1
