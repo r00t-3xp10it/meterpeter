@@ -14,7 +14,7 @@ Author: r00t-3xp10it (SSA RedTeam @2020)
    storage location. If executed with the 2º arg then GetBrowsers will store the logfile in the Input location.
    
 .NOTES
-   PS C:\> Get-Help ./GetBrowsers.ps1 [-detailed]
+   PS C:\> Get-Help ./GetBrowsers.ps1 -detailed
    Access This Cmdlet comments help menu
 
 .EXAMPLE
