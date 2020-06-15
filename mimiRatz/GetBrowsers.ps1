@@ -166,7 +166,11 @@ function IE_Dump {
             $ParseDownload = $DownloadDir -replace '{374DE290-123F-4565-9164-39C4925E467B} :','Downloads    :'
             $logfilefolder = (Get-ItemProperty "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders").Cache
             $dataparse = "INetCache    : "+"$logfilefolder"
-            $IETestings = (Get-Process MicrosoftEdge -ErrorAction SilentlyContinue).Responding
+
+            ## New MicrosoftEdge Update have changed the binary name to 'msedge' ..
+            $CheckVersion = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Internet Explorer" -ErrorAction SilentlyContinue).version
+            If($CheckVersion -lt '9.11.18362.0'){$ProcessName = "MicrosoftEdge"}else{$ProcessName = "msedge"}
+            $IETestings = (Get-Process $ProcessName  -ErrorAction SilentlyContinue).Responding
             If($IETestings -eq $True){$Status = "Status       : Active"}else{$Status = "Status       : Stoped"}
 
             ## Writting LogFile to the selected path in: { $param2 var }
