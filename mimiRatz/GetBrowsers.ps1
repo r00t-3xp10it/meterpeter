@@ -15,7 +15,7 @@ Author: r00t-3xp10it (SSA RedTeam @2020)
 
 .NOTES
    PS C:\> Get-Help ./GetBrowsers.ps1 -detailed
-   Access This Cmdlet comments help menu
+   Access This Cmdlet Comment-based Help
 
 .EXAMPLE
    PS C:\> ./GetBrowsers.ps1
