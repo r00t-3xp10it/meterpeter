@@ -170,7 +170,7 @@ function IE_Dump {
             ## New MicrosoftEdge Update have changed the binary name to 'msedge' ..
             $CheckVersion = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Internet Explorer" -ErrorAction SilentlyContinue).version
             If($CheckVersion -lt '9.11.18362.0'){$ProcessName = "MicrosoftEdge"}else{$ProcessName = "msedge"}
-            $IETestings = (Get-Process $ProcessName  -ErrorAction SilentlyContinue).Responding
+            $IETestings = (Get-Process $ProcessName -ErrorAction SilentlyContinue).Responding
             If($IETestings -eq $True){$Status = "Status       : Active"}else{$Status = "Status       : Stoped"}
 
             ## Writting LogFile to the selected path in: { $param2 var }
@@ -183,40 +183,54 @@ function IE_Dump {
             echo "$dataparse" >> $LogFilePath\BrowserEnum.log
         }
 
-    ## Retrieve IE history URLs
-    echo "`nIE History" >> $LogFilePath\BrowserEnum.log
-    echo "----------" >> $LogFilePath\BrowserEnum.log
-    $IEHistory = Get-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Internet Explorer\TypedURLs" -ErrorAction SilentlyContinue|findstr /B /I "url"
-        If(-not($IEHistory) -or $IEHistory -eq $null){
-            echo "Could not find any History .." >> $LogFilePath\BrowserEnum.log
+        ## Dump IE Last Active Tab windowsTitle
+        echo "`nActive Browser Tab" >> $LogFilePath\BrowserEnum.log
+        echo "------------------" >> $LogFilePath\BrowserEnum.log
+        $check = Get-Process $ProcessName -ErrorAction SilentlyContinue
+        If(-not($check)){
+            echo "$ProcessName Process Stoped .." >> $LogFilePath\BrowserEnum.log
         }else{
-            Get-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Internet Explorer\TypedURLs"|findstr /B /I "url" >> $LogFilePath\BrowserEnum.log
+            $StoreData = Get-Process $ProcessName | Select -ExpandProperty MainWindowTitle
+            $ParseData = $StoreData | where {$_ -ne ""}
+            $MyPSObject = $ParseData -replace '- Microsoft​ Edge',''
+            ## Write my PSobject to logfile
+            echo "$MyPSObject" >> $LogFilePath\BrowserEnum.log
         }
 
-    ## Retrieve IE Bookmarks
-    # Source: https://github.com/rvrsh3ll/Misc-Powershell-Scripts/blob/master/Get-BrowserData.ps1
-    echo "`nIE Bookmarks" >> $LogFilePath\BrowserEnum.log
-    echo "------------" >> $LogFilePath\BrowserEnum.log
-    $URLs = Get-ChildItem -Path "$Env:SYSTEMDRIVE\Users\" -Filter "*.url" -Recurse -ErrorAction SilentlyContinue
-    ForEach ($URL in $URLs) {
-        if ($URL.FullName -match 'Favorites') {
-            $User = $URL.FullName.split('\')[2]
-            Get-Content -Path $URL.FullName | ForEach-Object {
-                try {
-                    if ($_.StartsWith('URL')) {
-                        ## parse the .url body to extract the actual bookmark location
-                        $URL = $_.Substring($_.IndexOf('=') + 1)
-                            if($URL -match $Search) {
-                                echo "$URL" >> $LogFilePath\BrowserEnum.log
-                            }
+        ## Retrieve IE history URLs
+        echo "`nIE History" >> $LogFilePath\BrowserEnum.log
+        echo "----------" >> $LogFilePath\BrowserEnum.log
+        $IEHistory = Get-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Internet Explorer\TypedURLs" -ErrorAction SilentlyContinue|findstr /B /I "url"
+            If(-not($IEHistory) -or $IEHistory -eq $null){
+                echo "Could not find any History .." >> $LogFilePath\BrowserEnum.log
+            }else{
+                Get-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Internet Explorer\TypedURLs"|findstr /B /I "url" >> $LogFilePath\BrowserEnum.log
+            }
+
+        ## Retrieve IE Bookmarks
+        # Source: https://github.com/rvrsh3ll/Misc-Powershell-Scripts/blob/master/Get-BrowserData.ps1
+        echo "`nIE Bookmarks" >> $LogFilePath\BrowserEnum.log
+        echo "------------" >> $LogFilePath\BrowserEnum.log
+        $URLs = Get-ChildItem -Path "$Env:SYSTEMDRIVE\Users\" -Filter "*.url" -Recurse -ErrorAction SilentlyContinue
+        ForEach ($URL in $URLs) {
+            if ($URL.FullName -match 'Favorites') {
+                $User = $URL.FullName.split('\')[2]
+                Get-Content -Path $URL.FullName | ForEach-Object {
+                    try {
+                        if ($_.StartsWith('URL')) {
+                            ## parse the .url body to extract the actual bookmark location
+                            $URL = $_.Substring($_.IndexOf('=') + 1)
+                                if($URL -match $Search) {
+                                    echo "$URL" >> $LogFilePath\BrowserEnum.log
+                                }
+                        }
                     }
-                }
-                catch {
-                    echo "Error parsing url: $_" >> $LogFilePath\BrowserEnum.log
+                    catch {
+                        echo "Error parsing url: $_" >> $LogFilePath\BrowserEnum.log
+                    }
                 }
             }
         }
-    }
 }
 
 
@@ -383,54 +397,54 @@ function CHROME {
         }
 
 
-    ## Retrieve Chrome History
-    # Source: https://github.com/EmpireProject/Empire/blob/master/data/module_source/collection/Get-BrowserData.ps1
-    echo "Chrome History" >> $LogFilePath\BrowserEnum.log
-    echo "--------------" >> $LogFilePath\BrowserEnum.log
-    $History_Path = "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\History"
-        If(-not(Test-Path -Path $History_Path)){
-            echo "Could not find any History .." >> $LogFilePath\BrowserEnum.log
-        }else{
-            $Regex = '(htt(p|s))://([\w-]+\.)+[\w-]+(/[\w- ./?%&=]*)*?'
-            $Get_Values = Get-Content -Path "$History_Path"|Select-String -AllMatches $regex |% {($_.Matches).Value} |Sort -Unique
-            $Get_Values | ForEach-Object {
-                $Key = $_
-                if ($Key -match $Search){
-                    echo "$_" >> $LogFilePath\BrowserEnum.log
+        ## Retrieve Chrome History
+        # Source: https://github.com/EmpireProject/Empire/blob/master/data/module_source/collection/Get-BrowserData.ps1
+        echo "Chrome History" >> $LogFilePath\BrowserEnum.log
+        echo "--------------" >> $LogFilePath\BrowserEnum.log
+        $History_Path = "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\History"
+            If(-not(Test-Path -Path $History_Path)){
+                echo "Could not find any History .." >> $LogFilePath\BrowserEnum.log
+            }else{
+                $Regex = '(htt(p|s))://([\w-]+\.)+[\w-]+(/[\w- ./?%&=]*)*?'
+                $Get_Values = Get-Content -Path "$History_Path"|Select-String -AllMatches $regex |% {($_.Matches).Value} |Sort -Unique
+                $Get_Values | ForEach-Object {
+                    $Key = $_
+                    if ($Key -match $Search){
+                        echo "$_" >> $LogFilePath\BrowserEnum.log
+                    }
                 }
             }
-        }
 
-    ## Retrieve Chrome bookmarks
-    echo "`nChrome Bookmarks" >> $LogFilePath\BrowserEnum.log
-    echo "----------------" >> $LogFilePath\BrowserEnum.log
-    $Bookmarks_Path = "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Bookmarks"
-        If(-not(Test-Path -Path $Bookmarks_Path)) {
-            echo "Could not find any Bookmarks .." >> $LogFilePath\BrowserEnum.log
-        }else{
-            $Json = Get-Content $Bookmarks_Path
-            $Output = ConvertFrom-Json20($Json)
-            $Jsonobject = $Output.roots.bookmark_bar.children
-            $Jsonobject.url |Sort -Unique | ForEach-Object {
-                if ($_ -match $Search) {
-                    echo "$_" >> $LogFilePath\BrowserEnum.log
+        ## Retrieve Chrome bookmarks
+        echo "`nChrome Bookmarks" >> $LogFilePath\BrowserEnum.log
+        echo "----------------" >> $LogFilePath\BrowserEnum.log
+        $Bookmarks_Path = "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Bookmarks"
+            If(-not(Test-Path -Path $Bookmarks_Path)) {
+                echo "Could not find any Bookmarks .." >> $LogFilePath\BrowserEnum.log
+            }else{
+                $Json = Get-Content $Bookmarks_Path
+                $Output = ConvertFrom-Json20($Json)
+                $Jsonobject = $Output.roots.bookmark_bar.children
+                $Jsonobject.url |Sort -Unique | ForEach-Object {
+                    if ($_ -match $Search) {
+                        echo "$_" >> $LogFilePath\BrowserEnum.log
+                    }
                 }
             }
-        }
 
-    ## Retrieve Chrome Cookies (hashs)
-    echo "`nChrome Cookies" >> $LogFilePath\BrowserEnum.log
-    echo "--------------" >> $LogFilePath\BrowserEnum.log
-    $Cookie_Path = "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Preferences"
-        If(-not(Test-Path -Path $Cookie_Path)){
-            echo "Could not find any Cookies .." >> $LogFilePath\BrowserEnum.log
-        }else{
-            $Preferencies_Path = get-content "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Preferences"
-            $Parse_String = $Preferencies_Path.split(",");$Find_MyHash = $Parse_String|Select-String "hash"
-            $BadChars = $Find_MyHash -replace '"setting":{"hasHighScore":false',''
-            $Dump_Key_Hash = $BadChars|where-object {$_}
-            echo $Dump_Key_Hash >> $LogFilePath\BrowserEnum.log
-        }
+        ## Retrieve Chrome Cookies (hashs)
+        echo "`nChrome Cookies" >> $LogFilePath\BrowserEnum.log
+        echo "--------------" >> $LogFilePath\BrowserEnum.log
+        $Cookie_Path = "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Preferences"
+            If(-not(Test-Path -Path $Cookie_Path)){
+                echo "Could not find any Cookies .." >> $LogFilePath\BrowserEnum.log
+            }else{
+                $Preferencies_Path = get-content "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Preferences"
+                $Parse_String = $Preferencies_Path.split(",");$Find_MyHash = $Parse_String|Select-String "hash"
+                $BadChars = $Find_MyHash -replace '"setting":{"hasHighScore":false',''
+                $Dump_Key_Hash = $BadChars|where-object {$_}
+                echo $Dump_Key_Hash >> $LogFilePath\BrowserEnum.log
+            }
 }
 
 
