@@ -84,6 +84,7 @@ If($mpset -eq $True){Write-Host "[i] LogFile => $LogFilePath\BrowserEnum.log" -F
 Start-sleep -Seconds 1
 
 ## Get System Default Configurations
+$RHserver = "LogonServer  : "+"$env:LOGONSERVER"
 $Caption = Get-CimInstance Win32_OperatingSystem|Format-List *|findstr /I /B /C:"Caption"
 If($Caption){$ParseCap = $Caption -replace '                                   :','      :'}else{$ParseCap = "Caption      : Not Found"}
 ## Get System Default webBrowser
@@ -97,6 +98,7 @@ If($IntSet){$ParsingIntSet = $IntSet -replace '@{User Agent=','UserAgent    : ' 
 ## Writting LogFile to the selected path in: { $param2 var }
 echo "`n`nSystem Defaults" > $LogFilePath\BrowserEnum.log
 echo "---------------" >> $LogFilePath\BrowserEnum.log
+echo "$RHserver" >> $LogFilePath\BrowserEnum.log
 echo "$ParseCap" >> $LogFilePath\BrowserEnum.log 
 echo "$ParsingIntSet" >> $LogFilePath\BrowserEnum.log
     ## Get Flash Internal Name/Version
