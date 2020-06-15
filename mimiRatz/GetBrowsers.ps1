@@ -5,7 +5,7 @@
 Author: r00t-3xp10it (SSA RedTeam @2020)
   Required Dependencies: IE, Firefox, Chrome
   Optional Dependencies: None
-  PS Script Dev Version: v1.12
+  PS Script Dev Version: v1.13
 
 .DESCRIPTION
    Standalone Powershell script to dump Installed browsers information sutch as: HomePage, Browser Version,
@@ -47,7 +47,7 @@ $Path = $null
 $mpset = $False
 $param1 = $args[0] # User Inputs [Arguments]
 $param2 = $args[1] # User Inputs [Arguments]
-$host.UI.RawUI.WindowTitle = " @GetBrowsers v1.12"
+$host.UI.RawUI.WindowTitle = " @GetBrowsers v1.13"
 ## Auto-Set @Args in case of User empty inputs (Set LogFile Path).
 If(-not($param2)){$LogFilePath = "$env:TMP"}else{$LogFilePath = "$param2";$mpset = $True}
 If(-not($param1)){
@@ -247,6 +247,20 @@ function FIREFOX {
         echo "Could not find any Browser Info .." >> $LogFilePath\BrowserEnum.log
     }
 
+    ## Dump Firefox Last Active Tab windowsTitle
+    echo "`nLast Active Browser Tab" >> $LogFilePath\BrowserEnum.log
+    echo "-----------------------" >> $LogFilePath\BrowserEnum.log
+    $check = Get-Process firefox -ErrorAction SilentlyContinue
+    If(-not($check)){
+        echo "Firefox Process not found .." >> $LogFilePath\BrowserEnum.log
+    }else{
+        $StoreData = Get-Process firefox | Select -ExpandProperty MainWindowTitle
+        $ParseData = $StoreData | where {$_ -ne ""}
+        $MyPSObject = $ParseData -replace '- Mozilla Firefox',''
+        ## Write my PSobject to logfile
+        echo "$MyPSObject" >> $LogFilePath\BrowserEnum.log
+    }
+
     ## Dump FIREFOX HISTORY URLs
     # Source: https://github.com/rvrsh3ll/Misc-Powershell-Scripts/blob/master/Get-BrowserData.ps1
     echo "`nFireFox History" >> $LogFilePath\BrowserEnum.log
@@ -327,6 +341,20 @@ function CHROME {
                 echo "$Parse_Dump" >> $LogFilePath\BrowserEnum.log
             }
 
+            ## Dump Chrome Last Active Tab windowsTitle
+            echo "`nLast Active Browser Tab" >> $LogFilePath\BrowserEnum.log
+            echo "-----------------------" >> $LogFilePath\BrowserEnum.log
+            $check = Get-Process chrome -ErrorAction SilentlyContinue
+            If(-not($check)){
+                echo "Chrome Process not found .." >> $LogFilePath\BrowserEnum.log
+            }else{
+                $StoreData = Get-Process chrome | Select -ExpandProperty MainWindowTitle
+                $ParseData = $StoreData | where {$_ -ne ""}
+                $MyPSObject = $ParseData -replace '- Google Chrome',''
+                ## Write my PSobject to logfile
+                echo "$MyPSObject`n" >> $LogFilePath\BrowserEnum.log
+            }
+
             ## Retrieve Email(s) from Google CHROME preferencies File ..
             $Parse_String = $Preferencies_Path.split(",")
             $Search_Email = $Parse_String|select-string "email"
@@ -344,6 +372,7 @@ function CHROME {
                     echo $Store >> $LogFilePath\BrowserEnum.log
                 }
         }
+
 
     ## Retrieve Chrome History
     # Source: https://github.com/EmpireProject/Empire/blob/master/data/module_source/collection/Get-BrowserData.ps1
