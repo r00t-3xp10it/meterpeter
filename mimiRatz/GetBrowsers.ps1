@@ -253,8 +253,8 @@ function FIREFOX {
     }
 
     ## Dump Firefox Last Active Tab windowsTitle
-    echo "`nLast Active Browser Tab" >> $LogFilePath\BrowserEnum.log
-    echo "-----------------------" >> $LogFilePath\BrowserEnum.log
+    echo "`nActive Browser Tab" >> $LogFilePath\BrowserEnum.log
+    echo "------------------" >> $LogFilePath\BrowserEnum.log
     $check = Get-Process firefox -ErrorAction SilentlyContinue
     If(-not($check)){
         echo "Firefox Process Stoped .." >> $LogFilePath\BrowserEnum.log
@@ -347,8 +347,8 @@ function CHROME {
             }
 
             ## Dump Chrome Last Active Tab windowsTitle
-            echo "`nLast Active Browser Tab" >> $LogFilePath\BrowserEnum.log
-            echo "-----------------------" >> $LogFilePath\BrowserEnum.log
+            echo "`nActive Browser Tab" >> $LogFilePath\BrowserEnum.log
+            echo "------------------" >> $LogFilePath\BrowserEnum.log
             $check = Get-Process chrome -ErrorAction SilentlyContinue
             If(-not($check)){
                 echo "Chrome Process Stoped .." >> $LogFilePath\BrowserEnum.log
