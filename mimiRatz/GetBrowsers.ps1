@@ -23,7 +23,7 @@ Author: r00t-3xp10it (SSA RedTeam @2020)
 
 .EXAMPLE
    PS C:\> ./GetBrowsers.ps1 -RECON
-   Fast Recon (Browsers and versions)
+   Fast Recon (Browsers and versions only)
 
 .EXAMPLE
    PS C:\> ./GetBrowsers.ps1 -FIREFOX
@@ -252,7 +252,7 @@ function FIREFOX {
     echo "-----------------------" >> $LogFilePath\BrowserEnum.log
     $check = Get-Process firefox -ErrorAction SilentlyContinue
     If(-not($check)){
-        echo "Firefox Process not found .." >> $LogFilePath\BrowserEnum.log
+        echo "Firefox Process Stoped .." >> $LogFilePath\BrowserEnum.log
     }else{
         $StoreData = Get-Process firefox | Select -ExpandProperty MainWindowTitle
         $ParseData = $StoreData | where {$_ -ne ""}
@@ -346,7 +346,7 @@ function CHROME {
             echo "-----------------------" >> $LogFilePath\BrowserEnum.log
             $check = Get-Process chrome -ErrorAction SilentlyContinue
             If(-not($check)){
-                echo "Chrome Process not found .." >> $LogFilePath\BrowserEnum.log
+                echo "Chrome Process Stoped .." >> $LogFilePath\BrowserEnum.log
             }else{
                 $StoreData = Get-Process chrome | Select -ExpandProperty MainWindowTitle
                 $ParseData = $StoreData | where {$_ -ne ""}
