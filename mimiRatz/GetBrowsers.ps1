@@ -184,6 +184,8 @@ function IE_Dump {
     }
 
     ## Dump MicrosoftEdge.exe (OR: msedge.exe) binary path
+    $CheckVersion = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Internet Explorer" -ErrorAction SilentlyContinue).version
+    If($CheckVersion -lt '9.11.18362.0'){$ProcessName = "MicrosoftEdge"}else{$ProcessName = "msedge"}
     $BinaryPath = Get-Process $ProcessName -ErrorAction SilentlyContinue
     If(-not($BinaryPath) -or $BinaryPath -eq $null){
         echo "BinaryPath   : requires $ProcessName process running to dump path." >> $LogFilePath\BrowserEnum.log
