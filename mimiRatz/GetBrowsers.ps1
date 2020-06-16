@@ -183,18 +183,29 @@ function IE_Dump {
         echo "$dataparse" >> $LogFilePath\BrowserEnum.log
     }
 
+
+    ## Dump MicrosoftEdge.exe (OR: msedge.exe) binary path
+    $BinaryPath = Get-Process $ProcessName -ErrorAction SilentlyContinue
+    If(-not($BinaryPath) -or $BinaryPath -eq $null){
+        echo "BinaryPath   : requires $ProcessName process running to dump path." >> $LogFilePath\BrowserEnum.log
+    }else{
+        $BinaryPath = Get-Process $ProcessName|Select -ExpandProperty Path
+        $parseData = $BinaryPath[0]
+        echo "BinaryPath   : $parseData" >> $LogFilePath\BrowserEnum.log
+    }
+
     ## Dump IE Last Active Tab windowsTitle
     echo "`nActive Browser Tab" >> $LogFilePath\BrowserEnum.log
     echo "------------------" >> $LogFilePath\BrowserEnum.log
     $check = Get-Process $ProcessName -ErrorAction SilentlyContinue
     If(-not($check)){
-        echo "$ProcessName Process Stoped .." >> $LogFilePath\BrowserEnum.log
+        echo "$ProcessName Process Stoped ..`n" >> $LogFilePath\BrowserEnum.log
     }else{
         $StoreData = Get-Process $ProcessName | Select -ExpandProperty MainWindowTitle
         $ParseData = $StoreData | where {$_ -ne ""}
         $MyPSObject = $ParseData -replace '- Microsoft​ Edge',''
         ## Write my PSobject to logfile
-        echo "$MyPSObject" >> $LogFilePath\BrowserEnum.log
+        echo "$MyPSObject`n" >> $LogFilePath\BrowserEnum.log
     }
 
     ## Retrieve IE history URLs
@@ -270,18 +281,28 @@ function FIREFOX {
         echo "Could not find any Browser Info .." >> $LogFilePath\BrowserEnum.log
     }
 
+    ## Dump Firefox.exe binary path
+    $BinaryPath = Get-Process firefox -ErrorAction SilentlyContinue
+    If(-not($BinaryPath) -or $BinaryPath -eq $null){
+        echo "BinaryPath   : requires firefox process running to dump path." >> $LogFilePath\BrowserEnum.log
+    }else{
+        $BinaryPath = Get-Process firefox|Select -ExpandProperty Path
+        $parseData = $BinaryPath[0]
+        echo "BinaryPath   : $parseData" >> $LogFilePath\BrowserEnum.log
+    }
+
     ## Dump Firefox Last Active Tab windowsTitle
     echo "`nActive Browser Tab" >> $LogFilePath\BrowserEnum.log
     echo "------------------" >> $LogFilePath\BrowserEnum.log
     $check = Get-Process firefox -ErrorAction SilentlyContinue
     If(-not($check)){
-        echo "Firefox Process Stoped .." >> $LogFilePath\BrowserEnum.log
+        echo "Firefox Process Stoped ..`n" >> $LogFilePath\BrowserEnum.log
     }else{
         $StoreData = Get-Process firefox | Select -ExpandProperty MainWindowTitle
         $ParseData = $StoreData | where {$_ -ne ""}
         $MyPSObject = $ParseData -replace '- Mozilla Firefox',''
         ## Write my PSobject to logfile
-        echo "$MyPSObject" >> $LogFilePath\BrowserEnum.log
+        echo "$MyPSObject`n" >> $LogFilePath\BrowserEnum.log
     }
 
     ## Dump FIREFOX HISTORY URLs
@@ -364,12 +385,22 @@ function CHROME {
             echo "$Parse_Dump" >> $LogFilePath\BrowserEnum.log
         }
 
+        ## Dump Chrome.exe binary path
+        $BinaryPath = Get-Process chrome -ErrorAction SilentlyContinue
+        If(-not($BinaryPath) -or $BinaryPath -eq $null){
+            echo "BinaryPath   : requires chrome process running to dump path." >> $LogFilePath\BrowserEnum.log
+        }else{
+            $BinaryPath = Get-Process chrome|Select -ExpandProperty Path
+            $parseData = $BinaryPath[0]
+            echo "BinaryPath   : $parseData" >> $LogFilePath\BrowserEnum.log
+        }
+
         ## Dump Chrome Last Active Tab windowsTitle
         echo "`nActive Browser Tab" >> $LogFilePath\BrowserEnum.log
         echo "------------------" >> $LogFilePath\BrowserEnum.log
         $check = Get-Process chrome -ErrorAction SilentlyContinue
         If(-not($check)){
-            echo "Chrome Process Stoped .." >> $LogFilePath\BrowserEnum.log
+            echo "Chrome Process Stoped ..`n" >> $LogFilePath\BrowserEnum.log
         }else{
             $StoreData = Get-Process chrome | Select -ExpandProperty MainWindowTitle
             $ParseData = $StoreData | where {$_ -ne ""}
