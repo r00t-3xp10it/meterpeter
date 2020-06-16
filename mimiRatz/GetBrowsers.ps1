@@ -183,7 +183,6 @@ function IE_Dump {
         echo "$dataparse" >> $LogFilePath\BrowserEnum.log
     }
 
-
     ## Dump MicrosoftEdge.exe (OR: msedge.exe) binary path
     $BinaryPath = Get-Process $ProcessName -ErrorAction SilentlyContinue
     If(-not($BinaryPath) -or $BinaryPath -eq $null){
