@@ -46,6 +46,8 @@ Author: r00t-3xp10it (SSA RedTeam @2020)
 #>
 
 
+#$a = (Get-ChildItem -Recurse -Path $env:programfiles -Include firefox.exe -ErrorAction SilentlyContinue).fullname
+
 $Path = $null
 $mpset = $False
 $param1 = $args[0] # User Inputs [Arguments]
@@ -136,12 +138,13 @@ function BROWSER_RECON {
         $JsPrefs = Get-content $Preferencies|Select-String "extensions.lastPlatformVersion"
         $ParsingData = $JsPrefs[0] -replace 'user_pref\(','' -replace '\"','' -replace ',','' -replace '\);','' -replace 'extensions.lastPlatformVersion','' -replace ' ',''
     }
+
     ## Build Table to display results found
-    echo "`n`nBrowser      Status      Version          PreDefined" > $LogFilePath\BrowserEnum.log
-    echo "-------      ------      -------          ----------" >> $LogFilePath\BrowserEnum.log
-    echo "IE           $IEfound       $IEVersion     $MInvocation" >> $LogFilePath\BrowserEnum.log
-    echo "CHROME       $CHfound       $Chrome_App" >> $LogFilePath\BrowserEnum.log
-    echo "FIREFOX      $FFfound       $ParsingData" >> $LogFilePath\BrowserEnum.log
+    echo "`n`nBrowser    Status    Version         PreDefined" > $LogFilePath\BrowserEnum.log
+    echo "-------    ------    -------         ----------" >> $LogFilePath\BrowserEnum.log
+    echo "IE         $IEfound     $IEVersion    $MInvocation" >> $LogFilePath\BrowserEnum.log
+    echo "CHROME     $CHfound     $Chrome_App" >> $LogFilePath\BrowserEnum.log
+    echo "FIREFOX    $FFfound     $ParsingData" >> $LogFilePath\BrowserEnum.log
 }
 
 
@@ -187,7 +190,7 @@ function IE_Dump {
     ## Dump MicrosoftEdge.exe (OR: msedge.exe) binary path
     $BinaryPath = Get-Process $ProcessName -ErrorAction SilentlyContinue
     If(-not($BinaryPath) -or $BinaryPath -eq $null){
-        echo "BinaryPath   : requires $ProcessName process running to dump path." >> $LogFilePath\BrowserEnum.log
+        echo "BinaryPath   : {requires $ProcessName process running to dump path}" >> $LogFilePath\BrowserEnum.log
     }else{
         $BinaryPath = Get-Process $ProcessName|Select -ExpandProperty Path
         $parseData = $BinaryPath[0]
@@ -199,7 +202,7 @@ function IE_Dump {
     echo "------------------" >> $LogFilePath\BrowserEnum.log
     $check = Get-Process $ProcessName -ErrorAction SilentlyContinue
     If(-not($check)){
-        echo "$ProcessName Process Stoped ..`n" >> $LogFilePath\BrowserEnum.log
+        echo "{requires $ProcessName process running to dump tab}`n" >> $LogFilePath\BrowserEnum.log
     }else{
         $StoreData = Get-Process $ProcessName | Select -ExpandProperty MainWindowTitle
         $ParseData = $StoreData | where {$_ -ne ""}
@@ -284,7 +287,7 @@ function FIREFOX {
     ## Dump Firefox.exe binary path
     $BinaryPath = Get-Process firefox -ErrorAction SilentlyContinue
     If(-not($BinaryPath) -or $BinaryPath -eq $null){
-        echo "BinaryPath   : requires firefox process running to dump path." >> $LogFilePath\BrowserEnum.log
+        echo "BinaryPath   : {requires firefox process running to dump path}" >> $LogFilePath\BrowserEnum.log
     }else{
         $BinaryPath = Get-Process firefox|Select -ExpandProperty Path
         $parseData = $BinaryPath[0]
@@ -296,7 +299,7 @@ function FIREFOX {
     echo "------------------" >> $LogFilePath\BrowserEnum.log
     $check = Get-Process firefox -ErrorAction SilentlyContinue
     If(-not($check)){
-        echo "Firefox Process Stoped ..`n" >> $LogFilePath\BrowserEnum.log
+        echo "{requires firefox process running to dump tab}`n" >> $LogFilePath\BrowserEnum.log
     }else{
         $StoreData = Get-Process firefox | Select -ExpandProperty MainWindowTitle
         $ParseData = $StoreData | where {$_ -ne ""}
@@ -328,14 +331,14 @@ function FIREFOX {
     ## TODO: Retrieve FireFox bookmarks
     echo "`nFirefox Bookmarks" >> $LogFilePath\BrowserEnum.log
     echo "-----------------" >> $LogFilePath\BrowserEnum.log
-    $Bookmarks_Path = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\bookmarkbackups\*.jsonlz4" # delete last - from Path
+    $Bookmarks_Path = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\bookmarkbackups\*.jsonlz4-" # delete last - from Path
     If(-not(Test-Path -Path "$Bookmarks_Path")) {
         echo "Could not find any Bookmarks .." >> $LogFilePath\BrowserEnum.log
     }else{
         ## TODO: I cant use 'ConvertFrom-Json' cmdlet because it gives
         # 'primitive JSON invalid error' parsing jsonlz4 to text|csv ...
-        # $Regex = $Json -replace '[^a-zA-Z0-9/:.]','' # Replace all chars that does not match the Regex
         $Json = Get-Content "$Bookmarks_Path" -Raw
+        #$Regex = $Json -replace '[^a-zA-Z0-9/:.]','' # Replace all chars that does not match the Regex
         $Regex = $Json -replace '.*_','' -replace '.*©','' -replace '.*®','' -replace '.*¯','' -replace '.*ø','' -replace '.*þ','' -replace '.*Š','' -replace '.*‡','' -replace '.*¼','' -replace '.*±','' -replace '.*§','' -replace '.*™','' -replace '.*†','' -replace '.*»','' -replace '.*¥',''
             ForEach ($Key in $Regex){
                 echo "$Key" >> $LogFilePath\BrowserEnum.log
@@ -388,7 +391,7 @@ function CHROME {
         ## Dump Chrome.exe binary path
         $BinaryPath = Get-Process chrome -ErrorAction SilentlyContinue
         If(-not($BinaryPath) -or $BinaryPath -eq $null){
-            echo "BinaryPath   : requires chrome process running to dump path." >> $LogFilePath\BrowserEnum.log
+            echo "BinaryPath   : {requires chrome process running to dump path}" >> $LogFilePath\BrowserEnum.log
         }else{
             $BinaryPath = Get-Process chrome|Select -ExpandProperty Path
             $parseData = $BinaryPath[0]
@@ -400,7 +403,7 @@ function CHROME {
         echo "------------------" >> $LogFilePath\BrowserEnum.log
         $check = Get-Process chrome -ErrorAction SilentlyContinue
         If(-not($check)){
-            echo "Chrome Process Stoped ..`n" >> $LogFilePath\BrowserEnum.log
+            echo "{requires chrome process running to dump tab}`n" >> $LogFilePath\BrowserEnum.log
         }else{
             $StoreData = Get-Process chrome | Select -ExpandProperty MainWindowTitle
             $ParseData = $StoreData | where {$_ -ne ""}
