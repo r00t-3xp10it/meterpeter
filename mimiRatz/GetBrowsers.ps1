@@ -331,7 +331,7 @@ function FIREFOX {
     ## TODO: Retrieve FireFox bookmarks
     echo "`nFirefox Bookmarks" >> $LogFilePath\BrowserEnum.log
     echo "-----------------" >> $LogFilePath\BrowserEnum.log
-    $Bookmarks_Path = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\bookmarkbackups\*.jsonlz4-" # delete last - from Path
+    $Bookmarks_Path = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\bookmarkbackups\*.jsonlz4" # delete last - from Path
     If(-not(Test-Path -Path "$Bookmarks_Path")) {
         echo "Could not find any Bookmarks .." >> $LogFilePath\BrowserEnum.log
     }else{
