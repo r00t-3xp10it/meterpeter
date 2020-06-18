@@ -49,8 +49,6 @@ Author: r00t-3xp10it (SSA RedTeam @2020)
 #>
 
 
-#$a = (Get-ChildItem -Recurse -Path $env:programfiles -Include firefox.exe -ErrorAction SilentlyContinue).fullname
-
 $Path = $null
 $mpset = $False
 $param1 = $args[0] # User Inputs [Arguments]
