@@ -140,13 +140,6 @@ function BROWSER_RECON {
         $ParsingData = $JsPrefs[0] -replace 'user_pref\(','' -replace '\"','' -replace ',','' -replace '\);','' -replace 'extensions.lastPlatformVersion','' -replace ' ',''
     }
 
-
-    $test = [PSCustomObject] @{
-        Name = $name
-        Location = $location
-        Age = [int] $age
-    }
-
     ## Build Table to display results found
     echo "`n`nBrowser    Status    Version         PreDefined" > $LogFilePath\BrowserEnum.log
     echo "-------    ------    -------         ----------" >> $LogFilePath\BrowserEnum.log
@@ -576,7 +569,7 @@ function CREDS_DUMP {
     }
 
     ## Search for passwords in { ConsoleHost_history }
-    If(-not(Test-Path "$env:appdata\Microsoft\Windows\PowerShell\PSReadline\ConsoleHost_history.txxt")){
+    If(-not(Test-Path "$env:appdata\Microsoft\Windows\PowerShell\PSReadline\ConsoleHost_history.txt")){
         echo "`n`nCreds in ConsoleHost_history.txt" >> $LogFilePath\BrowserEnum.log
         echo "--------------------------------" >> $LogFilePath\BrowserEnum.log
         echo "ConsoleHost_history.txt not found .." >> $LogFilePath\BrowserEnum.log
@@ -594,7 +587,7 @@ function CREDS_DUMP {
                     "Creds in ConsoleHost_history.txt" = $token
                 }
             }
-            echo $MyPSObject >> $LogFilePath\BrowserEnum.log
+            echo "`n" $MyPSObject >> $LogFilePath\BrowserEnum.log
         }
     }
 }
