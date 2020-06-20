@@ -124,6 +124,16 @@ function ConvertFrom-Json20([object] $item){
 
 
 function BROWSER_RECON {
+    ## New MicrosoftEdge Update have changed the binary name to 'msedge' ..
+    $CheckVersion = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Internet Explorer" -ErrorAction SilentlyContinue).version
+    If($CheckVersion -lt '9.11.18362.0'){$ProcessName = "MicrosoftEdge"}else{$ProcessName = "msedge"}
+    $IETestings = (Get-Process $ProcessName -ErrorAction SilentlyContinue).Responding
+    If($IETestings -eq $True){$iStatus = "   Active"}else{$iStatus = "   Stoped"}
+    $FFTestings = (Get-Process firefox -ErrorAction SilentlyContinue).Responding
+    If($FFTestings -eq $True){$fStatus = "   Active"}else{$fStatus = "   Stoped"}
+    $CHTestings = (Get-Process chrome -ErrorAction SilentlyContinue).Responding
+    If($CHTestings -eq $True){$cStatus = "   Active"}else{$cStatus = "   Stoped"}
+
     ## Detect ALL Available browsers Installed and the PreDefined browser name
     $DefaultBrowser = (Get-ItemProperty 'HKCU:\Software\Microsoft\Windows\Shell\Associations\UrlAssociations\https\UserChoice' -ErrorAction SilentlyContinue).ProgId
     If($DefaultBrowser){$MInvocation = $DefaultBrowser.split("-")[0] -replace 'URL','' -replace 'HTML','' -replace '.HTTPS',''}else{$MInvocation = "Not Found"}
@@ -141,11 +151,11 @@ function BROWSER_RECON {
     }
 
     ## Build Table to display results found
-    echo "`n`nBrowser    Status    Version         PreDefined" > $LogFilePath\BrowserEnum.log
-    echo "-------    ------    -------         ----------" >> $LogFilePath\BrowserEnum.log
-    echo "IE         $IEfound     $IEVersion    $MInvocation" >> $LogFilePath\BrowserEnum.log
-    echo "CHROME     $CHfound     $Chrome_App" >> $LogFilePath\BrowserEnum.log
-    echo "FIREFOX    $FFfound     $ParsingData" >> $LogFilePath\BrowserEnum.log
+    echo "`n`nBrowser   Install   Status   Version         PreDefined" > $LogFilePath\BrowserEnum.log
+    echo "-------   -------   ------   -------         ----------" >> $LogFilePath\BrowserEnum.log
+    echo "IE        $IEfound  $iStatus   $IEVersion    $MInvocation" >> $LogFilePath\BrowserEnum.log
+    echo "CHROME    $CHfound  $fStatus   $Chrome_App " >> $LogFilePath\BrowserEnum.log
+    echo "FIREFOX   $FFfound  $cStatus   $ParsingData" >> $LogFilePath\BrowserEnum.log
 }
 
 
