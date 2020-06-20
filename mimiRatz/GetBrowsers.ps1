@@ -5,7 +5,7 @@
 Author: r00t-3xp10it (SSA RedTeam @2020)
   Required Dependencies: IE, Firefox, Chrome
   Optional Dependencies: None
-  PS Script Dev Version: v1.14
+  PS Script Dev Version: v1.15
 
 .DESCRIPTION
    Standalone Powershell script to dump Installed browsers information sutch as: HomePage, Browser Version,
@@ -53,7 +53,7 @@ $Path = $null
 $mpset = $False
 $param1 = $args[0] # User Inputs [Arguments]
 $param2 = $args[1] # User Inputs [Arguments]
-$host.UI.RawUI.WindowTitle = " @GetBrowsers v1.14"
+$host.UI.RawUI.WindowTitle = " @GetBrowsers v1.15"
 ## Auto-Set @Args in case of User empty inputs (Set LogFile Path).
 If(-not($param2)){$LogFilePath = "$env:TMP"}else{$LogFilePath = "$param2";$mpset = $True}
 If(-not($param1)){
@@ -512,7 +512,7 @@ function ADDONS {
         echo "None addons found .." >> $LogFilePath\BrowserEnum.log
     }else{
         $Json = Get-Content "$Env:AppData\Mozilla\Firefox\Profiles\*.default\extensions.json" -Raw|ConvertFrom-Json|select *
-        $Json.addons|select-object -property id,version,rootURI >> $LogFilePath\BrowserEnum.log
+        $Json.addons|select-object -property defaultLocale|Select-Object -ExpandProperty defaultLocale|Select-Object Name,description >> $LogFilePath\BrowserEnum.log
     }
 
     ## Retrieve Chrome addons
