@@ -154,8 +154,8 @@ function BROWSER_RECON {
     echo "`n`nBrowser   Install   Status   Version         PreDefined" > $LogFilePath\BrowserEnum.log
     echo "-------   -------   ------   -------         ----------" >> $LogFilePath\BrowserEnum.log
     echo "IE        $IEfound  $iStatus   $IEVersion    $MInvocation" >> $LogFilePath\BrowserEnum.log
-    echo "CHROME    $CHfound  $fStatus   $Chrome_App " >> $LogFilePath\BrowserEnum.log
-    echo "FIREFOX   $FFfound  $cStatus   $ParsingData" >> $LogFilePath\BrowserEnum.log
+    echo "CHROME    $CHfound  $cStatus   $Chrome_App " >> $LogFilePath\BrowserEnum.log
+    echo "FIREFOX   $FFfound  $fStatus   $ParsingData" >> $LogFilePath\BrowserEnum.log
 }
 
 
