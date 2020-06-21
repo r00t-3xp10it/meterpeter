@@ -49,6 +49,8 @@ Author: r00t-3xp10it (SSA RedTeam @2020)
 #>
 
 
+# $browsers["Opera"] = "C:\Program Files (x86)\Opera\launcher.exe"
+
 $Path = $null
 $mpset = $False
 $param1 = $args[0] # User Inputs [Arguments]
@@ -141,6 +143,15 @@ function BROWSER_RECON {
     If($IEVersion){$IEfound = "Found"}else{$IEfound = "False";$IEVersion = "            "}
     $Chrome_App = (Get-ItemProperty "HKCU:\Software\Google\Chrome\BLBeacon" -ErrorAction SilentlyContinue).version
     If($Chrome_App){$CHfound = "Found"}else{$CHfound = "False";$Chrome_App = "  "}
+
+    ## display predefined browser status
+    $id = "Null";$fd = "Null";$cd = "Null"
+    If($MInvocation -match 'IE'){$id = "True";$fd = "False";$cd = "False"}
+    If($MInvocation -match 'Chrome'){$id = "False";$fd = "False";$cd = "True"}
+    If($MInvocation -match 'Firefox'){$id = "False";$fd = "True";$cd = "False"}
+    If($MInvocation -match 'MSEdgeHTM'){$id = "True";$fd = "False";$cd = "False"}
+
+    ## Dump Firefox installed version
     If(-not(Test-Path -Path "$env:APPDATA\Mozilla\Firefox\Profiles")){
         $FFfound = "False";$ParsingData = "  "
     }else{
@@ -151,11 +162,13 @@ function BROWSER_RECON {
     }
 
     ## Build Table to display results found
+    If($ParsingData -eq "  "){$ParsingData = "      "}
+    If($Chrome_App -eq "  "){$Chrome_App = "             "}
     echo "`n`nBrowser   Install   Status   Version         PreDefined" > $LogFilePath\BrowserEnum.log
     echo "-------   -------   ------   -------         ----------" >> $LogFilePath\BrowserEnum.log
-    echo "IE        $IEfound  $iStatus   $IEVersion    $MInvocation" >> $LogFilePath\BrowserEnum.log
-    echo "CHROME    $CHfound  $cStatus   $Chrome_App " >> $LogFilePath\BrowserEnum.log
-    echo "FIREFOX   $FFfound  $fStatus   $ParsingData" >> $LogFilePath\BrowserEnum.log
+    echo "IE        $IEfound  $iStatus   $IEVersion    $id" >> $LogFilePath\BrowserEnum.log
+    echo "CHROME    $CHfound  $cStatus   $Chrome_App   $cd" >> $LogFilePath\BrowserEnum.log
+    echo "FIREFOX   $FFfound  $fStatus   $ParsingData          $fd" >> $LogFilePath\BrowserEnum.log
 }
 
 
