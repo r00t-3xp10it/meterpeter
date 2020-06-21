@@ -589,8 +589,8 @@ function CREDS_DUMP {
             echo "None Credentials found .." >> $LogFilePath\BrowserEnum.log
         }else{
             ForEach ($Key in $Json){
-                $Regex = $Key -replace '[^a-zA-Z0-9/:. ]',''
-                echo $Regex >> $LogFilePath\BrowserEnum.log
+                $Regex = $Key -replace '[^a-zA-Z0-9/:. ]','' # Replace all chars that does NOT match the Regex
+                echo "`n" $Regex >> $LogFilePath\BrowserEnum.log
             }
        }
     }
