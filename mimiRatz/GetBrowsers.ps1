@@ -142,18 +142,18 @@ function BROWSER_RECON {
 
     ## Detect ALL Available browsers Installed and the PreDefined browser name
     $DefaultBrowser = (Get-ItemProperty 'HKCU:\Software\Microsoft\Windows\Shell\Associations\UrlAssociations\https\UserChoice' -ErrorAction SilentlyContinue).ProgId
-    If($DefaultBrowser){$MInvocation = $DefaultBrowser.split("-")[0] -replace 'URL','' -replace 'HTML','' -replace '.HTTPS',''}else{$MInvocation = "Not Found"}
+    If($DefaultBrowser){$MInvocation = $DefaultBrowser.split("-")[0] -replace 'URL','' -replace 'HTML','' -replace '.HTTPS',''}else{$MInvocation = $null}
     $IEVersion = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Internet Explorer" -ErrorAction SilentlyContinue).version
     If($IEVersion){$IEfound = "Found"}else{$IEfound = "False";$IEVersion = "            "}
     $Chrome_App = (Get-ItemProperty "HKCU:\Software\Google\Chrome\BLBeacon" -ErrorAction SilentlyContinue).version
     If($Chrome_App){$CHfound = "Found"}else{$CHfound = "False";$Chrome_App = "             "}
 
     ## display predefined browser status
-    $id = "Null";$fd = "Null";$cd = "Null"
     If($MInvocation -match 'IE'){$id = "True";$fd = "False";$cd = "False"}
     If($MInvocation -match 'Chrome'){$id = "False";$fd = "False";$cd = "True"}
     If($MInvocation -match 'Firefox'){$id = "False";$fd = "True";$cd = "False"}
     If($MInvocation -match 'MSEdgeHTM'){$id = "True";$fd = "False";$cd = "False"}
+    If(-not($MInvocation) -or $MInvocation -eq $null){$id = "Null";$fd = "Null";$cd = "Null"}
 
     ## Dump Firefox installed version
     If(-not(Test-Path -Path "$env:APPDATA\Mozilla\Firefox\Profiles")){
