@@ -142,7 +142,7 @@ function BROWSER_RECON {
     $IEVersion = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Internet Explorer" -ErrorAction SilentlyContinue).version
     If($IEVersion){$IEfound = "Found"}else{$IEfound = "False";$IEVersion = "            "}
     $Chrome_App = (Get-ItemProperty "HKCU:\Software\Google\Chrome\BLBeacon" -ErrorAction SilentlyContinue).version
-    If($Chrome_App){$CHfound = "Found"}else{$CHfound = "False";$Chrome_App = "  "}
+    If($Chrome_App){$CHfound = "Found"}else{$CHfound = "False";$Chrome_App = "             "}
 
     ## display predefined browser status
     $id = "Null";$fd = "Null";$cd = "Null"
@@ -153,7 +153,7 @@ function BROWSER_RECON {
 
     ## Dump Firefox installed version
     If(-not(Test-Path -Path "$env:APPDATA\Mozilla\Firefox\Profiles")){
-        $FFfound = "False";$ParsingData = "  "
+        $FFfound = "False";$ParsingData = "      "
     }else{
         $FFfound = "Found"
         $Preferencies = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\prefs.js"
@@ -162,8 +162,6 @@ function BROWSER_RECON {
     }
 
     ## Build Table to display results found
-    If($ParsingData -eq "  "){$ParsingData = "      "}
-    If($Chrome_App -eq "  "){$Chrome_App = "             "}
     echo "`n`nBrowser   Install   Status   Version         PreDefined" > $LogFilePath\BrowserEnum.log
     echo "-------   -------   ------   -------         ----------" >> $LogFilePath\BrowserEnum.log
     echo "IE        $IEfound  $iStatus   $IEVersion    $id" >> $LogFilePath\BrowserEnum.log
