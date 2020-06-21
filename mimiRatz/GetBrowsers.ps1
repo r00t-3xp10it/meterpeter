@@ -605,7 +605,7 @@ function CREDS_DUMP {
             echo "None Credentials found .." >> $LogFilePath\BrowserEnum.log
         }else{
             ## Loop in each string found
-            $MyPSObject = ForEach($token in $Credentials){
+            $MyPSObject = ForEach ($token in $Credentials){
                 New-Object -TypeName PSObject -Property @{
                     "Creds in ConsoleHost_history.txt" = $token
                 }
