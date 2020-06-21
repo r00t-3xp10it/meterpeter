@@ -38,7 +38,7 @@ Author: r00t-3xp10it (SSA RedTeam @2020)
    Enumerates ALL Browsers addons and saves logfile to: $env:USERPROFILE\Desktop\BrowserEnum.log
 
 .INPUTS
-   None. This cmdlet does not accept any inputs besides <-arguments>
+   None. You cannot pipe objects to GetBrowsers.ps1
 
 .OUTPUTS
    Saves BrowserEnum.log to the selected directory. 'tmp' is the default.
@@ -49,7 +49,11 @@ Author: r00t-3xp10it (SSA RedTeam @2020)
 #>
 
 
-# $browsers["Opera"] = "C:\Program Files (x86)\Opera\launcher.exe"
+# param (
+# [Parameter(Mandatory=$true)]
+# [string]$MandatoryArgs, [string]$OptionalArgs
+# )
+
 
 $Path = $null
 $mpset = $False
