@@ -201,7 +201,17 @@ function IE_Dump {
 
         ## New MicrosoftEdge Update have changed the binary name to 'msedge' ..
         $IETestings = (Get-Process $ProcessName -ErrorAction SilentlyContinue).Responding
-        If($IETestings -eq $True){$Status = "Status       : Active"}else{$Status = "Status       : Stoped"}
+        If($IETestings -eq $True){
+            $Status = "Status       : Active"
+            ## Get Browser startTime
+            $BsT = Get-Process $ProcessName|Select -ExpandProperty StartTime
+            $ParseData = $BsT[0] -split(" ");$StartTime = $ParseData[1]
+            $FinalOut = "StartTime    : $StartTime"
+        }else{
+            $Status = "Status       : Stoped"
+            $FinalOut = "StartTime    : {requires $ProcessName process running to dump Time}"
+        }
+
 
         ## Writting LogFile to the selected path in: { $param2 var }
         echo "$Status" >> $LogFilePath\BrowserEnum.log
@@ -222,6 +232,7 @@ function IE_Dump {
         $parseData = $BinaryPath[0]
         echo "BinaryPath   : $parseData" >> $LogFilePath\BrowserEnum.log
     }
+    echo "$FinalOut" >> $LogFilePath\BrowserEnum.log
 
     ## Dump IE Last Active Tab windowsTitle
     echo "`nActive Browser Tab" >> $LogFilePath\BrowserEnum.log
@@ -284,7 +295,16 @@ function FIREFOX {
 
         ## Test if browser its active 
         $FFTestings = (Get-Process Firefox -ErrorAction SilentlyContinue).Responding
-        If($FFTestings -eq $True){$Status = "Status       : Active"}else{$Status = "Status       : Stoped"}
+        If($FFTestings -eq $True){
+            $Status = "Status       : Active"
+            ## Get Browser startTime
+            $BsT = Get-Process Firefox|Select -ExpandProperty StartTime
+            $ParseData = $BsT[0] -split(" ");$StartTime = $ParseData[1]
+            $FinalOut = "StartTime    : $StartTime"
+        }else{
+            $Status = "Status       : Stoped"
+            $FinalOut = "StartTime    : {requires Firefox process running to dump Time}"
+        }
         echo "$Status" >> $LogFilePath\BrowserEnum.log
 
         ## get browser countryCode
@@ -315,10 +335,9 @@ function FIREFOX {
     If(-not($BinaryPath) -or $BinaryPath -eq $null){
         echo "BinaryPath   : {requires firefox process running to dump path}" >> $LogFilePath\BrowserEnum.log
     }else{
-        $BinaryPath = Get-Process firefox|Select -ExpandProperty Path
-        $parseData = $BinaryPath[0]
         echo "BinaryPath   : $parseData" >> $LogFilePath\BrowserEnum.log
     }
+    echo "$FinalOut" >> $LogFilePath\BrowserEnum.log
 
     ## Dump Firefox Last Active Tab windowsTitle
     echo "`nActive Browser Tab" >> $LogFilePath\BrowserEnum.log
@@ -384,7 +403,16 @@ function CHROME {
         ## Test if browser its active 
         $Preferencies_Path = get-content "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Preferences"
         $CHTestings = (Get-Process Chrome -ErrorAction SilentlyContinue).Responding
-        If($CHTestings -eq $True){$Status = "Status       : Active"}else{$Status = "Status       : Stoped"}
+        If($CHTestings -eq $True){
+            $Status = "Status       : Active"
+            ## Get Browser startTime
+            $BsT = Get-Process Chrome|Select -ExpandProperty StartTime
+            $ParseData = $BsT[0] -split(" ");$StartTime = $ParseData[1]
+            $FinalOut = "StartTime    : $StartTime"
+        }else{
+            $Status = "Status       : Stoped"
+            $FinalOut = "StartTime    : {requires Chrome process running to dump Time}"
+        }
         echo "$Status" >> $LogFilePath\BrowserEnum.log
 
         ## Retrieve Download Pref Settings
@@ -423,6 +451,7 @@ function CHROME {
             $parseData = $BinaryPath[0]
             echo "BinaryPath   : $parseData" >> $LogFilePath\BrowserEnum.log
         }
+        echo "$FinalOut" >> $LogFilePath\BrowserEnum.log
 
         ## Dump Chrome Last Active Tab windowsTitle
         echo "`nActive Browser Tab" >> $LogFilePath\BrowserEnum.log
