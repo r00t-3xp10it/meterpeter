@@ -57,7 +57,6 @@ Author: r00t-3xp10it (SSA RedTeam @2020)
 #  [Parameter(Mandatory=$false,Position=1)][string]$LOGFILEPATH
 # )
 
-
 $Path = $null
 $mpset = $False
 $param1 = $args[0] # User Inputs [Arguments]
@@ -213,7 +212,6 @@ function IE_Dump {
             $Status = "Status       : Stoped"
             $FinalOut = "StartTime    : {requires $ProcessName process running to dump Time}"
         }
-
 
         ## Writting LogFile to the selected path in: { $param2 var }
         echo "$Status" >> $LogFilePath\BrowserEnum.log
