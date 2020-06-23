@@ -50,8 +50,11 @@ Author: r00t-3xp10it (SSA RedTeam @2020)
 
 
 # param (
-# [Parameter(Mandatory=$true)]
-# [string]$MandatoryArgs, [string]$OptionalArgs
+#  [Parameter(Mandatory=$true,Position=0)]$IE,
+#  [Parameter(Mandatory=$true,Position=0)]$RECON,
+#  [Parameter(Mandatory=$true,Position=0)]$CHROME,
+#  [Parameter(Mandatory=$true,Position=0)]$FIREFOX,
+#  [Parameter(Mandatory=$false,Position=1)][string]$LOGFILEPATH
 # )
 
 
@@ -66,7 +69,7 @@ If(-not($param1)){
     ## Required (Mandatory) Parameters/args Settings
     echo "`nGetBrowsers - Enumerate installed browser(s) information ." > $LogFilePath\BrowserEnum.log
     echo "[ ERROR ] This script requires parameters (-args) to run ..`n" >> $LogFilePath\BrowserEnum.log
-    echo "Syntax: <scriptname> <-arg>(mandatory) <arg>(optional)`n" >> $LogFilePath\BrowserEnum.log
+    echo "Syntax: [scriptname] [-arg <mandatory>] [arg <optional>]`n" >> $LogFilePath\BrowserEnum.log
     echo "The following mandatory args are available:" >> $LogFilePath\BrowserEnum.log
     echo "./GetBrowsers.ps1 -RECON            Fast Recon (Browsers and versions)" >> $LogFilePath\BrowserEnum.log
     echo "./GetBrowsers.ps1 -IE               Enumerates IE browser information Only." >> $LogFilePath\BrowserEnum.log
