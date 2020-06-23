@@ -208,8 +208,7 @@ function IE_Dump {
             $Status = "Status       : Active"
             ## Get Browser startTime
             $BsT = Get-Process $ProcessName|Select -ExpandProperty StartTime
-            $ParseData = $BsT[0] -split(" ");$StartTime = $ParseData[1]
-            $FinalOut = "StartTime    : $StartTime"
+            $StartTime = $BsT[0];$FinalOut = "StartTime    : $StartTime"
         }else{
             $Status = "Status       : Stoped"
             $FinalOut = "StartTime    : {requires $ProcessName process running to dump Time}"
@@ -302,8 +301,7 @@ function FIREFOX {
             $Status = "Status       : Active"
             ## Get Browser startTime
             $BsT = Get-Process Firefox|Select -ExpandProperty StartTime
-            $ParseData = $BsT[0] -split(" ");$StartTime = $ParseData[1]
-            $FinalOut = "StartTime    : $StartTime"
+            $StartTime = $BsT[0];$FinalOut = "StartTime    : $StartTime"
         }else{
             $Status = "Status       : Stoped"
             $FinalOut = "StartTime    : {requires Firefox process running to dump Time}"
@@ -410,8 +408,7 @@ function CHROME {
             $Status = "Status       : Active"
             ## Get Browser startTime
             $BsT = Get-Process Chrome|Select -ExpandProperty StartTime
-            $ParseData = $BsT[0] -split(" ");$StartTime = $ParseData[1]
-            $FinalOut = "StartTime    : $StartTime"
+            $StartTime = $BsT[0];$FinalOut = "StartTime    : $StartTime"
         }else{
             $Status = "Status       : Stoped"
             $FinalOut = "StartTime    : {requires Chrome process running to dump Time}"
