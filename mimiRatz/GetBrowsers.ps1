@@ -231,7 +231,6 @@ function IE_Dump {
             $FinalOut = "StartTime    : {requires $ProcessName process running}"
         }
 
-
         ## Writting LogFile to the selected path in: { $param2 var }
         echo "$Status" >> $LogFilePath\BrowserEnum.log
         echo "$KBData" >> $LogFilePath\BrowserEnum.log
@@ -281,7 +280,7 @@ function IE_Dump {
 
     ## TODO: Retrieve IE Favorites
     # "$env:LOCALAPPDATA\Microsoft\Edge\User Data\Default\History"
-    # "$env:LOCALAPPDATA\Microsoft\Edge\User Data\Default\Favorites" (IEFP)
+    #  "$env:LOCALAPPDATA\Microsoft\Edge\User Data\Default\Last Tabs" (IEFP)
     echo "`nIE Favorites" >> $LogFilePath\BrowserEnum.log
     echo "------------" >> $LogFilePath\BrowserEnum.log
     If(-not(Test-Path "$env:LOCALAPPDATA\Packages\Microsoft.MicrosoftEdge_8wekyb3d8bbwe\AC\MicrosoftEdge\User\Default\Favorites\*")){
@@ -318,8 +317,10 @@ function FIREFOX {
     $Path = Test-Path "$env:APPDATA\Mozilla\Firefox\Profiles";
     If($Path -eq $True){
         If(-not(Test-Path "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\prefs.js")){
-            $Path = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default-release\prefs.js"   
+            $Path = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default-release\prefs.js"
+            $double = $True
         }else{
+            $double = $False
             $Path = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\prefs.js" 
         }
 
@@ -339,14 +340,20 @@ function FIREFOX {
         }
         echo "$Status" >> $LogFilePath\BrowserEnum.log
 
-        ## get browser countryCode
-        $JsPrefs = Get-content "$Path"|Select-String "browser.search.countryCode";
-        $ParsingData = $JsPrefs[0] -replace 'user_pref\(','' -replace '\"','' -replace ',',':' -replace '\);','' -replace 'browser.search.countryCode','countryCode  '
-        echo "$ParsingData" >> $LogFilePath\BrowserEnum.log
+        ## get browser countryCode  browser.search.region
+        If($double -eq $True){
+            $JsPrefs = Get-content "$Path"|Select-String "browser.search.region";
+            $ParsingData = $JsPrefs[0] -replace 'user_pref\(','' -replace '\"','' -replace ',',':' -replace '\);','' -replace 'browser.search.region','countryCode  '
+            echo "$ParsingData" >> $LogFilePath\BrowserEnum.log
+        }else{
+            $JsPrefs = Get-content "$Path"|Select-String "browser.search.countryCode";
+            $ParsingData = $JsPrefs[0] -replace 'user_pref\(','' -replace '\"','' -replace ',',':' -replace '\);','' -replace 'browser.search.countryCode','countryCode  '
+            echo "$ParsingData" >> $LogFilePath\BrowserEnum.log
+        }
 
         ## get PlatformVersion
         $JsPrefs = Get-content "$Path"|Select-String "extensions.lastPlatformVersion"
-        $ParsingData = $JsPrefs[0] -replace 'user_pref\(','' -replace '\"','' -replace ',',':' -replace '\);','' -replace 'extensions.lastPlatformVersion','Version      '
+        $ParsingData = $JsPrefs -replace 'user_pref\(','' -replace '\"','' -replace ',',':' -replace '\);','' -replace 'extensions.lastPlatformVersion','Version      '
         echo "$ParsingData" >> $LogFilePath\BrowserEnum.log
 
         ## get brownser startup page
@@ -356,7 +363,7 @@ function FIREFOX {
 
         ## get browser DownloadDir
         $JsPrefs = Get-content "$Path"|Select-String "browser.download.lastDir";
-        $ParsingData = $JsPrefs[0] -replace 'user_pref\(','' -replace '\"','' -replace ',',':' -replace '\);','' -replace 'browser.download.lastDir','Downloads    '
+        $ParsingData = $JsPrefs -replace 'user_pref\(','' -replace '\"','' -replace ',',':' -replace '\);','' -replace 'browser.download.lastDir','Downloads    '
         echo "$ParsingData" >> $LogFilePath\BrowserEnum.log
     }else{
         echo "{Could not find any Browser Info}" >> $LogFilePath\BrowserEnum.log
