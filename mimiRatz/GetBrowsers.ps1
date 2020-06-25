@@ -10,8 +10,8 @@ Author: r00t-3xp10it (SSA RedTeam @2020)
 .DESCRIPTION
    Standalone Powershell script to dump Installed browsers information sutch as: HomePage, Browsers Version,
    accepted Language, Download Directory, URL History, Bookmarks, Extentions, Start Page, stored creds, etc..
-   The dumps will be Saved into $env:TMP folder and Auto-Deleted in the end. Unless this script 2º argument
-   its used to input the Logfile storage location. In that case GetBrowsers will permanent store the logfile.
+   The dumps will be saved into $env:TMP folder and Auto-deleted in the end. Unless this script 2º argument
+   its used to input the Logfile storage location. In that case GetBrowsers.ps1 will permanently store it.
 
 .NOTES
    PS C:\> Get-Help ./GetBrowsers.ps1 -full
@@ -31,7 +31,7 @@ Author: r00t-3xp10it (SSA RedTeam @2020)
 
 .EXAMPLE
    PS C:\> ./GetBrowsers.ps1 -ALL
-   Enumerates Internet Explorer (IE), FireFox and Chrome Browsers information.
+   Enumerates Internet Explorer (IE|MsEdge), FireFox and Chrome Browsers information.
    
 .EXAMPLE
    PS C:\> ./GetBrowsers.ps1 -ADDONS $env:USERPROFILE\Desktop
@@ -98,13 +98,21 @@ Start-sleep -Seconds 1
 $RHserver = "LogonServer  : "+"$env:LOGONSERVER"
 $Caption = Get-CimInstance Win32_OperatingSystem|Format-List *|findstr /I /B /C:"Caption"
 If($Caption){$ParseCap = $Caption -replace '                                   :','      :'}else{$ParseCap = "Caption      : Not Found"}
+
 ## Get System Default webBrowser
 $DefaultBrowser = (Get-ItemProperty 'HKCU:\Software\Microsoft\Windows\Shell\Associations\UrlAssociations\https\UserChoice' -ErrorAction SilentlyContinue).ProgId
 If($DefaultBrowser){$Parse_Browser_Data = $DefaultBrowser.split("-")[0] -replace 'URL','' -replace 'HTML','' -replace '.HTTPS',''}else{$Parse_Browser_Data = "Not Found"}
 $MInvocation = "WebBrowser   : "+"$Parse_Browser_Data"+" (PreDefined)";
+
 ## Get System UserAgent string
 $IntSet = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\internet settings" -Name 'User Agent' -ErrorAction SilentlyContinue|Select-Object 'User Agent'
 If($IntSet){$ParsingIntSet = $IntSet -replace '@{User Agent=','UserAgent    : ' -replace '}',''}else{$ParsingIntSet = "UserAgent    : Not Found"}
+
+## Internet statistics
+$recstats = netstat -s -p IP|select-string -pattern "Packets Received"
+If($recstats){$statsdata = $recstats -replace '  Packets Received                   =','TCPReceived  :'}else{$statsdata = "TCPReceived  : {null}"}
+$delstats = netstat -s -p IP|select-string -pattern "Packets Delivered"
+If($delstats){$deliverdata = $delstats -replace '  Received Packets Delivered         =','TCPDelivered :'}else{$deliverdata = "TCPDelivered : {null}"}
 
 ## Writting LogFile to the selected path in: { $param2 var }
 echo "`n`nSystem Defaults" > $LogFilePath\BrowserEnum.log
@@ -121,6 +129,9 @@ If(-not(Test-Path "$env:WINDIR\system32\macromed\flash\flash.ocx")){
     echo "flashName    : $flashName" >> $LogFilePath\BrowserEnum.log
 }
 echo "$MInvocation" >> $LogFilePath\BrowserEnum.log
+echo "$statsdata" >> $LogFilePath\BrowserEnum.log
+echo "$deliverdata" >> $LogFilePath\BrowserEnum.log
+## END Off { @args -DEFAULTS }
 
 
 function ConvertFrom-Json20([object] $item){
@@ -212,10 +223,14 @@ function IE_Dump {
             ## Get Browser startTime
             $BsT = Get-Process $ProcessName|Select -ExpandProperty StartTime
             $StartTime = $BsT[0];$FinalOut = "StartTime    : $StartTime"
+            $SSID = get-process $ProcessName|Select -Last 1|Select-Object -Expandproperty Id
+            $PSID = "Process PID  : $SSID"
         }else{
             $Status = "Status       : Stoped"
+            $PSID = "Process PID  : {requires $ProcessName process running}"
             $FinalOut = "StartTime    : {requires $ProcessName process running}"
         }
+
 
         ## Writting LogFile to the selected path in: { $param2 var }
         echo "$Status" >> $LogFilePath\BrowserEnum.log
@@ -237,6 +252,8 @@ function IE_Dump {
         echo "BinaryPath   : $parseData" >> $LogFilePath\BrowserEnum.log
     }
     echo "$FinalOut" >> $LogFilePath\BrowserEnum.log
+    echo "$PSID" >> $LogFilePath\BrowserEnum.log
+
 
     ## Dump IE Last Active Tab windowsTitle
     echo "`nActive Browser Tab" >> $LogFilePath\BrowserEnum.log
@@ -313,8 +330,11 @@ function FIREFOX {
             ## Get Browser startTime
             $BsT = Get-Process Firefox|Select -ExpandProperty StartTime
             $StartTime = $BsT[0];$FinalOut = "StartTime    : $StartTime"
+            $SSID = get-process Firefox|Select -Last 1|Select-Object -Expandproperty Id
+            $PSID = "Process PID  : $SSID"
         }else{
             $Status = "Status       : Stoped"
+            $PSID = "Process PID  : {requires Firefox process running}"
             $FinalOut = "StartTime    : {requires Firefox process running}"
         }
         echo "$Status" >> $LogFilePath\BrowserEnum.log
@@ -352,6 +372,8 @@ function FIREFOX {
         echo "BinaryPath   : $parseData" >> $LogFilePath\BrowserEnum.log
     }
     echo "$FinalOut" >> $LogFilePath\BrowserEnum.log
+    echo "$PSID" >> $LogFilePath\BrowserEnum.log
+
 
     ## Dump Firefox Last Active Tab windowsTitle
     echo "`nActive Browser Tab" >> $LogFilePath\BrowserEnum.log
@@ -430,8 +452,11 @@ function CHROME {
             ## Get Browser startTime
             $BsT = Get-Process Chrome|Select -ExpandProperty StartTime
             $StartTime = $BsT[0];$FinalOut = "StartTime    : $StartTime"
+            $SSID = get-process Chrome|Select -Last 1|Select-Object -Expandproperty Id
+            $PSID = "Process PID  : $SSID"
         }else{
             $Status = "Status       : Stoped"
+            $PSID = "Process PID  : {requires Chrome process running}"
             $FinalOut = "StartTime    : {requires Chrome process running}"
         }
         echo "$Status" >> $LogFilePath\BrowserEnum.log
@@ -473,6 +498,8 @@ function CHROME {
             echo "BinaryPath   : $parseData" >> $LogFilePath\BrowserEnum.log
         }
         echo "$FinalOut" >> $LogFilePath\BrowserEnum.log
+        echo "$PSID" >> $LogFilePath\BrowserEnum.log
+
 
         ## Dump Chrome Last Active Tab windowsTitle
         echo "`nActive Browser Tab" >> $LogFilePath\BrowserEnum.log
