@@ -1,30 +1,32 @@
 <#
-.Author:
-   @ZHacker13 &('r00t-3xp10it') version 2.10
+.SYNOPSIS
+  Starts a listener Server on a Windows attacker machine and generate oneline reverse shell payloads for CMD or PS
 
-.DESCRIPTION:
+  Author: @ZHacker13 &('r00t-3xp10it')
+  Required Dependencies: None
+  Optional Dependencies: Python3 (windows)|Apache2 (Linux)
+  PS Script Dev Version: v2.10
+
+.DESCRIPTION
    ReverseTCPShell - Framework. This PS1 starts a listener Server on a Windows attacker machine and generate oneline revshell
    payloads for CMD and PS to be executed on the victim machine. You can use the generated oneline revshell payload also via
    netcat on linux. (in this case you will lose the C2 functionalities like screenshot, upload and download files). If this
    framework is executed using venom v1.0.16 framework {amsi evasion nº4} then linux users will not lost C2 functionalities
    and the target connection terminal window will be executed hidden with the help of dropper.bat script.
 
-.EXECUTION:
-   ./meterpeter.ps1
-   - Local Host: 192.168.1.72
-   - Local Port: 443
+.EXAMPLE
+   PS C:\> Get-Help ./meterpeter.ps1
 
-   Obfuscation Type
-   ----------------
-   1 = ASCII
-   2 = BXOR
+.EXAMPLE
+   PS C:\> ./meterpeter.ps1
+ 
+.INPUTS
+   None. You cannot pipe objects to meterpeter.ps1
 
-   Obfuscation: 2
- 
- .EXECUTE PAYLOAD:
-    Execute the output or 'Update-KB4524147.ps1' on the victim machine.
- 
- .MORE INFO HERE: 
+.OUTPUTS
+   Saves Update-KB4524147.ps1 to meterpeter working directory.
+
+ .LINK 
     https://github.com/ZHacker13/ReverseTCPShell
     https://www.youtube.com/watch?v=hiYyXv4RdD8
  
