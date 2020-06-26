@@ -2,7 +2,7 @@
 .SYNOPSIS
   Standalone Powershell script to dump Installed browsers information.
 
-Author: r00t-3xp10it (SSA RedTeam @2020)
+  Author: r00t-3xp10it (SSA RedTeam @2020)
   Required Dependencies: IE, Firefox, Chrome
   Optional Dependencies: None
   PS Script Dev Version: v1.16
