@@ -382,7 +382,6 @@ function FIREFOX {
     echo "$FinalOut" >> $LogFilePath\BrowserEnum.log
     echo "$PSID" >> $LogFilePath\BrowserEnum.log
 
-
     ## Get Firefox Last Active Tab windowsTitle
     echo "`nActive Browser Tab" >> $LogFilePath\BrowserEnum.log
     echo "------------------" >> $LogFilePath\BrowserEnum.log
