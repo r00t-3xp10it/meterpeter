@@ -314,62 +314,62 @@ function FIREFOX {
     ## Retrieve FireFox Browser Information
     echo "`n`nFireFox Browser" >> $LogFilePath\BrowserEnum.log
     echo "---------------" >> $LogFilePath\BrowserEnum.log
-    $Path = Test-Path "$env:APPDATA\Mozilla\Firefox\Profiles";
-    If($Path -eq $True){
+    $FirefoxProfile = Test-Path "$env:APPDATA\Mozilla\Firefox\Profiles";
+    If($FirefoxProfile -eq $True){
         If(-not(Test-Path "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\prefs.js")){
-            $Path = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default-release\prefs.js"
-            $double = $True
+            $FirefoxProfile = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default-release\prefs.js"
+            $MyPCDefault = $False
         }else{
-            $double = $False
-            $Path = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\prefs.js" 
+            $MyPCDefault = $True
+            $FirefoxProfile = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\prefs.js" 
         }
 
-        ## Test if browser its active 
+        ## Check browser: { active|StartTime|PID } Settings
         $FFTestings = (Get-Process Firefox -ErrorAction SilentlyContinue).Responding
         If($FFTestings -eq $True){
             $Status = "Status       : Active"
-            ## Get Browser startTime
             $BsT = Get-Process Firefox|Select -ExpandProperty StartTime
             $StartTime = $BsT[0];$FinalOut = "StartTime    : $StartTime"
             $SSID = get-process Firefox|Select -Last 1|Select-Object -Expandproperty Id
             $PSID = "Process PID  : $SSID"
+            echo "$Status" >> $LogFilePath\BrowserEnum.log
         }else{
             $Status = "Status       : Stoped"
             $PSID = "Process PID  : {requires Firefox process running}"
             $FinalOut = "StartTime    : {requires Firefox process running}"
+            echo "$Status" >> $LogFilePath\BrowserEnum.log
         }
-        echo "$Status" >> $LogFilePath\BrowserEnum.log
 
-        ## get browser countryCode  browser.search.region
-        If($double -eq $True){
-            $JsPrefs = Get-content "$Path"|Select-String "browser.search.region";
-            $ParsingData = $JsPrefs[0] -replace 'user_pref\(','' -replace '\"','' -replace ',',':' -replace '\);','' -replace 'browser.search.region','countryCode  '
-            echo "$ParsingData" >> $LogFilePath\BrowserEnum.log
-        }else{
-            $JsPrefs = Get-content "$Path"|Select-String "browser.search.countryCode";
+        ## Get browser countryCode { PT }
+        If($MyPCDefault -eq $True){
+            $JsPrefs = Get-content "$FirefoxProfile"|Select-String "browser.search.countryCode";
             $ParsingData = $JsPrefs[0] -replace 'user_pref\(','' -replace '\"','' -replace ',',':' -replace '\);','' -replace 'browser.search.countryCode','countryCode  '
             echo "$ParsingData" >> $LogFilePath\BrowserEnum.log
+        }else{
+            $JsPrefs = Get-content "$FirefoxProfile"|Select-String "browser.search.region";
+            $ParsingData = $JsPrefs[0] -replace 'user_pref\(','' -replace '\"','' -replace ',',':' -replace '\);','' -replace 'browser.search.region','countryCode  '
+            echo "$ParsingData" >> $LogFilePath\BrowserEnum.log
         }
 
-        ## get PlatformVersion
-        $JsPrefs = Get-content "$Path"|Select-String "extensions.lastPlatformVersion"
+        ## Get Browser Version { 76.0.11 }
+        $JsPrefs = Get-content "$FirefoxProfile"|Select-String "extensions.lastPlatformVersion"
         $ParsingData = $JsPrefs -replace 'user_pref\(','' -replace '\"','' -replace ',',':' -replace '\);','' -replace 'extensions.lastPlatformVersion','Version      '
         echo "$ParsingData" >> $LogFilePath\BrowserEnum.log
 
-        ## get brownser startup page
-        $JsPrefs = Get-content "$Path"|Select-String "browser.startup.homepage"
+        ## get brownser startup page { https://www.google.pt }
+        $JsPrefs = Get-content "$FirefoxProfile"|Select-String "browser.startup.homepage"
         $ParsingData = $JsPrefs[0] -replace 'user_pref\(','' -replace '\"','' -replace ',',':' -replace '\);','' -replace 'browser.startup.homepage','HomePage     '
         echo "$ParsingData" >> $LogFilePath\BrowserEnum.log
 
-        ## get browser DownloadDir
-        $JsPrefs = Get-content "$Path"|Select-String "browser.download.lastDir";
+        ## get browser DownloadDir { C:\Users\pedro\Desktop }
+        $JsPrefs = Get-content "$FirefoxProfile"|Select-String "browser.download.lastDir";
         $ParsingData = $JsPrefs -replace 'user_pref\(','' -replace '\"','' -replace ',',':' -replace '\);','' -replace 'browser.download.lastDir','Downloads    '
         echo "$ParsingData" >> $LogFilePath\BrowserEnum.log
     }else{
         echo "{Could not find any Browser Info}" >> $LogFilePath\BrowserEnum.log
     }
 
-    ## Dump Firefox.exe binary path
+    ## Get Firefox.exe binary path
     $BinaryPath = Get-Process firefox -ErrorAction SilentlyContinue
     If(-not($BinaryPath) -or $BinaryPath -eq $null){
         echo "BinaryPath   : {requires firefox process running}" >> $LogFilePath\BrowserEnum.log
@@ -378,21 +378,21 @@ function FIREFOX {
         $parseData = $BinaryPath[0]
         echo "BinaryPath   : $parseData" >> $LogFilePath\BrowserEnum.log
     }
+    ## Dump From previous Functions { StartTime|PID }
     echo "$FinalOut" >> $LogFilePath\BrowserEnum.log
     echo "$PSID" >> $LogFilePath\BrowserEnum.log
 
 
-    ## Dump Firefox Last Active Tab windowsTitle
+    ## Get Firefox Last Active Tab windowsTitle
     echo "`nActive Browser Tab" >> $LogFilePath\BrowserEnum.log
     echo "------------------" >> $LogFilePath\BrowserEnum.log
-    $check = Get-Process firefox -ErrorAction SilentlyContinue
-    If(-not($check)){
+    $checkProcess = Get-Process firefox -ErrorAction SilentlyContinue
+    If(-not($checkProcess)){
         echo "{requires firefox process running}`n" >> $LogFilePath\BrowserEnum.log
     }else{
-        $StoreData = Get-Process firefox | Select -ExpandProperty MainWindowTitle
+        $StoreData = Get-Process firefox|Select -ExpandProperty MainWindowTitle
         $ParseData = $StoreData | where {$_ -ne ""}
         $MyPSObject = $ParseData -replace '- Mozilla Firefox',''
-        ## Write my PSobject to logfile
         echo "$MyPSObject`n" >> $LogFilePath\BrowserEnum.log
     }
 
@@ -400,14 +400,8 @@ function FIREFOX {
     # Source: https://github.com/rvrsh3ll/Misc-Powershell-Scripts/blob/master/Get-BrowserData.ps1
     echo "`nFireFox History" >> $LogFilePath\BrowserEnum.log
     echo "---------------" >> $LogFilePath\BrowserEnum.log
-    If($Path -eq $False) {
-        echo "{Could not find any History}" >> $LogFilePath\BrowserEnum.log
-    }else{
-        If(-not(Test-Path "$env:APPDATA\Mozilla\Firefox\Profiles\*.default-release")){
-            $Profiles = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default"   
-        }else{
-            $Profiles = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default-release" 
-        }
+    If(Test-Path "$env:APPDATA\Mozilla\Firefox\Profiles\*.default"){
+        $Profiles = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default"
         $Regex = '([a-zA-Z]{3,})://([\w-]+\.)+[\w-]+(/[\w- ./?%&=]*)*?'
         Get-Content $Profiles\places.sqlite|Select-String -Pattern $Regex -AllMatches | % { $_.Matches } | % { $_.Value } | Sort-Object -Unique | % {
             $Value = New-Object -TypeName PSObject -Property @{
@@ -418,15 +412,33 @@ function FIREFOX {
                 echo "$ParsingData" >> $LogFilePath\BrowserEnum.log
             }
         }
+
+    }else{
+
+        If(-not(Test-Path "$env:APPDATA\Mozilla\Firefox\Profiles\*.default-release")){
+            echo "{Could not find any History}" >> $LogFilePath\BrowserEnum.log 
+        }else{
+            $Profiles = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default-release"
+            $Regex = '([a-zA-Z]{3,})://([\w-]+\.)+[\w-]+(/[\w- ./?%&=]*)*?'
+            Get-Content $Profiles\places.sqlite|Select-String -Pattern $Regex -AllMatches | % { $_.Matches } | % { $_.Value } | Sort-Object -Unique | % {
+                $Value = New-Object -TypeName PSObject -Property @{
+                    FireFoxHistoryURL = $_
+                }
+                if ($Value -match $Search) {
+                    $ParsingData = $Value -replace '@{FireFoxHistoryURL=','' -replace '}',''
+                    echo "$ParsingData" >> $LogFilePath\BrowserEnum.log
+                }  
+            }
+        }
     }
 
     ## TODO: Retrieve FireFox bookmarks
     echo "`nFirefox Bookmarks" >> $LogFilePath\BrowserEnum.log
     echo "-----------------" >> $LogFilePath\BrowserEnum.log
     If(-not(Test-Path "$env:APPDATA\Mozilla\Firefox\Profiles\*.default-release")){
-        $Bookmarks_Path = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\bookmarkbackups\*.jsonlz4"   
+        $Bookmarks_Path = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\bookmarkbackups\*.jsonlz4-"   
     }else{
-        $Bookmarks_Path = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default-release\bookmarkbackups\*.jsonlz4" 
+        $Bookmarks_Path = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default-release\bookmarkbackups\*.jsonlz4-" 
     }
     If(-not(Test-Path -Path "$Bookmarks_Path")) {
         echo "{Could not find any Bookmarks}" >> $LogFilePath\BrowserEnum.log
