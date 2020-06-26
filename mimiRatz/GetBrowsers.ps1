@@ -318,9 +318,7 @@ function FIREFOX {
     If($FirefoxProfile -eq $True){
         If(-not(Test-Path "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\prefs.js")){
             $FirefoxProfile = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default-release\prefs.js"
-            $MyPCDefault = $False
         }else{
-            $MyPCDefault = $True
             $FirefoxProfile = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\prefs.js" 
         }
 
@@ -341,19 +339,18 @@ function FIREFOX {
         }
 
         ## Get browser countryCode { PT }
-        If($MyPCDefault -eq $True){
-            $JsPrefs = Get-content "$FirefoxProfile"|Select-String "browser.search.countryCode";
-            $ParsingData = $JsPrefs[0] -replace 'user_pref\(','' -replace '\"','' -replace ',',':' -replace '\);','' -replace 'browser.search.countryCode','countryCode  '
-            echo "$ParsingData" >> $LogFilePath\BrowserEnum.log
-        }else{
-            $JsPrefs = Get-content "$FirefoxProfile"|Select-String "browser.search.region";
-            $ParsingData = $JsPrefs[0] -replace 'user_pref\(','' -replace '\"','' -replace ',',':' -replace '\);','' -replace 'browser.search.region','countryCode  '
-            echo "$ParsingData" >> $LogFilePath\BrowserEnum.log
-        }
+        $JsPrefs = Get-content "$FirefoxProfile"|Select-String "browser.search.region";
+        $ParsingData = $JsPrefs[0] -replace 'user_pref\(','' -replace '\"','' -replace ',',':' -replace '\);','' -replace 'browser.search.region','countryCode  '
+        echo "$ParsingData" >> $LogFilePath\BrowserEnum.log
 
         ## Get Browser Version { 76.0.11 }
         $JsPrefs = Get-content "$FirefoxProfile"|Select-String "extensions.lastPlatformVersion"
         $ParsingData = $JsPrefs -replace 'user_pref\(','' -replace '\"','' -replace ',',':' -replace '\);','' -replace 'extensions.lastPlatformVersion','Version      '
+        echo "$ParsingData" >> $LogFilePath\BrowserEnum.log
+
+        ## Get Flash Version { 32.0.0.314 }
+        $JsPrefs = Get-content "$FirefoxProfile"|Select-String "plugin.flash.version"
+        $ParsingData = $JsPrefs -replace 'user_pref\(','' -replace '\"','' -replace ',',':' -replace '\);','' -replace 'plugin.flash.version','FlashVersion '
         echo "$ParsingData" >> $LogFilePath\BrowserEnum.log
 
         ## get brownser startup page { https://www.google.pt }
