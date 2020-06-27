@@ -224,16 +224,16 @@ function IE_Dump {
 
         ## New MicrosoftEdge Update have changed the binary name to 'msedge' ..
         $IETestings = (Get-Process $ProcessName -ErrorAction SilentlyContinue).Responding
-        If($IETestings -eq $True){
+        If(-not($IETestings) -or $IETestings -eq $null){
+            $Status = "Status       : Stoped"
+            $PSID = "Process PID  : {requires $ProcessName process running}"
+            $FinalOut = "StartTime    : {requires $ProcessName process running}"
+        }else{
             $Status = "Status       : Active"
             $BrowserStartTime = Get-Process $ProcessName|Select -ExpandProperty StartTime
             $StartTime = $BrowserStartTime[0];$FinalOut = "StartTime    : $StartTime"
             $ProcessPID = get-process $ProcessName|Select -Last 1|Select-Object -Expandproperty Id
             $PSID = "Process PID  : $ProcessPID"
-        }else{
-            $Status = "Status       : Stoped"
-            $PSID = "Process PID  : {requires $ProcessName process running}"
-            $FinalOut = "StartTime    : {requires $ProcessName process running}"
         }
 
         ## Writting LogFile to the selected path in: { $param2 var }
