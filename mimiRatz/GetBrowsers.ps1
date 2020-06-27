@@ -177,7 +177,7 @@ function BROWSER_RECON {
             If(-not(Test-Path "$env:APPDATA\Mozilla\Firefox\Profiles\*.default-release\prefs.js")){
                 $ParsingData = "{null}"
             }else{
-                $Preferencies = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\prefs.js"
+                $Preferencies = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default-release\prefs.js"
                 $JsPrefs = Get-content $Preferencies|Select-String "extensions.lastPlatformVersion"
                 $ParsingData = $JsPrefs[0] -replace 'user_pref\(','' -replace '\"','' -replace ',','' -replace '\);','' -replace 'extensions.lastPlatformVersion','' -replace ' ',''
             }
