@@ -157,29 +157,35 @@ function BROWSER_RECON {
     $DefaultBrowser = (Get-ItemProperty 'HKCU:\Software\Microsoft\Windows\Shell\Associations\UrlAssociations\https\UserChoice' -ErrorAction SilentlyContinue).ProgId
     If($DefaultBrowser){$MInvocation = $DefaultBrowser.split("-")[0] -replace 'URL','' -replace 'HTML','' -replace '.HTTPS',''}else{$MInvocation = $null}
     $IEVersion = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Internet Explorer" -ErrorAction SilentlyContinue).version
-    If($IEVersion){$IEfound = "Found"}else{$IEfound = "False";$IEVersion = "            "}
+    If($IEVersion){$IEfound = "Found"}else{$IEfound = "False";$IEVersion = "{null}      "}
     $Chrome_App = (Get-ItemProperty "HKCU:\Software\Google\Chrome\BLBeacon" -ErrorAction SilentlyContinue).version
-    If($Chrome_App){$CHfound = "Found"}else{$CHfound = "False";$Chrome_App = "             "}
+    If($Chrome_App){$CHfound = "Found"}else{$CHfound = "False";$Chrome_App = "{null}       "}
 
     ## display predefined browser status
     If($MInvocation -match 'IE'){$id = "True";$fd = "False";$cd = "False"}
     If($MInvocation -match 'Chrome'){$id = "False";$fd = "False";$cd = "True"}
     If($MInvocation -match 'Firefox'){$id = "False";$fd = "True";$cd = "False"}
     If($MInvocation -match 'MSEdgeHTM'){$id = "True";$fd = "False";$cd = "False"}
-    If(-not($MInvocation) -or $MInvocation -eq $null){$id = "Null";$fd = "Null";$cd = "Null"}
+    If(-not($MInvocation) -or $MInvocation -eq $null){$id = "{Null}";$fd = "{Null}";$cd = "{Null}"}
 
     ## Dump Firefox installed version
     If(-not(Test-Path -Path "$env:APPDATA\Mozilla\Firefox\Profiles")){
-        $FFfound = "False";$ParsingData = "      "
+        $FFfound = "False";$ParsingData = "{null}"
     }else{
         $FFfound = "Found"
         If(-not(Test-Path "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\prefs.js")){
-            $Preferencies = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default-release\prefs.js"   
+            If(-not(Test-Path "$env:APPDATA\Mozilla\Firefox\Profiles\*.default-release\prefs.js")){
+                $ParsingData = "{null}"
+            }else{
+                $Preferencies = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\prefs.js"
+                $JsPrefs = Get-content $Preferencies|Select-String "extensions.lastPlatformVersion"
+                $ParsingData = $JsPrefs[0] -replace 'user_pref\(','' -replace '\"','' -replace ',','' -replace '\);','' -replace 'extensions.lastPlatformVersion','' -replace ' ',''
+            }
         }else{
-            $Preferencies = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\prefs.js" 
+            $Preferencies = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\prefs.js"
+            $JsPrefs = Get-content $Preferencies|Select-String "extensions.lastPlatformVersion"
+            $ParsingData = $JsPrefs[0] -replace 'user_pref\(','' -replace '\"','' -replace ',','' -replace '\);','' -replace 'extensions.lastPlatformVersion','' -replace ' ',''
         }
-        $JsPrefs = Get-content $Preferencies|Select-String "extensions.lastPlatformVersion"
-        $ParsingData = $JsPrefs[0] -replace 'user_pref\(','' -replace '\"','' -replace ',','' -replace '\);','' -replace 'extensions.lastPlatformVersion','' -replace ' ',''
     }
 
     ## Build Table to display results found
@@ -220,11 +226,10 @@ function IE_Dump {
         $IETestings = (Get-Process $ProcessName -ErrorAction SilentlyContinue).Responding
         If($IETestings -eq $True){
             $Status = "Status       : Active"
-            ## Get Browser startTime
-            $BsT = Get-Process $ProcessName|Select -ExpandProperty StartTime
-            $StartTime = $BsT[0];$FinalOut = "StartTime    : $StartTime"
-            $SSID = get-process $ProcessName|Select -Last 1|Select-Object -Expandproperty Id
-            $PSID = "Process PID  : $SSID"
+            $BrowserStartTime = Get-Process $ProcessName|Select -ExpandProperty StartTime
+            $StartTime = $BrowserStartTime[0];$FinalOut = "StartTime    : $StartTime"
+            $ProcessPID = get-process $ProcessName|Select -Last 1|Select-Object -Expandproperty Id
+            $PSID = "Process PID  : $ProcessPID"
         }else{
             $Status = "Status       : Stoped"
             $PSID = "Process PID  : {requires $ProcessName process running}"
@@ -250,6 +255,7 @@ function IE_Dump {
         $parseData = $BinaryPath[0]
         echo "BinaryPath   : $parseData" >> $LogFilePath\BrowserEnum.log
     }
+    ## Dump From previous Functions { StartTime|PID }
     echo "$FinalOut" >> $LogFilePath\BrowserEnum.log
     echo "$PSID" >> $LogFilePath\BrowserEnum.log
 
@@ -257,14 +263,13 @@ function IE_Dump {
     ## Dump IE Last Active Tab windowsTitle
     echo "`nActive Browser Tab" >> $LogFilePath\BrowserEnum.log
     echo "------------------" >> $LogFilePath\BrowserEnum.log
-    $check = Get-Process $ProcessName -ErrorAction SilentlyContinue
-    If(-not($check)){
+    $checkProcess = Get-Process $ProcessName -ErrorAction SilentlyContinue
+    If(-not($checkProcess) -or $checkProcess -eq $null){
         echo "{requires $ProcessName process running}`n" >> $LogFilePath\BrowserEnum.log
     }else{
         $StoreData = Get-Process $ProcessName | Select -ExpandProperty MainWindowTitle
         $ParseData = $StoreData | where {$_ -ne ""}
         $MyPSObject = $ParseData -replace '- Microsoft​ Edge',''
-        ## Write my PSobject to logfile
         echo "$MyPSObject`n" >> $LogFilePath\BrowserEnum.log
     }
 
@@ -280,7 +285,7 @@ function IE_Dump {
 
     ## TODO: Retrieve IE Favorites
     # "$env:LOCALAPPDATA\Microsoft\Edge\User Data\Default\History"
-    #  "$env:LOCALAPPDATA\Microsoft\Edge\User Data\Default\Last Tabs" (IEFP)
+    # "$env:LOCALAPPDATA\Microsoft\Edge\User Data\Default\Last Tabs" (IEFP)
     echo "`nIE Favorites" >> $LogFilePath\BrowserEnum.log
     echo "------------" >> $LogFilePath\BrowserEnum.log
     If(-not(Test-Path "$env:LOCALAPPDATA\Packages\Microsoft.MicrosoftEdge_8wekyb3d8bbwe\AC\MicrosoftEdge\User\Default\Favorites\*")){
