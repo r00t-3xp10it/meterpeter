@@ -259,7 +259,6 @@ function IE_Dump {
     echo "$FinalOut" >> $LogFilePath\BrowserEnum.log
     echo "$PSID" >> $LogFilePath\BrowserEnum.log
 
-
     ## Dump IE Last Active Tab windowsTitle
     echo "`nActive Browser Tab" >> $LogFilePath\BrowserEnum.log
     echo "------------------" >> $LogFilePath\BrowserEnum.log
@@ -316,7 +315,7 @@ function IE_Dump {
 
 
 function FIREFOX {
-    ## Retrieve FireFox Browser Information
+    ## TODO: Retrieve FireFox Browser Information
     echo "`n`nFireFox Browser" >> $LogFilePath\BrowserEnum.log
     echo "---------------" >> $LogFilePath\BrowserEnum.log
     $FirefoxProfile = Test-Path "$env:APPDATA\Mozilla\Firefox\Profiles";
@@ -344,27 +343,27 @@ function FIREFOX {
         }
 
         ## Get browser countryCode { PT }
-        $JsPrefs = Get-content "$FirefoxProfile"|Select-String "browser.search.region";
-        $ParsingData = $JsPrefs[0] -replace 'user_pref\(','' -replace '\"','' -replace ',',':' -replace '\);','' -replace 'browser.search.region','countryCode  '
+        $JsPrefs = Get-content "$FirefoxProfile" -ErrorAction SilentlyContinue|Select-String "browser.search.region";
+        $ParsingData = $JsPrefs -replace 'user_pref\(','' -replace '\"','' -replace ',',':' -replace '\);','' -replace 'browser.search.region','countryCode  '
         echo "$ParsingData" >> $LogFilePath\BrowserEnum.log
 
         ## Get Browser Version { 76.0.11 }
-        $JsPrefs = Get-content "$FirefoxProfile"|Select-String "extensions.lastPlatformVersion"
+        $JsPrefs = Get-content "$FirefoxProfile" -ErrorAction SilentlyContinue|Select-String "extensions.lastPlatformVersion"
         $ParsingData = $JsPrefs -replace 'user_pref\(','' -replace '\"','' -replace ',',':' -replace '\);','' -replace 'extensions.lastPlatformVersion','Version      '
         echo "$ParsingData" >> $LogFilePath\BrowserEnum.log
 
         ## Get Flash Version { 32.0.0.314 }
-        $JsPrefs = Get-content "$FirefoxProfile"|Select-String "plugin.flash.version"
+        $JsPrefs = Get-content "$FirefoxProfile" -ErrorAction SilentlyContinue|Select-String "plugin.flash.version"
         $ParsingData = $JsPrefs -replace 'user_pref\(','' -replace '\"','' -replace ',',':' -replace '\);','' -replace 'plugin.flash.version','FlashVersion '
         echo "$ParsingData" >> $LogFilePath\BrowserEnum.log
 
         ## get brownser startup page { https://www.google.pt }
-        $JsPrefs = Get-content "$FirefoxProfile"|Select-String "browser.startup.homepage"
+        $JsPrefs = Get-content "$FirefoxProfile" -ErrorAction SilentlyContinue|Select-String "browser.startup.homepage"
         $ParsingData = $JsPrefs[0] -replace 'user_pref\(','' -replace '\"','' -replace ',',':' -replace '\);','' -replace 'browser.startup.homepage','HomePage     '
         echo "$ParsingData" >> $LogFilePath\BrowserEnum.log
 
         ## get browser DownloadDir { C:\Users\pedro\Desktop }
-        $JsPrefs = Get-content "$FirefoxProfile"|Select-String "browser.download.lastDir";
+        $JsPrefs = Get-content "$FirefoxProfile" -ErrorAction SilentlyContinue|Select-String "browser.download.lastDir";
         $ParsingData = $JsPrefs -replace 'user_pref\(','' -replace '\"','' -replace ',',':' -replace '\);','' -replace 'browser.download.lastDir','Downloads    '
         echo "$ParsingData" >> $LogFilePath\BrowserEnum.log
     }else{
@@ -437,7 +436,7 @@ function FIREFOX {
     echo "`nFirefox Bookmarks" >> $LogFilePath\BrowserEnum.log
     echo "-----------------" >> $LogFilePath\BrowserEnum.log
     If(-not(Test-Path "$env:APPDATA\Mozilla\Firefox\Profiles\*.default-release")){
-        $Bookmarks_Path = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\bookmarkbackups\*.jsonlz4"   
+        $Bookmarks_Path = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\bookmarkbackups\*.jsonlz4-"   
     }else{
         $Bookmarks_Path = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default-release\bookmarkbackups\*.jsonlz4" 
     }
