@@ -273,17 +273,19 @@ function IE_Dump {
     }
 
     ## Retrieve IE history URLs
+    # "$env:LOCALAPPDATA\Microsoft\Edge\User Data\Default\History"
+    # Get-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Internet Explorer\TypedURLs"
     echo "`nIE History" >> $LogFilePath\BrowserEnum.log
     echo "----------" >> $LogFilePath\BrowserEnum.log
-    $IEHistory = Get-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Internet Explorer\TypedURLs" -ErrorAction SilentlyContinue|findstr /B /I "url"
-    If(-not($IEHistory) -or $IEHistory -eq $null){
+    If(-not(Test-Path -Path "$env:LOCALAPPDATA\Microsoft\Edge\User Data\Default\History")){
         echo "{Could not find any History}" >> $LogFilePath\BrowserEnum.log
     }else{
-        Get-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Internet Explorer\TypedURLs"|findstr /B /I "url" >> $LogFilePath\BrowserEnum.log
+        $Regex = '([a-zA-Z]{3,})://([\w-]+\.)+[\w-]+(/[\w- ./?%&=]*)*?'
+        $MsEdgeHistory = "$env:LOCALAPPDATA\Microsoft\Edge\User Data\Default\History"
+        Get-Content "$MsEdgeHistory"|Select-String -Pattern $Regex -AllMatches | % { $_.Matches } | % { $_.Value } | Sort-Object -Unique >> $LogFilePath\BrowserEnum.log
     }
 
     ## TODO: Retrieve IE Favorites
-    # "$env:LOCALAPPDATA\Microsoft\Edge\User Data\Default\History"
     # "$env:LOCALAPPDATA\Microsoft\Edge\User Data\Default\Last Tabs" (IEFP)
     echo "`nIE Favorites" >> $LogFilePath\BrowserEnum.log
     echo "------------" >> $LogFilePath\BrowserEnum.log
@@ -444,10 +446,11 @@ function FIREFOX {
         echo "{Could not find any Bookmarks}" >> $LogFilePath\BrowserEnum.log
     }else{
         ## TODO: I cant use 'ConvertFrom-Json' cmdlet because it gives
-        # 'primitive JSON invalid error' parsing .jsonlz4 files to text|csv ...
+        # 'primitive JSON invalid error' parsing .jsonlz4 files to TEXT|CSV ..
+        # $Regex = '([a-zA-Z]{3,})://([\w-]+\.)+[\w-]+(/[\w- ./?%&=]*)*?'
+        # Get-Content "$Bookmarks_Path"|Select-String -Pattern $Regex -AllMatches | % { $_.Matches } | % { $_.Value } | Sort-Object -Unique >> $LogFilePath\BrowserEnum.log
         $Json = Get-Content "$Bookmarks_Path" -Raw
         $Regex = $Json -replace '[^a-zA-Z0-9/:. ]','' # Replace all chars that does NOT match the Regex
-        #$Regex = $Json -replace '.*_','' -replace '.*©','' -replace '.*®','' -replace '.*¯','' -replace '.*ø','' -replace '.*þ','' -replace '.*Š','' -replace '.*‡','' -replace '.*¼','' -replace '.*±','' -replace '.*§','' -replace '.*™','' -replace '.*†','' -replace '.*»','' -replace '.*«','' -replace '.*☻','' -replace '.*♠','' -replace '.*↨','' -replace '.*▼','' -replace '.*¶','' -replace '.*♥','' -replace '.*♦','' -replace '.*☼','' -replace '.*♫','' -replace '.*◄','' -replace '.*↔','' -replace '.*°','' -replace '.*‰','' -replace '.*ï','' -replace '.*î','' -replace '.*ô','' -replace '.*↓','' -replace '.*æ','' -replace '.*►','' -replace '.*♣','' -replace '.*³',''
             ForEach ($Key in $Regex){
                 echo "`n" $Key >> $LogFilePath\BrowserEnum.log
             }
