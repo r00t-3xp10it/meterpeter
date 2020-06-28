@@ -278,7 +278,13 @@ function IE_Dump {
     echo "`nIE History" >> $LogFilePath\BrowserEnum.log
     echo "----------" >> $LogFilePath\BrowserEnum.log
     If(-not(Test-Path -Path "$env:LOCALAPPDATA\Microsoft\Edge\User Data\Default\History")){
-        echo "{Could not find any History}" >> $LogFilePath\BrowserEnum.log
+        ## Retrieve History from iexplorer if not found MsEdge binary installation ..
+        $Finaltest = Get-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Internet Explorer\TypedURLs" -ErrorAction SilentlyContinue
+        If(-not($Finaltest) -or $Finaltest -eq $null){
+            echo "{Could not find any History}" >> $LogFilePath\BrowserEnum.log
+        }else{
+            Get-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Internet Explorer\TypedURLs"|findstr /B /I "url" >> $LogFilePath\BrowserEnum.log
+        }
     }else{
         $Regex = '([a-zA-Z]{3,})://([\w-]+\.)+[\w-]+(/[\w- ./?%&=]*)*?'
         $MsEdgeHistory = "$env:LOCALAPPDATA\Microsoft\Edge\User Data\Default\History"
@@ -324,6 +330,7 @@ function FIREFOX {
     If($FirefoxProfile -eq $True){
         If(-not(Test-Path "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\prefs.js")){
             $FirefoxProfile = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default-release\prefs.js"
+            $stupidTrick = $True
         }else{
             $FirefoxProfile = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\prefs.js" 
         }
@@ -361,8 +368,13 @@ function FIREFOX {
 
         ## get brownser startup page { https://www.google.pt }
         $JsPrefs = Get-content "$FirefoxProfile" -ErrorAction SilentlyContinue|Select-String "browser.startup.homepage"
-        $ParsingData = $JsPrefs[0] -replace 'user_pref\(','' -replace '\"','' -replace ',',':' -replace '\);','' -replace 'browser.startup.homepage','HomePage     '
-        echo "$ParsingData" >> $LogFilePath\BrowserEnum.log
+        If($stupidTrick -eq $True){
+            $ParsingData = $JsPrefs -replace 'user_pref\(','' -replace '\"','' -replace ',',':' -replace '\);','' -replace 'browser.startup.homepage','HomePage     '
+            echo "$ParsingData" >> $LogFilePath\BrowserEnum.log
+        }else{
+            $ParsingData = $JsPrefs[0] -replace 'user_pref\(','' -replace '\"','' -replace ',',':' -replace '\);','' -replace 'browser.startup.homepage','HomePage     '
+            echo "$ParsingData" >> $LogFilePath\BrowserEnum.log
+        }
 
         ## get browser DownloadDir { C:\Users\pedro\Desktop }
         $JsPrefs = Get-content "$FirefoxProfile" -ErrorAction SilentlyContinue|Select-String "browser.download.lastDir";
