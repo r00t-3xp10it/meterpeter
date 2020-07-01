@@ -363,23 +363,32 @@ function FIREFOX {
 
         ## Get Flash Version { 32.0.0.314 }
         $JsPrefs = Get-content "$FirefoxProfile" -ErrorAction SilentlyContinue|Select-String "plugin.flash.version"
-        $ParsingData = $JsPrefs -replace 'user_pref\(','' -replace '\"','' -replace ',',':' -replace '\);','' -replace 'plugin.flash.version','FlashVersion '
-        echo "$ParsingData" >> $LogFilePath\BrowserEnum.log
+        If(-not($JsPrefs) -or $JsPrefs -eq $null){
+            echo "FlashVersion : {null}" >> $LogFilePath\BrowserEnum.log
+        }else{
+            $ParsingData = $JsPrefs -replace 'user_pref\(','' -replace '\"','' -replace ',',':' -replace '\);','' -replace 'plugin.flash.version','FlashVersion '
+            echo "$ParsingData" >> $LogFilePath\BrowserEnum.log
+        }
 
-        ## get brownser startup page { https://www.google.pt }
+        ## Get brownser startup page { https://www.google.pt }
         $JsPrefs = Get-content "$FirefoxProfile" -ErrorAction SilentlyContinue|Select-String "browser.startup.homepage"
         If($stupidTrick -eq $True){
-            $ParsingData = $JsPrefs -replace 'user_pref\(','' -replace '\"','' -replace ',',':' -replace '\);','' -replace 'browser.startup.homepage','HomePage     '
+            $ParseData = $JsPrefs -split(';');$Strip = $ParseData[0]
+            $ParsingData = $Strip -replace 'user_pref\(','' -replace '\"','' -replace ',',':' -replace '\)','' -replace 'browser.startup.homepage','HomePage     '
             echo "$ParsingData" >> $LogFilePath\BrowserEnum.log
         }else{
             $ParsingData = $JsPrefs[0] -replace 'user_pref\(','' -replace '\"','' -replace ',',':' -replace '\);','' -replace 'browser.startup.homepage','HomePage     '
             echo "$ParsingData" >> $LogFilePath\BrowserEnum.log
         }
 
-        ## get browser DownloadDir { C:\Users\pedro\Desktop }
+        ## Get browser DownloadDir { C:\Users\pedro\Desktop }
         $JsPrefs = Get-content "$FirefoxProfile" -ErrorAction SilentlyContinue|Select-String "browser.download.lastDir";
-        $ParsingData = $JsPrefs -replace 'user_pref\(','' -replace '\"','' -replace ',',':' -replace '\);','' -replace 'browser.download.lastDir','Downloads    '
-        echo "$ParsingData" >> $LogFilePath\BrowserEnum.log
+        If(-not($JsPrefs) -or $JsPrefs -eq $null){
+            echo "Downloads    : {null}" >> $LogFilePath\BrowserEnum.log
+        }else{
+            $ParsingData = $JsPrefs -replace 'user_pref\(','' -replace '\"','' -replace ',',':' -replace '\);','' -replace 'browser.download.lastDir','Downloads    '
+            echo "$ParsingData" >> $LogFilePath\BrowserEnum.log
+        }
     }else{
         echo "{Could not find any Browser Info}" >> $LogFilePath\BrowserEnum.log
     }
@@ -410,14 +419,14 @@ function FIREFOX {
         echo "$MyPSObject`n" >> $LogFilePath\BrowserEnum.log
     }
 
-    ## Dump FIREFOX HISTORY URLs
+    ## TODO: Dump FIREFOX HISTORY URLs (iefp - .DEFAULT-RELEASE)
     # Source: https://github.com/rvrsh3ll/Misc-Powershell-Scripts/blob/master/Get-BrowserData.ps1
     echo "`nFireFox History" >> $LogFilePath\BrowserEnum.log
     echo "---------------" >> $LogFilePath\BrowserEnum.log
     If(Test-Path "$env:APPDATA\Mozilla\Firefox\Profiles\*.default"){
         $Profiles = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default"
         $Regex = '([a-zA-Z]{3,})://([\w-]+\.)+[\w-]+(/[\w- ./?%&=]*)*?'
-        Get-Content $Profiles\places.sqlite|Select-String -Pattern $Regex -AllMatches | % { $_.Matches } | % { $_.Value } | Sort-Object -Unique | % {
+        Get-Content $Profiles\places.sqlite -ErrorAction SilentlyContinue|Select-String -Pattern $Regex -AllMatches | % { $_.Matches } | % { $_.Value } | Sort-Object -Unique | % {
             $Value = New-Object -TypeName PSObject -Property @{
                 FireFoxHistoryURL = $_
             }
@@ -500,13 +509,21 @@ function CHROME {
         $Search_Download = $Parse_String|select-string "download" # directory_upgrade
         $Store_Dump = $Search_Download[1] # download_history Property
         $Parse_Dump = $Store_Dump -replace '"','' -replace ':','      : ' -replace 'download_history','History'
-        echo "$Parse_Dump" >> $LogFilePath\BrowserEnum.log
+        If(-not($Parse_Dump) -or $Parse_Dump -eq $null){
+            echo "History      : {null}" >> $LogFilePath\BrowserEnum.log
+        }else{
+            echo "$Parse_Dump" >> $LogFilePath\BrowserEnum.log
+        }
 
         ## Retrieve Browser accept languages
         $Parse_String = $Preferencies_Path.split(",")
         $Search_Lang = $Parse_String|select-string "accept_languages"
         $Parse_Dump = $Search_Lang -replace '"','' -replace 'intl:{','' -replace ':','    : ' -replace 'accept_languages','Languages'
-        echo "$Parse_Dump" >> $LogFilePath\BrowserEnum.log
+        If(-not($Parse_Dump) -or $Parse_Dump -eq $null){
+            echo "Languages    : {null}" >> $LogFilePath\BrowserEnum.log
+        }else{
+            echo "$Parse_Dump" >> $LogFilePath\BrowserEnum.log
+        }
 
         ## Retrieve Browser Version
         $GCVersionInfo = (Get-ItemProperty 'HKCU:\Software\Google\Chrome\BLBeacon').Version
