@@ -458,9 +458,11 @@ function FIREFOX {
     ## TODO: Retrieve FireFox bookmarks
     echo "`nFirefox Bookmarks" >> $LogFilePath\BrowserEnum.log
     echo "-----------------" >> $LogFilePath\BrowserEnum.log
+    $AlternativeDir = $False
     If(-not(Test-Path "$env:APPDATA\Mozilla\Firefox\Profiles\*.default-release")){
         $Bookmarks_Path = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\bookmarkbackups\*.jsonlz4"   
     }else{
+        $AlternativeDir = $True
         $Bookmarks_Path = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default-release\bookmarkbackups\*.jsonlz4" 
     }
     If(-not(Test-Path -Path "$Bookmarks_Path")) {
@@ -468,9 +470,13 @@ function FIREFOX {
     }else{
         $IPATH = pwd
         $LocalArch = (Get-WmiObject Win32_OperatingSystem).OSArchitecture
-        ## Change to the correct directory structure
-        cd "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\bookmarkbackups\"
-        $StorePath = dir "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\bookmarkbackups\*"
+        If($AlternativeDir -eq $True){
+            cd "$env:APPDATA\Mozilla\Firefox\Profiles\*.default-release\bookmarkbackups\"
+            $StorePath = dir "$env:APPDATA\Mozilla\Firefox\Profiles\*.default-release\bookmarkbackups\*"
+        }else{
+            cd "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\bookmarkbackups\"
+            $StorePath = dir "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\bookmarkbackups\*"        
+        }
         $parse = $StorePath|Select-Object -ExpandProperty name
         $Final = $parse[0]
         ## Copy .Jsonlz4 file to $env:tmp directory
