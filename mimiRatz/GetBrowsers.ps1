@@ -545,6 +545,7 @@ function FIREFOX {
             }
         }
         cd $IPATH
+        If(Test-Path "$env:tmp\output.jsonlz4"){Remove-Item -Path "$env:tmp\output.jsonlz4" -Force}
 }
 
 
