@@ -5,7 +5,7 @@
   Author: r00t-3xp10it (SSA RedTeam @2020)
   Required Dependencies: IE, Firefox, Chrome
   Optional Dependencies: None
-  PS Script Dev Version: v1.16
+  PS Script Dev Version: v1.17
 
 .DESCRIPTION
    Standalone Powershell script to dump Installed browsers information sutch as: HomePage, Browsers Version,
@@ -61,7 +61,7 @@ $Path = $null
 $mpset = $False
 $param1 = $args[0] # User Inputs [Arguments]
 $param2 = $args[1] # User Inputs [Arguments]
-$host.UI.RawUI.WindowTitle = " @GetBrowsers v1.16"
+$host.UI.RawUI.WindowTitle = " @GetBrowsers v1.17"
 ## Auto-Set @Args in case of User empty inputs (Set LogFile Path).
 If(-not($param2)){$LogFilePath = "$env:TMP"}else{$LogFilePath = "$param2";$mpset = $True}
 If(-not($param1)){
@@ -466,16 +466,14 @@ function FIREFOX {
     If(-not(Test-Path -Path "$Bookmarks_Path")) {
         echo "{Could not find any Bookmarks}" >> $LogFilePath\BrowserEnum.log
     }else{
-        ## TODO: I cant use 'ConvertFrom-Json' cmdlet because it gives
-        # 'primitive JSON invalid error' parsing .jsonlz4 files to TEXT|CSV ..
-
         $IPATH = pwd
         $LocalArch = (Get-WmiObject Win32_OperatingSystem).OSArchitecture
+        ## Change to the correct directory structure
         cd "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\bookmarkbackups\"
-
-        $StorePath = dir
+        $StorePath = dir "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\bookmarkbackups\*"
         $parse = $StorePath|Select-Object -ExpandProperty name
         $Final = $parse[0]
+        ## Copy .Jsonlz4 file to $env:tmp directory
         Copy-Item -Path "$Final" -Destination "$env:tmp\output.jsonlz4" -Force
         $fail = $False;cd $env:tmp
         If($LocalArch -match "64"){
@@ -487,11 +485,11 @@ function FIREFOX {
                 ## Convert from jsonlz4 to json
                 .\mozlz4-win64.exe --extract output.jsonlz4 output.json
                 $DumpFileData = Get-Content "$env:tmp\output.json" -Raw
-                $pp = $DumpFileData.split(',')
-                $ff = $pp|findstr /I /C:"uri"
-                $tt = $ff|findstr /V /C:"iconuri"
-                $rr = $tt -replace '"','' -replace 'uri:','' -replace '}',''
-                echo $rr >> $LogFilePath\BrowserEnum.log
+                $SplitString = $DumpFileData.split(',')
+                $findUri = $SplitString|findstr /I /C:"uri"
+                $Deliconuri = $findUri|findstr /V /C:"iconuri"
+                $ParsingData = $Deliconuri -replace '"','' -replace 'uri:','' -replace '}',''
+                echo $ParsingData >> $LogFilePath\BrowserEnum.log
             }
         }else{
             If(-not(Test-Path "mozlz4-win32.exe")){
@@ -502,15 +500,16 @@ function FIREFOX {
                 ## Convert from jsonlz4 to json
                 .\mozlz4-win32.exe --extract output.jsonlz4 output.json
                 $DumpFileData = Get-Content "$env:tmp\output.json" -Raw
-                $pp = $DumpFileData.split(',')
-                $ff = $pp|findstr /I /C:"uri"
-                $tt = $ff|findstr /V /C:"iconuri"
-                $rr = $tt -replace '"','' -replace 'uri:','' -replace '}',''
-                echo $rr >> $LogFilePath\BrowserEnum.log
+                $SplitString = $DumpFileData.split(',')
+                $findUri = $SplitString|findstr /I /C:"uri"
+                $Deliconuri = $findUri|findstr /V /C:"iconuri"
+                $ParsingData = $Deliconuri -replace '"','' -replace 'uri:','' -replace '}',''
+                echo $ParsingData >> $LogFilePath\BrowserEnum.log
             }
         }
         cd $IPATH
-
+        ## TODO: I cant use 'ConvertFrom-Json' cmdlet because it gives
+        # 'primitive JSON invalid error' parsing .jsonlz4 files to TEXT|CSV ..
         If($fail -eq $True){
             $Json = Get-Content "$Bookmarks_Path" -Raw
             $Regex = $Json -replace '[^a-zA-Z0-9/:. ]','' # Replace all chars that does NOT match the Regex
