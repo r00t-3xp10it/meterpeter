@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-  Standalone Powershell script to dump Installed browsers information.
+  Standalone Powershell script to leak Installed browsers information.
 
   Author: r00t-3xp10it (SSA RedTeam @2020)
   Required Dependencies: IE, Firefox, Chrome
@@ -8,9 +8,9 @@
   PS Script Dev Version: v1.17
 
 .DESCRIPTION
-   Standalone Powershell script to dump Installed browsers information sutch as: HomePage, Browsers Version,
+   Standalone Powershell script to leak Installed browsers information sutch as: HomePage, Browsers Version,
    accepted Language, Download Directory, URL History, Bookmarks, Extentions, Start Page, stored creds, etc..
-   The dumps will be saved into $env:TMP folder and Auto-deleted in the end. Unless this script 2º argument
+   The leaks will be saved into $env:TMP folder and Auto-deleted in the end. Unless this script 2º argument
    its used to input the Logfile storage location. In that case GetBrowsers.ps1 will permanently store it.
 
 .NOTES
@@ -172,7 +172,7 @@ function BROWSER_RECON {
     If($MInvocation -match 'MSEdgeHTM'){$id = "True";$fd = "False";$cd = "False"}
     If(-not($MInvocation) -or $MInvocation -eq $null){$id = "{Null}";$fd = "{Null}";$cd = "{Null}"}
 
-    ## Dump Firefox installed version
+    ## leak Firefox installed version
     If(-not(Test-Path -Path "$env:APPDATA\Mozilla\Firefox\Profiles")){
         $FFfound = "False";$ParsingData = "{null}"
     }else{
@@ -250,7 +250,7 @@ function IE_Dump {
         echo "$dataparse" >> $LogFilePath\BrowserEnum.log
     }
 
-    ## Dump MicrosoftEdge.exe (OR: msedge.exe) binary path
+    ## leak MicrosoftEdge.exe (OR: msedge.exe) binary path
     $BinaryPath = Get-Process $ProcessName -ErrorAction SilentlyContinue
     If(-not($BinaryPath) -or $BinaryPath -eq $null){
         echo "BinaryPath   : {requires $ProcessName process running}" >> $LogFilePath\BrowserEnum.log
@@ -259,11 +259,11 @@ function IE_Dump {
         $parseData = $BinaryPath[0]
         echo "BinaryPath   : $parseData" >> $LogFilePath\BrowserEnum.log
     }
-    ## Dump From previous Functions { StartTime|PID }
+    ## leak From previous Functions { StartTime|PID }
     echo "$FinalOut" >> $LogFilePath\BrowserEnum.log
     echo "$PSID" >> $LogFilePath\BrowserEnum.log
 
-    ## Dump IE Last Active Tab windowsTitle
+    ## leak IE Last Active Tab windowsTitle
     echo "`nActive Browser Tab" >> $LogFilePath\BrowserEnum.log
     echo "------------------" >> $LogFilePath\BrowserEnum.log
     $checkProcess = Get-Process $ProcessName -ErrorAction SilentlyContinue
@@ -406,7 +406,7 @@ function FIREFOX {
         $parseData = $BinaryPath[0]
         echo "BinaryPath   : $parseData" >> $LogFilePath\BrowserEnum.log
     }
-    ## Dump From previous Functions { StartTime|PID }
+    ## leak From previous Functions { StartTime|PID }
     echo "$FinalOut" >> $LogFilePath\BrowserEnum.log
     echo "$PSID" >> $LogFilePath\BrowserEnum.log
 
@@ -423,7 +423,7 @@ function FIREFOX {
         echo "$MyPSObject`n" >> $LogFilePath\BrowserEnum.log
     }
 
-    ## Dump FIREFOX HISTORY URLs
+    ## leak FIREFOX HISTORY URLs
     # Source: https://github.com/rvrsh3ll/Misc-Powershell-Scripts/blob/master/Get-BrowserData.ps1
     echo "`nFireFox History" >> $LogFilePath\BrowserEnum.log
     echo "---------------" >> $LogFilePath\BrowserEnum.log
@@ -609,7 +609,7 @@ function CHROME {
             echo "$Parse_Dump" >> $LogFilePath\BrowserEnum.log
         }
 
-        ## Dump Chrome.exe binary path
+        ## leak Chrome.exe binary path
         $BinaryPath = Get-Process chrome -ErrorAction SilentlyContinue
         If(-not($BinaryPath) -or $BinaryPath -eq $null){
             echo "BinaryPath   : {requires chrome process running}" >> $LogFilePath\BrowserEnum.log
@@ -621,7 +621,7 @@ function CHROME {
         echo "$FinalOut" >> $LogFilePath\BrowserEnum.log
         echo "$PSID" >> $LogFilePath\BrowserEnum.log
 
-        ## Dump Chrome Last Active Tab windowsTitle
+        ## leak Chrome Last Active Tab windowsTitle
         echo "`nActive Browser Tab" >> $LogFilePath\BrowserEnum.log
         echo "------------------" >> $LogFilePath\BrowserEnum.log
         $checkTitle = Get-Process chrome -ErrorAction SilentlyContinue
