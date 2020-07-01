@@ -323,7 +323,7 @@ function IE_Dump {
 
 
 function FIREFOX {
-    ## TODO: Retrieve FireFox Browser Information
+    ## Retrieve FireFox Browser Information
     echo "`n`nFireFox Browser" >> $LogFilePath\BrowserEnum.log
     echo "---------------" >> $LogFilePath\BrowserEnum.log
     $FirefoxProfile = Test-Path "$env:APPDATA\Mozilla\Firefox\Profiles";
@@ -438,7 +438,7 @@ function FIREFOX {
 
     }else{
 
-        If(-not(Test-Path "$env:APPDATA\Mozilla\Firefox\Profiles\*.default-release")){
+        If(-not(Test-Path "$env:APPDATA\Mozilla\Firefox\Profiles\*.default")){
             echo "{Could not find any History}" >> $LogFilePath\BrowserEnum.log 
         }else{
             $Profiles = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default"
