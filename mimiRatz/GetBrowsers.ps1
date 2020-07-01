@@ -423,8 +423,8 @@ function FIREFOX {
     # Source: https://github.com/rvrsh3ll/Misc-Powershell-Scripts/blob/master/Get-BrowserData.ps1
     echo "`nFireFox History" >> $LogFilePath\BrowserEnum.log
     echo "---------------" >> $LogFilePath\BrowserEnum.log
-    If(Test-Path "$env:APPDATA\Mozilla\Firefox\Profiles\*.default"){
-        $Profiles = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default"
+    If(Test-Path "$env:APPDATA\Mozilla\Firefox\Profiles\*.default-release"){
+        $Profiles = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default-release"
         $Regex = '([a-zA-Z]{3,})://([\w-]+\.)+[\w-]+(/[\w- ./?%&=]*)*?'
         Get-Content $Profiles\places.sqlite -ErrorAction SilentlyContinue|Select-String -Pattern $Regex -AllMatches | % { $_.Matches } | % { $_.Value } | Sort-Object -Unique | % {
             $Value = New-Object -TypeName PSObject -Property @{
@@ -441,9 +441,9 @@ function FIREFOX {
         If(-not(Test-Path "$env:APPDATA\Mozilla\Firefox\Profiles\*.default-release")){
             echo "{Could not find any History}" >> $LogFilePath\BrowserEnum.log 
         }else{
-            $Profiles = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default-release"
+            $Profiles = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default"
             $Regex = '([a-zA-Z]{3,})://([\w-]+\.)+[\w-]+(/[\w- ./?%&=]*)*?'
-            Get-Content $Profiles\places.sqlite|Select-String -Pattern $Regex -AllMatches | % { $_.Matches } | % { $_.Value } | Sort-Object -Unique | % {
+            Get-Content $Profiles\places.sqlite -ErrorAction SilentlyContinue|Select-String -Pattern $Regex -AllMatches | % { $_.Matches } | % { $_.Value } | Sort-Object -Unique | % {
                 $Value = New-Object -TypeName PSObject -Property @{
                     FireFoxHistoryURL = $_
                 }
