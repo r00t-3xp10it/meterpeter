@@ -385,12 +385,12 @@ function FIREFOX {
             echo "$ParsingData" >> $LogFilePath\BrowserEnum.log
         }
 
-        ## Get browser DownloadDir { C:\Users\pedro\Desktop }
-        $JsPrefs = Get-content "$FirefoxProfile" -ErrorAction SilentlyContinue|Select-String "browser.download.lastDir";
+        ## Get browser.download.lastDir { C:\Users\pedro\Desktop }
+        $JsPrefs = Get-content "$FirefoxProfile" -ErrorAction SilentlyContinue|Select-String "browser.download.dir";
         If(-not($JsPrefs) -or $JsPrefs -eq $null){
             echo "Downloads    : {null}" >> $LogFilePath\BrowserEnum.log
         }else{
-            $ParsingData = $JsPrefs -replace 'user_pref\(','' -replace '\"','' -replace ',',':' -replace '\);','' -replace 'browser.download.lastDir','Downloads    '
+            $ParsingData = $JsPrefs -replace 'user_pref\(','' -replace '\"','' -replace ',',':' -replace '\);','' -replace 'browser.download.dir','Downloads    '
             echo "$ParsingData" >> $LogFilePath\BrowserEnum.log
         }
     }else{
