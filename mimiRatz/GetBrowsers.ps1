@@ -21,7 +21,6 @@
    Used to convert firefox bookmarks files from: jsonlz4 To: json (clean outputs)
    Manual Downloads: https://github.com/r00t-3xp10it/meterpeter/tree/master/mimiRatz/
 
-
 .EXAMPLE
    PS C:\> ./GetBrowsers.ps1
    Display List of arguments available
