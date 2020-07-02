@@ -66,7 +66,7 @@ $Path = $null
 $mpset = $False
 $param1 = $args[0] # User Inputs [Arguments]
 $param2 = $args[1] # User Inputs [Arguments]
-$host.UI.RawUI.WindowTitle = " @GetBrowsers v1.17"
+$host.UI.RawUI.WindowTitle = " @GetBrowsers v1.18"
 ## Auto-Set @Args in case of User empty inputs (Set LogFile Path).
 If(-not($param2)){$LogFilePath = "$env:TMP"}else{$LogFilePath = "$param2";$mpset = $True}
 If(-not($param1)){
