@@ -18,7 +18,7 @@
    Access This Cmdlet Comment_based_Help
 
    mozlz4-win32.exe , mozlz4-win64.exe (Optional Dependencie)
-   Used to convert firefox bookmarks files from: jsonlz4 To: json
+   Used to convert firefox bookmarks files from: jsonlz4 To: json (clean outputs)
    Manual Downloads: https://github.com/r00t-3xp10it/meterpeter/tree/master/mimiRatz/
 
 
