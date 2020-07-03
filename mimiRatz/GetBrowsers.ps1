@@ -8,19 +8,19 @@
   PS Script Dev Version: v1.18
 
 .DESCRIPTION
-   Standalone Powershell script to leak Installed browsers information sutch as: HomePage, Browsers Version,
-   accepted Language, Download Directory, URL History, Bookmarks, Extentions, Start Page, stored creds, etc..
-   The leaks will be saved into $env:TMP folder and Auto-deleted in the end. Unless this script 2º argument
-   its used to input the Logfile storage location. In that case GetBrowsers.ps1 will permanently store it.
+   Standalone Powershell script to leak Installed browsers information sutch as: Home Page,
+   Browsers Version, Accepted Language, Download Directory, History, Bookmarks, Extentions,
+   StartPage, Stored Creds, Etc. The leaks will be saved to $env:TMP folder and Auto-deleted
+   in the end. Unless the 2 argument is used to input the Logfile permanent storage location.
 
 .NOTES
    PS C:\> Get-Help ./GetBrowsers.ps1 -full
-   Access This Cmdlet Comment_Based_Help
+   Access This cmdlet Comment_Based_Help
 
    mozlz4-win32.exe (Optional Dependencie)
    Used to convert firefox bookmarks files from: .jsonlz4 To: .json (More clean outputs)
-   mozlz4-win32.exe requires to be uploaded to $env:tmp for GetBrowsers.ps1 be abble to use it.
-   Manual Download: https://github.com/r00t-3xp10it/meterpeter/tree/master/mimiRatz/mozlz4-win32.exe
+   mozlz4-win32 requires to be uploaded to $env:tmp folder for GetBrowsers.ps1 to use it.
+   url: https://github.com/r00t-3xp10it/meterpeter/tree/master/mimiRatz/mozlz4-win32.exe
 
 .EXAMPLE
    PS C:\> ./GetBrowsers.ps1
