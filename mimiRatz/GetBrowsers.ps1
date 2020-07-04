@@ -132,8 +132,6 @@ $InetAdaptor = Get-WmiObject -Class Win32_NetworkAdapterConfiguration -Filter IP
 If(-not($InetAdaptor) -or $InetAdaptor -eq $null){echo "InetAdaptor  : {null}" >> $LogFilePath\BrowserEnum.log}else{echo "InetAdaptor  : $InetAdaptor" >> $LogFilePath\BrowserEnum.log}
 
 ## Get InetAdaptor Driver Name
-$Eth0Dr = Get-NetAdapter|Select-Object -ExpandProperty "DriverName" -ErrorAction SilentlyContinue|Select -Last 1
-If(-not($Eth0Dr) -or $Eth0Dr -eq $null){echo "Eth0Driver   : {null}" >> $LogFilePath\BrowserEnum.log}else{echo "Eth0Driver   : $Eth0Dr" >> $LogFilePath\BrowserEnum.log}
 $Driver = Get-NetAdapter|Select-Object -ExpandProperty "DriverName" -ErrorAction SilentlyContinue|Select -First 1
 If(-not($Driver) -or $Driver -eq $null){echo "WiFiDriver   : {null}" >> $LogFilePath\BrowserEnum.log}else{echo "WiFiDriver   : $Driver" >> $LogFilePath\BrowserEnum.log}
 
@@ -213,7 +211,7 @@ function BROWSER_RECON {
     echo "CHROME    $CHfound  $cStatus   $Chrome_App   $cd" >> $LogFilePath\BrowserEnum.log
     echo "FIREFOX   $FFfound  $fStatus   $ParsingData          $fd" >> $LogFilePath\BrowserEnum.log
     ## Get-NetAdapter { Interfaces Available }
-    $Interfaces = Get-NetAdapter|Select-Object Status,InterfaceDescription -ErrorAction SilentlyContinue
+    $Interfaces = Get-NetAdapter|Select-Object Name,Status,InterfaceDescription -ErrorAction SilentlyContinue
     If($Interfaces){echo "`n" $Interfaces >> $LogFilePath\BrowserEnum.log}
 }
 
