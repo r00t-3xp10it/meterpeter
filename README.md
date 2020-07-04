@@ -138,6 +138,7 @@ meterpeter prompt reveals us some of the shortcuts we have available to use.
     - **OldBox**   : Trigger Remote Phishing PS Script (Windows 7 or less)
     - **NewBox**   : Trigger Remote Phishing PS Script (Windows 7 or above)
     - **ReadLog**   : Read Remote Phishing LogFile
+    - **Browser**   : Enumerate Installed Browsers (IE,FIREFOX,CHROME)
 - **exit**       : Exit Reverse TCP Shell (Server + Client).
 
 - **[Please Read my WIKI for Detailed information about each Module](https://github.com/r00t-3xp10it/meterpeter/wiki)**<br />
