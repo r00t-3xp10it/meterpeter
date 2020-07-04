@@ -114,7 +114,6 @@ $MInvocation = "WebBrowser   : "+"$Parse_Browser_Data"+" (PreDefined)";
 $IntSet = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\internet settings" -Name 'User Agent' -ErrorAction SilentlyContinue|Select-Object 'User Agent'
 If($IntSet){$ParsingIntSet = $IntSet -replace '@{User Agent=','UserAgent    : ' -replace '}',''}else{$ParsingIntSet = "UserAgent    : Not Found"}
 
-
 ## Internet statistics
 $recstats = netstat -s -p IP|select-string -pattern "Packets Received"
 If($recstats){$statsdata = $recstats -replace '  Packets Received                   =','TCPReceived  :'}else{$statsdata = "TCPReceived  : {null}"}
