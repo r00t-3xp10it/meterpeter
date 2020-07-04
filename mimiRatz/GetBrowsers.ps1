@@ -131,6 +131,10 @@ echo "$ParsingIntSet" >> $LogFilePath\BrowserEnum.log
 $InetAdaptor = Get-WmiObject -Class Win32_NetworkAdapterConfiguration -Filter IPEnabled=TRUE -ComputerName . -ErrorAction SilentlyContinue|Select-Object -Property [a-z]* -ExcludeProperty IPX*,WINS*|Select-Object -ExpandProperty "Description"
 If(-not($InetAdaptor) -or $InetAdaptor -eq $null){echo "InetAdaptor  : {null}" >> $LogFilePath\BrowserEnum.log}else{echo "InetAdaptor  : $InetAdaptor" >> $LogFilePath\BrowserEnum.log}
 
+## Get InetAdaptor Driver Name
+$Driver = Get-NetAdapter|Select-Object -ExpandProperty "DriverName"|Select -First 1
+echo "WiFiDriver   : $Driver" >> $LogFilePath\BrowserEnum.log
+
 ## Get Flash Internal Name/Version
 If(-not(Test-Path "$env:WINDIR\system32\macromed\flash\flash.ocx")){
     echo "flashName    : Not Found" >> $LogFilePath\BrowserEnum.log
