@@ -114,6 +114,7 @@ $MInvocation = "WebBrowser   : "+"$Parse_Browser_Data"+" (PreDefined)";
 $IntSet = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\internet settings" -Name 'User Agent' -ErrorAction SilentlyContinue|Select-Object 'User Agent'
 If($IntSet){$ParsingIntSet = $IntSet -replace '@{User Agent=','UserAgent    : ' -replace '}',''}else{$ParsingIntSet = "UserAgent    : Not Found"}
 
+
 ## Internet statistics
 $recstats = netstat -s -p IP|select-string -pattern "Packets Received"
 If($recstats){$statsdata = $recstats -replace '  Packets Received                   =','TCPReceived  :'}else{$statsdata = "TCPReceived  : {null}"}
@@ -126,6 +127,11 @@ echo "---------------" >> $LogFilePath\BrowserEnum.log
 echo "$RHserver" >> $LogFilePath\BrowserEnum.log
 echo "$ParseCap" >> $LogFilePath\BrowserEnum.log 
 echo "$ParsingIntSet" >> $LogFilePath\BrowserEnum.log
+
+## Get InetAdaptor name
+$InetAdaptor = Get-WmiObject -Class Win32_NetworkAdapterConfiguration -Filter IPEnabled=TRUE -ComputerName . -ErrorAction SilentlyContinue|Select-Object -Property [a-z]* -ExcludeProperty IPX*,WINS*|Select-Object -ExpandProperty "Description"
+If(-not($InetAdaptor) -or $InetAdaptor -eq $null){echo "InetAdaptor  : {null}" >> $LogFilePath\BrowserEnum.log}else{echo "InetAdaptor  : $InetAdaptor" >> $LogFilePath\BrowserEnum.log}
+
 ## Get Flash Internal Name/Version
 If(-not(Test-Path "$env:WINDIR\system32\macromed\flash\flash.ocx")){
     echo "flashName    : Not Found" >> $LogFilePath\BrowserEnum.log
@@ -134,6 +140,7 @@ If(-not(Test-Path "$env:WINDIR\system32\macromed\flash\flash.ocx")){
     $flashName = $flash.versioninfo.InternalName
     echo "flashName    : $flashName" >> $LogFilePath\BrowserEnum.log
 }
+
 echo "$MInvocation" >> $LogFilePath\BrowserEnum.log
 echo "$statsdata" >> $LogFilePath\BrowserEnum.log
 echo "$deliverdata" >> $LogFilePath\BrowserEnum.log
