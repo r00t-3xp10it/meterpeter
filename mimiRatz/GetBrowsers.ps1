@@ -387,10 +387,18 @@ function FIREFOX {
             echo "$ParsingData" >> $LogFilePath\BrowserEnum.log
         }
 
-        ## Get browser.download.lastDir { C:\Users\pedro\Desktop }
-        $JsPrefs = Get-content "$FirefoxProfile" -ErrorAction SilentlyContinue|Select-String "browser.download.dir";
+        ## Get browser.download.dir { C:\Users\pedro\Desktop }
+        $JsPrefs = Get-Content "$FirefoxProfile" -ErrorAction SilentlyContinue|Select-String "browser.download.dir";
         If(-not($JsPrefs) -or $JsPrefs -eq $null){
-            echo "Downloads    : {null}" >> $LogFilePath\BrowserEnum.log
+            ## Test with browser.download.lastDir
+            $JsPrefs = Get-Content "$FirefoxProfile" -ErrorAction SilentlyContinue|Select-String "browser.download.lastDir"
+            If(-not($JsPrefs) -or $JsPrefs -eq $null){
+                echo "Downloads    : {null}" >> $LogFilePath\BrowserEnum.log
+            }else{
+                $ParsingData = $JsPrefs -replace 'user_pref\(','' -replace '\"','' -replace ',',':' -replace '\);','' -replace 'browser.download.lastDir','Downloads    '
+                If($ParsingData -match '\\\\'){$ParsingData = $ParsingData -replace '\\\\','\'}
+                echo "$ParsingData" >> $LogFilePath\BrowserEnum.log            
+            }
         }else{
             $ParsingData = $JsPrefs -replace 'user_pref\(','' -replace '\"','' -replace ',',':' -replace '\);','' -replace 'browser.download.dir','Downloads    '
             If($ParsingData -match '\\\\'){$ParsingData = $ParsingData -replace '\\\\','\'}
