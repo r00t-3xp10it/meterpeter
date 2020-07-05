@@ -601,6 +601,7 @@ function CHROME {
             echo "Downloads    : $env:userprofile\Downloads" >> $LogFilePath\BrowserEnum.log
         }else{
             $Parse_Dump = $Download_Dir -replace '"','' -replace '{','' -replace '}','' -replace 'default_directory:','' -replace 'savefile:','Downloads    : '
+            If($Parse_Dump -match '\\\\'){$Parse_Dump = $Parse_Dump -replace '\\\\','\'}
             echo "$Parse_Dump" >> $LogFilePath\BrowserEnum.log
         }
 
