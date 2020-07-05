@@ -499,16 +499,14 @@ function FIREFOX {
             ## Store last bookmark file into { $Final } local var
             cd "$env:APPDATA\Mozilla\Firefox\Profiles\*.default-release\bookmarkbackups\"
             $StorePath = dir "$env:APPDATA\Mozilla\Firefox\Profiles\*.default-release\bookmarkbackups\*"
-            $parse = $StorePath|Select-Object -ExpandProperty name
-            $Final = $parse|Select -Last 1
+            $Final = $StorePath|Select-Object -ExpandProperty name|Select -Last 1
             ## Copy .Jsonlz4 file to $env:tmp directory
             Copy-Item -Path "$Final" -Destination "$env:tmp\output.jsonlz4" -Force
         }else{
             ## Store last bookmark file into { $Final } local var
             cd "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\bookmarkbackups\"
             $StorePath = dir "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\bookmarkbackups\*"
-            $parse = $StorePath|Select-Object -ExpandProperty name
-            $Final = $parse|Select -Last 1
+            $Final = $StorePath|Select-Object -ExpandProperty name|Select -Last 1
             ## Copy .Jsonlz4 file to $env:tmp directory
             Copy-Item -Path "$Final" -Destination "$env:tmp\output.jsonlz4" -Force
         }
