@@ -496,19 +496,19 @@ function FIREFOX {
         echo "{Could not find any Bookmarks}" >> $LogFilePath\BrowserEnum.log
     }else{
         If($AlternativeDir -eq $True){
-            ## Store 1º bookmark file into { $Final } local var
+            ## Store last bookmark file into { $Final } local var
             cd "$env:APPDATA\Mozilla\Firefox\Profiles\*.default-release\bookmarkbackups\"
             $StorePath = dir "$env:APPDATA\Mozilla\Firefox\Profiles\*.default-release\bookmarkbackups\*"
             $parse = $StorePath|Select-Object -ExpandProperty name
-            $Final = $parse[0]
+            $Final = $parse|Select -Last 1
             ## Copy .Jsonlz4 file to $env:tmp directory
             Copy-Item -Path "$Final" -Destination "$env:tmp\output.jsonlz4" -Force
         }else{
-            ## Store 1º bookmark file into { $Final } local var
+            ## Store last bookmark file into { $Final } local var
             cd "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\bookmarkbackups\"
             $StorePath = dir "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\bookmarkbackups\*"
             $parse = $StorePath|Select-Object -ExpandProperty name
-            $Final = $parse[0]
+            $Final = $parse|Select -Last 1
             ## Copy .Jsonlz4 file to $env:tmp directory
             Copy-Item -Path "$Final" -Destination "$env:tmp\output.jsonlz4" -Force
         }
