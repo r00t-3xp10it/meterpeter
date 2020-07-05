@@ -76,7 +76,7 @@ If(-not($param1)){
     echo "Syntax: [scriptname] [-arg <mandatory>] [arg <optional>]`n" >> $LogFilePath\BrowserEnum.log
     echo "The following mandatory args are available:" >> $LogFilePath\BrowserEnum.log
     echo "./GetBrowsers.ps1 -RECON            Fast recon (browsers and versions)" >> $LogFilePath\BrowserEnum.log
-    echo "./GetBrowsers.ps1 -DEFAULTS         Enumerates remote sys default settings." >> $LogFilePath\BrowserEnum.log
+    echo "./GetBrowsers.ps1 -WINVER           Enumerates remote sys default settings." >> $LogFilePath\BrowserEnum.log
     echo "./GetBrowsers.ps1 -IE               Enumerates IE browser information Only." >> $LogFilePath\BrowserEnum.log
     echo "./GetBrowsers.ps1 -ALL              Enumerates IE, Firefox, Chrome information." >> $LogFilePath\BrowserEnum.log
     echo "./GetBrowsers.ps1 -CHROME           Enumerates Chrome browser information Only." >> $LogFilePath\BrowserEnum.log
@@ -99,6 +99,10 @@ If(-not($param1)){
 Write-Host "GetBrowsers - Enumerate installed browser(s) information." -ForeGroundColor Green
 If($mpset -eq $True){Write-Host "[i] LogFile => $LogFilePath\BrowserEnum.log" -ForeGroundColor yellow}
 Start-sleep -Seconds 1
+
+## Get Default network interface
+$DefaultInterface = Test-NetConnection -ErrorAction SilentlyContinue|Select-Object -expandproperty InterfaceAlias
+If(-not($DefaultInterface) -or $DefaultInterface -eq $null){$DefaultInterface = "{null}"}
 
 ## Get System Default Configurations
 $RHserver = "LogonServer  : "+"$env:LOGONSERVER"
@@ -123,17 +127,10 @@ If($delstats){$deliverdata = $delstats -replace '  Received Packets Delivered   
 ## Writting LogFile to the selected path in: { $param2 var }
 echo "`n`nSystem Defaults" > $LogFilePath\BrowserEnum.log
 echo "---------------" >> $LogFilePath\BrowserEnum.log
+echo "Interface    : $DefaultInterface" >> $LogFilePath\BrowserEnum.log
 echo "$RHserver" >> $LogFilePath\BrowserEnum.log
 echo "$ParseCap" >> $LogFilePath\BrowserEnum.log 
 echo "$ParsingIntSet" >> $LogFilePath\BrowserEnum.log
-
-## Get InetAdaptor name
-$InetAdaptor = Get-WmiObject -Class Win32_NetworkAdapterConfiguration -Filter IPEnabled=TRUE -ComputerName . -ErrorAction SilentlyContinue|Select-Object -Property [a-z]* -ExcludeProperty IPX*,WINS*|Select-Object -ExpandProperty "Description"
-If(-not($InetAdaptor) -or $InetAdaptor -eq $null){echo "InetAdaptor  : {null}" >> $LogFilePath\BrowserEnum.log}else{echo "InetAdaptor  : $InetAdaptor" >> $LogFilePath\BrowserEnum.log}
-
-## Get InetAdaptor Driver Name
-$Driver = Get-NetAdapter|Select-Object -ExpandProperty "DriverName" -ErrorAction SilentlyContinue|Select -First 1
-If(-not($Driver) -or $Driver -eq $null){echo "WiFiDriver   : {null}" >> $LogFilePath\BrowserEnum.log}else{echo "WiFiDriver   : $Driver" >> $LogFilePath\BrowserEnum.log}
 
 ## Get Flash Internal Name/Version
 If(-not(Test-Path "$env:WINDIR\system32\macromed\flash\flash.ocx")){
@@ -211,7 +208,7 @@ function BROWSER_RECON {
     echo "CHROME    $CHfound  $cStatus   $Chrome_App   $cd" >> $LogFilePath\BrowserEnum.log
     echo "FIREFOX   $FFfound  $fStatus   $ParsingData          $fd" >> $LogFilePath\BrowserEnum.log
     ## Get-NetAdapter { Interfaces Available }
-    $Interfaces = Get-NetAdapter|Select-Object Name,Status,InterfaceDescription -ErrorAction SilentlyContinue
+    $Interfaces = Get-NetAdapter|Select-Object Status,InterfaceDescription -ErrorAction SilentlyContinue
     If($Interfaces){echo "`n" $Interfaces >> $LogFilePath\BrowserEnum.log}
 }
 
