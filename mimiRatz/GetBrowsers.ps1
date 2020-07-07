@@ -66,6 +66,7 @@
 .LINK
     https://github.com/r00t-3xp10it/meterpeter
     https://github.com/r00t-3xp10it/meterpeter/blob/master/mimiRatz/GetBrowsers.ps1
+    https://github.com/r00t-3xp10it/meterpeter/tree/master/mimiRatz/HackChrome.exe
     https://github.com/r00t-3xp10it/meterpeter/tree/master/mimiRatz/mozlz4-win32.exe
 #>
 
@@ -884,7 +885,6 @@ function CREDS_DUMP {
         }
     }
 }
-
 
 
 ## Jump Links (Functions)
