@@ -550,6 +550,28 @@ function FIREFOX {
     }
     cd $IPATH
     If(Test-Path "$env:tmp\output.jsonlz4"){Remove-Item -Path "$env:tmp\output.jsonlz4" -Force}
+
+    ## Retrieve Firefox logins
+    # TODO: Test on IEFP computer
+    echo "`nEnumerating LogIns" >> $LogFilePath\BrowserEnum.log
+    echo "------------------" >> $LogFilePath\BrowserEnum.log
+    If(-not(Test-Path "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\logins.json")){
+        If(-not(Test-Path "$env:APPDATA\Mozilla\Firefox\Profiles\*.default-release\logins.json")){
+            echo "{None Credentials found}" >> $LogFilePath\BrowserEnum.log
+        }else{
+            $ReadData = Get-Content "$env:APPDATA\Mozilla\Firefox\Profiles\*.default-release\logins.json" 
+            $SplitData = $ReadData -split(',')
+            $ParseData = $SplitData|findstr /I /C:"http" /I /C:"https"|findstr /V /C:"httpRealm" /V /C:"formSubmitURL"
+            $Json = $ParseData -replace '":','' -replace '"','' -replace 'hostname',''
+            echo $Json >> $LogFilePath\BrowserEnum.log
+        }
+    }else{
+        $ReadData = Get-Content "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\logins.json" 
+        $SplitData = $ReadData -split(',')
+        $ParseData = $SplitData|findstr /I /C:"http" /I /C:"https"|findstr /V /C:"httpRealm" /V /C:"formSubmitURL"
+        $Json = $ParseData -replace '":','' -replace '"','' -replace 'hostname',''
+        echo $Json >> $LogFilePath\BrowserEnum.log
+    }
 }
 
 
