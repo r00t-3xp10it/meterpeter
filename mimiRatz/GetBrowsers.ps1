@@ -17,11 +17,13 @@
    PS C:\> Get-Help ./GetBrowsers.ps1 -full
    Access This cmdlet Comment_Based_Help
 
+   PS C:\> ./GetBrowsers.ps1 -FIREFOX
    mozlz4-win32.exe (Optional Dependencie)
    Used to convert firefox bookmarks files from: .jsonlz4 To: .json (More clean outputs)
    mozlz4-win32 requires to be uploaded to $env:tmp folder for GetBrowsers.ps1 to use it.
    url: https://github.com/r00t-3xp10it/meterpeter/tree/master/mimiRatz/mozlz4-win32.exe
 
+   PS C:\> ./GetBrowsers.ps1 -CREDS
    HackChrome.exe (Optional Dependencie)
    Used to uncrypt chrome browser stored credentials to plain text
    HackChrome requires to be uploaded to $env:tmp folder for GetBrowsers.ps1 to use it.
