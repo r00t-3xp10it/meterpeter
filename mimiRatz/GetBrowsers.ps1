@@ -355,8 +355,30 @@ function IE_Dump {
     echo "`nIE Bookmarks" >> $LogFilePath\BrowserEnum.log
     echo "------------" >> $LogFilePath\BrowserEnum.log
     If(-not(Test-Path "$env:LOCALAPPDATA\Microsoft\Edge\User Data\Default\Bookmarks")){
-        echo "{Could not find any Bookmarks}" >> $LogFilePath\BrowserEnum.log
+        ## Leaking iexplore
+        $URLs = Get-ChildItem -Path "$Env:SYSTEMDRIVE\Users\" -Filter "*.url" -Recurse -ErrorAction SilentlyContinue
+        ForEach ($URL in $URLs){
+            if ($URL.FullName -match 'Favorites'){
+                $User = $URL.FullName.split('\')[2]
+                Get-Content -Path $URL.FullName|ForEach-Object {
+                    try {
+                        if ($_.StartsWith('URL')){
+                            ## parse the .url body to extract the actual bookmark location
+                            $URL = $_.Substring($_.IndexOf('=') + 1)
+                                if($URL -match $Search){
+                                    echo "$URL" >> $LogFilePath\BrowserEnum.log
+                                }
+                        }
+                    }
+                    catch {
+                        echo "Error parsing url: $_" >> $LogFilePath\BrowserEnum.log
+                    }
+                }
+            }
+        }
+
     }else{
+        ## Leaking msedge 
         $LocalDirPath = "$env:LOCALAPPDATA\Microsoft\Edge\User Data\Default\Bookmarks"
         $DumpFileData = Get-Content "$LocalDirPath" -Raw|findstr /I /C:"http" /C:"https"
         ForEach ($Token in $DumpFileData){
@@ -365,36 +387,6 @@ function IE_Dump {
         }
     }
 }
-
-
-<#
-
-    ## Retrieve IE Bookmarks
-    # Source: https://github.com/rvrsh3ll/Misc-Powershell-Scripts/blob/master/Get-BrowserData.ps1
-    echo "`nIE Bookmarks" >> $LogFilePath\BrowserEnum.log
-    echo "------------" >> $LogFilePath\BrowserEnum.log
-    $URLs = Get-ChildItem -Path "$Env:SYSTEMDRIVE\Users\" -Filter "*.url" -Recurse -ErrorAction SilentlyContinue
-    ForEach ($URL in $URLs) {
-        if ($URL.FullName -match 'Favorites') {
-            $User = $URL.FullName.split('\')[2]
-            Get-Content -Path $URL.FullName | ForEach-Object {
-                try {
-                    if ($_.StartsWith('URL')) {
-                        ## parse the .url body to extract the actual bookmark location
-                        $URL = $_.Substring($_.IndexOf('=') + 1)
-                            if($URL -match $Search) {
-                                echo "$URL" >> $LogFilePath\BrowserEnum.log
-                            }
-                    }
-                }
-                catch {
-                    echo "Error parsing url: $_" >> $LogFilePath\BrowserEnum.log
-                }
-            }
-        }
-    }
-
-#>
 
 
 function FIREFOX {
