@@ -901,8 +901,7 @@ function CREDS_DUMP {
 
  ## Function tcp port scanner
  function PORTSCANNER {
- [int]$counter = 0
-
+    [int]$counter = 0
     If(-not($param2)){$PortRange = "21,22,23,80,135,137,139,443,445,666,1433,4444,8080"}else{$PortRange = $param2}
     $Remote_Host = (Test-Connection -ComputerName (hostname) -Count 1 -ErrorAction SilentlyContinue).IPV4Address.IPAddressToString
     echo "`n`nRemote-Host   Status   Port" >> $LogFilePath\BrowserEnum.log
