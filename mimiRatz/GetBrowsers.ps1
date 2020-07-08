@@ -304,7 +304,7 @@ function IE_Dump {
     }else{
         $StoreData = Get-Process $ProcessName | Select -ExpandProperty MainWindowTitle
         $ParseData = $StoreData | where {$_ -ne ""}
-        $MyPSObject = $ParseData -replace '- Microsoft​ Edge',''
+        $MyPSObject = $ParseData -replace '- Microsoft? Edge',''
         echo "$MyPSObject`n" >> $LogFilePath\BrowserEnum.log
     }
 
@@ -365,6 +365,36 @@ function IE_Dump {
         }
     }
 }
+
+
+<#
+
+    ## Retrieve IE Bookmarks
+    # Source: https://github.com/rvrsh3ll/Misc-Powershell-Scripts/blob/master/Get-BrowserData.ps1
+    echo "`nIE Bookmarks" >> $LogFilePath\BrowserEnum.log
+    echo "------------" >> $LogFilePath\BrowserEnum.log
+    $URLs = Get-ChildItem -Path "$Env:SYSTEMDRIVE\Users\" -Filter "*.url" -Recurse -ErrorAction SilentlyContinue
+    ForEach ($URL in $URLs) {
+        if ($URL.FullName -match 'Favorites') {
+            $User = $URL.FullName.split('\')[2]
+            Get-Content -Path $URL.FullName | ForEach-Object {
+                try {
+                    if ($_.StartsWith('URL')) {
+                        ## parse the .url body to extract the actual bookmark location
+                        $URL = $_.Substring($_.IndexOf('=') + 1)
+                            if($URL -match $Search) {
+                                echo "$URL" >> $LogFilePath\BrowserEnum.log
+                            }
+                    }
+                }
+                catch {
+                    echo "Error parsing url: $_" >> $LogFilePath\BrowserEnum.log
+                }
+            }
+        }
+    }
+
+#>
 
 
 function FIREFOX {
@@ -600,7 +630,7 @@ function CHROME {
         echo "{Could not find any Browser Info}" >> $LogFilePath\BrowserEnum.log
     }else{
         ## Test if browser its active 
-        $Preferencies_Path = get-content "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Preferences"
+        $Preferencies_Path = get-content "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Preferences" -ErrorAction SilentlyContinue
         $CHTestings = (Get-Process Chrome -ErrorAction SilentlyContinue).Responding
         If($CHTestings -eq $True){
             $Status = "Status       : Active"
@@ -617,13 +647,15 @@ function CHROME {
         echo "$Status" >> $LogFilePath\BrowserEnum.log
 
         ## Retrieve Browser accept languages
-        $Parse_String = $Preferencies_Path.split(",")
-        $Search_Lang = $Parse_String|select-string "accept_languages"
-        $Parse_Dump = $Search_Lang -replace '"','' -replace 'intl:{','' -replace ':','    : ' -replace 'accept_languages','Languages'
-        If(-not($Parse_Dump) -or $Parse_Dump -eq $null){
-            echo "Languages    : {null}" >> $LogFilePath\BrowserEnum.log
-        }else{
-            echo "$Parse_Dump" >> $LogFilePath\BrowserEnum.log
+        If($Preferencies_Path){
+            $Parse_String = $Preferencies_Path.split(",")
+            $Search_Lang = $Parse_String|select-string "accept_languages"
+            $Parse_Dump = $Search_Lang -replace '"','' -replace 'intl:{','' -replace ':','    : ' -replace 'accept_languages','Languages'
+            If(-not($Parse_Dump) -or $Parse_Dump -eq $null){
+                echo "Languages    : {null}" >> $LogFilePath\BrowserEnum.log
+            }else{
+                echo "$Parse_Dump" >> $LogFilePath\BrowserEnum.log
+            }
         }
 
         ## Retrieve Browser Version
@@ -631,14 +663,16 @@ function CHROME {
         echo "Version      : $GCVersionInfo" >> $LogFilePath\BrowserEnum.log
 
         ## Retrieve Download Folder (default_directory) Settings
-        $Parse_String = $Preferencies_Path.split(",")
-        $Download_Dir = $Parse_String|select-string "savefile"
-        If(-not($Download_Dir) -or $Download_Dir -eq $null){
-            echo "Downloads    : $env:userprofile\Downloads" >> $LogFilePath\BrowserEnum.log
-        }else{
-            $Parse_Dump = $Download_Dir -replace '"','' -replace '{','' -replace '}','' -replace 'default_directory:','' -replace 'savefile:','Downloads    : '
-            If($Parse_Dump -match '\\\\'){$Parse_Dump = $Parse_Dump -replace '\\\\','\'}
-            echo "$Parse_Dump" >> $LogFilePath\BrowserEnum.log
+        If($Preferencies_Path){
+            $Parse_String = $Preferencies_Path.split(",")
+            $Download_Dir = $Parse_String|select-string "savefile"
+            If(-not($Download_Dir) -or $Download_Dir -eq $null){
+                echo "Downloads    : $env:userprofile\Downloads" >> $LogFilePath\BrowserEnum.log
+            }else{
+                $Parse_Dump = $Download_Dir -replace '"','' -replace '{','' -replace '}','' -replace 'default_directory:','' -replace 'savefile:','Downloads    : '
+                If($Parse_Dump -match '\\\\'){$Parse_Dump = $Parse_Dump -replace '\\\\','\'}
+                echo "$Parse_Dump" >> $LogFilePath\BrowserEnum.log
+            }
         }
 
         ## leak Chrome.exe binary path
@@ -668,20 +702,22 @@ function CHROME {
         }
 
         ## Retrieve Email(s) from Google CHROME preferencies File ..
-        $Parse_String = $Preferencies_Path.split(",")
-        $Search_Email = $Parse_String|select-string "email"
-        $Parse_Dump = $Search_Email -replace '"','' -replace 'email:',''
-        If(-not($Search_Email) -or $Search_Email -eq $null){
-            echo "Email            : {None Email Found}" >> $LogFilePath\BrowserEnum.log
-        }else{
-            ## Build new PSObject to store emails found
-            $Store = ForEach ($Email in $Parse_Dump){
-                New-Object -TypeName PSObject -Property @{
-                    Emails = $Email
+        If($Preferencies_Path){
+            $Parse_String = $Preferencies_Path.split(",")
+            $Search_Email = $Parse_String|select-string "email"
+            $Parse_Dump = $Search_Email -replace '"','' -replace 'email:',''
+            If(-not($Search_Email) -or $Search_Email -eq $null){
+                echo "Email            : {None Email Found}`n" >> $LogFilePath\BrowserEnum.log
+            }else{
+                ## Build new PSObject to store emails found
+                $Store = ForEach ($Email in $Parse_Dump){
+                    New-Object -TypeName PSObject -Property @{
+                        Emails = $Email
+                    }
                 }
-            }
-            ## Write new PSObject to logfile
-            echo $Store >> $LogFilePath\BrowserEnum.log
+                ## Write new PSObject to logfile
+                echo $Store >> $LogFilePath\BrowserEnum.log
+                }
             }
         }
 
@@ -777,6 +813,7 @@ function ADDONS {
 
     ## Retrieve Chrome addons
     echo "`n`n[ Chrome ]" >> $LogFilePath\BrowserEnum.log
+    echo "----------" >> $LogFilePath\BrowserEnum.log
     If(-not(Test-Path "\\$env:COMPUTERNAME\c$\users\*\appdata\local\Google\Chrome\User Data\Default\Extensions\*\*\manifest.json" -ErrorAction SilentlyContinue)){
         echo "{None addons found}" >> $LogFilePath\BrowserEnum.log
     }else{
@@ -844,7 +881,7 @@ function CREDS_DUMP {
     
     ## Search for passwords in { ConsoleHost_history }
     If(-not(Test-Path "$env:appdata\Microsoft\Windows\PowerShell\PSReadline\ConsoleHost_history.txt")){
-        echo "Creds in ConsoleHost_history.txt" >> $LogFilePath\BrowserEnum.log
+        echo "`n`nCreds in ConsoleHost_history.txt" >> $LogFilePath\BrowserEnum.log
         echo "--------------------------------" >> $LogFilePath\BrowserEnum.log
         echo "{ConsoleHost_history.txt not found}" >> $LogFilePath\BrowserEnum.log
     }else{
