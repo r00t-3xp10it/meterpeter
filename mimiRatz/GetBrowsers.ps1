@@ -48,10 +48,12 @@
 .EXAMPLE
    PS C:\> ./GetBrowsers.ps1 -CHROME $env:USERPROFILE\Desktop
    Enumerates Chrome browser and stores logfile to: $env:USERPROFILE\Desktop\BrowserEnum.log
+   GetBrowsers 2º parameter requires 'write permissions' on the directory we are sellecting.
 
 .EXAMPLE
-   PS C:\> ./GetBrowsers.ps1 -ADDONS $env:USERPROFILE\Desktop
-   Enumerates ALL browsers addons and stores logfile to: $env:USERPROFILE\Desktop\BrowserEnum.log
+   PS C:\> ./GetBrowsers.ps1 -ADDONS $env:LOCALAPPDATA\Temp
+   Enumerates ALL browsers addons and stores logfile to: $env:LOCALAPPDATA\Temp\BrowserEnum.log
+   GetBrowsers 2º parameter requires 'write permissions' on the directory we are sellecting.
 
 .EXAMPLE
    PS C:\> ./GetBrowsers.ps1 -SCAN 80,135,139,445
