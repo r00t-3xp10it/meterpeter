@@ -58,8 +58,8 @@
 .EXAMPLE
    PS C:\> ./GetBrowsers.ps1 -SCAN 80,135,139,445
    Enumerates local|remote host open|closed tcp ports 
-   'This Function does not allow the permanent storage of the logfile'
-   'If none value its input after -SCAN then the most commonly hacked ports will be scanned'
+   This Function does not allow the permanent storage of the logfile
+   If none value its input after -SCAN then the most commonly hacked ports will be scanned
 
 .INPUTS
    None. You cannot pipe objects to GetBrowsers.ps1
