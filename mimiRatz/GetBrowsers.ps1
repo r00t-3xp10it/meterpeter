@@ -919,17 +919,17 @@ function CREDS_DUMP {
     [int]$counter = 0
     If(-not($param2)){$PortRange = "21,22,23,80,135,137,139,443,445,666,1433,4444,8080"}else{$PortRange = $param2}
     $Remote_Host = (Test-Connection -ComputerName (hostname) -Count 1 -ErrorAction SilentlyContinue).IPV4Address.IPAddressToString
-    echo "`n`nRemote-Host   Status   Port" >> $LogFilePath\BrowserEnum.log
-    echo "-----------   ------   ----" >> $LogFilePath\BrowserEnum.log
+    echo "`n`nRemote-Host   Status   Proto  Port" >> $LogFilePath\BrowserEnum.log
+    echo "-----------   ------   -----  ----" >> $LogFilePath\BrowserEnum.log
     $PortRange -split(',')|Foreach-Object -Process {
         If((Test-NetConnection $Remote_Host -Port $_ -WarningAction SilentlyContinue).tcpTestSucceeded -eq $true){
-            echo "$Remote_Host  Open     $_" >> $LogFilePath\BrowserEnum.log
+            echo "$Remote_Host  Open     tcp    $_" >> $LogFilePath\BrowserEnum.log
             $counter++
         }else{
-            echo "$Remote_Host  Closed   $_" >> $LogFilePath\BrowserEnum.log
+            echo "$Remote_Host  Closed   tcp    $_" >> $LogFilePath\BrowserEnum.log
         }
     }
-    echo "`nTotal open ports found: $counter" >> $LogFilePath\BrowserEnum.log
+    echo "`nTotal open tcp ports found: $counter" >> $LogFilePath\BrowserEnum.log
 }
 
 
