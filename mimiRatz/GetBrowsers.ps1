@@ -173,7 +173,8 @@ echo "$MInvocation" >> $LogFilePath\BrowserEnum.log
 echo "Gateway      : $RGateway" >> $LogFilePath\BrowserEnum.log
 echo "$statsdata" >> $LogFilePath\BrowserEnum.log
 echo "$deliverdata" >> $LogFilePath\BrowserEnum.log
-## END Off { @args -DEFAULTS }
+## END Off { @args -WINVER }
+
 
 function ConvertFrom-Json20([object] $item){
     ## Json Files Convertion to text
