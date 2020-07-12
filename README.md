@@ -126,6 +126,9 @@ meterpeter prompt reveals us some of the shortcuts we have available to use.
     - **Check**     : Review Remote-Host Firewall Settings
     - **Disable**   : Disable Remote-Host Firewall
     - **Enable**    : Enable  Remote-Host Firewall
+  - **Defender** : Enable/Disable Windows Defender Module (Sub-Menu)
+    - **Disable**   : Disable Remote-Host Windows Defender
+    - **Enable**    : Enable  Remote-Host Windows Defender
   - **DumpSAM**  : Dump SAM/SYSTEM Credentials to a remote location
   - **Dnspoof**  : Hijack Entrys in hosts file Module (Sub-Menu)
     - **Check**     : Review Remote-Host hosts File
