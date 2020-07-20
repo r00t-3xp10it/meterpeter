@@ -954,7 +954,8 @@ function CREDS_DUMP {
 
  ## Function tcp port scanner
  function PORTSCANNER {
-    [int]$counter = 0
+[int]$counter = 0
+
     If(-not($param2)){$PortRange = "21,22,23,25,80,110,135,137,139,443,445,666,1433,3389,8080"}else{$PortRange = $param2}
     $Remote_Host = (Test-Connection -ComputerName (hostname) -Count 1 -ErrorAction SilentlyContinue).IPV4Address.IPAddressToString
     echo "`n`nRemote-Host   Status   Proto  Port" >> $LogFilePath\BrowserEnum.log
@@ -973,10 +974,8 @@ function CREDS_DUMP {
 
 ## Function browser cleaner
 function BROWSER_CLEANTRACKS {
-
 [int]$DaysToDelete = 0 # delete all files less than the current date ..
 echo "`n`n`n=[ Clean Browsers Cached Files ]=" >> $LogFilePath\BrowserEnum.log
-
 
     ## Clean Internet Explorer temporary files
     # RunDll32.exe InetCpl.cpl, ClearMyTracksByProcess 8 - Clear Temp Files
