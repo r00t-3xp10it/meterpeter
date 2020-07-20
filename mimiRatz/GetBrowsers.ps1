@@ -107,7 +107,8 @@ If(-not($param1)){
     echo "./GetBrowsers.ps1 -CHROME           Enumerates Chrome browser information Only." >> $LogFilePath\BrowserEnum.log
     echo "./GetBrowsers.ps1 -FIREFOX          Enumerates Firefox browser information Only." >> $LogFilePath\BrowserEnum.log
     echo "./GetBrowsers.ps1 -ADDONS           Enumerates ALL browsers extentions installed." >> $LogFilePath\BrowserEnum.log
-    echo "./GetBrowsers.ps1 -CREDS            Enumerates ALL browsers credentials stored.`n" >> $LogFilePath\BrowserEnum.log
+    echo "./GetBrowsers.ps1 -CREDS            Enumerates ALL browsers credentials stored." >> $LogFilePath\BrowserEnum.log
+    echo "./GetBrowsers.ps1 -CLEAN            Enumerates|Delete ALL browsers cache files.`n" >> $LogFilePath\BrowserEnum.log
     echo "The following Optional args are available:" >> $LogFilePath\BrowserEnum.log
     echo "./GetBrowsers.ps1 -IE `$env:TMP      Enumerates browser and stores logfile to 'tmp'." >> $LogFilePath\BrowserEnum.log
     echo "./GetBrowsers.ps1 -SCAN 135,139,445 Enumerates local|remote host open|closed tcp ports.`n" >> $LogFilePath\BrowserEnum.log
@@ -970,6 +971,58 @@ function CREDS_DUMP {
 }
 
 
+## Function browser cleaner
+function BROWSER_CLEANTRACKS {
+
+[int]$DaysToDelete = 0 # delete all files less than the current date ..
+echo "`n`n`n=[ Clean Browsers Cached Files ]=" >> $LogFilePath\BrowserEnum.log
+
+
+    ## Clean Internet Explorer temporary files
+    # RunDll32.exe InetCpl.cpl, ClearMyTracksByProcess 8 - Clear Temp Files
+    # RunDll32.exe InetCpl.cpl, ClearMyTracksByProcess 1 - Clear History
+    echo "`n`nIE|MsEdge Browser" >> $LogFilePath\BrowserEnum.log
+    echo "-----------------" >> $LogFilePath\BrowserEnum.log
+    $TempFiles = "$env:LOCALAPPDATA\Microsoft\Windows\WER\ERC"
+    $InetCache = "$env:LOCALAPPDATA\Microsoft\Windows\INetCache"
+    $CacheFile = "$env:LOCALAPPDATA\Microsoft\Windows\Temporary Internet Files"
+    Get-ChildItem -Path "$CacheFile","$TempFiles","$InetCache" -Recurse -EA SilentlyContinue|
+    Where-Object { ($_.CreationTime -lt $(Get-Date).AddDays(-$DaysToDelete)) } |
+        ForEach-Object {
+            $_ | Remove-Item -Force -Recurse -EA SilentlyContinue
+            $_.Name -replace 'Low',''| Out-File -FilePath "$LogFilePath\BrowserEnum.log" -Append
+        }
+
+
+    ## Clean Mozilla Firefox temporary files
+    echo "`nFireFox Browser" >> $LogFilePath\BrowserEnum.log
+    echo "-----------------" >> $LogFilePath\BrowserEnum.log
+    $CacheFile = "$env:LOCALAPPDATA\Mozilla\Firefox\Profiles\*.default\cache"
+    $TempFiles = "$env:LOCALAPPDATA\Mozilla\Firefox\Profiles\*.default-release\cache"
+    $OutraFile = "$env:LOCALAPPDATA\Mozilla\Firefox\Profiles\*.default\cache2\entries"
+    $IefpFiles = "$env:LOCALAPPDATA\Mozilla\Firefox\Profiles\*.default-release\cache2\entries"
+        Get-ChildItem -Path "$CacheFile","$TempFiles","$OutraFile","$IefpFiles" -Recurse -EA SilentlyContinue|
+        Where-Object { ($_.CreationTime -lt $(Get-Date).AddDays(-$DaysToDelete)) } |
+            ForEach-Object {
+                $_ | Remove-Item -Force -Recurse -EA SilentlyContinue
+                $_.Name | Out-File -FilePath "$LogFilePath\BrowserEnum.log" -Append
+            }
+
+
+    ## Clean Google Chrome temporary files
+    echo "`n`nChrome Browser" >> $LogFilePath\BrowserEnum.log
+    echo "-----------------" >> $LogFilePath\BrowserEnum.log
+    $CacheFile = "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Cache"
+    $TempFiles = "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Cache2\entries"
+    Get-ChildItem -Path "$CacheFile","$TempFiles" -Recurse -EA SilentlyContinue|
+    Where-Object { ($_.CreationTime -lt $(Get-Date).AddDays(-$DaysToDelete)) } |
+        ForEach-Object {
+            $_ | Remove-Item -Force -Recurse -EA SilentlyContinue
+            $_.Name | Out-File -FilePath "$LogFilePath\BrowserEnum.log" -Append
+        }
+}
+
+
 ## Jump Links (Functions)
 If($param1 -eq "-IE"){IE_Dump}
 If($param1 -eq "-CHROME"){CHROME}
@@ -978,6 +1031,7 @@ If($param1 -eq "-FIREFOX"){FIREFOX}
 If($param1 -eq "-CREDS"){CREDS_DUMP}
 If($param1 -eq "-SCAN"){PORTSCANNER}
 If($param1 -eq "-RECON"){BROWSER_RECON}
+If($param1 -eq "-CLEAN"){BROWSER_CLEANTRACKS}
 If($param1 -eq "-ALL"){BROWSER_RECON;IE_Dump;FIREFOX;CHROME}
 
 ## NOTE: ForEach - Build PSObject displays ..
