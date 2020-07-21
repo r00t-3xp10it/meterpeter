@@ -1000,12 +1000,12 @@ echo "`n`n`n=[ Clean Browsers Cached Files ]=" >> $LogFilePath\BrowserEnum.log
     $TempFiles = "$env:LOCALAPPDATA\Mozilla\Firefox\Profiles\*.default-release\cache"
     $OutraFile = "$env:LOCALAPPDATA\Mozilla\Firefox\Profiles\*.default\cache2\entries"
     $IefpFiles = "$env:LOCALAPPDATA\Mozilla\Firefox\Profiles\*.default-release\cache2\entries"
-        Get-ChildItem -Path "$CacheFile","$TempFiles","$OutraFile","$IefpFiles" -Recurse -EA SilentlyContinue|
-        Where-Object { ($_.CreationTime -lt $(Get-Date).AddDays(-$DaysToDelete)) } |
-            ForEach-Object {
-                $_ | Remove-Item -Force -Recurse -EA SilentlyContinue
-                $_.Name | Out-File -FilePath "$LogFilePath\BrowserEnum.log" -Append
-            }
+    Get-ChildItem -Path "$CacheFile","$TempFiles","$OutraFile","$IefpFiles" -Recurse -EA SilentlyContinue|
+    Where-Object { ($_.CreationTime -lt $(Get-Date).AddDays(-$DaysToDelete)) } |
+        ForEach-Object {
+            $_ | Remove-Item -Force -Recurse -EA SilentlyContinue
+            $_.Name | Out-File -FilePath "$LogFilePath\BrowserEnum.log" -Append
+        }
 
 
     ## Clean Google Chrome temporary files
