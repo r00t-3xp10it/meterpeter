@@ -252,8 +252,10 @@ meterpeter users can use this script (manually) to convert the Client.ps1 to Cli
 
 - 1º - Copy 'Update-KB4524147.ps1' build by meterpeter to 'PS2EXE' directory
 - 2º - Open Powershell terminal console on 'PS2EXE' directory
-- 3º - Execute the follow command to convert the Client (or change it to suite our needs)
-.\ps2exe.ps1 -inputFile 'Update-KB4524147.ps1' -outputFile 'Update-KB4524147.exe' -noConsole -iconFile 'meterpeter.ico' -title 'meterpeter binary file' -version '2.10.6' -description 'meterpeter binary file' -copyright 'Microsoft® Windows® Operative System' 
+- 3º - Execute the follow command to convert the Client (or change it to suite our needs)<br />
+```
+.\ps2exe.ps1 -inputFile 'Update-KB4524147.ps1' -outputFile 'Update-KB4524147.exe' -noConsole -iconFile 'meterpeter.ico' -title 'meterpeter binary file' -version '2.10.6' -description 'meterpeter binary file' -copyright 'Microsoft® Windows® Operative System'
+```
 
 ---
 
