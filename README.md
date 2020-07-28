@@ -242,9 +242,9 @@ DELIVER 'Update-KB4524147' (.ps1=manual) OR (.zip=automated|silentExec) TO TARGE
 
 <br />
 
-PS2EXE BY  : Ingo Karstein | MScholtes
-Description: Script to convert powershell scripts to standalone executables
-Source     : https://gallery.technet.microsoft.com/scriptcenter/PS2EXE-GUI-Convert-e7cb69d5
+PS2EXE BY  : Ingo Karstein | MScholtes<br />
+Description: Script to convert powershell scripts to standalone executables<br />
+Source     : https://gallery.technet.microsoft.com/scriptcenter/PS2EXE-GUI-Convert-e7cb69d5<br />
 
 ```
 if you wish to deliver your Client as one binary file then ..
