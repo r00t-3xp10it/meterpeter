@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
   Starts a listener Server on a Windows|Linux attacker machine and generate oneline reverse shell payloads (PS)
 

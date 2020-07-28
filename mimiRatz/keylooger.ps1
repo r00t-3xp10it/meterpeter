@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
   Standalone Powershell Script to Capture keyboard keystrokes
 

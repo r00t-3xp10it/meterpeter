@@ -10,6 +10,7 @@
 - **[List Of Available Modules](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#meterpeter-server-available-modules)**<br />
 - **[How To - Under Linux Distributions](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#attacker-machine-linux-kali)**<br />
 - **[How To - Under Windows Distributions](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#attacker-machiner-windows-pc)**<br />
+- **[How To - Use PS2EXE to convert ps1 scripts to standalone executables](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#Use-PS2EXE-to-convert-ps1-scripts-to-standalone-executables)**<br />
 - **[Windows Defender (Target Related)](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#remark-about-windows-defender)**<br />
 - **[Some meterpeter Screenshots](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#meterpeter-screenshots)**<br />
 - **[Special Thanks|Contributions|Videos](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#video-tutorials)**<br />
@@ -234,6 +235,29 @@ DELIVER 'Update-KB4524147' (.ps1=manual) OR (.zip=automated|silentExec) TO TARGE
 - **[Quick Jump List](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#project)**<br />
 
 ---
+
+<br />
+
+### Use PS2EXE to convert ps1 scripts to standalone executables
+
+```
+PS2EXE BY  : Ingo Karstein | MScholtes
+Description: Script to convert powershell scripts to standalone executables
+Source     : https://gallery.technet.microsoft.com/scriptcenter/PS2EXE-GUI-Convert-e7cb69d5
+
+if you wish to deliver your Client as one binary file then
+meterpeter users can use this script (manually) to convert the Client.ps1 to Client.exe
+
+```
+
+- 1º - Copy 'Update-KB4524147.ps1' build by meterpeter to 'PS2EXE' directory
+- 2º - Open Powershell terminal console on 'PS2EXE' directory
+- 3º - Execute the follow command to convert the Client (or change it to suite our needs)
+.\ps2exe.ps1 -inputFile 'Update-KB4524147.ps1' -outputFile 'Update-KB4524147.exe' -noConsole -iconFile 'meterpeter.ico' -title 'meterpeter binary file' -version '2.10.6' -description 'meterpeter binary file' -copyright 'Microsoft® Windows® Operative System' 
+
+---
+
+
 
 <br />
 

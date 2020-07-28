@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
   Standalone Powershell Script to Leak Installed Browsers Information.
 
@@ -733,7 +733,7 @@ function CHROME {
 
         ## Retrieve Chrome History
         # Source: https://github.com/EmpireProject/Empire/blob/master/data/module_source/collection/Get-BrowserData.ps1
-        echo "Chrome History" >> $LogFilePath\BrowserEnum.log
+        echo "`nChrome History" >> $LogFilePath\BrowserEnum.log
         echo "--------------" >> $LogFilePath\BrowserEnum.log
         If(-not(Test-Path -Path "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\History")){
             echo "{Could not find any History}" >> $LogFilePath\BrowserEnum.log

