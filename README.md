@@ -259,7 +259,7 @@ meterpeter users can use this script (manually) to convert the Client.ps1 to Cli
 ```
 
 ![final](https://user-images.githubusercontent.com/23490060/88741165-d75f2f00-d136-11ea-8761-28b690f0ddf3.png)
-
+**`REMARK:`** Client.exe (created by PS2EXEC) migth **malfunction** under meterpeter C2 **server**.
 
 ---
 
