@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
 Converts powershell scripts to standalone executables.
 .DESCRIPTION
@@ -113,11 +113,11 @@ Param([STRING]$inputFile = $NULL, [STRING]$outputFile = $NULL, [SWITCH]$verbose,
 
 if (!$nested)
 {
-	Write-Output "PS2EXE-GUI v0.5.0.21 by Ingo Karstein, reworked and GUI support by Markus Scholtes`n"
+	Write-Output "   PS2EXE-GUI v0.5.0.21 by Ingo Karstein, reworked and GUI support by Markus Scholtes"
 }
 else
 {
-	Write-Output "PowerShell 2.0 environment started...`n"
+	Write-Output "PowerShell 2.0 environment started..."
 }
 
 if ([STRING]::IsNullOrEmpty($inputFile))
@@ -164,7 +164,7 @@ $psversion = 0
 if ($PSVersionTable.PSVersion.Major -ge 4)
 {
 	$psversion = 4
-	Write-Output "You are using PowerShell 4.0 or above."
+	#Write-Output "You are using PowerShell 4.0 or above."
 }
 
 if ($PSVersionTable.PSVersion.Major -eq 3)
@@ -198,13 +198,13 @@ else
 
 if (!(Test-Path $inputFile -PathType Leaf))
 {
-	Write-Error "Input file $($inputfile) not found!"
+	Write-Error "   Input file  => $($inputfile) not found!"
 	exit -1
 }
 
 if ($inputFile -eq $outputFile)
 {
-	Write-Error "Input file is identical to output file!"
+	Write-Error "   Input file is identical to output file!"
 	exit -1
 }
 
@@ -343,7 +343,7 @@ if ($psversion -ge 3 -and $runtime20)
 
 if ($psversion -lt 3 -and $runtime40)
 {
-	Write-Error "You need to run ps2exe in an Powershell 3.0 or higher environment to use parameter -runtime40`n"
+	Write-Error "You need to run ps2exe in an Powershell 3.0 or higher environment to use parameter -runtime40"
 	exit -1
 }
 
@@ -487,7 +487,7 @@ if ($debug)
 	$cp.TempFiles.KeepFiles = $TRUE
 }
 
-Write-Output "Reading input file $inputFile"
+Write-Output "   Input file  => $inputFile"
 $content = Get-Content -LiteralPath $inputFile -Encoding UTF8 -ErrorAction SilentlyContinue
 if ([STRING]::IsNullOrEmpty($content))
 {
@@ -2736,7 +2736,7 @@ if ($longPaths)
 	$configFileForEXE3 = "<?xml version=""1.0"" encoding=""utf-8"" ?>`r`n<configuration><startup><supportedRuntime version=""v4.0"" sku="".NETFramework,Version=v4.0"" /></startup><runtime><AppContextSwitchOverrides value=""Switch.System.IO.UseLegacyPathHandling=false;Switch.System.IO.BlockLongPaths=false"" /></runtime></configuration>"
 }
 
-Write-Output "Compiling file...`n"
+#Write-Output "Compiling file..."
 $cr = $cop.CompileAssemblyFromSource($cp, $programFrame)
 if ($cr.Errors.Count -gt 0)
 {
@@ -2751,7 +2751,7 @@ else
 {
 	if (Test-Path $outputFile)
 	{
-		Write-Output "Output file $outputFile written`n"
+		Write-Output "   Output file => $outputFile `n`n"
 
 		if ($debug)
 		{
@@ -2777,7 +2777,7 @@ else
 	}
 	else
 	{
-		Write-Error -ErrorAction "Continue" "Output file $outputFile not written`n"
+		Write-Error -ErrorAction "Continue" "   Output file => $outputFile not written`n`n"
 	}
 }
 
