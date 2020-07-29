@@ -10,18 +10,18 @@
 - 3º - Execute the follow command to convert the Client.ps1 to standalone executable<br />
 
 ```
-.\ps2exe.ps1 -inputFile 'Update-KB4524147.ps1' -outputFile 'Update-KB4524147.exe' -iconFile 'meterpeter.ico' -title 'meterpeter binary file' -version '2.10.6' -description 'meterpeter binary file' -copyright 'Microsoft® Windows® Operative System' -noConsole -noError
+.\ps2exe.ps1 -inputFile 'Update-KB4524147.ps1' -outputFile 'Update-KB4524147.exe' -iconFile 'meterpeter.ico' -title 'meterpeter binary file' -version '2.10.6' -description 'meterpeter binary file' -copyright 'Microsoft® Windows® Operative System' -noConsole -noVisualStyles -noError
 ```
 
 ![final](https://user-images.githubusercontent.com/23490060/88741165-d75f2f00-d136-11ea-8761-28b690f0ddf3.png)
 
-**`REMARK:`** Client.exe (created by PS2EXEC) migth **malfunction** under meterpeter C2 **server**.
+**`REMARK:`** Client.exe (created by PS2EXEC) migth **malfunction** with meterpeter **mimiratz scripts**.
 
 ---
 
 <br />
 
-**ps2exe Syntax:**
+**Syntax:**
 ```
     ps2exe.ps1 [-inputFile] '<file_name>' [[-outputFile] '<file_name>'] [-verbose]
                [-debug] [-runtime20|-runtime40] [-lcid <id>] [-x86|-x64] [-STA|-MTA] [-noConsole]
