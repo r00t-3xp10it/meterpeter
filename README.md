@@ -307,5 +307,3 @@ meterpeter Under Linux Distros: https://www.youtube.com/watch?v=CmMbWmN246E<br /
 - **[meterpeter WIKI pages (Oficial Documentation)](https://github.com/r00t-3xp10it/meterpeter/wiki)**<br />
 - **[Jump To Top of this readme File](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#project)**<br />
 ---
-
-
