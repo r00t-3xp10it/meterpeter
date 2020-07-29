@@ -242,7 +242,7 @@ DELIVER 'Update-KB4524147' (.ps1=manual) OR (.zip=automated|silentExec) TO TARGE
 
 <br />
 
-**PS2EXE BY**  : Ingo Karstein | MScholtes
+**PS2EXE BY**  : Ingo Karstein | MScholtes<br />
 **Description**: Script to convert powershell scripts to standalone executables<br />
 **Source**     : https://gallery.technet.microsoft.com/scriptcenter/PS2EXE-GUI-Convert-e7cb69d5<br /><br />
 
@@ -258,7 +258,7 @@ DELIVER 'Update-KB4524147' (.ps1=manual) OR (.zip=automated|silentExec) TO TARGE
 
 ![final](https://user-images.githubusercontent.com/23490060/88741165-d75f2f00-d136-11ea-8761-28b690f0ddf3.png)
 
-**`REMARK:`** Client.exe (created by PS2EXEC) migth **malfunction** with meterpeter **mimiratz scripts**.
+- **`REMARK:`** Client.exe (created by PS2EXEC) migth **malfunction** with meterpeter **mimiratz scripts**.
 
 - **[Quick Jump List](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#project)**<br />
 
