@@ -113,7 +113,7 @@ Param([STRING]$inputFile = $NULL, [STRING]$outputFile = $NULL, [SWITCH]$verbose,
 
 if (!$nested)
 {
-	Write-Output "   PS2EXE-GUI v0.5.0.21 by Ingo Karstein, reworked and GUI support by Markus Scholtes"
+	Write-Output "   PS2EXE - v0.5.0.21 by Ingo Karstein, reworked and GUI support by Markus Scholtes"
 }
 else
 {
@@ -487,7 +487,8 @@ if ($debug)
 	$cp.TempFiles.KeepFiles = $TRUE
 }
 
-Write-Output "   Input file  => $inputFile"
+If($inputFile -match 'meterpeter'){$parsingPath = $inputFile -replace '\\PS2EXE',''}else{$parsingPath = $inputFile}
+Write-Output "   Input  file => $parsingPath"
 $content = Get-Content -LiteralPath $inputFile -Encoding UTF8 -ErrorAction SilentlyContinue
 if ([STRING]::IsNullOrEmpty($content))
 {
@@ -2751,7 +2752,8 @@ else
 {
 	if (Test-Path $outputFile)
 	{
-		Write-Output "   Output file => $outputFile `n`n"
+        If($outputFile -match 'meterpeter'){$parsingPath = $outputFile -replace '\\PS2EXE',''}else{$parsingPath = $outputFile}
+		Write-Output "   Output file => $parsingPath `n`n"
 
 		if ($debug)
 		{
