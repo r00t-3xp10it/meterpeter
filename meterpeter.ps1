@@ -41,7 +41,7 @@
 ## Meterpeter Develop version
 $dev_Version = "2.10.6";
 ## Auto-Convertion of Client.ps1 to standalone executable
-$Converter = $True
+$Converter = $False
 
 
 function Character_Obfuscation($String)
