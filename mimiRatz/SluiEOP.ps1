@@ -82,7 +82,7 @@ If($CheckVuln){
    Set-ItemProperty -Path "HKCU:\Software\Classes\Launcher.SystemSettings" -Name "(default)" -Value '' -Force;Start-Sleep -Seconds 2
 
 }else{
-   echo "`n`n   [i] System Doesn't Seems Vulnerable, Aborting .." > $env:TMP\fail.log
+   echo "   [ERROR]  System Doesn't Seems Vulnerable, Aborting .." > $env:TMP\fail.log
 }
 
 
