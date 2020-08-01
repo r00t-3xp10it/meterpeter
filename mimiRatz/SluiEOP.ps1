@@ -29,7 +29,7 @@
    Execute notepad process with high privileges (SYSTEM)
 
 .EXAMPLE
-   PS C:\> ./SluiEOP.ps1 "powershell -exec bypass -w 1 -File MyRat.ps1"
+   PS C:\> ./SluiEOP.ps1 "powershell -exec bypass -w 1 -File C:\Users\pedro\AppData\Local\Temp\MyRat.ps1"
    Execute MyRat.ps1 script with high privileges (SYSTEM)
 
 .INPUTS
