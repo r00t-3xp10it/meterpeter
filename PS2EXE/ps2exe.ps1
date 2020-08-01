@@ -140,7 +140,6 @@ Param([STRING]$inputFile = $NULL, [STRING]$outputFile = $NULL, [SWITCH]$verbose,
 
 if (!$nested)
 {
-        Write-Output ""
 	Write-Output "   PS2EXE - v0.5.0.21 by Ingo Karstein, reworked and GUI support by Markus Scholtes"
 }
 else
