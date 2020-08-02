@@ -133,7 +133,7 @@ If($DetailedDataDump -eq $True){
          $EOPID = "null"
       }
    }
-   ElseIf($Command -match '^[powershell]' -and $Command -match '.ps1' -or $Command -match '.vbs' -or $Command -match '.py'){
+   ElseIf($Command -match '^[powershell]' -and $Command -match '.ps1' -or $Command -match '.vbs' -or $Command -match '.py' -or $Command -match '.bat'){
       ## String: "powershell -exec bypass -w 1 -File C:\Users\pedro\AppData\Local\Temp\MyRat.ps1"
       $ParsingData = $Command -Split('\\')
       $ProcessName = $ParsingData|Select -Last 1 -EA SilentlyContinue
