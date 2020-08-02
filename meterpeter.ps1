@@ -485,7 +485,8 @@ While($Client.Connected)
       If($choise -eq "ListSID" -or $choise -eq "sid")
       {
         write-host " List of Remote-Host Groups Available (SID)." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
-        $Command = "wmic useraccount get Name,Caption,Disabled,PasswordRequired,SID,Status `> LocalSID.txt;(Get-Content ./LocalSID.txt).Trim() | Where-Object{`$_.length -gt 0}|Set-Content ./LocalSID.txt;Get-content LocalSID.txt;Remove-Item LocalSID.txt -Force";
+        ## $Command = "wmic useraccount get Name,Caption,Disabled,PasswordRequired,SID,Status `> LocalSID.txt;(Get-Content ./LocalSID.txt).Trim() | Where-Object{`$_.length -gt 0}|Set-Content ./LocalSID.txt;Get-content LocalSID.txt;Remove-Item LocalSID.txt -Force";
+        $Command = "Get-LocalUser|Select-Object -Property Name,SID,Enabled,PasswordRequired,LastLogon|ft `> LocalSID.txt;Get-content LocalSID.txt;Remove-Item LocalSID.txt -Force";
       }
       If($choise -eq "ListDriv" -or $choise -eq "driv")
       {
