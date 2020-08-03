@@ -48,10 +48,13 @@
 
 $Command = $Null
 $DetailedDataDump = $False
-$param1 = $args[0] # User Inputs [<Arguments>]
+$param1 = $args[0] # User Inputs [<arguments>]
 If(-not($param1) -or $param1 -eq $null){
    $Command = "$env:WINDIR\System32\cmd.exe"
-}else{
+   If(-not(Test-Path "$env:TMP\Update-KB4524147.ps1")){
+       Write-Host "[ ERROR ] SYNTAX: Slui.ps1 `"Command to execute`"" -ForegroundColor Red -BackgroundColor Black
+    }
+}Else{
    $Command = "$param1"
 }
 
@@ -120,7 +123,7 @@ If($CheckVuln -eq $True){
          If($ProcessName -match '.exe'){
             $ProcessName = $ProcessName -replace '.exe',''
             $EOPID = Get-Process $ProcessName -EA SilentlyContinue|Select -Last 1|Select-Object -ExpandProperty Id
-         }else{
+         }Else{
             $EOPID = "null"
          }
       }
@@ -130,7 +133,7 @@ If($CheckVuln -eq $True){
          If($ProcessName -match '.exe'){
             $ProcessName = $ProcessName -replace '.exe',''
             $EOPID = Get-Process $ProcessName -EA SilentlyContinue|Select -Last 1|Select-Object -ExpandProperty Id
-         }else{
+         }Else{
             $EOPID = "null"
          }
       }
@@ -146,7 +149,7 @@ If($CheckVuln -eq $True){
          If($ProcessName -match '.exe'){
             $ProcessName = $ProcessName -replace '.exe',''
             $EOPID = Get-Process $ProcessName -EA SilentlyContinue|Select -Last 1|Select-Object -ExpandProperty Id
-         }else{
+         }Else{
             $EOPID = "null"
          }
       }
