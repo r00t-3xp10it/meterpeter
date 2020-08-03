@@ -20,7 +20,7 @@
 .NOTES
    SluiEOP script was written as one meterpeter C2 Post-Exploitation module.
    This script 'reverts' regedit hacks to the previous state before the EOP.
-   To run executables (.exe) through this module use: cmd /c start binary.exe
+   To run child binaries (.exe) through this module use: cmd /c start bin.exe
 
 .EXAMPLE
    PS C:\> ./SluiEOP.ps1 "C:\Windows\System32\cmd.exe /c start notepad.exe"
