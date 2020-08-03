@@ -120,8 +120,7 @@ If($CheckVuln -eq $True){
    #>
 
    ## Extracting attacker Spawned ProcessName PID
-   If(-not(Test-Path "$env:TMP\SluiEOP.ps1")){Write-Host "[+] Building  EOP output Table displays.`n"}
-   Start-Sleep -Milliseconds 500
+   If(-not(Test-Path "$env:TMP\SluiEOP.ps1")){Write-Host "[+] Building  EOP output Table displays.`n"};Start-Sleep -Milliseconds 500
    If($Command -match '^[cmd]' -and $Command -match ' ' -and $Command -NotMatch '.bat$' -and $Command -NotMatch '.ps1$' -and $Command -NotMatch '.py$'){
       ## String: "C:\Windows\System32\cmd.exe /c start notepad.exe"
       $ProcessName = $Command -Split(' ')|Select -Last 1 -EA SilentlyContinue
