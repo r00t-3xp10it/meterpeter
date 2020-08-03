@@ -124,7 +124,7 @@ If($CheckVuln -eq $True){
    If($Command -match '^[cmd]' -and $Command -match ' ' -and $Command -NotMatch '.bat$' -and $Command -NotMatch '.ps1$' -and $Command -NotMatch '.py$'){
       ## String: "C:\Windows\System32\cmd.exe /c start notepad.exe"
       $ProcessName = $Command -Split(' ')|Select -Last 1 -EA SilentlyContinue
-      If($ProcessName -match '.exe'){
+      If($ProcessName -match '[.exe]$'){
          $ProcessName = $ProcessName -replace '.exe',''
          $EOPID = Get-Process $ProcessName -EA SilentlyContinue|Select -Last 1|Select-Object -ExpandProperty Id
          If($EOPID -match '^\d+$'){$EOP_Success = $True}
@@ -135,7 +135,7 @@ If($CheckVuln -eq $True){
    ElseIf(-not($Command -match ' ') -and $Command -match '\\'){
       ## String: "$env:WINDIR\System32\WindowsPowerShell\v1.0\powershell.exe"
       $ProcessName = Split-Path "$Command" -Leaf
-      If($ProcessName -match '.exe'){
+      If($ProcessName -match '[.exe]$'){
          $ProcessName = $ProcessName -replace '.exe',''
          $EOPID = Get-Process $ProcessName -EA SilentlyContinue|Select -Last 1|Select-Object -ExpandProperty Id
          If($EOPID -match '^\d+$'){$EOP_Success = $True}
@@ -148,17 +148,17 @@ If($CheckVuln -eq $True){
       ## String: "powershell -exec bypass -w 1 -File C:\Users\pedro\AppData\Local\Temp\MyRat.ps1"
       $ProcessName = $Command -Split('\\')|Select -Last 1 -EA SilentlyContinue
       ## Extract powershell.exe interpreter process PID
-      If($Command -match '^[powershell]' -and $Command -match '.ps1$'){
+      If($Command -match '^[powershell].*[.ps1]$'){
          $EOPID = Get-Process powershell -EA SilentlyContinue|Select -Last 1|Select-Object -ExpandProperty Id
          If($EOPID -match '^\d+$'){$EOP_Success = $True}
       }
       ## Extract cmd.exe interpreter process PID
-      ElseIf($Command -match '^[cmd]' -and $Command -match '.bat$'){
+      ElseIf($Command -match '^[cmd].*[.bat]$'){
          $EOPID = Get-Process cmd -EA SilentlyContinue|Select -Last 1|Select-Object -ExpandProperty Id
          If($EOPID -match '^\d+$'){$EOP_Success = $True} 
       }
       ## Extract python.exe interpreter process PID
-      ElseIf($Command -match '^[python]' -and $Command -match '.py$'){
+      ElseIf($Command -match '^[python].*[.py]$'){
          $EOPID = Get-Process python -EA SilentlyContinue|Select -Last 1|Select-Object -ExpandProperty Id
          If($EOPID -match '^\d+$'){$EOP_Success = $True} 
       }
@@ -169,7 +169,7 @@ If($CheckVuln -eq $True){
    Else{
       ## String: "powershell.exe"
       $ProcessName = Split-Path "$Command" -Leaf
-      If($ProcessName -match '.exe'){
+      If($ProcessName -match '[.exe]$'){
          $ProcessName = $ProcessName -replace '.exe',''
          $EOPID = Get-Process $ProcessName -EA SilentlyContinue|Select -Last 1|Select-Object -ExpandProperty Id
          If($EOPID -match '^\d+$'){$EOP_Success = $True}
