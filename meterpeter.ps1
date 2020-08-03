@@ -2011,8 +2011,6 @@ While($Client.Connected)
       {
         If($OutPut -ne " ")
         {
-
-
           If($Cam_set -eq "True")
           {
             $OutPut = $OutPut|findstr /s /I /C:"Device name:";
@@ -2021,7 +2019,7 @@ While($Client.Connected)
             Write-Host "  $OutPut";
             $Cam_set = "False";
           }ElseIf($SluiEOP -eq "True"){
-            Write-Host "   Privs   Status   Description" -ForeGroundColor green;
+            Write-Host "`n   Privs   Status   Description" -ForeGroundColor green;
             Write-Host "   -----   ------   -----------";
             Write-Host "   system  execute  '$mYcOMMAND'"
             $SluiEOP = "False"
