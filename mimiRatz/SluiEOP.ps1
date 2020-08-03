@@ -168,15 +168,17 @@ If($CheckVuln -eq $True){
    }Else{
       ## Build meterpeter Table
       If($Success -eq $True){
-         echo "   system  success  Process PID returned: $EOPID" > $env:TMP\sLUIEop.log
+         echo "   system  execute  '$Command'" > $env:TMP\sLUIEop.log
+         echo "   system  success  Spawn Process PID returned: $EOPID" >> $env:TMP\sLUIEop.log
       }Else{
-         echo "   system  error?   Process PID not returned" > $env:TMP\sLUIEop.log
+         echo "   system  execute  '$Command'" > $env:TMP\sLUIEop.log
+         echo "   system  error?   Spawn Process PID not returned" >> $env:TMP\sLUIEop.log
       }
    }
 
 }Else{
    ## Vulnerable registry hive => not found
-   echo "   ERROR    System Doesn't Seems Vulnerable, Aborting." > $env:TMP\sLUIEop.log
+   echo "   user    ERROR     System Doesn't Seems Vulnerable, Aborting." > $env:TMP\sLUIEop.log
 }
 
 ## Clean old files/configurations left behind after EOP finished ..
