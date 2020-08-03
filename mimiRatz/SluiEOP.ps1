@@ -116,7 +116,6 @@ If($CheckVuln -eq $True){
    #>
 
    If($DetailedDataDump -eq $True){
-
       If($Command -match ' ' -and $Command -match 'cmd'){
          ## String: "C:\Windows\System32\cmd.exe /c start notepad.exe"
          $ParsingData = $Command -Split(' ')
