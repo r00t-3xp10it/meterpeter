@@ -141,8 +141,8 @@ If($CheckVuln -eq $True){
       ## String: "powershell -exec bypass -w 1 -File C:\Users\pedro\AppData\Local\Temp\MyRat.ps1"
       $ParsingData = $Command -Split('\\')
       $ProcessName = $ParsingData|Select -Last 1 -EA SilentlyContinue
-      $Success = $True
       $EOPID = "null {script exec}"
+      $Success = $True
    }
    Else{
       ## String: "powershell.exe"
