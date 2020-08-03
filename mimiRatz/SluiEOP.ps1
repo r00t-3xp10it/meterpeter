@@ -67,7 +67,6 @@ If($CheckVuln -eq $True){
    If(-not(Test-Path "$env:TMP\Update-KB4524147.ps1")){
       Write-Host "SluiEOP v1.7 - By r00t-3xp10it (SSA RedTeam @2020)" -ForeGroundColor Green
       Write-Host "[+] Executing Command: '$Command'"
-      # Output Detailed Info on screen
    }
 
    ### Add Entrys to Regedit { using powershell }
