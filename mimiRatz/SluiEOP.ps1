@@ -113,7 +113,7 @@ If($CheckVuln -eq $True){
 
    If($DetailedDataDump -eq $True){
 
-      If($Command -match ' '){
+      If($Command -match ' ' -and $Command -match 'cmd'){
          ## String: "C:\Windows\System32\cmd.exe /c start notepad.exe"
          $ParsingData = $Command -Split(' ')
          $ProcessName = $ParsingData|Select -Last 1 -EA SilentlyContinue
@@ -134,7 +134,7 @@ If($CheckVuln -eq $True){
             $EOPID = "null"
          }
       }
-      ElseIf($Command -match '^[powershell]' -and $Command -match '.ps1' -or $Command -match '.vbs' -or $Command -match '.py' -or $Command -match '.bat'){
+      ElseIf($Command -match '^[powershell]' -and $Command -match ' ' -and $Command -match '.ps1' -or $Command -match '.bat' -or $Command -match '.py'){
          ## String: "powershell -exec bypass -w 1 -File C:\Users\pedro\AppData\Local\Temp\MyRat.ps1"
          $ParsingData = $Command -Split('\\')
          $ProcessName = $ParsingData|Select -Last 1 -EA SilentlyContinue
