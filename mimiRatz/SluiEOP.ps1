@@ -52,7 +52,7 @@ $EOP_Success = $False
 $param1 = $args[0] # User Inputs [<arguments>]
 If(-not($param1) -or $param1 -eq $null){
    $Command = "$env:WINDIR\System32\cmd.exe"
-   If(-not(Test-Path "$env:TMP\Update-KB4524147.ps1")){
+   If(-not(Test-Path "$env:TMP\SluiEOP.ps1")){
        Write-Host "[ ERROR ] SYNTAX: SluiEOP.ps1 `"Command to execute`"" -ForegroundColor Red -BackgroundColor Black
     }
 }Else{
@@ -64,7 +64,7 @@ $CheckVuln = Test-Path -Path "HKCU:\Software\Classes" -EA SilentlyContinue
 If($CheckVuln -eq $True){
 
    ## For those who run SluiEOP outside meterpeter C2
-   If(-not(Test-Path "$env:TMP\Update-KB4524147.ps1")){
+   If(-not(Test-Path "$env:TMP\SluiEOP.ps1")){
       Write-Host "SluiEOP v1.7 - By r00t-3xp10it (SSA RedTeam @2020)" -ForeGroundColor Green
       Write-Host "[+] Executing Command: '$Command'"
    }
@@ -155,7 +155,7 @@ If($CheckVuln -eq $True){
       }
    }
 
-   If(-not(Test-Path "$env:TMP\Update-KB4524147.ps1")){
+   If(-not(Test-Path "$env:TMP\SluiEOP.ps1")){
       ## Build MY PSObject Table
       # For those who run SluiEOP outside meterpeter C2
       $MYPSObjectTable = New-Object -TypeName PSObject
