@@ -20,7 +20,7 @@
 .NOTES
    SluiEOP script was written to be one meterpeter C2 post-exploit module.
    SluiEOP script supports [ CMD | POWERSHELL | PYTHON ] scripts execution.
-   To run child binaries (.exe) through this module use: cmd /c start bin.exe
+   To run child binaries (.exe) through this cmdlet use: cmd /c start bin.exe
 
    This script 'reverts' regedit hacks to the previous state before the EOP.
    Unless '$MakeItPersistence = "True"' its set. In that case the EOP registry
