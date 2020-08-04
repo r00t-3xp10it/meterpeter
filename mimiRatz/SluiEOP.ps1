@@ -93,10 +93,10 @@ If($CheckVuln -eq $True){
          Remove-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shell" -Recurse -Force;Start-Sleep -Seconds 1
          Remove-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shellex" -Recurse -Force;Start-Sleep -Seconds 1
          Set-ItemProperty -Path "HKCU:\Software\Classes\Launcher.SystemSettings" -Name "(default)" -Value '' -Force
-         echo "[ ] Success   => MakeItPersistence reverted." > $env:TMP\sLUIEop.log
+         echo "[»] Success   => MakeItPersistence reverted." > $env:TMP\sLUIEop.log
          Get-Content -Path "$env:TMP\sLUIEop.log";Remove-Item -Path "$env:TMP\sLUIEop.log" -Force
       }Else{
-         echo "[ ] Failed    => None SluiEOP registry keys found." > $env:TMP\sLUIEop.log
+         echo "[»] Failed    => None SluiEOP registry keys found." > $env:TMP\sLUIEop.log
          Get-Content -Path "$env:TMP\sLUIEop.log";Remove-Item -Path "$env:TMP\sLUIEop.log" -Force      
       }
       Exit
@@ -136,7 +136,7 @@ If($CheckVuln -eq $True){
       Remove-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shellex" -Recurse -Force;Start-Sleep -Seconds 1
       Set-ItemProperty -Path "HKCU:\Software\Classes\Launcher.SystemSettings" -Name "(default)" -Value '' -Force
    }Else{
-      If(-not(Test-Path "$env:TMP\SluiEOP.ps1")){Write-Host "[ ] Executing => MakeItPersistence (True)" -ForeGroundColor yellow;Write-Host "[ ] Hijacking => Registry hacks will NOT be deleted." -ForeGroundColor yellow;Start-Sleep -Seconds 1}
+      If(-not(Test-Path "$env:TMP\SluiEOP.ps1")){Write-Host "[»] Executing => MakeItPersistence (True)" -ForeGroundColor yellow;Write-Host "[»] Hijacking => Registry hacks will NOT be deleted." -ForeGroundColor yellow;Start-Sleep -Seconds 1}
    }
 
    <#
