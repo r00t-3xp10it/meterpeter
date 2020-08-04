@@ -18,10 +18,12 @@
    powershell.exe Start-Process "C:\Windows\System32\slui.exe" -verb runas (SluiEOP PS script automates all this tasks).
 
 .NOTES
-   SluiEOP script was written as one meterpeter C2 Post-Exploitation module.
+   SluiEOP script was written to be one meterpeter C2 post-exploit module.
    This script 'reverts' regedit hacks to the previous state before the EOP.
-   To run child binaries (.exe) through this module use: cmd /c start bin.exe
-   SluiEOP script supports [CMD|POWERSHELL|PYTHON] scripts execution 
+   Unless '$MakeItPersistence = "True"' its set. In that case the EOP registry
+   hacks will NOT be deleted in the end of exec making the '$Command' persistence.
+   To run child binaries (.exe) through this module use: cmd /c start binary.exe
+   SluiEOP script supports [ CMD | POWERSHELL | PYTHON ] scripts execution.
 
 .EXAMPLE
    PS C:\> .\SluiEOP.ps1 "C:\Windows\System32\cmd.exe /c start notepad.exe"
@@ -30,6 +32,10 @@
 .EXAMPLE
    PS C:\> .\SluiEOP.ps1 "$env:WINDIR\System32\WindowsPowerShell\v1.0\powershell.exe"
    Execute powershell process with high privileges (SYSTEM)
+
+.EXAMPLE
+   PS C:\> .\SluiEOP.ps1 "cmd /c start C:\Users\pedro\AppData\Local\Temp\MyRat.bat"
+   Execute $env:TMP\MyRat.bat script with high privileges (SYSTEM)
 
 .EXAMPLE
    PS C:\> .\SluiEOP.ps1 "powershell -exec bypass -w 1 -File C:\Users\pedro\AppData\Local\Temp\MyRat.ps1"
