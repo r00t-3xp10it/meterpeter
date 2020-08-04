@@ -58,7 +58,7 @@
 
 $Command = $Null
 $EOP_Success = $False
-$MakeItPersistence = "True"
+$MakeItPersistence = "False"
 $param1 = $args[0] # User Inputs [<arguments>]
 If(-not($param1) -or $param1 -eq $null){
    $Command = "$env:WINDIR\System32\cmd.exe"
