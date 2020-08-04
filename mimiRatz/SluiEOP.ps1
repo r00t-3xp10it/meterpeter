@@ -70,7 +70,6 @@ If(-not($param1) -or $param1 -eq $null){
    $Command = "$param1"
 }
 
-
 ## Check for Vulnerability existence before continue any further ..
 $CheckVuln = Test-Path -Path "HKCU:\Software\Classes" -EA SilentlyContinue
 If($CheckVuln -eq $True){
