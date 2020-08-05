@@ -204,7 +204,7 @@ If($CheckVuln -eq $True){
       ## String: "powershell.exe"
       $ProcessName = Split-Path "$Command" -Leaf
       If($ProcessName -match '[.exe]$'){
-         $ReturnCode = "3.0";$ProcessName = $ProcessName -replace '.exe',''
+         $ReturnCode = "3";$ProcessName = $ProcessName -replace '.exe',''
          $EOPID = Get-Process $ProcessName -EA SilentlyContinue|Select -Last 1|Select-Object -ExpandProperty Id
          If($EOPID -match '^\d+$'){$EOP_Success = $True}
       }Else{
