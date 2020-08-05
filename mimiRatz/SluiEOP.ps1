@@ -213,13 +213,13 @@ If($CheckVuln -eq $True){
    }
 
    ## Build MY PSObject Table to display results
-   If($EOP_Success -eq $True){$EOPState = "success"}Else{$EOPState = "error ?";$EOPID = "null"}
    $MYPSObjectTable = New-Object -TypeName PSObject
    If($DebugMode -eq "True"){
       $SpawnPath = (Get-Process $ProcessName -EA SilentlyContinue|select *).Path
       $SpawnTime = (Get-Process $ProcessName -EA SilentlyContinue|select *).StartTime
       $MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "Id" -Value "$ReturnCode"
     }
+    If($EOP_Success -eq $True){$EOPState = "success"}Else{$EOPState = "error ?";$EOPID = "null"}
     If($DebugMode -eq "True"){$MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "Architecture" -Value "$Env:PROCESSOR_ARCHITECTURE"}
     $MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "UserDomain" -Value "$Env:USERDOMAIN"
     $MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "ProcessName" -Value "$ProcessName"
