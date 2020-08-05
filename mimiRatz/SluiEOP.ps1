@@ -214,6 +214,7 @@ If($CheckVuln -eq $True){
    ## Build MY PSObject Table to display results
    $MYPSObjectTable = New-Object -TypeName PSObject
    If($DebugMode -eq "True"){
+      $RemoteOS = (Get-WmiObject Win32_OperatingSystem).Caption
       $SpawnPath = (Get-Process $ProcessName -EA SilentlyContinue|select *).Path|Select -Last 1
       $SpawnTime = (Get-Process $ProcessName -EA SilentlyContinue|select *).StartTime|Select -Last 1
       $MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "Id" -Value "$ReturnCode"
@@ -225,6 +226,7 @@ If($CheckVuln -eq $True){
     $MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "Status" -Value "$EOPState"
     $MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "PID" -Value "$EOPID"
     If($DebugMode -eq "True"){$MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "StartTime" -Value "$SpawnTime"}
+    If($DebugMode -eq "True"){$MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "RemoteHost" -Value "$RemoteOS"}
     If($DebugMode -eq "True"){$MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "ProcessPath" -Value "$SpawnPath"}
     If($DebugMode -eq "True"){$MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "EOPCommand" -Value "$Command"}
     echo $MYPSObjectTable > $Env:TMP\sLUIEop.log
