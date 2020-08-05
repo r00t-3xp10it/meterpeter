@@ -142,8 +142,8 @@ If($CheckVuln -eq $True){
       Author: @r00t-3xp10it
 
    .DESCRIPTION
-      Gets the spawned process <UserDomain> <ProcessName> <status> and <PID> (Default)
-      If activated '$DebugMode = "True"' then '$ReturnCodes' will be displayed also.
+      Gets the spawned process <UserDomain> <ProcessName> <status> and <PID>
+      If active '$DebugMode' then more detailed information will be displayed.
 
    .EXAMPLE
       PS C:\> .\SluiEOP.ps1 "C:\Windows\System32\cmd.exe /c start notepad.exe"
@@ -151,6 +151,18 @@ If($CheckVuln -eq $True){
       UserDomain ProccessName Status   PID
       ---------- ------------ ------   ---
       SKYNET     notepad      success  5543
+
+   .EXAMPLE
+      PS C:\> .\SluiEOP.ps1 "C:\Windows\System32\cmd.exe /c start notepad.exe"
+
+      Id           : 0
+      Architecture : AMD64
+      UserDomain   : SKYNET
+      ProcessName  : notepad
+      Status       : success
+      PID          : 54338
+      StartTime    : 05/08/2020 11:41
+      ProcessPath  : C:\Windows\System32\notepad.exe
    #>
 
    ## Extracting attacker Spawned ProcessName PID
