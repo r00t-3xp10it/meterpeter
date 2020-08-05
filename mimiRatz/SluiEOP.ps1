@@ -214,8 +214,8 @@ If($CheckVuln -eq $True){
    ## Build MY PSObject Table to display results
    $MYPSObjectTable = New-Object -TypeName PSObject
    If($DebugMode -eq "True"){
-      $SpawnPath = (Get-Process $ProcessName -EA SilentlyContinue|select *).Path
-      $SpawnTime = (Get-Process $ProcessName -EA SilentlyContinue|select *).StartTime
+      $SpawnPath = (Get-Process $ProcessName -EA SilentlyContinue|select *).Path|Select -Last 1
+      $SpawnTime = (Get-Process $ProcessName -EA SilentlyContinue|select *).StartTime|Select -Last 1
       $MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "Id" -Value "$ReturnCode"
     }
     If($EOP_Success -eq $True){$EOPState = "success"}Else{$EOPState = "error ?";$EOPID = "null"}
