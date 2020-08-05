@@ -57,7 +57,7 @@
 
 
 $Command = $Null               # Command Internal function [<dontchange>]
-$DebugMode = "True"           # Change this value to "True" to debug cmdlet
+$DebugMode = "False"           # Change this value to "True" to debug cmdlet
 $EOP_Success = $False          # Remote execution Status [<dontchange>]
 $MakeItPersistence = "False"   # Change this value to "True" to persiste $Command
 $param1 = $args[0]             # User Inputs [ <arguments> ] [<dontchange>]
