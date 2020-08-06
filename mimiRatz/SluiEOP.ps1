@@ -258,7 +258,7 @@ If($CheckVuln -eq $True -or $param2 -eq "-Force" -or $param2 -eq "-force"){
     If($VerboseMode -eq "True"){$MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "EOPCommand" -Value "$Command"}
     If($VerboseMode -eq "True"){$MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "Owner" -Value "$GroupToken"}
     If($VerboseMode -eq "True"){$MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "OSversion" -Value "$OSversion"}
-    ## Create a logfile with the Table because meterpeter C2 can't remotely display the Table contents otherwise.
+    ## Create a logfile with the Table. Because meterpeter C2 can't otherwise remotely display the Table contents.
     echo $MYPSObjectTable > $Env:TMP\sLUIEop.log
 
 }Else{
