@@ -44,8 +44,8 @@
    Execute $Env:TMP\rat.ps1 script with high privileges (Admin) in an hidden console.
 
 .EXAMPLE
-   PS C:\> .\SluiEOP.ps1 "cmd /c start mspaint.exe" -Verbose
-   Displays process verbose info and Spawn mspaint with high privileges (Admin)
+   PS C:\> .\SluiEOP.ps1 "cmd /c start regedit.exe" -Verbose
+   Displays process verbose info and Spawn regedit with high privileges (Admin)
    Remark: This function does not work under meterpeter C2 framework
 
 .EXAMPLE
