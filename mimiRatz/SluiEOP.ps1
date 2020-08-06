@@ -57,7 +57,7 @@
 
 
 $Command = $Null               # Command Internal function [<dontchange>]
-$DebugMode = "False"           # Change this value to "True" to debug cmdlet
+$DebugMode = "False"           # Change this value to "True" to debug this cmdlet
 $EOP_Success = $False          # Remote execution Status [<dontchange>]
 $MakeItPersistence = "False"   # Change this value to "True" to persiste $Command
 $param1 = $args[0]             # User Inputs [ <arguments> ] [<dontchange>]
@@ -221,10 +221,11 @@ If($CheckVuln -eq $True){
    $MYPSObjectTable = New-Object -TypeName PSObject
    If($DebugMode -eq "True"){
       $RemoteOS = (Get-WmiObject Win32_OperatingSystem).Caption
-      $SpawnPath = (Get-Process $ProcessName -EA SilentlyContinue|select *).Path|Select -Last 1
-      $SpawnTime = (Get-Process $ProcessName -EA SilentlyContinue|select *).StartTime|Select -Last 1
+      $OS_version = (Get-WmiObject Win32_Process|Select-Object).WindowsVersion|Select -Last 1 -EA SilentlyContinue
+      $SpawnPath = (Get-Process $ProcessName -EA SilentlyContinue|select *).Path|Select -Last 1 -EA SilentlyContinue
+      $SpawnTime = (Get-Process $ProcessName -EA SilentlyContinue|select *).StartTime|Select -Last 1 -EA SilentlyContinue
       $GroupToken = Get-WmiObject Win32_Process -Filter "name='$ProcessToken'"|Select Name, @{Name="UserName";Expression={$_.GetOwner().Domain+"\"+$_.GetOwner().User}}|Select -Last 1|Select-Object -ExpandProperty UserName
-      $MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "Id" -Value "$ReturnCode"
+      $MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "InnerCode" -Value "$ReturnCode"
     }
     If($EOP_Success -eq $True){$EOPState = "success"}Else{$EOPState = "error ?";$EOPID = "null"}
     If($DebugMode -eq "True"){$MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "Architecture" -Value "$Env:PROCESSOR_ARCHITECTURE"}
@@ -237,6 +238,7 @@ If($CheckVuln -eq $True){
     If($DebugMode -eq "True"){$MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "ProcessPath" -Value "$SpawnPath"}
     If($DebugMode -eq "True"){$MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "EOPCommand" -Value "$Command"}
     If($DebugMode -eq "True"){$MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "Owner" -Value "$GroupToken"}
+    If($DebugMode -eq "True"){$MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "OSversion" -Value "$OS_version"}
     echo $MYPSObjectTable > $Env:TMP\sLUIEop.log
 
 }Else{
