@@ -3,7 +3,7 @@
    SluiEOP can be used to escalate privileges or to execute a command with high integrity (Admin)
 
    Author: r00t-3xp10it (SSA RedTeam @2020)
-   Tested Under: Windows 10 - 18363.778
+   Tested Under: Windows 10 - Build 18363
    EOP Disclosure By: @mattharr0ey
    Required Dependencies: none
    Optional Dependencies: none
@@ -73,7 +73,7 @@ $EOP_Success = $False          # Remote EOP execution status [<dontchange>]
 $MakeItPersistence = "False"   # Change this value to "True" to make the '$Command' persistence
 $param1 = $args[0]             # User Inputs [ <Arguments> ] [<Parameters>] [<dontchange>]
 $param2 = $args[1]             # User Inputs [ <Arguments> ] [<Parameters>] [<dontchange>]
-$host.UI.RawUI.WindowTitle = " @SluiEOP v1.9 {SSA@redTeam}"
+$host.UI.RawUI.WindowTitle = "@SluiEOP v1.9 {SSA@redTeam}"
 If($param2 -eq "-Verbose" -or $param2 -eq "-verbose"){$VerboseMode = "True"}
 If(-not($param1) -or $param1 -eq $null){
    $Command = "$Env:WINDIR\System32\cmd.exe"
