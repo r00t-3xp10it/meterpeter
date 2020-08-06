@@ -61,6 +61,7 @@ $DebugMode = "False"           # Change this value to "True" to debug this cmdle
 $EOP_Success = $False          # Remote execution Status [<dontchange>]
 $MakeItPersistence = "False"   # Change this value to "True" to persiste $Command
 $param1 = $args[0]             # User Inputs [ <arguments> ] [<dontchange>]
+$host.UI.RawUI.WindowTitle = " @SluiEOP v1.9 {SSA@redTeam}"
 If(-not($param1) -or $param1 -eq $null){
    $Command = "$Env:WINDIR\System32\cmd.exe"
    Write-Host "[ ERROR ] SYNTAX: .\SluiEOP.ps1 `"Command to execute`"`n" -ForegroundColor Red -BackgroundColor Black
