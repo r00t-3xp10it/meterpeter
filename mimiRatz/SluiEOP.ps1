@@ -290,4 +290,3 @@ If($CheckVuln -eq $True -or $param2 -ieq "-Force"){
 If(Test-Path "$Env:TMP\sLUIEop.log"){Get-Content -Path "$Env:TMP\sLUIEop.log" -EA SilentlyContinue;Remove-Item -Path "$Env:TMP\sLUIEop.log" -Force -EA SilentlyContinue}
 If(Test-Path "$Env:TMP\SluiEOP.ps1"){Remove-Item -Path "$Env:TMP\SluiEOP.ps1" -Force -EA SilentlyContinue}
 Exit
-
