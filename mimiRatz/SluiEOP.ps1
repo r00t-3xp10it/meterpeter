@@ -118,8 +118,7 @@ If($CheckVuln -eq $True -or $param2 -ieq "-Force"){
    If($param1 -eq "deleteEOP"){
       Write-Host "[+] Deleting  => EOP registry hacks (revert)";Start-Sleep -Milliseconds 400
       ## Make sure the vulnerable registry key exists
-      $CheckHive = Test-Path -Path "HKCU:\Software\Classes\Launcher.SystemSettings\shell\Open\Command" -ErrorAction SilentlyContinue
-      If($CheckHive -eq $True){
+      If(Test-Path -Path "HKCU:\Software\Classes\Launcher.SystemSettings\shell\Open\Command" -ErrorAction SilentlyContinue){
          Remove-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shell" -Recurse -Force;Start-Sleep -Seconds 1
          Remove-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shellex" -Recurse -Force;Start-Sleep -Seconds 1
          Set-ItemProperty -Path "HKCU:\Software\Classes\Launcher.SystemSettings" -Name "(default)" -Value '' -Force
