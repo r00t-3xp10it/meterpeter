@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-   SluiEOP can be used has UAC bypass or to execute one command with high privileges (Admin)
+   SluiEOP can be used has UAC bypass module or to execute one command with high privileges (Admin)
 
    Author: r00t-3xp10it (SSA RedTeam @2020)
    Tested Under: Windows 10 - Build 18363
@@ -57,7 +57,7 @@
    None. You cannot pipe objects into SluiEOP.ps1
 
 .OUTPUTS
-   Audit the spawned process <UserDomain> <ProcessName> <Status> and <PID>
+   Audits the spawned process <UserDomain> <ProcessName> <Status> and <PID>
    If used '-Verbose' parameter then displays process detailed information
 
 .LINK
@@ -167,11 +167,11 @@ If($CheckVuln -eq $True -or $param2 -ieq "-Force"){
 
    <#
    .SYNOPSIS
-      Helper - Audit the Spawned process <UserDomain> <ProcessName> <Status> and <PID>
+      Helper - Audits the Spawned process <UserDomain> <ProcessName> <Status> and <PID>
       Author: @r00t-3xp10it
 
    .DESCRIPTION
-      Audit the spawned process <UserDomain> <ProcessName> <Status> and <PID>
+      Audits the spawned process <UserDomain> <ProcessName> <Status> and <PID>
       If used '-Verbose' parameter then displays process detailed information
 
    .EXAMPLE
@@ -270,7 +270,7 @@ If($CheckVuln -eq $True -or $param2 -ieq "-Force"){
     If($VerboseMode -eq "True"){$MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "EOPCommand" -Value "$Command"}
     If($VerboseMode -eq "True"){$MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "Owner" -Value "$GroupToken"}
     If($VerboseMode -eq "True"){$MYPSObjectTable | Add-Member -MemberType "NoteProperty" -Name "OSversion" -Value "$OSversion"}
-    ## Create a logfile with the Table. Because meterpeter C2 can't otherwise remotely display the Table contents.
+    ## Create a logfile with the Table. Because meterpeter C2 can't otherwise remotely display Table contents.
     echo $MYPSObjectTable > $Env:TMP\sLUIEop.log
 
 }Else{
