@@ -88,7 +88,7 @@ If(-not($param1) -or $param1 -eq $null){
 }
 
 ## CompDefault meterpeter post-module banner
-$CheckClientPrivs = [bool](([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match"S-1-5-32-544")
+$CheckClientPrivs = [bool](([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match "S-1-5-32-544")
 Write-Host "`nCompDefault v1.2 - By r00t-3xp10it (SSA RedTeam @2020)" -ForeGroundColor Green
 Write-Host "[+] Executing Command: '$Command'";Start-Sleep -Milliseconds 400
 
