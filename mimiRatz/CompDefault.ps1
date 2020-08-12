@@ -4,7 +4,7 @@
 
    Author: r00t-3xp10it (SSA RedTeam @2020)
    Tested Under: Windows 10 - Build 18363
-   EOP Disclosure By: @Fabien DROMAS|@404death
+   Disclosure By: @Fabien DROMAS|@404death
    Required Dependencies: none
    Optional Dependencies: none
    PS cmdlet Dev Version: v1.2
@@ -113,21 +113,7 @@ If($CheckVuln -eq $True -or $param2 -ieq "-Force"){
          Remove-Item "HKCU:\Software\Classes\ms-settings\shell" -Recurse -Force|Out-Null;Start-Sleep -Seconds 1
          Write-Host "[ ] Success   => MakeItPersistence (`$Command) reverted." -ForegroundColor Green;Start-Sleep -Milliseconds 400
          Write-Host "[ ] HIVE      => HKCU:\Software\Classes\ms-settings\shell\open\command"
-         ## Revert ScriptBlockLogging (default)
-         If($CheckClientPrivs -eq $True){
-            If(Test-Path -Path "HKLM:\Software\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging"){
-               Write-Host "[ ] Admin     => Enable AMSI ScriptBlockLogging." -ForeGroundColor Yellow
-               Remove-Item -Path "HKLM:\Software\Policies\Microsoft\Windows\PowerShell" -Recurse -Force -EA SilentlyContinue|Out-Null
-            }
-         }
       }Else{
-         ## Revert ScriptBlockLogging (default)
-         If($CheckClientPrivs -eq $True){
-            If(Test-Path -Path "HKLM:\Software\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging"){
-               Write-Host "[ ] Admin     => Enable AMSI ScriptBlockLogging." -ForeGroundColor Yellow
-               Remove-Item -Path "HKLM:\Software\Policies\Microsoft\Windows\PowerShell" -Recurse -Force -EA SilentlyContinue|Out-Null
-            }
-         }
          Write-Host "[ ] Failed    => None CompDefault registry keys found under:" -ForegroundColor Red;Start-Sleep -Milliseconds 400
          Write-Host "[ ] HIVE      => HKCU:\Software\Classes\ms-settings\shell\open\command"
       }
