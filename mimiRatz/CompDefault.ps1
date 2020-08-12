@@ -4,7 +4,7 @@
 
    Author: r00t-3xp10it (SSA RedTeam @2020)
    Tested Under: Windows 10 - Build 18363
-   EOP Disclosure By: @FabienDROMAS|@404death
+   EOP Disclosure By: @Fabien DROMAS|@404death
    Required Dependencies: none
    Optional Dependencies: none
    PS cmdlet Dev Version: v1.2
