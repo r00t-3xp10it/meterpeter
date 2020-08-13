@@ -112,10 +112,10 @@ If($CheckVuln -eq $True -or $param2 -ieq "-Force"){
       If(Test-Path -Path "HKCU:\Software\Classes\ms-settings\shell\Open\Command" -ErrorAction SilentlyContinue){
          Remove-Item "HKCU:\Software\Classes\ms-settings\shell" -Recurse -Force|Out-Null;Start-Sleep -Seconds 1
          Write-Host "[ ] Success   => MakeItPersistence (`$Command) reverted." -ForegroundColor Green;Start-Sleep -Milliseconds 400
-         Write-Host "[ ] HIVE      => HKCU:\Software\Classes\ms-settings\shell\open\command"
+         Write-Host "[ ] HIVE      => HKCU:\Software\Classes\ms-settings\shell\open\command`n"
       }Else{
          Write-Host "[ ] Failed    => None CompDefault registry keys found under:" -ForegroundColor Red;Start-Sleep -Milliseconds 400
-         Write-Host "[ ] HIVE      => HKCU:\Software\Classes\ms-settings\shell\open\command"
+         Write-Host "[ ] HIVE      => HKCU:\Software\Classes\ms-settings\shell\open\command`n"
       }
       If(Test-Path "$Env:TMP\CompDefault.ps1"){Remove-Item -Path "$Env:TMP\CompDefault.ps1" -Force -EA SilentlyContinue}
       Exit
