@@ -10,7 +10,6 @@
    "Script variables" and "Window in background in -noConsole mode".
 
    A generated executables has the following reserved parameters:
-
    -debug              Forces the executable to be debugged. It calls "System.Diagnostics.Debugger.Break()".
    -extract:<FILENAME> Extracts the powerShell script inside the executable and saves it as FILENAME. The script will not be executed.
    -wait               At the end of the script execution it writes "Hit any key to exit..." and waits for a key to be pressed.
