@@ -5,7 +5,7 @@
    Author: r00t-3xp10it
    Tested Under: Windows 10 (19042) x64 bits
    Required Dependencies: Invoke-WebRequest {native}
-   Optional Dependencies: none
+   Optional Dependencies: ps2xe.ps1 {meterpeter native}
    PS cmdlet Dev version: v1.0.0
 
 .DESCRIPTION
