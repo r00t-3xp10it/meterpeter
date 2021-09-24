@@ -1,5 +1,5 @@
 ### PROJECT
-   my_meterp(r)eter_Server [**`STABLE`**] <br />
+   <b><i>my_meterp(r)eter_Server</i></b><br />
 
 ### AUTHOR
    @r00t-3xp10it { meterpeter version 2.10.8 }<br />
@@ -26,7 +26,7 @@ This PS1 starts a listener Server on a Windows|Linux attacker machine and genera
 
 <br />
 
-This Project allows Attackers to execute **'meterpeter.ps1'** under **'Linux'** or **'Windows'** distributions. Under Linux distros users required to install **powershell** and **apache2** webserver, Under Windows its optional the install of **python3** http.server to deliver payloads under LAN networks. If this requirements are **NOT** met, then Client will be written in meterpeter working directory for manual deliver <- In this ocassion execute your Client.ps1 in **$env:tmp** ('recomended').
+This Project allows Attackers to execute **'meterpeter.ps1'** under **'Linux'** or **'Windows'** distros. Under Linux users required to install **powershell** and **apache2** webserver, Under Windows its optional the install of **python3** http.server to deliver payloads under LAN networks. If this requirements are **NOT** met, then Client will be written in meterpeter working directory for manual deliver <- In this ocassion execute your Client.ps1 in **$env:tmp** ('recomended').
 ![pythonserver](https://user-images.githubusercontent.com/23490060/74612205-1bb3c100-50fb-11ea-8138-a3c9649a8201.png)
 
 <br />
