@@ -22,7 +22,7 @@
 
 ### DESCRIPTION
 This PS1 starts a listener Server on a Windows|Linux attacker machine and generates oneliner PS reverse shell payloads obfuscated in BXOR with a random secret key and another layer of Characters/Variables Obfuscation to be executed on the victim machine (The payload will also execute AMSI reflection bypass in current session to evade AMSI detection while working). You can also recive the generated oneliner reverse shell connection via netcat. (in this case you will lose the C2 functionalities like screenshot, upload, download files, Keylogger, AdvInfo, PostExploit, etc)<br /><br />meterpeter payloads/droppers can be executed using User or Administrator Privileges depending of the cenario (executing the Client as Administrator will unlock ALL Server Modules, amsi bypasses, etc.). Droppers will mimic a Fake KB Security Update while in background Download\executes the Client in <b><i>$Env:TMP</i></b> trusted location, with the intent of evading  WindowsDefender ExploitGuard. meterpeter payloads|droppers are FUD (dont test samples on VirusTotal).<br />
-![banner](https://user-images.githubusercontent.com/23490060/74566700-fba1c780-4f6b-11ea-85a0-ac26576302b3.png)<br />
+![meterbanner](https://user-images.githubusercontent.com/23490060/134608569-ca194b98-8a6b-4da6-9848-326101ec3652.png)<br />
 
 <br />
 
