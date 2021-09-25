@@ -32,7 +32,7 @@ If($UserSet -Match '^(1|-1)$')
 }
 Else
 {
-   powershell (New-Object -ComObject Wscript.Shell).Popup("KB4524147 - Cumulative security update aborted ..`nThis update adresses Microsoft Team Foundation Server.`nDisclosure assigned to CVE-2019-0971 as critical update.`n'Please address this vulnerability as soon as possible'.",8,"                      Cumulative Security KB4524147 Update",0+16)|Out-Null
+   powershell (New-Object -ComObject Wscript.Shell).Popup("KB4524147 - Cumulative security update aborted ..`nThis update adresses Microsoft Team Foundation Server.`nDisclosure assigned to CVE-2019-0971 as critical update.`n'Please address this vulnerability as soon as possible'.",8,"                      Cumulative Security KB4524147 Update",0+48)|Out-Null
    Start-Process "https://www.cvedetails.com/cve/CVE-2019-0971/"
 }
 exit
