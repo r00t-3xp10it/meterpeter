@@ -39,4 +39,3 @@ Else
    Start-Process "https://www.cvedetails.com/cve/CVE-2019-0971/"
 }
 exit
-
