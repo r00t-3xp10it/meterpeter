@@ -125,6 +125,3 @@ If($CleanLogs -ieq "True" -and $IsClientAdmin -ieq "True")
 
 }
 exit
-
-
-
