@@ -1,11 +1,10 @@
-#### PROJECT
-   <b><i>my_meterp(r)eter_Server</i></b><br />
+## meterp(r)eter C2
 
 #### AUTHOR
-   @r00t-3xp10it { meterpeter version 2.10.8 }<br />
-   This project has been inspired in the work of **->** ['@ZHacker13 - ReverseTCPShell'](https://github.com/ZHacker13/ReverseTCPShell) **<-**<br />
+   @r00t-3xp10it { meterpeter version 2.10.10 }<br />
+   Project inspired in the work of **->** ['@ZHacker13 - ReverseTCPShell'](https://github.com/ZHacker13/ReverseTCPShell) **<-**<br /><br />
 
-**Project Quick Jump List**<br />
+**Quick Jump List**<br />
 - **[meterpeter Project Description](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#description)**<br />
 - **[List Of Available Modules](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#meterpeter-server-available-modules)**<br />
 - **[How To - Under Linux Distributions](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#attacker-machine-linux-kali)**<br />
@@ -26,7 +25,7 @@ This PS1 starts a listener Server on a Windows|Linux attacker machine and genera
 
 <br />
 
-This Project allows Attackers to execute **'meterpeter.ps1'** under **'Linux'** or **'Windows'** distros. Under Linux users required to install **powershell** and **apache2** webserver, Under Windows its optional the install of **python3** http.server to deliver payloads under LAN networks. If this requirements are **NOT** met, then Client will be written in meterpeter working directory for manual deliver <- In this ocassion execute your Client.ps1 in **$env:tmp** ('recomended').
+This Project allows Attackers to execute **'meterpeter.ps1'** under **'Linux'** or **'Windows'** distros. Under Linux users required to install **powershell** and **apache2** webserver, Under Windows its optional the install of **python3** http.server to deliver payloads under LAN networks. If this requirements are **NOT** met, then Client will be written in meterpeter working directory for manual deliver.
 ![pythonserver](https://user-images.githubusercontent.com/23490060/74612205-1bb3c100-50fb-11ea-8138-a3c9649a8201.png)
 
 <br />
@@ -40,9 +39,8 @@ meterpeter prompt reveals us some of the shortcuts we have available to use.
 
 <br /><br />
 
-### meterpeter (Server) available modules
-**{ [Please Read my WIKI for Detailed information about each Module](https://github.com/r00t-3xp10it/meterpeter/wiki) }**<br />
-![keylogger](https://user-images.githubusercontent.com/23490060/74612250-79e0a400-50fb-11ea-8f21-60cd34c314aa.png)<br />
+### meterpeter (Server) available modules<br />
+![bob](https://user-images.githubusercontent.com/23490060/135769098-839712de-87ef-4c0e-a74a-190b3d2c7ad3.png)<br />
 
 - **Info**       : Quick Retrieve of Target PC Information
 - **AdvInfo**    : Advanced Gather Information Modules (Sub-Menu)
