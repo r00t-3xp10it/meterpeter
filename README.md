@@ -1,8 +1,9 @@
 ## meterp(r)eter C2
 
-#### AUTHOR
-   @r00t-3xp10it { meterpeter version 2.10.10 }<br />
-   Project inspired in the work of **->** ['@ZHacker13 - ReverseTCPShell'](https://github.com/ZHacker13/ReverseTCPShell) **<-**<br /><br />
+<br />
+
+AUTHOR: <b><i>@r00t-3xp10it</i></b> { meterpeter version 2.10.10 }<br />
+Project inspired in the work of **->** ['@ZHacker13 - ReverseTCPShell'](https://github.com/ZHacker13/ReverseTCPShell) **<-**<br /><br />
 
 **Quick Jump List**<br />
 - **[meterpeter Project Description](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#description)**<br />
