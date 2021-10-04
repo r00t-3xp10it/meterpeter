@@ -6,7 +6,7 @@ AUTHOR: <b><i>@r00t-3xp10it</i></b> { meterpeter version 2.10.10 }<br />
 Project inspired in the work of **->** ['@ZHacker13 - ReverseTCPShell'](https://github.com/ZHacker13/ReverseTCPShell) **<-**<br /><br />
 
 **Quick Jump List**<br />
-- **[meterpeter Project Description](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#description)**<br />
+- **[Project Description](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#description)**<br />
 - **[List Of Available Modules](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#meterpeter-server-available-modules)**<br />
 - **[How To - Under Linux Distributions](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#attacker-machine-linux-kali)**<br />
 - **[How To - Under Windows Distributions](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#attacker-machiner-windows-pc)**<br />
@@ -16,32 +16,25 @@ Project inspired in the work of **->** ['@ZHacker13 - ReverseTCPShell'](https://
 - **[How To - Use PS2EXE to convert ps1 scripts to standalone executables](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#Use-PS2EXE-to-convert-ps1-scripts-to-standalone-executables)**<br />
 - **[Please Read my WIKI for Detailed information about each Module](https://github.com/r00t-3xp10it/meterpeter/wiki)**<br />
 
----
-
 <br />
 
-### DESCRIPTION
+### Project Description
 This PS1 starts a listener Server on a Windows|Linux attacker machine and generates oneliner PS reverse shell payloads obfuscated in BXOR with a random secret key and another layer of Characters/Variables Obfuscation to be executed on the victim machine (The payload will also execute AMSI reflection bypass in current session to evade AMSI detection while working). You can also recive the generated oneliner reverse shell connection via netcat. (in this case you will lose the C2 functionalities like screenshot, upload, download files, Keylogger, AdvInfo, PostExploit, etc)<br /><br />meterpeter payloads/droppers can be executed using User or Administrator Privileges depending of the cenario (executing the Client as Administrator will unlock ALL Server Modules, amsi bypasses, etc.). Droppers will mimic a Fake KB Security Update while in background Download\executes the Client in <b><i>$Env:TMP</i></b> trusted location, with the intent of evading  WindowsDefender ExploitGuard. meterpeter payloads|droppers are FUD (dont test samples on VirusTotal).<br />
 ![meterbanner](https://user-images.githubusercontent.com/23490060/134608569-ca194b98-8a6b-4da6-9848-326101ec3652.png)<br />
 
 <br />
 
 This Project allows Attackers to execute **'meterpeter.ps1'** under **'Linux'** or **'Windows'** distros. Under Linux users required to install **powershell** and **apache2** webserver, Under Windows its optional the install of **python3** http.server to deliver payloads under LAN networks. If this requirements are **NOT** met, then Client will be written in meterpeter working directory for manual deliver.
-![pythonserver](https://user-images.githubusercontent.com/23490060/74612205-1bb3c100-50fb-11ea-8138-a3c9649a8201.png)
+![oki1](https://user-images.githubusercontent.com/23490060/135849854-575d3dcd-21c5-44a1-96fe-3684d586c128.png)<br />
+**[Quick Jump List](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#project)**<br />
 
 <br />
 
-**meterpeter Modules Shortcuts**<br />
-meterpeter prompt reveals us some of the shortcuts we have available to use.
-![Shortcuts](https://user-images.githubusercontent.com/23490060/75630967-ad84f900-5be6-11ea-9810-7430cb72663c.png)
-
-- **[Quick Jump List](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#project)**<br />
----
-
-<br /><br />
-
 ### meterpeter (Server) available modules<br />
 ![bob](https://user-images.githubusercontent.com/23490060/135769098-839712de-87ef-4c0e-a74a-190b3d2c7ad3.png)<br />
+
+<details>
+<summary>Full List of meterpeter (Server) available modules</summary>
 
 - **Info**       : Quick Retrieve of Target PC Information
 - **AdvInfo**    : Advanced Gather Information Modules (Sub-Menu)
@@ -146,7 +139,10 @@ meterpeter prompt reveals us some of the shortcuts we have available to use.
 - **exit**       : Exit Reverse TCP Shell (Server + Client).
 
 - **[Please Read my WIKI for Detailed information about each Module](https://github.com/r00t-3xp10it/meterpeter/wiki)**<br />
-- **[Quick Jump List](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#project)**<br />
+  
+  </details>
+  
+**[Quick Jump List](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#project)**<br />
 
 ---
 
@@ -191,7 +187,7 @@ UNZIP (IN DESKTOP) AND EXECUTE 'Update-KB4524147.bat' (Run As Administrator)..
      IF Attacker decided to manualy execute Client: Then Client remote location (pwd) will be used has working dir .
 
 
-- **[Quick Jump List](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#project)**<br />
+**[Quick Jump List](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#project)**<br />
 
 ---
 
@@ -232,7 +228,7 @@ DELIVER 'Update-KB4524147' (.ps1=manual) OR (.zip=automated|silentExec) TO TARGE
      IF dropper.bat its executed: Then the Client will use $env:tmp has its working directory ('recomended')..
      IF Attacker decided to manualy execute Client: Then Client remote location (pwd) will be used has working dir .
 
-- **[Quick Jump List](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#project)**<br />
+**[Quick Jump List](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#project)**<br />
 
 ---
 
@@ -260,10 +256,7 @@ DELIVER 'Update-KB4524147' (.ps1=manual) OR (.zip=automated|silentExec) TO TARGE
 
 - **`REMARK:`** Client.exe (created by PS2EXEC) migth **malfunction** with meterpeter **mimiratz scripts**.
 
-- **[Quick Jump List](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#project)**<br />
-
----
-
+**[Quick Jump List](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#project)**<br />
 
 <br />
 
@@ -284,9 +277,7 @@ incursions into Remote-Host (**in persistence cenario Demonstrations**) ..
 powershell Set-ExecutionPolicy Restricted -Scope CurrentUser
 ```
 
-- **[Quick Jump List](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#project)**<br />
-
----
+**[Quick Jump List](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#project)**<br />
 
 <br />
 
