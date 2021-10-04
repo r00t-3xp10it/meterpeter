@@ -137,8 +137,7 @@ Under **'Linux'** or **'Windows'** distros. Under Linux users required to instal
   
   </details>
   
-**[Quick Jump List](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#project-description)**<br />
-
+**[Quick Jump List](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#octocat-quick-jump-list)**<br />
 
 
 ---
@@ -184,7 +183,7 @@ UNZIP (IN DESKTOP) AND EXECUTE 'Update-KB4524147.bat' (Run As Administrator)..
      IF Attacker decided to manualy execute Client: Then Client remote location (pwd) will be used has working dir .
 
 
-**[Quick Jump List](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#project-description)**<br />
+**[Quick Jump List](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#octocat-quick-jump-list)**<br />
 
 ---
 
@@ -225,7 +224,7 @@ DELIVER 'Update-KB4524147' (.ps1=manual) OR (.zip=automated|silentExec) TO TARGE
      IF dropper.bat its executed: Then the Client will use $env:tmp has its working directory ('recomended')..
      IF Attacker decided to manualy execute Client: Then Client remote location (pwd) will be used has working dir .
 
-**[Quick Jump List](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#project-description)**<br />
+**[Quick Jump List](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#octocat-quick-jump-list)**<br />
 
 ---
 
@@ -253,7 +252,7 @@ DELIVER 'Update-KB4524147' (.ps1=manual) OR (.zip=automated|silentExec) TO TARGE
 
 - **`REMARK:`** Client.exe (created by PS2EXEC) migth **malfunction** with meterpeter **mimiratz scripts**.
 
-**[Quick Jump List](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#project-description)**<br />
+**[Quick Jump List](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#octocat-quick-jump-list)**<br />
 
 <br />
 
@@ -274,7 +273,7 @@ incursions into Remote-Host (**in persistence cenario Demonstrations**) ..
 powershell Set-ExecutionPolicy Restricted -Scope CurrentUser
 ```
 
-**[Quick Jump List](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#project-description)**<br />
+**[Quick Jump List](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#octocat-quick-jump-list)**<br />
 
 <br />
 
@@ -297,7 +296,7 @@ meterpeter Under Linux Distros: https://www.youtube.com/watch?v=CmMbWmN246E<br /
 **@ZHacker13** (Original Rev Shell) | **@tedburke** (CommandCam.exe binary) <br />
 **@codings9** (debugging project under Windows|Linux Distros)<br /><br />
 - **[meterpeter WIKI pages (Oficial Documentation)](https://github.com/r00t-3xp10it/meterpeter/wiki)**<br />
-- **[Jump To Top of this readme File](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#project-description)**<br />
+- **[Jump To Top of this readme File](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#octocat-quick-jump-list)**<br />
 ---
 
 <br />
