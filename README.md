@@ -1,30 +1,16 @@
-## meterp(r)eter C2
+Name: <b><i>meterpeter C2</i></b><br />
+Author: <b><i>@r00t-3xp10it</i></b><br />
+Version release: <b><i>v2.10.10</i></b><br />
+Distros Supported: <b><i>Windows (x86|x64), Linux</i></b><br />
+Inspired in the work of: ['@ZHacker13 - ReverseTCPShell'](https://github.com/ZHacker13/ReverseTCPShell)<br />
+<b><i>Suspicious-Shell-Activity© (SSA) RedTeam develop @2021</i></b><br />
 
-<br />
+![meterbanner](https://user-images.githubusercontent.com/23490060/134608569-ca194b98-8a6b-4da6-9848-326101ec3652.png)<br /><br />
 
-AUTHOR: <b><i>@r00t-3xp10it</i></b> { meterpeter version 2.10.10 }<br />
-Project inspired in the work of **->** ['@ZHacker13 - ReverseTCPShell'](https://github.com/ZHacker13/ReverseTCPShell) **<-**<br /><br />
+## :octocat: Project Description
+This PS1 starts a listener Server on a Windows|Linux attacker machine and generates oneliner PS reverse shell payloads obfuscated in BXOR with a random secret key and another layer of Characters/Variables Obfuscation to be executed on the victim machine (The payload will also execute AMSI reflection bypass in current session to evade AMSI detection while working). You can also recive the generated oneliner reverse shell connection via netcat. (in this case you will lose the C2 functionalities like screenshot, upload, download files, Keylogger, AdvInfo, PostExploit, persistence, elevate privileges, etc)<br /><br />meterpeter payloads/droppers can be executed using User or Administrator Privileges depending of the cenario (executing the Client as Administrator will unlock ALL Server Modules, amsi bypasses, etc.). Droppers will mimic an fake KB Security Update while in background Download\executes the Client in <b><i>$Env:TMP</i></b> trusted location, with the intent of evading  Windows Defender Exploit Guard. meterpeter payloads|droppers are FUD (please dont test samples on VirusTotal or similar websites).<br />
 
-**Quick Jump List**<br />
-- **[Project Description](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#project-description)**<br />
-- **[List Of Available Modules](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#meterpeter-server-available-modules)**<br />
-- **[How To - Under Linux Distributions](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#attacker-machine-linux-kali)**<br />
-- **[How To - Under Windows Distributions](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#attacker-machiner-windows-pc)**<br />
-- **[Windows Defender (Target Related)](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#remark-about-windows-defender)**<br />
-- **[Some meterpeter Screenshots](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#meterpeter-screenshots)**<br />
-- **[Special Thanks|Contributions|Videos](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#video-tutorials)**<br />
-- **[How To - Use PS2EXE to convert ps1 scripts to standalone executables](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#Use-PS2EXE-to-convert-ps1-scripts-to-standalone-executables)**<br />
-- **[Please Read my WIKI for Detailed information about each Module](https://github.com/r00t-3xp10it/meterpeter/wiki)**<br />
-
-<br />
-
-### Project Description
-This PS1 starts a listener Server on a Windows|Linux attacker machine and generates oneliner PS reverse shell payloads obfuscated in BXOR with a random secret key and another layer of Characters/Variables Obfuscation to be executed on the victim machine (The payload will also execute AMSI reflection bypass in current session to evade AMSI detection while working). You can also recive the generated oneliner reverse shell connection via netcat. (in this case you will lose the C2 functionalities like screenshot, upload, download files, Keylogger, AdvInfo, PostExploit, etc)<br /><br />meterpeter payloads/droppers can be executed using User or Administrator Privileges depending of the cenario (executing the Client as Administrator will unlock ALL Server Modules, amsi bypasses, etc.). Droppers will mimic a Fake KB Security Update while in background Download\executes the Client in <b><i>$Env:TMP</i></b> trusted location, with the intent of evading  WindowsDefender ExploitGuard. meterpeter payloads|droppers are FUD (dont test samples on VirusTotal).<br />
-![meterbanner](https://user-images.githubusercontent.com/23490060/134608569-ca194b98-8a6b-4da6-9848-326101ec3652.png)<br />
-
-<br />
-
-This Project allows Attackers to execute **'meterpeter.ps1'** under **'Linux'** or **'Windows'** distros. Under Linux users required to install **powershell** and **apache2** webserver, Under Windows its optional the install of **python3** http.server to deliver payloads under LAN networks. If this requirements are **NOT** met, then Client will be written in meterpeter working directory for manual deliver.
+This Project allows Attackers to execute **'meterpeter.ps1'** under **'Linux'** or **'Windows'** distros. Under Linux users required to install **powershell** and **apache2** webserver, Under Windows its optional the install of **python3** http.server to deliver payloads under LAN. If this requirements are **NOT** met, then Client will be written in meterpeter working directory for manual deliver.
 ![oki1](https://user-images.githubusercontent.com/23490060/135849854-575d3dcd-21c5-44a1-96fe-3684d586c128.png)<br />
 **[Quick Jump List](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#project-description)**<br />
 
@@ -143,6 +129,8 @@ This Project allows Attackers to execute **'meterpeter.ps1'** under **'Linux'** 
   </details>
   
 **[Quick Jump List](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#project-description)**<br />
+
+
 
 ---
 
