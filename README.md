@@ -12,7 +12,20 @@ This PS1 starts a listener Server on a Windows|Linux attacker machine and genera
 
 Under **'Linux'** or **'Windows'** distros. Under Linux users required to install **powershell** and **apache2** webserver, Under Windows its optional the install of **python3** http.server to deliver payloads under LAN. If this requirements are **NOT** met, then Client ( <b><i>Update-KB4524147.ps1</i></b> ) will be written in meterpeter working directory for manual deliver.
 ![oki1](https://user-images.githubusercontent.com/23490060/135849854-575d3dcd-21c5-44a1-96fe-3684d586c128.png)<br />
-**[Quick Jump List](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#project-description)**<br />
+
+
+**Quick Jump List**<br />
+- **[Project Description](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#project-description)**<br />
+- **[List Of Available Modules](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#meterpeter-server-available-modules)**<br />
+- **[How To - Under Linux Distributions](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#attacker-machine-linux-kali)**<br />
+- **[How To - Under Windows Distributions](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#attacker-machiner-windows-pc)**<br />
+- **[Windows Defender (Target Related)](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#remark-about-windows-defender)**<br />
+- **[Some meterpeter Screenshots](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#meterpeter-screenshots)**<br />
+- **[Special Thanks|Contributions|Videos](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#video-tutorials)**<br />
+- **[How To - Use PS2EXE to convert ps1 scripts to standalone executables](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#Use-PS2EXE-to-convert-ps1-scripts-to-standalone-executables)**<br />
+- **[Please Read my WIKI for Detailed information about each Module](https://github.com/r00t-3xp10it/meterpeter/wiki)**<br />
+
+<br />
 
 <br />
 
