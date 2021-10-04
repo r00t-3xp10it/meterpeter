@@ -1,7 +1,7 @@
 Author: <b><i>@r00t-3xp10it</i></b><br />
 Version release: <b><i>v2.10.10</i></b><br />
 Distros Supported: <b><i>Windows (x86|x64), Linux</i></b><br />
-Inspired in the work of: ['@ZHacker13 - ReverseTCPShell'](https://github.com/ZHacker13/ReverseTCPShell)<br />
+Inspired in the work of: ['@ZHacker13 - ReverseTCPShell'](https://github.com/ZHacker13/ReverseTCPShell)<br /><br />
 ![meterbanner](https://user-images.githubusercontent.com/23490060/134608569-ca194b98-8a6b-4da6-9848-326101ec3652.png)<br /><br />
 
 **Quick Jump List**<br />
