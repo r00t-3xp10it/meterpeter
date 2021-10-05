@@ -2,7 +2,18 @@ Author: <b><i>@r00t-3xp10it</i></b><br />
 Version release: <b><i>v2.10.10</i></b><br />
 Distros Supported: <b><i>Windows (x86|x64), Linux</i></b><br />
 Inspired in the work of: ['@ZHacker13 - ReverseTCPShell'](https://github.com/ZHacker13/ReverseTCPShell)<br /><br />
-![meterbanner](https://user-images.githubusercontent.com/23490060/134608569-ca194b98-8a6b-4da6-9848-326101ec3652.png)<br /><br />
+![meterbanner](https://user-images.githubusercontent.com/23490060/134608569-ca194b98-8a6b-4da6-9848-326101ec3652.png)<br />
+
+[![Version](https://img.shields.io/badge/meterpeter-v2.10.10-brightgreen.svg?maxAge=259200)]()
+[![Stage](https://img.shields.io/badge/Release-Stable-brightgreen.svg)]()
+[![Build](https://img.shields.io/badge/OS-Windows,Linux-orange.svg)]()
+![licence](https://img.shields.io/badge/license-GPLv3-brightgreen.svg)
+![Last Commit](https://img.shields.io/github/last-commit/r00t-3xp10it/meterpeter)
+![isues](https://img.shields.io/github/issues/r00t-3xp10it/meterpeter)
+![Repo Size](https://img.shields.io/github/repo-size/r00t-3xp10it/meterpeter)
+![topLanguages](https://img.shields.io/github/languages/count/r00t-3xp10it/meterpeter)
+
+<br />
 
 ## :octocat: Quick Jump List<br />
 - **[Project Description](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#octocat-project-description)**<br />
@@ -258,24 +269,10 @@ DELIVER 'Update-KB4524147' (.ps1=manual) OR (.zip=automated|silentExec) TO TARGE
 ### Remark About Windows Defender:
 Using **keylogger** Module without the **Client** been executed as administrator, will trigger this kind of warnings by Windows Defender **AMSI** mechanism. IF the **Client** is executed as administrator and target machine as powershell **version 2** installed, then the keylogger execution its achieved using PSv2 (**bypassing Windows Defender AMSI|DEP|ASLR defenses**). The same method its also valid for **persistence** Module, executing our client using powershell version 2 (PS downgrade Attack).<br /><br />
 **Payloads|Droppers are FUD (Fully UnDetected) by AntiVirus (Please dont test samples on VirusTotal)**<br />
-![AV](https://user-images.githubusercontent.com/23490060/74576599-6f030380-4f83-11ea-8e10-bdeefeb0b547.png)
-<br />
-Remenbering that **Dropper.bat** even IF executed without Administrator Privileges, will try to bypass many defensive mechanisms.. for that alone plays a main role in all this process ..<br /> 
-
-<br />
-
-#### Final Notes:
-Remember to set your PS execution Policy to default (attacker) After having used meterpeter in your pentestings.<br />
-meterpeter.ps1 for obvious reasons will **NOT** revert the target PS Policy to Restricted (default) to facilitate next<br />
-incursions into Remote-Host (**in persistence cenario Demonstrations**) ..
-```
-powershell Set-ExecutionPolicy Restricted -Scope CurrentUser
-```
-
+![AV](https://user-images.githubusercontent.com/23490060/74576599-6f030380-4f83-11ea-8e10-bdeefeb0b547.png)<br />
 **[Quick Jump List](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#octocat-quick-jump-list)**<br />
 
 ---
-
 
 <br />
 
@@ -284,7 +281,7 @@ meterpeter Under Windows Distros: https://www.youtube.com/watch?v=d2npuCXsMvE<br
 meterpeter Under Linux Distros: https://www.youtube.com/watch?v=CmMbWmN246E<br /><br />
 
 ### Special Thanks:
-**@ZHacker13** (Original Rev Shell) | **@tedburke** (CommandCam.exe binary) <br />
+**@ZHacker13** (Original Rev Shell) | **@tedburke** (CommandCam.exe binary)<br />
 **@codings9** (debugging project under Windows|Linux Distros)<br /><br />
 - **[meterpeter WIKI pages (Oficial Documentation)](https://github.com/r00t-3xp10it/meterpeter/wiki)**<br />
 - **[Jump To Top of this readme File](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#octocat-quick-jump-list)**<br />
