@@ -203,8 +203,7 @@ UNZIP (IN DESKTOP) AND EXECUTE 'Update-KB4524147.bat' (Run As Administrator)..
 
 <br />
 
-#### Install Python3 (optional)
-Install Python3 (http.Server) to deliver payloads under LAN networks ..<br />
+### Install Python3 (http.Server) to deliver payloads under LAN networks (optional)<br />
 ```
 https://www.python.org/downloads/release/python-381/
 ```
@@ -262,6 +261,8 @@ DELIVER 'Update-KB4524147' (.ps1=manual) OR (.zip=automated|silentExec) TO TARGE
 - **`REMARK:`** Client.exe (created by PS2EXEC) migth **malfunction** with meterpeter **mimiratz scripts**.
 
 **[Quick Jump List](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#octocat-quick-jump-list)**<br />
+
+---
 
 <br />
 
