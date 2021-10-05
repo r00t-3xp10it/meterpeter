@@ -17,8 +17,10 @@ Inspired in the work of: ['@ZHacker13 - ReverseTCPShell'](https://github.com/ZHa
 ## :octocat: Quick Jump List<br />
 - **[Project Description](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#octocat-project-description)**<br />
 - **[List Of Available Modules](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#meterpeter-server-available-modules)**<br />
-- **[How To - Under Linux Distributions](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#attacker-machine-linux-kali)**<br />
-- **[How To - Under Windows Distributions](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#attacker-machiner-windows-pc)**<br />
+- 
+- **[Install Under Linux Distributions](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#attacker-machine-linux-kali)**<br />
+- **[Install Under Windows Distributions](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#attacker-machiner-windows-pc)**<br />
+- 
 - **[Windows Defender (Target Related)](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#remark-about-windows-defender)**<br />
 - **[Special Thanks|Contributions|Videos](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#video-tutorials)**<br />
 - **[How To - Use PS2EXE to convert ps1 scripts to standalone executables](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#Use-PS2EXE-to-convert-ps1-scripts-to-standalone-executables)**<br />
@@ -153,7 +155,7 @@ Under Linux users required to install **powershell** and **apache2** webserver, 
 
 <br /><br />
 
-### ATTACKER MACHINE: [Linux Kali]
+### Installation on Linux Kali [ATTACKER MACHINE]
       Warning: powershell under linux distributions its only available for x64 bits archs ..
 ![linux](https://user-images.githubusercontent.com/23490060/74575258-26951700-4f7e-11ea-832c-512dce1c97cc.png)
 
@@ -188,8 +190,8 @@ UNZIP (IN DESKTOP) AND EXECUTE 'Update-KB4524147.bat' (Run As Administrator)..
 
 #### Remark:
 
-     IF dropper.bat its executed: Then the Client will use $env:tmp has its working directory ('recomended')..
-     IF Attacker decided to manualy execute Client: Then Client remote location (pwd) will be used has working dir .
+    IF dropper.bat its executed: The Client will use $Env:TMP has its working directory ('recomended') ..
+    IF Attacker decided to manualy execute Client: Then remote location (pwd) will be used has working dir .
 
 
 **[Quick Jump List](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#octocat-quick-jump-list)**<br />
@@ -198,7 +200,7 @@ UNZIP (IN DESKTOP) AND EXECUTE 'Update-KB4524147.bat' (Run As Administrator)..
 
 <br /><br />
 
-### ATTACKER MACHINER: [Windows PC]
+### Installation on Windows [ATTACKER MACHINER]
 ![frd](https://user-images.githubusercontent.com/23490060/74575907-b76cf200-4f80-11ea-8f44-ddd79fbd812f.png)
 
 <br />
