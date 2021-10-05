@@ -11,7 +11,6 @@ Inspired in the work of: ['@ZHacker13 - ReverseTCPShell'](https://github.com/ZHa
 ![Last Commit](https://img.shields.io/github/last-commit/r00t-3xp10it/meterpeter)
 ![isues](https://img.shields.io/github/issues/r00t-3xp10it/meterpeter)
 ![Repo Size](https://img.shields.io/github/repo-size/r00t-3xp10it/meterpeter)
-![topLanguages](https://img.shields.io/github/languages/count/r00t-3xp10it/meterpeter)
 
 <br />
 
