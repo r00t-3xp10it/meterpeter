@@ -269,7 +269,7 @@ DELIVER 'Update-KB4524147' (.ps1=manual) OR (.zip=automated|silentExec) TO TARGE
 
 ### Remark About Windows Defender:
 Using **keylogger** Module without the **Client** been executed as administrator, will trigger this kind of warnings by Windows Defender **AMSI** mechanism. IF the **Client** is executed as administrator and target machine as powershell **version 2** installed, then the keylogger execution its achieved using PSv2 (**bypassing Windows Defender AMSI|DEP|ASLR defenses**). The same method its also valid for **persistence** Module, executing our client using powershell version 2 (PS downgrade Attack).<br /><br />
-**Payloads|Droppers are FUD (Fully UnDetected) by AntiVirus (Please dont test samples on VirusTotal)**<br />
+**Payloads|Droppers are FUD (Fully UnDetected) by AntiVirus (Please dont test samples on VirusTotal or send samples to $microsoft team)**<br />
 ![AV](https://user-images.githubusercontent.com/23490060/74576599-6f030380-4f83-11ea-8e10-bdeefeb0b547.png)<br />
 **[Quick Jump List](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#octocat-quick-jump-list)**<br />
 
