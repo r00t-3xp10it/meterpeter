@@ -44,6 +44,13 @@ powershell -C "Get-CimInstance Win32_StartupCommand|Select-Object Name,command,L
 ::echo.
 ::echo.
 
+
+echo LIST ADMINISTRATORS GROUP
+echo -------------------------
+powershell -C "$lang = ([CultureInfo]::InstalledUICulture).Name;If($lang -iMatch '^(pt-PT)$'){net localgroup administradores|findstr /V 'Nome de alias     administradores'|findstr /V 'O comando foi'}Else{net localgroup administrators}"
+echo.
+echo.
+
 echo LINK RUNNING PROCESSES TO STARTED SERVICES
 echo ------------------------------------------
 tasklist /SVC
