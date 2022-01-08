@@ -37,7 +37,7 @@ echo.
 :: List Stored cmdkey creds
 echo STORED CMDKEY CREDENTIALS (runas)
 echo ---------------------------------
-powershell -C "cmdkey /list|Format-Table|Out-String -Stream|Select-Object -Skip 1|Select-Object -Skip 2"
+powershell -C "cmdkey /list|Format-Table|Out-String -Stream|Select-Object -Skip 3"
 echo.
 
 :: List Environement Paths
