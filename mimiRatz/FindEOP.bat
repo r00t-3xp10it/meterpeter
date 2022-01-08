@@ -1,5 +1,5 @@
 @echo off
-:: Version: v1.0.1
+:: Version: v1.0.2
 :: Author: @r00t-3xp10it (ssa red team)
 :: Auxiliary module of @Meterpeter v2.10.11 - FindEop module
 :: ----
@@ -15,6 +15,17 @@ powershell -C "Get-HotFix|Select-Object Description,HotFixID,InstalledBy,Install
 :: List PRIVILEGES
 whoami /priv
 echo.
+echo.
+
+echo LIST ADMINISTRATORS GROUP
+echo -------------------------
+powershell -C "$lang = ([CultureInfo]::InstalledUICulture).Name;If($lang -iMatch '^(pt-PT)$'){net localgroup administradores|findstr /V 'Nome de alias     administradores'|findstr /V 'O comando foi'}Else{net localgroup administrators}"
+echo.
+
+:: List Stored cmdkey creds
+echo STORED CMDKEY CREDENTIALS (runas)
+echo ---------------------------------
+cmdkey /list
 echo.
 
 cd %tmp%
@@ -43,13 +54,6 @@ powershell -C "Get-CimInstance Win32_StartupCommand|Select-Object Name,command,L
 ::tasklist /v /fi "username eq system"
 ::echo.
 ::echo.
-
-
-echo LIST ADMINISTRATORS GROUP
-echo -------------------------
-powershell -C "$lang = ([CultureInfo]::InstalledUICulture).Name;If($lang -iMatch '^(pt-PT)$'){net localgroup administradores|findstr /V 'Nome de alias     administradores'|findstr /V 'O comando foi'}Else{net localgroup administrators}"
-echo.
-echo.
 
 echo LINK RUNNING PROCESSES TO STARTED SERVICES
 echo ------------------------------------------
