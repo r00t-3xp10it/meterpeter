@@ -1,6 +1,10 @@
 @echo off
+:: Version: v1.0.1
+:: Author: @r00t-3xp10it (ssa red team)
+:: Auxiliary module of @Meterpeter v2.10.11 - FindEop module
+:: ----
 
-:: List PRIVILEGES
+:: List UserPrivs
 whoami /user
 echo.
 echo.
@@ -13,8 +17,7 @@ whoami /priv
 echo.
 echo.
 
-
-cd %userprofile%
+cd %tmp%
 echo UNQUOTED SERVICE PATHS
 echo ----------------------
 sc query state= all > scoutput.txt
@@ -45,7 +48,4 @@ echo LINK RUNNING PROCESSES TO STARTED SERVICES
 echo ------------------------------------------
 tasklist /SVC
 
-
-cd %tmp%
 exit
-
