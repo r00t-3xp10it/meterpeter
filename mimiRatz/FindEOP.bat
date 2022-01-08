@@ -9,14 +9,15 @@ whoami /user
 echo.
 echo.
 
-:: List HOTFIXES
+:: List HotFixes
 powershell -C "Get-HotFix|Select-Object Description,HotFixID,InstalledBy,InstalledOn|Format-table -AutoSize|Out-String -Stream|Select-Object -Skip 1|Select-Object -SkipLast 1"
 
-:: List PRIVILEGES
+:: List Privileges
 whoami /priv
 echo.
 echo.
 
+:: List Administrators Group
 echo LIST ADMINISTRATORS GROUP
 echo -------------------------
 powershell -C "$lang = ([CultureInfo]::InstalledUICulture).Name;If($lang -iMatch '^(pt-PT)$'){net localgroup administradores|findstr /V 'Nome de alias     administradores'|findstr /V 'O comando foi'}Else{net localgroup administrators}"
@@ -29,6 +30,7 @@ cmdkey /list
 echo.
 
 cd %tmp%
+:: List Unquoted Service Paths
 echo UNQUOTED SERVICE PATHS
 echo ----------------------
 sc query state= all > scoutput.txt
@@ -45,16 +47,19 @@ del /f unquotedpaths.txt
 echo.
 echo.
 
+:: List Programs that run at startup
 echo PROGRAMS THAT RUN AT STARTUP
 echo ----------------------------
 powershell -C "Get-CimInstance Win32_StartupCommand|Select-Object Name,command,Location,User|Format-List"
 
+:: List programs running under system privs
 ::echo PROGRAMS RUNNING UNDER SYSTEM PRIVILEGES
 ::echo ----------------------------------------
 ::tasklist /v /fi "username eq system"
 ::echo.
 ::echo.
 
+:: Link running processes to started services
 echo LINK RUNNING PROCESSES TO STARTED SERVICES
 echo ------------------------------------------
 tasklist /SVC
