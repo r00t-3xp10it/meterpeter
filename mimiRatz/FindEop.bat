@@ -23,7 +23,6 @@ echo.
 echo LIST LOCAL GROUPS
 echo -----------------
 powershell -C "Get-LocalGroup|Select-Object Name,SID,PrincipalSource|Format-table -AutoSize|Out-String -Stream|Select-Object -Skip 1"
-echo.
 
 :: List HotFixes
 echo LIST HOTFIXES INSTALLED
