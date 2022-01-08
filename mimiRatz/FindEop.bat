@@ -86,5 +86,6 @@ powershell -C "(Get-ChildItem $Env:WINDIR\Panther\Unattend\Unattend.xml -EA Sile
 powershell -C "(Get-ChildItem $Env:WINDIR\system32\sysprep\sysprep.xml -EA SilentlyContinue|Select-Object *).FullName"
 
 
-cd "C:\Users\pedro\OneDrive\Ambiente de Trabalho"
+:: DEBUG FUNCTION
+::cd "C:\Users\pedro\OneDrive\Ambiente de Trabalho"
 ::exit
