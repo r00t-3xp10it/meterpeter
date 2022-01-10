@@ -10,7 +10,6 @@ TITLE FindEop v1.2.10 {SSA RedTeam @2022}
 :: Local variables
 SET LocalPath=%cd%
 SET BatVersion=v1.2.10
-
 :: Spirit of Heaven, Goddess of Fire and Life!
 echo.
 echo                                                      \  /
