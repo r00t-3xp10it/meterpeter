@@ -12,6 +12,7 @@ SET LocalPath=%cd%
 SET BatVersion=v1.2.10
 
 :: Spirit of Heaven, Goddess of Fire and Life!
+echo.
 echo                                                      \  /
 echo                                                      (())
 echo                                                      ,~L_
