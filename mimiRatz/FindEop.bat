@@ -26,7 +26,7 @@ echo                            "(_(_(_(_(_(_(_(_(_(_(_(_[_]_|_)_)_)_)_)_)_)_)_)
 echo                                                     ^|    \
 echo                                                    / /   /___
 echo                                                   / /         "~~~~~__.
-echo                                                   \_\_______________\_"_.
+echo                                                   \_\_______________\_'_?
 echo                                       Spirit of Heaven, Goddess of Fire and Life
 echo. && echo. &&echo.
 :: Banner Timeout
