@@ -28,7 +28,7 @@ echo                                                    / /   /___
 echo                                                   / /         '~~~~~__.
 echo                                                   \_\_______________\_'_?
 echo                                       Spirit of Heaven, Goddess of Fire and Life
-echo. && echo. &&echo.
+echo. && echo. && echo.
 :: Banner Timeout
 timeout /T 2 >nul
 
