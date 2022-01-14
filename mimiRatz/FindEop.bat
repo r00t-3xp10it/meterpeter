@@ -3,7 +3,7 @@
 :: Dependencies: icacls\cacls\Get-Acl {native}
 :: Author: @r00t-3xp10it (SSA redTeam @2022)
 :: Description: Auxiliary module of @Meterpeter v2.10.11 - FindEop module
-:: Methodology: https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Methodology%20and%20Resources/Windows%20-%20Privilege%20Escalation.md#windows---privilege-escalation
+:: Methodology: https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Methodology
 :: ----
 TITLE FindEop v1.3.18 {SSA RedTeam @2022}
 
