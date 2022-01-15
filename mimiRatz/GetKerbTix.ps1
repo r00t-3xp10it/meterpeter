@@ -10,7 +10,7 @@
 #  any logon type session (network, batch, interactive, remote interactive...).
 # This script will run on Windows Server 2008/Vista and later.
 #************************************************
-cls
+
 $FormatEnumerationLimit = -1
 $ComputerName = $env:COMPUTERNAME
 $UserName = [Security.Principal.WindowsIdentity]::GetCurrent().name
