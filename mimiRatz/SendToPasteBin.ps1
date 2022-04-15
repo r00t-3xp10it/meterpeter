@@ -35,7 +35,7 @@
 
 .Parameter TimeOut
    Create paste each xxx seconds (min: 120)
-   Remark: No time limmit if -maxpastes '1'
+   Remark: No time limmit if -maxpastes '1' int
 
 .EXAMPLE
    PS C:\> Get-Help .\SendToPasteBin.ps1 -full
