@@ -132,7 +132,8 @@ meterpeter Under Linux Distros: https://www.youtube.com/watch?v=CmMbWmN246E<br /
 
 ### Special Thanks:
 **@ZHacker13** (Original Rev Shell) | **@tedburke** (CommandCam.exe binary)<br />
-**@codings9** (debugging project uWindows|Linux) | @ShantyDamayanti (debugging Windows)<br /><br />
+**@codings9** (debugging project uWindows|Linux) | @ShantyDamayanti (debugging Windows)<br />
+**@gtworek** (EnableAllParentPrivileges) | @AHLASaad (debugging Modules)<br /><br />
 - **[meterpeter WIKI pages (Oficial Documentation)](https://github.com/r00t-3xp10it/meterpeter/wiki)**<br />
 - **[Jump To Top of this readme File](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#octocat-quick-jump-list)**<br />
 ---
