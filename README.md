@@ -22,6 +22,7 @@ Inspired in the work of: ['@ZHacker13 - ReverseTCPShell'](https://github.com/ZHa
 - **[Windows Defender (Target Related)](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#remark-about-windows-defender)**<br />
 - **[Special Thanks|Contributions|Videos](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#video-tutorials)**<br />
 - **[Please Read my 'WIKI' page for detailed information about each Module](https://github.com/r00t-3xp10it/meterpeter/wiki)**<br />
+- **[Latest Release](https://github.com/r00t-3xp10it/meterpeter/releases/tag/untagged-a861dc932323ee9dd280)**<br />
 
 <br />
 
