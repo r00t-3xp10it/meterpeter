@@ -17,7 +17,7 @@ Inspired in the work of: ['@ZHacker13 - ReverseTCPShell'](https://github.com/ZHa
 ## :octocat: Quick Jump List<br />
 - **[Project Description](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#octocat-project-description)**<br />
 - **[List Of Available Modules](https://gist.github.com/r00t-3xp10it/4b066797ddc99a3fc41195ddfaf4af9b?permalink_comment_id=4133582#gistcomment-4133582)**<br />
-- **[Meterpeter C2 Latest Release](https://github.com/r00t-3xp10it/meterpeter/releases/tag/untagged-a861dc932323ee9dd280)**<br />
+- **[Meterpeter C2 Latest Release](https://github.com/r00t-3xp10it/meterpeter/releases/tag/v2.10.12)**<br />
 - **[How To - Under Linux Distributions](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#attacker-machine-linux-kali)**<br />
 - **[How To - Under Windows Distributions](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#attacker-machiner-windows-pc)**<br />
 - **[Special Thanks|Contributions|Videos](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#video-tutorials)**<br />
