@@ -16,13 +16,13 @@ Inspired in the work of: ['@ZHacker13 - ReverseTCPShell'](https://github.com/ZHa
 
 ## :octocat: Quick Jump List<br />
 - **[Project Description](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#octocat-project-description)**<br />
+- **[Meterpeter C2 Latest Release](https://github.com/r00t-3xp10it/meterpeter/releases/tag/untagged-a861dc932323ee9dd280)**<br />
 - **[List Of Available Modules](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#meterpeter-server-available-modules)**<br />
 - **[How To - Under Linux Distributions](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#attacker-machine-linux-kali)**<br />
 - **[How To - Under Windows Distributions](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#attacker-machiner-windows-pc)**<br />
 - **[Windows Defender (Target Related)](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#remark-about-windows-defender)**<br />
 - **[Special Thanks|Contributions|Videos](https://github.com/r00t-3xp10it/meterpeter/blob/master/README.md#video-tutorials)**<br />
 - **[Please Read my 'WIKI' page for detailed information about each Module](https://github.com/r00t-3xp10it/meterpeter/wiki)**<br />
-- **[Latest Release](https://github.com/r00t-3xp10it/meterpeter/releases/tag/untagged-a861dc932323ee9dd280)**<br />
 
 <br />
 
