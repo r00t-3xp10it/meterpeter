@@ -2,7 +2,7 @@ Author: <b><i>@r00t-3xp10it</i></b><br />
 Version release: <b><i>v2.10.12</i></b><br />
 Distros Supported: <b><i>Windows (x86|x64), Linux</i></b><br />
 Inspired in the work of: ['@ZHacker13 - ReverseTCPShell'](https://github.com/ZHacker13/ReverseTCPShell)<br /><br />
-![meterbanner](https://user-images.githubusercontent.com/23490060/134608569-ca194b98-8a6b-4da6-9848-326101ec3652.png)<br />
+![banner](https://user-images.githubusercontent.com/23490060/163636021-4351eca6-b66b-4817-b4b9-182a66070584.png)<br />
 
 [![Version](https://img.shields.io/badge/meterpeter-v2.10.12-brightgreen.svg?maxAge=259200)]()
 [![Stage](https://img.shields.io/badge/Release-Stable-brightgreen.svg)]()
@@ -95,6 +95,14 @@ Install Python3 (http.Server) to deliver payloads under LAN networks ..<br />
 ```
 https://www.python.org/downloads/release/python-381/
 ```
+
+Check if python **http.server** its installed<br />
+```
+$Local_Host = ((ipconfig | findstr [0-9].\.)[0]).Split()[-1]
+python -m http.server 8080 --bind $Local_Host
+CTRL+C # Exit webserver console
+```
+
 
 #### Start C2 Server (Local)
 ```
