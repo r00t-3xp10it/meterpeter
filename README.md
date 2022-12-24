@@ -4,7 +4,7 @@ Distros Supported: <b><i>Windows (x86|x64), Linux</i></b><br />
 Inspired in the work of: ['@ZHacker13 - ReverseTCPShell'](https://github.com/ZHacker13/ReverseTCPShell)<br /><br />
 ![banner](https://user-images.githubusercontent.com/23490060/163636021-4351eca6-b66b-4817-b4b9-182a66070584.png)<br />
 
-[![Version](https://img.shields.io/badge/meterpeter-v2.10.12-brightgreen.svg?maxAge=259200)]()
+[![Version](https://img.shields.io/badge/meterpeter-v2.10.13-brightgreen.svg?maxAge=259200)]()
 [![Stage](https://img.shields.io/badge/Release-Stable-brightgreen.svg)]()
 [![Build](https://img.shields.io/badge/OS-Windows,Linux-orange.svg)]()
 ![licence](https://img.shields.io/badge/license-GPLv3-brightgreen.svg)
