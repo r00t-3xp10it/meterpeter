@@ -157,7 +157,7 @@ For($i=1; $i -lt $MaxInteractions; $i++)
    $MsgBoxTitle = "KERNEL WARNNING 00xf340d0.421"
    $MsgBoxText = "Kernel: Critical Error 00xf340d0.421 Memory Corruption!"
    #Spawn cmd terminal console and make it look like one kernel error as ocurr
-   Start-Process cmd.exe -argumentlist "/c color 90&title $MsgBoxTitle&echo $MsgBoxText&Pause"
+   Start-Process cmd.exe -argumentlist "/c color 90&title $MsgBoxTitle&echo $MsgBoxText&Pause" -Wait
 
    If($i -Match '^(8|12|45)$')
    {
