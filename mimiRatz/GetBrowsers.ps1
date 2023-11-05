@@ -132,60 +132,73 @@ If(-not($param1)){
 If($mpset -eq $True){Write-Host "[i] LogFile => $LogFilePath\BrowserEnum.log" -ForeGroundColor yellow}
 Start-sleep -Seconds 1
 
-## Get Default network interface
-$DefaultInterface = Test-NetConnection -ErrorAction SilentlyContinue|Select-Object -expandproperty InterfaceAlias
-If(-not($DefaultInterface) -or $DefaultInterface -eq $null){$DefaultInterface = "{null}"}
+If($param1 -ne "-CLEAN" -or $param1 -ne "-clean")
+{
+   ## Get Default network interface
+   $DefaultInterface = Test-NetConnection -ErrorAction SilentlyContinue|Select-Object -expandproperty InterfaceAlias
+   If(-not($DefaultInterface) -or $DefaultInterface -eq $null){$DefaultInterface = "{null}"}
 
-## Get System Default Configurations
-$RHserver = "LogonServer  : "+"$env:LOGONSERVER"
-$Caption = Get-CimInstance Win32_OperatingSystem|Format-List *|findstr /I /B /C:"Caption"
-If($Caption){$ParseCap = $Caption -replace '                                   :','      :'}else{$ParseCap = "Caption      : Not Found"}
+   ## Get System Default Configurations
+   $RHserver = "LogonServer  : "+"$env:LOGONSERVER"
+   $Caption = Get-CimInstance Win32_OperatingSystem|Format-List *|findstr /I /B /C:"Caption"
+   If($Caption){$ParseCap = $Caption -replace '                                   :','      :'}else{$ParseCap = "Caption      : Not Found"}
 
-## Get System Default webBrowser
-$DefaultBrowser = (Get-ItemProperty 'HKCU:\Software\Microsoft\Windows\Shell\Associations\UrlAssociations\https\UserChoice' -ErrorAction SilentlyContinue).ProgId
-If($DefaultBrowser){$Parse_Browser_Data = $DefaultBrowser.split("-")[0] -replace 'URL','' -replace 'HTML','' -replace '.HTTPS',''}else{$Parse_Browser_Data = "Not Found"}
-$MInvocation = "WebBrowser   : "+"$Parse_Browser_Data"+" (PreDefined)";
+   ## Get System Default webBrowser
+   $DefaultBrowser = (Get-ItemProperty 'HKCU:\Software\Microsoft\Windows\Shell\Associations\UrlAssociations\https\UserChoice' -ErrorAction SilentlyContinue).ProgId
+   If($DefaultBrowser){$Parse_Browser_Data = $DefaultBrowser.split("-")[0] -replace 'URL','' -replace 'HTML','' -replace '.HTTPS',''}else{$Parse_Browser_Data = "Not Found"}
+   $MInvocation = "WebBrowser   : "+"$Parse_Browser_Data"+" (PreDefined)";
 
-## Get System UserAgent string
-$IntSet = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\internet settings" -Name 'User Agent' -ErrorAction SilentlyContinue|Select-Object 'User Agent'
-If($IntSet){$ParsingIntSet = $IntSet -replace '@{User Agent=','UserAgent    : ' -replace '}',''}else{$ParsingIntSet = "UserAgent    : Not Found"}
+   ## Get System UserAgent string
+   $IntSet = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\internet settings" -Name 'User Agent' -ErrorAction SilentlyContinue|Select-Object 'User Agent'
+   If($IntSet){$ParsingIntSet = $IntSet -replace '@{User Agent=','UserAgent    : ' -replace '}',''}else{$ParsingIntSet = "UserAgent    : Not Found"}
 
-## Get Default Gateway IpAddress (IPV4)
-$RGateway = (Get-NetIPConfiguration|Foreach IPv4DefaultGateway -ErrorAction SilentlyContinue).NextHop
-If(-not($RGateway) -or $RGateway -eq $null){$RGateway = "{null}"}
-$nwINFO = Get-WmiObject -ComputerName (hostname) Win32_NetworkAdapterConfiguration|Where-Object { $_.IPAddress -ne $null }
-$DHCPName = $nwINFO.DHCPEnabled;$ServiceName = $nwINFO.ServiceName
+   ## Get Default Gateway IpAddress (IPV4)
+   $RGateway = (Get-NetIPConfiguration|Foreach IPv4DefaultGateway -ErrorAction SilentlyContinue).NextHop
+   If(-not($RGateway) -or $RGateway -eq $null){$RGateway = "{null}"}
+   $nwINFO = Get-WmiObject -ComputerName (hostname) Win32_NetworkAdapterConfiguration|Where-Object { $_.IPAddress -ne $null }
+   $DHCPName = $nwINFO.DHCPEnabled;$ServiceName = $nwINFO.ServiceName
 
-## Internet statistics
-$recstats = netstat -s -p IP|select-string -pattern "Packets Received"
-If($recstats){$statsdata = $recstats -replace '  Packets Received                   =','TCPReceived  :'}else{$statsdata = "TCPReceived  : {null}"}
-$delstats = netstat -s -p IP|select-string -pattern "Packets Delivered"
-If($delstats){$deliverdata = $delstats -replace '  Received Packets Delivered         =','TCPDelivered :'}else{$deliverdata = "TCPDelivered : {null}"}
+   ## Internet statistics
+   $recstats = netstat -s -p IP|select-string -pattern "Packets Received"
+   If($recstats){$statsdata = $recstats -replace '  Packets Received                   =','TCPReceived  :'}else{$statsdata = "TCPReceived  : {null}"}
+   $delstats = netstat -s -p IP|select-string -pattern "Packets Delivered"
+   If($delstats){$deliverdata = $delstats -replace '  Received Packets Delivered         =','TCPDelivered :'}else{$deliverdata = "TCPDelivered : {null}"}
 
-## Writting LogFile to the selected path in: { $param2 var }
-echo "`n`nSystem Defaults" > $LogFilePath\BrowserEnum.log
-echo "---------------" >> $LogFilePath\BrowserEnum.log
-echo "DHCPEnabled  : $DHCPName" >> $LogFilePath\BrowserEnum.log
-echo "Interface    : $DefaultInterface" >> $LogFilePath\BrowserEnum.log
-echo "ServiceName  : $ServiceName" >> $LogFilePath\BrowserEnum.log
-echo "$RHserver" >> $LogFilePath\BrowserEnum.log
-echo "$ParseCap" >> $LogFilePath\BrowserEnum.log 
-echo "$ParsingIntSet" >> $LogFilePath\BrowserEnum.log
 
-## Get Flash Internal Name/Version
-If(-not(Test-Path "$env:WINDIR\system32\macromed\flash\flash.ocx")){
-    echo "flashName    : Not Found" >> $LogFilePath\BrowserEnum.log
-}else{
-    $flash = Get-Item "$env:WINDIR\system32\macromed\flash\flash.ocx"|select *
-    $flashName = $flash.versioninfo.InternalName
-    echo "flashName    : $flashName" >> $LogFilePath\BrowserEnum.log
+   ## Writting LogFile to the selected path in: { $param2 var }
+   echo "`n`nSystem Defaults" > $LogFilePath\BrowserEnum.log
+   echo "---------------" >> $LogFilePath\BrowserEnum.log
+   echo "DHCPEnabled  : $DHCPName" >> $LogFilePath\BrowserEnum.log
+   echo "Interface    : $DefaultInterface" >> $LogFilePath\BrowserEnum.log
+   echo "ServiceName  : $ServiceName" >> $LogFilePath\BrowserEnum.log
+   echo "$RHserver" >> $LogFilePath\BrowserEnum.log
+   echo "$ParseCap" >> $LogFilePath\BrowserEnum.log 
+   echo "$ParsingIntSet" >> $LogFilePath\BrowserEnum.log
+
+   ## Get Flash Internal Name/Version
+   If(-not(Test-Path "$env:WINDIR\system32\macromed\flash\flash.ocx")){
+       echo "flashName    : Not Found" >> $LogFilePath\BrowserEnum.log
+   }else{
+       $flash = Get-Item "$env:WINDIR\system32\macromed\flash\flash.ocx"|select *
+       $flashName = $flash.versioninfo.InternalName
+       echo "flashName    : $flashName" >> $LogFilePath\BrowserEnum.log
+   }
+
+   echo "$MInvocation" >> $LogFilePath\BrowserEnum.log
+   echo "Gateway      : $RGateway" >> $LogFilePath\BrowserEnum.log
+   echo "$statsdata" >> $LogFilePath\BrowserEnum.log
+   echo "$deliverdata" >> $LogFilePath\BrowserEnum.log
+   ## END Off { @args -WINVER }
 }
 
-echo "$MInvocation" >> $LogFilePath\BrowserEnum.log
-echo "Gateway      : $RGateway" >> $LogFilePath\BrowserEnum.log
-echo "$statsdata" >> $LogFilePath\BrowserEnum.log
-echo "$deliverdata" >> $LogFilePath\BrowserEnum.log
-## END Off { @args -WINVER }
+
+function ConvertFrom-Json20([object] $item){
+    $RawString = "System.W"+"eb.Ext"+"ensions" -Join ''
+    $JavaSerial = "System.W"+"eb.Scri"+"pt.Serial"+"ization.Jav"+"aScriptSe"+"rializer" -Join ''
+    Add-Type -AssemblyName $RawString
+    $powers_js = New-Object $JavaSerial
+    return ,$powers_js.DeserializeObject($item) 
+}
 
 
 function BROWSER_RECON {
@@ -831,14 +844,6 @@ function FIREFOX {
 }
 
 
-function ConvertFrom-Json20([object] $item){
-    $RawString = "System.W"+"eb.Ext"+"ensions" -Join ''
-    $JavaSerial = "System.W"+"eb.Scri"+"pt.Serial"+"ization.Jav"+"aScriptSe"+"rializer" -Join ''
-    Add-Type -AssemblyName $RawString
-    $powers_js = New-Object $JavaSerial
-    return ,$powers_js.DeserializeObject($item) 
-}
-
 function CHROME {
     ## Retrieve Google Chrome Browser Information
     echo "`n`nChrome Browser" >> $LogFilePath\BrowserEnum.log
@@ -1162,8 +1167,8 @@ function CREDS_DUMP {
 }
  
 
- ## Function tcp port scanner
- function PORTSCANNER {
+## Function tcp port scanner
+function PORTSCANNER {
 [int]$counter = 0
 
     If(-not($param2)){$PortRange = "21,22,23,25,80,110,135,137,139,443,445,666,1433,3389,8080"}else{$PortRange = $param2}
@@ -1185,50 +1190,100 @@ function CREDS_DUMP {
 ## Function browser cleaner
 function BROWSER_CLEANTRACKS {
 [int]$DaysToDelete = 0 # delete all files less than the current date ..
-echo "`n`n`n=[ Clean Browsers Cached Files ]=" >> $LogFilePath\BrowserEnum.log
 
+    ipconfig /flushdns|Out-Null
     ## Clean Internet Explorer temporary files
     # RunDll32.exe InetCpl.cpl, ClearMyTracksByProcess 8 - Clear Temp Files
     # RunDll32.exe InetCpl.cpl, ClearMyTracksByProcess 1 - Clear History
-    echo "`n`nIE|MsEdge Browser" >> $LogFilePath\BrowserEnum.log
-    echo "-----------------" >> $LogFilePath\BrowserEnum.log
+    echo "`n    IE|MsEdge Browser" >> $LogFilePath\BrowserEnum.log
+    echo "    -----------------" >> $LogFilePath\BrowserEnum.log
     $TempFiles = "$env:LOCALAPPDATA\Microsoft\Windows\WER\ERC"
     $InetCache = "$env:LOCALAPPDATA\Microsoft\Windows\INetCache"
     $CacheFile = "$env:LOCALAPPDATA\Microsoft\Windows\Temporary Internet Files"
-    Get-ChildItem -Path "$CacheFile","$TempFiles","$InetCache" -Recurse -EA SilentlyContinue|
-    Where-Object { ($_.CreationTime -lt $(Get-Date).AddDays(-$DaysToDelete)) } |
-        ForEach-Object {
-            $_ | Remove-Item -Force -Recurse -EA SilentlyContinue
-            $_.Name -replace 'Low',''| Out-File -FilePath "$LogFilePath\BrowserEnum.log" -Append
-        }
+    $RemoveMe = (Get-ChildItem -Path "$CacheFile","$TempFiles","$InetCache" -Recurse -EA SilentlyContinue|Where-Object {($_.CreationTime -lt $(Get-Date).AddDays(-$DaysToDelete))}).FullName
+
+    If(-not([string]::IsNullOrEmpty($RemoveMe)))
+    {
+       ForEach($Item in $RemoveMe)
+       {  
+          $NameOnly = (Get-ChildItem -Path "$Item").Name
+          echo "    Deleted: $NameOnly" >> $LogFilePath\BrowserEnum.log
+          Remove-Item -Path "$Item" -Force -EA SilentlyContinue
+       }
+    }
+    Else
+    {
+       echo "    None temp files found." >> $LogFilePath\BrowserEnum.log
+    }
 
 
     ## Clean Mozilla Firefox temporary files
-    echo "`nFireFox Browser" >> $LogFilePath\BrowserEnum.log
-    echo "-----------------" >> $LogFilePath\BrowserEnum.log
+    echo "`n`n    FireFox Browser" >> $LogFilePath\BrowserEnum.log
+    echo "    -----------------" >> $LogFilePath\BrowserEnum.log
     $CacheFile = "$env:LOCALAPPDATA\Mozilla\Firefox\Profiles\*.default\cache"
     $TempFiles = "$env:LOCALAPPDATA\Mozilla\Firefox\Profiles\*.default-release\cache"
     $OutraFile = "$env:LOCALAPPDATA\Mozilla\Firefox\Profiles\*.default\cache2\entries"
     $IefpFiles = "$env:LOCALAPPDATA\Mozilla\Firefox\Profiles\*.default-release\cache2\entries"
-    Get-ChildItem -Path "$CacheFile","$TempFiles","$OutraFile","$IefpFiles" -Recurse -EA SilentlyContinue|
-    Where-Object { ($_.CreationTime -lt $(Get-Date).AddDays(-$DaysToDelete)) } |
-        ForEach-Object {
-            $_ | Remove-Item -Force -Recurse -EA SilentlyContinue
-            $_.Name | Out-File -FilePath "$LogFilePath\BrowserEnum.log" -Append
-        }
+    $RemoveMe = (Get-ChildItem -Path "$CacheFile","$TempFiles","$OutraFile","$IefpFiles" -Recurse -EA SilentlyContinue|Where-Object {($_.CreationTime -lt $(Get-Date).AddDays(-$DaysToDelete))}).FullName
+
+    If(-not([string]::IsNullOrEmpty($RemoveMe)))
+    {
+       ForEach($Item in $RemoveMe)
+       {  
+          $NameOnly = (Get-ChildItem -Path "$Item").Name
+          echo "    Deleted: $NameOnly" >> $LogFilePath\BrowserEnum.log
+          Remove-Item -Path "$Item" -Force -EA SilentlyContinue
+       }
+    }
+    Else
+    {
+       echo "    None temp files found." >> $LogFilePath\BrowserEnum.log
+    }
 
 
     ## Clean Google Chrome temporary files
-    echo "`n`nChrome Browser" >> $LogFilePath\BrowserEnum.log
-    echo "-----------------" >> $LogFilePath\BrowserEnum.log
+    echo "`n`n    Chrome Browser" >> $LogFilePath\BrowserEnum.log
+    echo "    -----------------" >> $LogFilePath\BrowserEnum.log
     $CacheFile = "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Cache"
     $TempFiles = "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Cache2\entries"
-    Get-ChildItem -Path "$CacheFile","$TempFiles" -Recurse -EA SilentlyContinue|
-    Where-Object { ($_.CreationTime -lt $(Get-Date).AddDays(-$DaysToDelete)) } |
-        ForEach-Object {
-            $_ | Remove-Item -Force -Recurse -EA SilentlyContinue
-            $_.Name | Out-File -FilePath "$LogFilePath\BrowserEnum.log" -Append
-        }
+    $RemoveMe = (Get-ChildItem -Path "$CacheFile","$TempFiles" -Recurse -EA SilentlyContinue|Where-Object{($_.CreationTime -lt $(Get-Date).AddDays(-$DaysToDelete))}).FullName
+
+    If(-not([string]::IsNullOrEmpty($RemoveMe)))
+    {
+       ForEach($Item in $RemoveMe)
+       {  
+          $NameOnly = (Get-ChildItem -Path "$Item").Name
+          echo "    Deleted: $NameOnly" >> $LogFilePath\BrowserEnum.log
+          Remove-Item -Path "$Item" -Force -EA SilentlyContinue
+       }
+    }
+    Else
+    {
+       echo "    None temp files found." >> $LogFilePath\BrowserEnum.log
+    }
+
+
+    ## Clean Opera temporary files
+    echo "`n`n    Opera Browser" >> $LogFilePath\BrowserEnum.log
+    echo "    -----------------" >> $LogFilePath\BrowserEnum.log
+    $OpCache = "C:\Users\$Env:USERNAME\AppData\Local\Opera Software"
+    $OpName = (Get-ChildItem -Path "$OpCache" -Recurse -Force|Where-Object {$_.PSIsContainer -eq $true -and $_.Name -match "^(Cache)$"}).FullName
+    $OpClean = (Get-ChildItem -Path "${OpName}\Cache_Data"|Where-Object {$_.PSIsContainer -eq $false -and $_.Name -ne "index"}).FullName
+
+    If(-not([string]::IsNullOrEmpty($OpClean)))
+    {
+       ForEach($Item in $OpClean)
+       {  
+          $NameOnly = (Get-ChildItem -Path "$Item").Name
+          echo "    Deleted: $NameOnly" >> $LogFilePath\BrowserEnum.log
+          Remove-Item -Path "$Item" -Force -EA SilentlyContinue
+       }
+    }
+    Else
+    {
+       echo "    None temp files found." >> $LogFilePath\BrowserEnum.log
+    }
+
 }
 
 
@@ -1255,4 +1310,5 @@ If($param1 -eq "-ALL"){BROWSER_RECON;IE_Dump;FIREFOX;CHROME;OPERA}
 ## Retrieve Remote Info from LogFile
 Write-Host ""
 Get-Content "$LogFilePath\BrowserEnum.log"
+Remove-Item -Path "$LogFilePath\BrowserEnum.log" -Force
 Exit
