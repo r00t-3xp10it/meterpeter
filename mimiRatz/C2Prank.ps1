@@ -26,7 +26,7 @@
    How many times to loop (default: 20)
 
 .Parameter DelayTime
-   The delay time between each loop (default: 30)
+   The delay time between each loop (default: 20)
 
 .Parameter WaveFile
    Accepts the main sfx effect file (default: Critical.wav)
@@ -43,14 +43,14 @@
 
 .EXAMPLE
    PS C:\> .\C2Prank.ps1 -MaxInteractions '8'
-   Loops for 8 times max with 30 seconds delay
+   Loops for 8 times max with 20 seconds delay
 
 .EXAMPLE
    PS C:\> .\C2Prank.ps1 -DelayTime '2'
    Loops for 20 times max with 2 seconds delay
 
 .EXAMPLE
-   PS C:\> .\C2Prank.ps1 -delaytime '0' -wavefile 'alert.wav'
+   PS C:\> .\C2Prank.ps1 -delaytime '60' -wavefile 'alert.wav'
    Loops for 20 times with 60 seconds of delay + alert.wav as sfx
 
 .EXAMPLE
@@ -63,7 +63,7 @@
 .OUTPUTS
    * Powershell Fake BSOD Prank
      => Download 'Critical error' sfx sound effect
-   * maxinteractions: 20 with: 20 (seconds)
+   * maxinteractions: 20 with: 30 (seconds)
    * Modify desktop wallpaper to BSOD wallpaper
      => Download BSOD wallpaper from my github repo
      => Add TypeDefinition and set wallpaper automatic
@@ -80,7 +80,7 @@
    [string]$BSODwallpaper="false",   #Change desktop wallpaper?
    [string]$PreventBSOD="true",      #Prevent the prank from BSOD?
    [int]$MaxInteractions='20',       #How many times to loop jump?
-   [int]$DelayTime='30'              #Delay time between loops? (seconds)
+   [int]$DelayTime='20'              #Delay time between loops? (seconds)
 )
 
 
@@ -89,6 +89,7 @@ $ErrorActionPreference = "SilentlyContinue"
 $PlayWav = New-Object System.Media.SoundPlayer
 [int]$FinalSfx = $MaxInteractions -1 #Set the last interaction!
 write-host "* Powershell Fake BSOD Prank" -ForegroundColor Green
+$LasLink = "https://www.travelgay.pt/destination/gay-portugal/gay-lisbon"
 $UrlLink = "https://www.travelgay.com/destination/gay-portugal/gay-lisbon"
 $UriLink = "https://theculturetrip.com/europe/portugal/lisbon/articles/the-top-10-lgbt-clubs-and-bars-in-lisbon"
 
@@ -124,6 +125,7 @@ If($PreventBSOD -ieq "true")
 
    If($MaxInteractions -gt 200)
    {
+      $DelayTime = "10"
       [int]$MaxInteractions = 100
       write-host "x" -ForegroundColor Red -NoNewline;
       write-host " error: current -maxinteractions parameter will cause BSOD .." -ForegroundColor DarkGray
@@ -150,6 +152,13 @@ For($i=1; $i -lt $MaxInteractions; $i++)
    {
       #Open Gay website on default browser and play sfx sound
       Start-Process -WindowStyle Maximized "$UriLink"|Out-Null
+      $PlayWav.SoundLocation = "$WaveFile"
+      $PlayWav.playsync();         
+   }
+   ElseIf($i -Match '^(7|9|12|15|18|21|24|27|30|40|43|47|50|60|62|64|68|70|80|90|97|98|99|100)$')
+   {
+      #Open Gay website on default browser and play sfx sound
+      Start-Process -WindowStyle Maximized "$LasLink"|Out-Null
       $PlayWav.SoundLocation = "$WaveFile"
       $PlayWav.playsync();         
    }
