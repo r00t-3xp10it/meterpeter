@@ -1196,11 +1196,12 @@ function BROWSER_CLEANTRACKS {
     {
        ## Global cleaning
        ipconfig /flushdns|Out-Null
-       C:\Windows\System32\rundll32.exe InetCpl.cpl, ClearMyTracksByProcess 8|Out-Null   #  Clear Temp Files
-       C:\Windows\System32\rundll32.exe InetCpl.cpl, ClearMyTracksByProcess 1|Out-Null   #  Clear History
-       C:\Windows\System32\rundll32.exe InetCpl.cpl, ClearMyTracksByProcess 2|Out-Null   #  Clear Cookies
+       C:\Windows\System32\rundll32.exe InetCpl.cpl, ClearMyTracksByProcess 1|Out-Null     #  Clear History
+       C:\Windows\System32\rundll32.exe InetCpl.cpl, ClearMyTracksByProcess 2|Out-Null     #  Clear Cookies
+       C:\Windows\System32\rundll32.exe InetCpl.cpl, ClearMyTracksByProcess 8|Out-Null     #  Clear Temporary Files
        # C:\Windows\System32\rundll32.exe InetCpl.cpl, ClearMyTracksByProcess 255|Out-Null #  Clear cookies, history data, internet files, and passwords
     }
+
 
     ## Clean Internet Explorer temporary files
     echo "   [IE|MsEdge Browser]" >> $LogFilePath\BrowserEnum.log
@@ -1227,7 +1228,7 @@ function BROWSER_CLEANTRACKS {
        {
           ## Delete selected files
           $NameOnly = (Get-ChildItem -Path "$Item" -EA SilentlyContinue).Name
-          echo "   Deleted: $NameOnly" >> $LogFilePath\BrowserEnum.log
+          echo "   Deleted:: $NameOnly" >> $LogFilePath\BrowserEnum.log
           Remove-Item -Path "$Item" -Force -EA SilentlyContinue
        }
     }
@@ -1260,7 +1261,7 @@ function BROWSER_CLEANTRACKS {
        {
           ## Delete selected files
           $NameOnly = (Get-ChildItem -Path "$Item" -EA SilentlyContinue).Name
-          echo "   Deleted: $NameOnly" >> $LogFilePath\BrowserEnum.log
+          echo "   Deleted:: $NameOnly" >> $LogFilePath\BrowserEnum.log
           Remove-Item -Path "$Item" -Force -EA SilentlyContinue
        }
     }
@@ -1295,7 +1296,7 @@ function BROWSER_CLEANTRACKS {
        {
           ## Delete selected files
           $NameOnly = (Get-ChildItem -Path "$Item" -EA SilentlyContinue).Name
-          echo "   Deleted: $NameOnly" >> $LogFilePath\BrowserEnum.log
+          echo "   Deleted:: $NameOnly" >> $LogFilePath\BrowserEnum.log
           Remove-Item -Path "$Item" -Force -EA SilentlyContinue
        }
     }
@@ -1307,7 +1308,7 @@ function BROWSER_CLEANTRACKS {
 
     ## Clean Opera temporary files
     echo "`n`n   [Opera Browser]" >> $LogFilePath\BrowserEnum.log
-    echo "   $Env:LOCALAPPDATA\Opera Software\Cache\Cache_Data" >> $LogFilePath\BrowserEnum.log
+    echo "   $Env:LOCALAPPDATA\Opera Software\Opera GX Stable\Cache\Cache_Data" >> $LogFilePath\BrowserEnum.log
     echo "   ----------------------" >> $LogFilePath\BrowserEnum.log
 
     ## Common locations
@@ -1323,7 +1324,7 @@ function BROWSER_CLEANTRACKS {
        {
           ## Delete selected files
           $NameOnly = (Get-ChildItem -Path "$Item" -EA SilentlyContinue).Name
-          echo "   Deleted: $NameOnly" >> $LogFilePath\BrowserEnum.log
+          echo "   Deleted:: $NameOnly" >> $LogFilePath\BrowserEnum.log
           Remove-Item -Path "$Item" -Force -EA SilentlyContinue
        }
     }
@@ -1336,13 +1337,17 @@ function BROWSER_CLEANTRACKS {
     ## Clean Brave temporary files
     echo "`n`n   [Brave Browser]" >> $LogFilePath\BrowserEnum.log
     echo "   $Env:LOCALAPPDATA\BraveSoftware\User Data\Default\Cache" >> $LogFilePath\BrowserEnum.log
+    echo "   $Env:LOCALAPPDATA\BraveSoftware\Brave-Browser\UserData\Default" >> $LogFilePath\BrowserEnum.log
+    echo "   $Env:LOCALAPPDATA\BraveSoftware\User Data\Default\Cache\Cache_Data" >> $LogFilePath\BrowserEnum.log
     echo "   ----------------------" >> $LogFilePath\BrowserEnum.log
 
     ## Common locations
     $OpCache = "$Env:LOCALAPPDATA\BraveSoftware\User Data\Default\Cache"
+    $OpUserd = "$Env:LOCALAPPDATA\BraveSoftware\Brave-Browser\UserData\Default"
+    $OpDatas = "$Env:LOCALAPPDATA\BraveSoftware\User Data\Default\Cache\Cache_Data"
 
     ## Locations Recursive Query
-    $OpClean = (Get-ChildItem -Path "${OpCache}"|Where-Object {$_.PSIsContainer -eq $false}).FullName
+    $OpClean = (Get-ChildItem -Path "${OpCache}","${OpDatas}","${OpUserd}"|Where-Object {$_.PSIsContainer -eq $false}).FullName
 
     If(-not([string]::IsNullOrEmpty($OpClean)))
     {
@@ -1350,7 +1355,7 @@ function BROWSER_CLEANTRACKS {
        {
           ## Delete selected files
           $NameOnly = (Get-ChildItem -Path "$Item" -EA SilentlyContinue).Name
-          echo "   Deleted: $NameOnly" >> $LogFilePath\BrowserEnum.log
+          echo "   Deleted:: $NameOnly" >> $LogFilePath\BrowserEnum.log
           Remove-Item -Path "$Item" -Force -EA SilentlyContinue
        }
     }
