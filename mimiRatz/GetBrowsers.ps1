@@ -1198,13 +1198,13 @@ function BROWSER_CLEANTRACKS {
     # C:\Windows\System32\rundll32.exe InetCpl.cpl, ClearMyTracksByProcess 255|Out-Null #  Clear cookies
 
     ## Clean Internet Explorer temporary files
-    echo "    [IE|MsEdge Browser]" >> $LogFilePath\BrowserEnum.log
-    echo "    $Env:LOCALAPPDATA\Microsoft\Windows\WER\ERC" >> $LogFilePath\BrowserEnum.log
-    echo "    $Env:LOCALAPPDATA\Microsoft\Windows\INetCache" >> $LogFilePath\BrowserEnum.log
-    echo "    $Env:LOCALAPPDATA\Microsoft\Windows\INetCookies" >> $LogFilePath\BrowserEnum.log
-    echo "    $Env:LOCALAPPDATA\Microsoft\Windows\IEDownloadHistory" >> $LogFilePath\BrowserEnum.log
-    echo "    $Env:LOCALAPPDATA\Microsoft\Windows\Temporary Internet Files" >> $LogFilePath\BrowserEnum.log
-    echo "    ----------------------" >> $LogFilePath\BrowserEnum.log
+    echo "   [IE|MsEdge Browser]" >> $LogFilePath\BrowserEnum.log
+    echo "   $Env:LOCALAPPDATA\Microsoft\Windows\WER\ERC" >> $LogFilePath\BrowserEnum.log
+    echo "   $Env:LOCALAPPDATA\Microsoft\Windows\INetCache" >> $LogFilePath\BrowserEnum.log
+    echo "   $Env:LOCALAPPDATA\Microsoft\Windows\INetCookies" >> $LogFilePath\BrowserEnum.log
+    echo "   $Env:LOCALAPPDATA\Microsoft\Windows\IEDownloadHistory" >> $LogFilePath\BrowserEnum.log
+    echo "   $Env:LOCALAPPDATA\Microsoft\Windows\Temporary Internet Files" >> $LogFilePath\BrowserEnum.log
+    echo "   ----------------------" >> $LogFilePath\BrowserEnum.log
 
     ## Common locations
     $TempFiles = "$Env:LOCALAPPDATA\Microsoft\Windows\WER\ERC"
@@ -1222,23 +1222,23 @@ function BROWSER_CLEANTRACKS {
        {
           ## Delete selected files
           $NameOnly = (Get-ChildItem -Path "$Item" -EA SilentlyContinue).Name
-          echo "    Deleted: $NameOnly" >> $LogFilePath\BrowserEnum.log
+          echo "   Deleted: $NameOnly" >> $LogFilePath\BrowserEnum.log
           Remove-Item -Path "$Item" -Force -EA SilentlyContinue
        }
     }
     Else
     {
-       echo "    None temp files found." >> $LogFilePath\BrowserEnum.log
+       echo "   None temp files found." >> $LogFilePath\BrowserEnum.log
     }
 
 
     ## Clean Mozilla Firefox temporary files
-    echo "`n`n    [FireFox Browser]" >> $LogFilePath\BrowserEnum.log
-    echo "    $Env:LOCALAPPDATA\Mozilla\Firefox\Profiles\*.default\cache" >> $LogFilePath\BrowserEnum.log
-    echo "    $Env:LOCALAPPDATA\Mozilla\Firefox\Profiles\*.default-release\cache" >> $LogFilePath\BrowserEnum.log
-    echo "    $Env:LOCALAPPDATA\Mozilla\Firefox\Profiles\*.default\cache2\entries" >> $LogFilePath\BrowserEnum.log
-    echo "    $Env:LOCALAPPDATA\Mozilla\Firefox\Profiles\*.default-release\cache2\entries" >> $LogFilePath\BrowserEnum.log
-    echo "    ----------------------" >> $LogFilePath\BrowserEnum.log
+    echo "`n`n   [FireFox Browser]" >> $LogFilePath\BrowserEnum.log
+    echo "   $Env:LOCALAPPDATA\Mozilla\Firefox\Profiles\*.default\cache" >> $LogFilePath\BrowserEnum.log
+    echo "   $Env:LOCALAPPDATA\Mozilla\Firefox\Profiles\*.default-release\cache" >> $LogFilePath\BrowserEnum.log
+    echo "   $Env:LOCALAPPDATA\Mozilla\Firefox\Profiles\*.default\cache2\entries" >> $LogFilePath\BrowserEnum.log
+    echo "   $Env:LOCALAPPDATA\Mozilla\Firefox\Profiles\*.default-release\cache2\entries" >> $LogFilePath\BrowserEnum.log
+    echo "   ----------------------" >> $LogFilePath\BrowserEnum.log
 
     ## Common locations
     $CacheFile = "$Env:LOCALAPPDATA\Mozilla\Firefox\Profiles\*.default\cache"
@@ -1255,24 +1255,24 @@ function BROWSER_CLEANTRACKS {
        {
           ## Delete selected files
           $NameOnly = (Get-ChildItem -Path "$Item" -EA SilentlyContinue).Name
-          echo "    Deleted: $NameOnly" >> $LogFilePath\BrowserEnum.log
+          echo "   Deleted: $NameOnly" >> $LogFilePath\BrowserEnum.log
           Remove-Item -Path "$Item" -Force -EA SilentlyContinue
        }
     }
     Else
     {
-       echo "    None temp files found." >> $LogFilePath\BrowserEnum.log
+       echo "   None temp files found." >> $LogFilePath\BrowserEnum.log
     }
 
 
     ## Clean Google Chrome temporary files
-    echo "`n`n    [Chrome Browser]" >> $LogFilePath\BrowserEnum.log
-    echo "    $Env:LOCALAPPDATA\Google\Chrome\User Data\Default\Cache" >> $LogFilePath\BrowserEnum.log
-    echo "    $Env:LOCALAPPDATA\Google\Chrome\User Data\Default\Cookies" >> $LogFilePath\BrowserEnum.log
-    echo "    $Env:LOCALAPPDATA\Google\Chrome\User Data\Default\History" >> $LogFilePath\BrowserEnum.log
-    echo "    $Env:LOCALAPPDATA\Google\Chrome\User Data\Default\VisitedLinks" >> $LogFilePath\BrowserEnum.log
-    echo "    $Env:LOCALAPPDATA\Google\Chrome\User Data\Default\Cache2\entries" >> $LogFilePath\BrowserEnum.log
-    echo "    ----------------------" >> $LogFilePath\BrowserEnum.log
+    echo "`n`n   [Chrome Browser]" >> $LogFilePath\BrowserEnum.log
+    echo "   $Env:LOCALAPPDATA\Google\Chrome\User Data\Default\Cache" >> $LogFilePath\BrowserEnum.log
+    echo "   $Env:LOCALAPPDATA\Google\Chrome\User Data\Default\Cookies" >> $LogFilePath\BrowserEnum.log
+    echo "   $Env:LOCALAPPDATA\Google\Chrome\User Data\Default\History" >> $LogFilePath\BrowserEnum.log
+    echo "   $Env:LOCALAPPDATA\Google\Chrome\User Data\Default\VisitedLinks" >> $LogFilePath\BrowserEnum.log
+    echo "   $Env:LOCALAPPDATA\Google\Chrome\User Data\Default\Cache2\entries" >> $LogFilePath\BrowserEnum.log
+    echo "   ----------------------" >> $LogFilePath\BrowserEnum.log
 
     ## Common locations
     $CacheFile = "$Env:LOCALAPPDATA\Google\Chrome\User Data\Default\Cache"
@@ -1290,20 +1290,20 @@ function BROWSER_CLEANTRACKS {
        {
           ## Delete selected files
           $NameOnly = (Get-ChildItem -Path "$Item" -EA SilentlyContinue).Name
-          echo "    Deleted: $NameOnly" >> $LogFilePath\BrowserEnum.log
+          echo "   Deleted: $NameOnly" >> $LogFilePath\BrowserEnum.log
           Remove-Item -Path "$Item" -Force -EA SilentlyContinue
        }
     }
     Else
     {
-       echo "    None temp files found." >> $LogFilePath\BrowserEnum.log
+       echo "   None temp files found." >> $LogFilePath\BrowserEnum.log
     }
 
 
     ## Clean Opera temporary files
-    echo "`n`n    [Opera Browser]" >> $LogFilePath\BrowserEnum.log
-    echo "    C:\Users\$Env:USERNAME\AppData\Local\Opera Software\Cache\Cache_Data" >> $LogFilePath\BrowserEnum.log
-    echo "    ----------------------" >> $LogFilePath\BrowserEnum.log
+    echo "`n`n   [Opera Browser]" >> $LogFilePath\BrowserEnum.log
+    echo "   C:\Users\$Env:USERNAME\AppData\Local\Opera Software\Cache\Cache_Data" >> $LogFilePath\BrowserEnum.log
+    echo "   ----------------------" >> $LogFilePath\BrowserEnum.log
 
     ## Common locations
     $OpCache = "C:\Users\$Env:USERNAME\AppData\Local\Opera Software"
@@ -1318,13 +1318,13 @@ function BROWSER_CLEANTRACKS {
        {
           ## Delete selected files
           $NameOnly = (Get-ChildItem -Path "$Item" -EA SilentlyContinue).Name
-          echo "    Deleted: $NameOnly" >> $LogFilePath\BrowserEnum.log
+          echo "   Deleted: $NameOnly" >> $LogFilePath\BrowserEnum.log
           Remove-Item -Path "$Item" -Force -EA SilentlyContinue
        }
     }
     Else
     {
-       echo "    None temp files found." >> $LogFilePath\BrowserEnum.log
+       echo "   None temp files found." >> $LogFilePath\BrowserEnum.log
     }
 
 }
