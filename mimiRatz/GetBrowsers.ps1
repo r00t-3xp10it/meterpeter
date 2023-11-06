@@ -1195,7 +1195,9 @@ function BROWSER_CLEANTRACKS {
     ipconfig /flushdns|Out-Null
     # C:\Windows\System32\rundll32.exe InetCpl.cpl, ClearMyTracksByProcess 8|Out-Null   #  Clear Temp Files
     # C:\Windows\System32\rundll32.exe InetCpl.cpl, ClearMyTracksByProcess 1|Out-Null   #  Clear History
-    # C:\Windows\System32\rundll32.exe InetCpl.cpl, ClearMyTracksByProcess 255|Out-Null #  Clear cookies
+    # C:\Windows\System32\rundll32.exe InetCpl.cpl, ClearMyTracksByProcess 2|Out-Null   #  Clear Cookies
+    # C:\Windows\System32\rundll32.exe InetCpl.cpl, ClearMyTracksByProcess 255|Out-Null #  Clear cookies, history data, internet files, and passwords
+
 
     ## Clean Internet Explorer temporary files
     echo "   [IE|MsEdge Browser]" >> $LogFilePath\BrowserEnum.log
@@ -1302,15 +1304,42 @@ function BROWSER_CLEANTRACKS {
 
     ## Clean Opera temporary files
     echo "`n`n   [Opera Browser]" >> $LogFilePath\BrowserEnum.log
-    echo "   C:\Users\$Env:USERNAME\AppData\Local\Opera Software\Cache\Cache_Data" >> $LogFilePath\BrowserEnum.log
+    echo "   $Env:LOCALAPPDATA\Opera Software\Cache\Cache_Data" >> $LogFilePath\BrowserEnum.log
     echo "   ----------------------" >> $LogFilePath\BrowserEnum.log
 
     ## Common locations
-    $OpCache = "C:\Users\$Env:USERNAME\AppData\Local\Opera Software"
+    $OpCache = "$Env:LOCALAPPDATA\Opera Software"
     $OpName = (Get-ChildItem -Path "$OpCache" -Recurse -Force|Where-Object {$_.PSIsContainer -eq $true -and $_.Name -match "^(Cache)$"}).FullName
 
     ## Locations Recursive Query
     $OpClean = (Get-ChildItem -Path "${OpName}\Cache_Data"|Where-Object {$_.PSIsContainer -eq $false -and $_.Name -ne "index"}).FullName
+
+    If(-not([string]::IsNullOrEmpty($OpClean)))
+    {
+       ForEach($Item in $OpClean)
+       {
+          ## Delete selected files
+          $NameOnly = (Get-ChildItem -Path "$Item" -EA SilentlyContinue).Name
+          echo "   Deleted: $NameOnly" >> $LogFilePath\BrowserEnum.log
+          Remove-Item -Path "$Item" -Force -EA SilentlyContinue
+       }
+    }
+    Else
+    {
+       echo "   None temp files found." >> $LogFilePath\BrowserEnum.log
+    }
+
+
+    ## Clean Brave temporary files
+    echo "`n`n   [Brave Browser]" >> $LogFilePath\BrowserEnum.log
+    echo "   $Env:LOCALAPPDATA\BraveSoftware\User Data\Default\Cache" >> $LogFilePath\BrowserEnum.log
+    echo "   ----------------------" >> $LogFilePath\BrowserEnum.log
+
+    ## Common locations
+    $OpCache = "$Env:LOCALAPPDATA\BraveSoftware\User Data\Default\Cache"
+
+    ## Locations Recursive Query
+    $OpClean = (Get-ChildItem -Path "${OpCache}"|Where-Object {$_.PSIsContainer -eq $false}).FullName
 
     If(-not([string]::IsNullOrEmpty($OpClean)))
     {
