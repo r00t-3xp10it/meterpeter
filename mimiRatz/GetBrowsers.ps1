@@ -89,6 +89,7 @@
 
 $Path = $null
 $mpset = $False
+$RUIUIUi0 = 'no'
 $cmdletver = "1.20.7"
 $IPATH = ($pwd).Path.ToString()
 $param1 = $args[0] # User Inputs [Arguments]
@@ -1191,13 +1192,15 @@ function PORTSCANNER {
 function BROWSER_CLEANTRACKS {
 [int]$DaysToDelete = 0 # delete all files less than the current date ..
 
-    ## Global cleaning
-    ipconfig /flushdns|Out-Null
-    # C:\Windows\System32\rundll32.exe InetCpl.cpl, ClearMyTracksByProcess 8|Out-Null   #  Clear Temp Files
-    # C:\Windows\System32\rundll32.exe InetCpl.cpl, ClearMyTracksByProcess 1|Out-Null   #  Clear History
-    # C:\Windows\System32\rundll32.exe InetCpl.cpl, ClearMyTracksByProcess 2|Out-Null   #  Clear Cookies
-    # C:\Windows\System32\rundll32.exe InetCpl.cpl, ClearMyTracksByProcess 255|Out-Null #  Clear cookies, history data, internet files, and passwords
-
+    If($RUIUIUi0 -iMatch '^(yes)$')
+    {
+       ## Global cleaning
+       ipconfig /flushdns|Out-Null
+       C:\Windows\System32\rundll32.exe InetCpl.cpl, ClearMyTracksByProcess 8|Out-Null   #  Clear Temp Files
+       C:\Windows\System32\rundll32.exe InetCpl.cpl, ClearMyTracksByProcess 1|Out-Null   #  Clear History
+       C:\Windows\System32\rundll32.exe InetCpl.cpl, ClearMyTracksByProcess 2|Out-Null   #  Clear Cookies
+       # C:\Windows\System32\rundll32.exe InetCpl.cpl, ClearMyTracksByProcess 255|Out-Null #  Clear cookies, history data, internet files, and passwords
+    }
 
     ## Clean Internet Explorer temporary files
     echo "   [IE|MsEdge Browser]" >> $LogFilePath\BrowserEnum.log
