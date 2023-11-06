@@ -1191,25 +1191,37 @@ function PORTSCANNER {
 function BROWSER_CLEANTRACKS {
 [int]$DaysToDelete = 0 # delete all files less than the current date ..
 
+    ## Global cleaning
     ipconfig /flushdns|Out-Null
+    # C:\Windows\System32\rundll32.exe InetCpl.cpl, ClearMyTracksByProcess 8|Out-Null   #  Clear Temp Files
+    # C:\Windows\System32\rundll32.exe InetCpl.cpl, ClearMyTracksByProcess 1|Out-Null   #  Clear History
+    # C:\Windows\System32\rundll32.exe InetCpl.cpl, ClearMyTracksByProcess 255|Out-Null #  Clear cookies
+
     ## Clean Internet Explorer temporary files
-    # RunDll32.exe InetCpl.cpl, ClearMyTracksByProcess 8 - Clear Temp Files
-    # RunDll32.exe InetCpl.cpl, ClearMyTracksByProcess 1 - Clear History
-    echo "    IE|MsEdge Browser:" >> $LogFilePath\BrowserEnum.log
+    echo "    [IE|MsEdge Browser]" >> $LogFilePath\BrowserEnum.log
     echo "    $Env:LOCALAPPDATA\Microsoft\Windows\WER\ERC" >> $LogFilePath\BrowserEnum.log
     echo "    $Env:LOCALAPPDATA\Microsoft\Windows\INetCache" >> $LogFilePath\BrowserEnum.log
+    echo "    $Env:LOCALAPPDATA\Microsoft\Windows\INetCookies" >> $LogFilePath\BrowserEnum.log
+    echo "    $Env:LOCALAPPDATA\Microsoft\Windows\IEDownloadHistory" >> $LogFilePath\BrowserEnum.log
     echo "    $Env:LOCALAPPDATA\Microsoft\Windows\Temporary Internet Files" >> $LogFilePath\BrowserEnum.log
     echo "    ----------------------" >> $LogFilePath\BrowserEnum.log
-    $TempFiles = "$env:LOCALAPPDATA\Microsoft\Windows\WER\ERC"
-    $InetCache = "$env:LOCALAPPDATA\Microsoft\Windows\INetCache"
-    $CacheFile = "$env:LOCALAPPDATA\Microsoft\Windows\Temporary Internet Files"
-    $RemoveMe = (Get-ChildItem -Path "$CacheFile","$TempFiles","$InetCache" -Recurse -EA SilentlyContinue|Where-Object {($_.CreationTime -lt $(Get-Date).AddDays(-$DaysToDelete))}).FullName
+
+    ## Common locations
+    $TempFiles = "$Env:LOCALAPPDATA\Microsoft\Windows\WER\ERC"
+    $InetCache = "$Env:LOCALAPPDATA\Microsoft\Windows\INetCache"
+    $Cachecook = "$Env:LOCALAPPDATA\Microsoft\Windows\INetCookies"
+    $CacheDown = "$Env:LOCALAPPDATA\Microsoft\Windows\IEDownloadHistory"
+    $CacheFile = "$Env:LOCALAPPDATA\Microsoft\Windows\Temporary Internet Files"
+
+    ## Locations Recursive Query
+    $RemoveMe = (Get-ChildItem -Path "$CacheFile","$TempFiles","$InetCache","$Cachecook","$CacheDown" -Recurse -EA SilentlyContinue|Where-Object { ($_.CreationTime -lt $(Get-Date).AddDays(-$DaysToDelete)) -and $_.PSIsContainer -eq $false }).FullName
 
     If(-not([string]::IsNullOrEmpty($RemoveMe)))
     {
        ForEach($Item in $RemoveMe)
-       {  
-          $NameOnly = (Get-ChildItem -Path "$Item").Name
+       {
+          ## Delete selected files
+          $NameOnly = (Get-ChildItem -Path "$Item" -EA SilentlyContinue).Name
           echo "    Deleted: $NameOnly" >> $LogFilePath\BrowserEnum.log
           Remove-Item -Path "$Item" -Force -EA SilentlyContinue
        }
@@ -1221,23 +1233,28 @@ function BROWSER_CLEANTRACKS {
 
 
     ## Clean Mozilla Firefox temporary files
-    echo "`n`n    FireFox Browser:" >> $LogFilePath\BrowserEnum.log
+    echo "`n`n    [FireFox Browser]" >> $LogFilePath\BrowserEnum.log
     echo "    $Env:LOCALAPPDATA\Mozilla\Firefox\Profiles\*.default\cache" >> $LogFilePath\BrowserEnum.log
     echo "    $Env:LOCALAPPDATA\Mozilla\Firefox\Profiles\*.default-release\cache" >> $LogFilePath\BrowserEnum.log
     echo "    $Env:LOCALAPPDATA\Mozilla\Firefox\Profiles\*.default\cache2\entries" >> $LogFilePath\BrowserEnum.log
     echo "    $Env:LOCALAPPDATA\Mozilla\Firefox\Profiles\*.default-release\cache2\entries" >> $LogFilePath\BrowserEnum.log
     echo "    ----------------------" >> $LogFilePath\BrowserEnum.log
-    $CacheFile = "$env:LOCALAPPDATA\Mozilla\Firefox\Profiles\*.default\cache"
-    $TempFiles = "$env:LOCALAPPDATA\Mozilla\Firefox\Profiles\*.default-release\cache"
-    $OutraFile = "$env:LOCALAPPDATA\Mozilla\Firefox\Profiles\*.default\cache2\entries"
-    $IefpFiles = "$env:LOCALAPPDATA\Mozilla\Firefox\Profiles\*.default-release\cache2\entries"
-    $RemoveMe = (Get-ChildItem -Path "$CacheFile","$TempFiles","$OutraFile","$IefpFiles" -Recurse -EA SilentlyContinue|Where-Object {($_.CreationTime -lt $(Get-Date).AddDays(-$DaysToDelete))}).FullName
+
+    ## Common locations
+    $CacheFile = "$Env:LOCALAPPDATA\Mozilla\Firefox\Profiles\*.default\cache"
+    $TempFiles = "$Env:LOCALAPPDATA\Mozilla\Firefox\Profiles\*.default-release\cache"
+    $OutraFile = "$Env:LOCALAPPDATA\Mozilla\Firefox\Profiles\*.default\cache2\entries"
+    $IefpFiles = "$Env:LOCALAPPDATA\Mozilla\Firefox\Profiles\*.default-release\cache2\entries"
+
+    ## Locations Recursive Query
+    $RemoveMe = (Get-ChildItem -Path "$CacheFile","$TempFiles","$OutraFile","$IefpFiles" -Recurse -EA SilentlyContinue|Where-Object { ($_.CreationTime -lt $(Get-Date).AddDays(-$DaysToDelete)) -and $_.PSIsContainer -eq $false }).FullName
 
     If(-not([string]::IsNullOrEmpty($RemoveMe)))
     {
        ForEach($Item in $RemoveMe)
-       {  
-          $NameOnly = (Get-ChildItem -Path "$Item").Name
+       {
+          ## Delete selected files
+          $NameOnly = (Get-ChildItem -Path "$Item" -EA SilentlyContinue).Name
           echo "    Deleted: $NameOnly" >> $LogFilePath\BrowserEnum.log
           Remove-Item -Path "$Item" -Force -EA SilentlyContinue
        }
@@ -1249,19 +1266,30 @@ function BROWSER_CLEANTRACKS {
 
 
     ## Clean Google Chrome temporary files
-    echo "`n`n    Chrome Browser:" >> $LogFilePath\BrowserEnum.log
+    echo "`n`n    [Chrome Browser]" >> $LogFilePath\BrowserEnum.log
     echo "    $Env:LOCALAPPDATA\Google\Chrome\User Data\Default\Cache" >> $LogFilePath\BrowserEnum.log
+    echo "    $Env:LOCALAPPDATA\Google\Chrome\User Data\Default\Cookies" >> $LogFilePath\BrowserEnum.log
+    echo "    $Env:LOCALAPPDATA\Google\Chrome\User Data\Default\History" >> $LogFilePath\BrowserEnum.log
+    echo "    $Env:LOCALAPPDATA\Google\Chrome\User Data\Default\VisitedLinks" >> $LogFilePath\BrowserEnum.log
     echo "    $Env:LOCALAPPDATA\Google\Chrome\User Data\Default\Cache2\entries" >> $LogFilePath\BrowserEnum.log
     echo "    ----------------------" >> $LogFilePath\BrowserEnum.log
-    $CacheFile = "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Cache"
-    $TempFiles = "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Cache2\entries"
-    $RemoveMe = (Get-ChildItem -Path "$CacheFile","$TempFiles" -Recurse -EA SilentlyContinue|Where-Object{($_.CreationTime -lt $(Get-Date).AddDays(-$DaysToDelete))}).FullName
+
+    ## Common locations
+    $CacheFile = "$Env:LOCALAPPDATA\Google\Chrome\User Data\Default\Cache"
+    $Cachecook = "$Env:LOCALAPPDATA\Google\Chrome\User Data\Default\Cookies"
+    $Cachehist = "$Env:LOCALAPPDATA\Google\Chrome\User Data\Default\History"
+    $Cachelink = "$Env:LOCALAPPDATA\Google\Chrome\User Data\Default\VisitedLinks"
+    $TempFiles = "$Env:LOCALAPPDATA\Google\Chrome\User Data\Default\Cache2\entries"
+
+    ## Locations Recursive Query
+    $RemoveMe = (Get-ChildItem -Path "$CacheFile","$Cachecook","$Cachehist","$Cachelink","$TempFiles" -Recurse -EA SilentlyContinue|Where-Object{ ($_.CreationTime -lt $(Get-Date).AddDays(-$DaysToDelete)) -and $_.PSIsContainer -eq $false }).FullName
 
     If(-not([string]::IsNullOrEmpty($RemoveMe)))
     {
        ForEach($Item in $RemoveMe)
-       {  
-          $NameOnly = (Get-ChildItem -Path "$Item").Name
+       {
+          ## Delete selected files
+          $NameOnly = (Get-ChildItem -Path "$Item" -EA SilentlyContinue).Name
           echo "    Deleted: $NameOnly" >> $LogFilePath\BrowserEnum.log
           Remove-Item -Path "$Item" -Force -EA SilentlyContinue
        }
@@ -1273,18 +1301,23 @@ function BROWSER_CLEANTRACKS {
 
 
     ## Clean Opera temporary files
-    echo "`n`n    Opera Browser:" >> $LogFilePath\BrowserEnum.log
+    echo "`n`n    [Opera Browser]" >> $LogFilePath\BrowserEnum.log
     echo "    C:\Users\$Env:USERNAME\AppData\Local\Opera Software\Cache\Cache_Data" >> $LogFilePath\BrowserEnum.log
     echo "    ----------------------" >> $LogFilePath\BrowserEnum.log
+
+    ## Common locations
     $OpCache = "C:\Users\$Env:USERNAME\AppData\Local\Opera Software"
     $OpName = (Get-ChildItem -Path "$OpCache" -Recurse -Force|Where-Object {$_.PSIsContainer -eq $true -and $_.Name -match "^(Cache)$"}).FullName
+
+    ## Locations Recursive Query
     $OpClean = (Get-ChildItem -Path "${OpName}\Cache_Data"|Where-Object {$_.PSIsContainer -eq $false -and $_.Name -ne "index"}).FullName
 
     If(-not([string]::IsNullOrEmpty($OpClean)))
     {
        ForEach($Item in $OpClean)
-       {  
-          $NameOnly = (Get-ChildItem -Path "$Item").Name
+       {
+          ## Delete selected files
+          $NameOnly = (Get-ChildItem -Path "$Item" -EA SilentlyContinue).Name
           echo "    Deleted: $NameOnly" >> $LogFilePath\BrowserEnum.log
           Remove-Item -Path "$Item" -Force -EA SilentlyContinue
        }
