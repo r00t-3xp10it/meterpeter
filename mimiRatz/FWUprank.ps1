@@ -6,19 +6,18 @@
    Tested Under: Windows 10 (19044) x64 bits
    Required Dependencies: none
    Optional Dependencies: none
-   PS cmdlet Dev version: v1.0.2
+   PS cmdlet Dev version: v1.0.3
 
 .DESCRIPTION
-   Auxiliary module of Meterpeter C2 v2.10.13 that executes a prank in background.
+   Auxiliary module of Meterpeter C2 v2.10.13 that executes an prank in background.
    The prank opens the default web browser in fakeupdate.net website in full screen
-   mode. To abort the prank target user requires to press {F11} on is keyboard.
+   mode. To abort the prank target user requires to manual press {F11} on is keyboard.
 
 .NOTES
-   This cmdlet stores windows operative sistem version number, stores default web
-   browser name, gets the default browser executable path, selects the operative
-   sistem version to run on fakeupdate.net, downloads sendkeys.ps1 cmdlet, execute
-   sendkeys cmdlet to open default browser in fakeupdate.net in full windows mode.
-   sendkeys cmdlet its invoked to send keyboard keys to the browser [Enter + F11]
+   This cmdlet gets the default web browser name\path\command and operative system
+   version number (to select fakeupdate.net correct wallpaper) before download and
+   invoking sendkeys.ps1 cmdlet that opens fakeupdate.net website in full screen mode.
+   sendkeys.ps1 cmdlet its invoked to send keyboard keys to the browser {Enter + F11}
 
 .Parameter AutoDelete
    Auto-Delete this cmdlet in the end? (default: off)
