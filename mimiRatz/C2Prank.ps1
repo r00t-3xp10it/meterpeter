@@ -219,77 +219,7 @@ public class Wallpaper
 "@
 
 #BlueScreenOfDeath - Prank
-If($BSODwallpaper -ieq "true")
-{
 
-   <#
-   .SYNOPSIS
-      Author: @r00t-3xp10it
-      Helper - Change desktop wallpaper to BSOD wallpaper
-
-   .NOTES
-      This function downloads the BSOD wallpaper from my github repo
-      and store it on %TMP% directory before changing desktop wallpaper.
-
-      This function auto-creates 'RevertWallpaper.ps1' cmdlet in current
-      directory to manually revert the wallpaper to is original state ..    
-   #>
-
-   write-host "* Modify desktop wallpaper to BSOD wallpaper" -ForegroundColor Green
-   If((Get-ItemProperty -Path "HKCU:\Control Panel\Desktop").Wallpaper)
-   {
-      #Backup original wallpaper registry absoluct path value
-      $OriginalWallpaperPath = (Get-ItemProperty -Path "HKCU:\Control Panel\Desktop").Wallpaper
-   }
-
-   #Download BSOD wallpaper from my github repository
-   write-host "  => Download BSOD wallpaper from my github repo" -ForegroundColor DarkYellow
-   iwr -uri "https://raw.githubusercontent.com/r00t-3xp10it/meterpeter/master/mimiRatz/theme/bsod.png" -OutFile "$Env:TMP\bsod.png"|Unblock-File
-
-   #Add type and set wallpaper automatic
-   Add-Type -TypeDefinition $setwallpapersrc
-   [Wallpaper]::SetWallpaper("$Env:TMP\bsod.png")
-   write-host "  => Add TypeDefinition and set wallpaper automatic" -ForegroundColor DarkYellow
-
-
-#Revert Wallpaper to original state function
-$RevertWallpaper = @("`$setwallpapersrc = @`"
-using System.Runtime.InteropServices;
-
-public class Wallpaper
-{
-  public const int SetDesktopWallpaper = 20;
-  public const int UpdateIniFile = 0x01;
-  public const int SendWinIniChange = 0x02;
-  [DllImport(`"user32.dll`", SetLastError = true, CharSet = CharSet.Auto)]
-  private static extern int SystemParametersInfo(int uAction, int uParam, string lpvParam, int fuWinIni);
-  public static void SetWallpaper(string path)
-  {
-    SystemParametersInfo(SetDesktopWallpaper, 0, path, UpdateIniFile | SendWinIniChange);
-  }
-}
-`"@
-
-#Add type and set wallpaper automatic
-Add-Type -TypeDefinition `$setwallpapersrc
-[Wallpaper]::SetWallpaper(`"$OriginalWallpaperPath`")
-
-write-host `"* Reverted desktop wallpaper to is original state.`" -ForeGroundColor Green
-write-host `"  => $OriginalWallpaperPath`" -ForeGroundColor DarkYellow
-
-Remove-Item `$Env:TMP\bsod.png -Force #Delete wallpaper
-#Auto Delete this cmdlet in the end. ( anti-forensic )
-Remove-Item -LiteralPath `$MyInvocation.MyCommand.Path -Force")
-
-
-#Build RevertWallpaper.ps1 cmdlet in current directory
-echo $RevertWallpaper|Out-File "RevertWallpaper.ps1" -Encoding string -Force
-write-host "*" -ForegroundColor DarkYellow -NoNewline;
-write-host " created: " -ForegroundColor Green -NoNewline;
-write-host "RevertWallpaper.ps1" -ForegroundColor DarkGray -NoNewline;
-write-host " in current directory" -ForegroundColor Green
-
-}
 
 #Auto Delete this cmdlet in the end ...
 Remove-Item -LiteralPath $MyInvocation.MyCommand.Path -Force
