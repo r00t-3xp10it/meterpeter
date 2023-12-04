@@ -135,8 +135,8 @@ If($Action -iMatch '^(list)$')
 
    <#
    .SYNOPSIS
-      list installed packets [local]
-      :meterpeter:post:applman> list
+      list installed packets [local PC]
+      :meterpeter:post:msstore> list
    #>
 
    ## Command
@@ -150,7 +150,7 @@ If($Action -iMatch '^(discover)$')
    <#
    .SYNOPSIS
       search for application [msstore]
-      :meterpeter:post:applman> discover
+      :meterpeter:post:msstore> discover
    #>
 
    ## Cmdlet parameters checks
@@ -176,7 +176,7 @@ If($Action -iMatch '^(install)$')
    <#
    .SYNOPSIS
       Install application [msstore]
-      :meterpeter:post:applman> install
+      :meterpeter:post:msstore> install
 
    .NOTES
       Parameters -program and -id are mandatory
@@ -213,8 +213,8 @@ If($Action -iMatch '^(uninstall)$')
 
    <#
    .SYNOPSIS
-      Uninstall application [local]
-      :meterpeter:post:applman> uninstall
+      Uninstall application [local PC]
+      :meterpeter:post:msstore> uninstall
 
    .NOTES
       Parameters -program and -id are mandatory
