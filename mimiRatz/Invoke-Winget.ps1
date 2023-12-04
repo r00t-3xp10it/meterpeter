@@ -245,7 +245,6 @@ If($Action -iMatch '^(uninstall)$')
 
 }
 
-write-host ""
 ## Give extra time to finish tasks
 Start-Sleep -Milliseconds $Delay
 
