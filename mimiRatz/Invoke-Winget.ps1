@@ -161,8 +161,8 @@ If($Action -iMatch '^(discover)$')
    }
 
    ## Search for pacakage in microsoft store
-   winget search --name "$Program" --exact|Out-File -FilePath "$Env:TMP\skynet.log" -Force
-   $Pacakage = (Get-Content -Path "$Env:TMP\skynet.log"|Select-String -Pattern "$Program")
+   winget search --name "$Program" --exact|Out-File -FilePath "$Env:TMP\Skynet.log" -Force
+   $Pacakage = (Get-Content -Path "$Env:TMP\Skynet.log"|Select-String -Pattern "$Program")
    If([string]::IsNullOrEmpty($Pacakage))
    {
       write-host "   > Error: program '$Program' not found in msstore!`n" -ForegroundColor Red
@@ -170,14 +170,12 @@ If($Action -iMatch '^(discover)$')
    Else
    {
       ## Sanitize command output
-      $RawData = (Get-Content -Path "$Env:TMP\skynet.log")
-      $SanitizeOutput = $RawData -replace '(\\|/)',''
+      $SanitizeOutput = (Get-Content -Path "$Env:TMP\Skynet.log") -replace '(\\|/|£)',''
       echo $SanitizeOutput
    }
 
-   ## Clean Up
-   Remove-Item -Path "$Env:TMP\skynet.log" -Force
-
+   ## CleanUp
+   Remove-Item -Path "$Env:TMP\Skynet.log" -Force
 }
 
 
@@ -215,7 +213,6 @@ If($Action -iMatch '^(install)$')
       write-host "`n   > Fail: Installing -program '$Program' -id '$Id' from msstore`n" -ForegroundColor Red
       return      
    }
-
 }
 
 
@@ -253,8 +250,8 @@ If($Action -iMatch '^(uninstall)$')
       write-host "`n   > Fail: Uninstalling -program '$Program' -id '$Id' [local]`n" -ForegroundColor Red
       return
    }
-
 }
+
 
 ## Give extra time to finish tasks
 Start-Sleep -Milliseconds $Delay
@@ -262,6 +259,6 @@ Start-Sleep -Milliseconds $Delay
 ## CleanUp
 If($AutoDelete -iMatch '^(on)$')
 {
-   #Auto Delete this cmdlet in the end ...
+   ## Auto Delete this cmdlet in the end ...
    Remove-Item -LiteralPath $MyInvocation.MyCommand.Path -Force
 }
