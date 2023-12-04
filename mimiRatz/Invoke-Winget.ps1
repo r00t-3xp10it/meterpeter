@@ -6,7 +6,7 @@
    Tested Under: Windows 10 (19044) x64 bits
    Required Dependencies: WinGet, UserLand
    Optional Dependencies: none
-   PS cmdlet Dev version: v1.0.2
+   PS cmdlet Dev version: v1.0.3
 
 .DESCRIPTION
    Auxiliary Module of meterpeter v2.10.13 that invokes winget command line
@@ -85,7 +85,7 @@
 )
 
 
-$cmdletver = "v1.0.2"
+$cmdletver = "v1.0.3"
 $ErrorActionPreference = "SilentlyContinue"
 ## Disable Powershell Command Logging for current session.
 Set-PSReadlineOption –HistorySaveStyle SaveNothing|Out-Null
@@ -198,7 +198,7 @@ If($Action -iMatch '^(install)$')
    }
 
    ## Silent install program from microsoft store
-   winget install --name "$Program" --id "$Id" --silent --force --accept-package-agreements --accept-source-agreements --disable-interactivity --ignore-local-archive-malware-scan
+   winget install --name "$Program" --id "$Id" --silent --force --accept-package-agreements --accept-source-agreements --disable-interactivity
    If($? -iMatch 'false')
    {
       write-host "   > Fail: Installing -program '$Program' -id '$Id'`n" -ForegroundColor Red
