@@ -120,7 +120,7 @@ If([string]::IsNullOrEmpty($CheckInstall))
    If($Force.IsPresent)
    {
       ## Download and install winget application using the latest release available.
-      Add-AppxPackage https://github.com/microsoft/winget-cli/releases/latest/download/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle
+      Add-AppxPackage "https://github.com/microsoft/winget-cli/releases/latest/download/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle"
    }
    Else
    {
@@ -239,7 +239,7 @@ If($Action -iMatch '^(uninstall)$')
    $IsAvailable = (Winget list|Select-String -Pattern "$Program")
    If([string]::IsNullOrEmpty($IsAvailable))
    {
-      write-host "   > Error: program '$Program' not found [local]!`n" -ForegroundColor Red
+      write-host "   > Error: program '$Program' not found! [local]`n" -ForegroundColor Red
       return      
    }
 
