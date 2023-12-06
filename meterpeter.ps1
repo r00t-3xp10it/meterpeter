@@ -264,12 +264,14 @@ $check = Test-Path -Path "/var/www/html/";
 If($check -ieq $False)
 {
 
-  try{
-     #Check Attacker python version (http.server)
-     $Python_version = python -V
-  }catch{}
+   try{
+     #Check Attacker http.server
+     python -V > $Env:TMP\ff.log
+     $Python_version = (Get-Content "$Env:TMP\ff.log" -ErrorAction SilentlyContinue)
+     Remove-Item -Path "$Env:TMP\ff.log" -Force -ErrorAction SilentlyContinue
+   }Catch{}
 
-  If($Python_version)
+  If(-not([string]::IsNullOrEmpty($Python_version)))
   {
     $Webroot_test = Test-Path -Path "$env:LocalAppData\webroot\";
     If($Webroot_test -ieq $True){cmd /R rmdir /Q /S "%LocalAppData%\webroot\";mkdir $APACHE|Out-Null}else{mkdir $APACHE|Out-Null};
