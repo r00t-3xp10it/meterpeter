@@ -6,7 +6,7 @@
 
 #Global variable declarations
 $ErrorActionPreference = "SilentlyContinue"
-
+echo "$PID" > "$Env:TMP\kkk.log"
 
 IF($Action -ieq "start")
 {
