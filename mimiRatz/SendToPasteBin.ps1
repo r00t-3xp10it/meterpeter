@@ -6,7 +6,7 @@
    Tested Under: Windows 10 (19042) x64 bits
    Required Dependencies: Invoke-WebRequest {native}
    Optional Dependencies: Out-PasteBin.ps1 {auto}
-   PS cmdlet Dev version: v1.1.3
+   PS cmdlet Dev version: v1.1.4
    
 .DESCRIPTION
    Uses Out-PasteBin.ps1 cmdlet to take the contents of -filepath 'string'
@@ -92,7 +92,7 @@
 )
 
 
-$cmdletVersion = "v1.1.3"
+$cmdletVersion = "v1.1.4"
 $ErrorActionPreference = "SilentlyContinue"
 #Disable Powershell Command Logging for current session.
 Set-PSReadlineOption –HistorySaveStyle SaveNothing|Out-Null
