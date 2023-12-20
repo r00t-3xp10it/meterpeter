@@ -143,6 +143,32 @@ For($i=1; $i -lt $MaxInteractions; $i++)
    #Spawn cmd terminal console and make it look like one kernel error as ocurr
    Start-Process cmd.exe -argumentlist "/R color 90&title $MsgBoxTitle&echo $MsgBoxText&Pause"
 
+
+   ## Check Operative system version [BallonTip]
+   If(([System.Environment]::OSVersion.Version.Major) -match '^(7|8|8.1|10)$')
+   {
+      <#
+      .SYNOPSIS
+         Author: @r00t-3xp10it
+         Helper - Display a ballontip in notification area
+      #>
+
+      Try{
+         Add-Type -AssemblyName System.Windows.Forms
+         $global:balmsg = New-Object System.Windows.Forms.NotifyIcon
+         $path = (Get-Process -id $pid).Path
+
+         ## Build ballon box
+         $balmsg.Icon = [System.Drawing.Icon]::ExtractAssociatedIcon($path)
+         $balmsg.BalloonTipIcon = [System.Windows.Forms.ToolTipIcon]::Warning
+         $balmsg.BalloonTipText = "A virus has detected in $Env:COMPUTERNAME"
+         $balmsg.BalloonTipTitle = "Attention $Env:USERNAME"
+         $balmsg.Visible = $true
+         $balmsg.ShowBalloonTip(20000)
+      }Catch{}
+   }
+
+
    Start-Sleep -Seconds 1
    Start $Env:PROGRAMFILES
 
