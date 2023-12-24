@@ -107,7 +107,7 @@ If(-not([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity
 {
    $Namelless = "%R@unA@s%" -replace '(@|%)',''
    write-host "[*] Relaunch console as an elevated process .."
-   Start-Process powershell.exe "-File",('"{0}"' -f $MyInvocation.MyCommand.Path) -Verb $Namelless
+   Start-Process -WindowStyle Hidden powershell "-File",('"{0}"' -f $MyInvocation.MyCommand.Path) -Verb $Namelless
    exit
 }
 
