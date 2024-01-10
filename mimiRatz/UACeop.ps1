@@ -6,7 +6,7 @@
    Tested Under: Windows 10 (19044) x64 bits
    Required Dependencies: none
    Optional Dependencies: netstat
-   PS cmdlet Dev version: v1.0.6
+   PS cmdlet Dev version: v1.0.7
 
 .DESCRIPTION
    Auxiliary module of Meterpeter v2.10.14 that allow users to
@@ -85,7 +85,7 @@ if(-not($Attacker -match '^(off)$'))
 {
    ## Make sure user inputed the correct lhost:lport format
    # Regex translated to human  1  9  2 .  1  6  8 .  ?  .    ?   :  ?
-   If(-not($Attacker -match '^(\d+\d+\d\.+\d+\d+\d\.+\d*\.)+[\d*]+:[\d*]+$'))
+   If(-not($Attacker -match '^(\d\d\d\.\d\d\d\.\d*\.)+[\d*]+:[\d*]+$'))
    {
       write-host "`n[x] Error: wrong LHOST:LPORT format input`n" -ForegroundColor Red
       Remove-Item -Path "$Env:TMP\Programdata.log" -Force
@@ -95,7 +95,7 @@ if(-not($Attacker -match '^(off)$'))
 }
 
 
-If($StartTime -Match '^(\d+\d+:+\d+\d)$')
+If($StartTime -Match '^(\d\d:\d\d)$')
 {
    <#
    .SYNOPSIS
